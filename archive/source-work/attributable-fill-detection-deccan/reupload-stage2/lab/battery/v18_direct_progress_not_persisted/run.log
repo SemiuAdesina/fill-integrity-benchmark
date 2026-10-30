@@ -1,0 +1,4 @@
+MODE=patched LABEL=v4-v18_direct_progress_not_persisted REWARD=0 RC=1 ELAPSED=2s TOTAL 53 FAILED 3
+FAILS: v11_restart_does_not_repeat_resolved_work v17_attribution_of_a_filled_leg_survives_a_restart v13_seeded_orderings_preserve_safety_invariants 
+RUNLOG: CONTROL ok timing runner_build=1 runner_execution=0 judge=1 verdict total=53 failed=3 control=1 reward=0 
+WORKDIR: /tmp/afd-eLQIPZ

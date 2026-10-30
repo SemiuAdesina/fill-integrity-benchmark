@@ -1,0 +1,677 @@
+2	//! Offline self-checking reproducer for the fill-attribution defects.
+3	//!
+4	//! This is a diagnostic aid, not the grader. It drives the engine through the
+5	//! public surface with in-memory fakes and prints one PASS/FAIL line per check,
+6	//! so a change can be evaluated without guessing.
+7	//!
+8	//! Run with:
+9	//! ```sh
+10	//! cargo run --offline --bin reproduce
+11	//! ```
+12	//!
+13	//! Exits 0 when every check passes and 1 otherwise, so it can be used in a loop.
+14	//!
+15	//! Scope. These checks cover the coarse attribution failures: inventory that
+16	//! predates an order, one instrument shared by two mandates, a stale feed, a
+17	//! genuine one-legged fill and a restart. They are necessary, not sufficient.
+18	//! The graded suite is broader and checks the exact rules in
+19	//! `/app/spec/venue-semantics.md` — attribution window boundaries, integer
+20	//! division of a block, the remainder tie-break, block idempotency — which this
+21	//! file deliberately does not encode. `tests/diagnostics.rs` does check those,
+22	//! one rule at a time. Passing everything here says the coarse model is right;
+23	//! it says nothing about the exact ones.
+24	//!
+25	//! No network and no venue account. The venues, the custody account and the
+26	//! event feed are fakes driven by a script. Extend it freely: it is not graded,
+27	//! and the verifier discards `src/bin/` before grading.
+28	
+29	use pairing_engine::{
+30	    Clock, Cursor, Duration, Engine, EngineConfig, FillBatch, FillEvent, FillEventSource,
+31	    InstrumentId, InventorySource, OpenOrder, OrderAccepted, OrderGateway, OrderId, OrderKind,
+32	    OrderRequest, PortError, Price, Qty, Snapshot, StateStore, StrategyCandidate, StrategyId,
+33	    StrategySource, Timestamp, Venue,
+34	};
+35	use std::cell::{Cell, RefCell};
+36	use std::collections::HashMap;
+37	
+38	// ---------------------------------------------------------------------------
+39	// Check reporting
+40	// ---------------------------------------------------------------------------
+41	
+42	#[derive(Default)]
+43	struct Report {
+44	    passed: usize,
+45	    failed: usize,
+46	}
+47	
+48	impl Report {
+49	    /// Record one check. `detail` is printed either way, because a passing
+50	    /// check whose reason is invisible is not much use when the next one fails.
+51	    fn check(&mut self, name: &str, ok: bool, detail: impl AsRef<str>) {
+52	        if ok {
+53	            self.passed += 1;
+54	            println!("  PASS  {name}");
+55	        } else {
+56	            self.failed += 1;
+57	            println!("  FAIL  {name}");
+58	        }
+59	        let detail = detail.as_ref();
+60	        if !detail.is_empty() {
+61	            println!("          {detail}");
+62	        }
+63	    }
+64	}
+65	
+66	// ---------------------------------------------------------------------------
+67	// Fakes
+68	// ---------------------------------------------------------------------------
+69	
+70	struct FakeClock {
+71	    now: Cell<Timestamp>,
+72	}
+73	
+74	impl FakeClock {
+75	    fn new(t: Timestamp) -> Self {
+76	        Self { now: Cell::new(t) }
+77	    }
+78	
+79	    fn advance(&self, delta: Duration) {
+80	        self.now.set(self.now.get() + delta);
+81	    }
+82	}
+83	
+84	impl Clock for FakeClock {
+85	    fn now(&self) -> Timestamp {
+86	        self.now.get()
+87	    }
+88	}
+89	
+90	struct FakeInventory {
+91	    instruments: RefCell<HashMap<InstrumentId, Qty>>,
+92	    cash: RefCell<Price>,
+93	}
+94	
+95	impl FakeInventory {
+96	    fn new() -> Self {
+97	        Self {
+98	            instruments: RefCell::new(HashMap::new()),
+99	            cash: RefCell::new(1000.0),
+100	        }
+101	    }
+102	
+103	    fn set_instrument(&self, instrument_id: InstrumentId, qty: Qty) {
+104	        self.instruments.borrow_mut().insert(instrument_id, qty);
+105	    }
+106	}
+107	
+108	impl InventorySource for FakeInventory {
+109	    fn instrument_inventory(&self, instrument_id: &InstrumentId) -> Result<Qty, PortError> {
+110	        Ok(*self.instruments.borrow().get(instrument_id).unwrap_or(&0))
+111	    }
+112	
+113	    fn settlement_balance(&self) -> Result<Price, PortError> {
+114	        Ok(*self.cash.borrow())
+115	    }
+116	}
+117	
+118	struct FakeGateway {
+119	    next_order_id: RefCell<u64>,
+120	    submitted: RefCell<Vec<OrderRequest>>,
+121	    open_orders: RefCell<Vec<OpenOrder>>,
+122	}
+123	
+124	impl FakeGateway {
+125	    fn new() -> Self {
+126	        Self {
+127	            next_order_id: RefCell::new(1),
+128	            submitted: RefCell::new(Vec::new()),
+129	            open_orders: RefCell::new(Vec::new()),
+130	        }
+131	    }
+132	
+133	    /// Seed the open-order list the engine reads back. This is the hook for
+134	    /// order-visibility scenarios: an order absent from this list is not
+135	    /// necessarily gone, and the engine has to cope with that.
+136	    fn set_open_orders(&self, orders: Vec<OpenOrder>) {
+137	        *self.open_orders.borrow_mut() = orders;
+138	    }
+139	
+140	    /// Every request the engine has submitted so far, in order.
+141	    fn submitted(&self) -> Vec<OrderRequest> {
+142	        self.submitted.borrow().clone()
+143	    }
+144	
+145	    fn taker_orders(&self) -> Vec<OrderRequest> {
+146	        self.submitted()
+147	            .into_iter()
+148	            .filter(|r| r.kind == OrderKind::ImmediateOrCancel)
+149	            .collect()
+150	    }
+151	
+152	    /// The order id the venue handed back for a given client reference.
+153	    fn order_id_for(&self, client_ref: &str) -> Option<OrderId> {
+154	        self.submitted()
+155	            .iter()
+156	            .position(|r| r.client_ref.as_str() == client_ref)
+157	            .map(|i| OrderId::new(format!("ord{}", i + 1)))
+158	    }
+159	}
+160	
+161	impl OrderGateway for FakeGateway {
+162	    fn submit(&self, request: &OrderRequest) -> Result<OrderAccepted, pairing_engine::SubmitError> {
+163	        let order_id = OrderId::new(format!("ord{}", *self.next_order_id.borrow()));
+164	        *self.next_order_id.borrow_mut() += 1;
+165	        self.submitted.borrow_mut().push(request.clone());
+166	        let venue_seq = *self.next_order_id.borrow();
+167	        Ok(OrderAccepted {
+168	            order_id,
+169	            client_ref: request.client_ref.clone(),
+170	            venue_seq,
+171	        })
+172	    }
+173	
+174	    fn cancel(&self, _order_id: &OrderId) -> Result<(), PortError> {
+175	        Ok(())
+176	    }
+177	
+178	    fn open_orders(&self) -> Result<Vec<OpenOrder>, PortError> {
+179	        Ok(self.open_orders.borrow().clone())
+180	    }
+181	
+182	    fn best_offer(&self, _instrument_id: &InstrumentId) -> Result<Option<Price>, PortError> {
+183	        Ok(Some(0.51))
+184	    }
+185	}
+186	
+187	struct FakeStrategies {
+188	    candidates: RefCell<Vec<StrategyCandidate>>,
+189	}
+190	
+191	impl FakeStrategies {
+192	    fn new() -> Self {
+193	        Self {
+194	            candidates: RefCell::new(Vec::new()),
+195	        }
+196	    }
+197	
+198	    fn set_candidates(&self, candidates: Vec<StrategyCandidate>) {
+199	        *self.candidates.borrow_mut() = candidates;
+200	    }
+201	}
+202	
+203	impl StrategySource for FakeStrategies {
+204	    fn candidates(&self) -> Result<Vec<StrategyCandidate>, PortError> {
+205	        Ok(self.candidates.borrow().clone())
+206	    }
+207	}
+208	
+209	/// Fill feed. Delivery is at-least-once, so `poll` replays everything it holds
+210	/// on every call, exactly as the real feed is permitted to.
+211	struct FakeFills {
+212	    events: RefCell<Vec<FillEvent>>,
+213	}
+214	
+215	impl FakeFills {
+216	    fn new() -> Self {
+217	        Self {
+218	            events: RefCell::new(Vec::new()),
+219	        }
+220	    }
+221	
+222	    fn push(&self, event: FillEvent) {
+223	        self.events.borrow_mut().push(event);
+224	    }
+225	}
+226	
+227	impl FillEventSource for FakeFills {
+228	    fn poll(&self, _cursor: &Cursor) -> Result<FillBatch, PortError> {
+229	        Ok(FillBatch {
+230	            events: self.events.borrow().clone(),
+231	            blocks: Vec::new(),
+232	            next_cursor: Cursor::beginning(),
+233	        })
+234	    }
+235	}
+236	
+237	struct FakeStore {
+238	    snapshot: RefCell<Option<Snapshot>>,
+239	}
+240	
+241	impl FakeStore {
+242	    fn new() -> Self {
+243	        Self {
+244	            snapshot: RefCell::new(None),
+245	        }
+246	    }
+247	}
+248	
+249	impl StateStore for FakeStore {
+250	    fn load(&self) -> Result<Option<Snapshot>, PortError> {
+251	        Ok(self.snapshot.borrow().clone())
+252	    }
+253	
+254	    fn save(&self, snapshot: &Snapshot) -> Result<(), PortError> {
+255	        *self.snapshot.borrow_mut() = Some(snapshot.clone());
+256	        Ok(())
+257	    }
+258	}
+259	
+260	// ---------------------------------------------------------------------------
+261	// Shared fixtures
+262	// ---------------------------------------------------------------------------
+263	
+264	fn config() -> EngineConfig {
+265	    EngineConfig {
+266	        max_pair_cost: 0.98,
+267	        min_leg_size: 5,
+268	        max_leg_size: 50,
+269	        neutralization_slippage: 0.02,
+270	        client_ref_prefix: String::from("test"),
+271	    }
+272	}
+273	
+274	fn candidate(id: &str, north: &str, south: &str, size: Qty) -> StrategyCandidate {
+275	    StrategyCandidate::new(
+276	        StrategyId::from(id),
+277	        InstrumentId::from(north),
+278	        InstrumentId::from(south),
+279	        0.45,
+280	        0.52,
+281	        size,
+282	        size,
+283	        Timestamp::from_seconds(9_000),
+284	    )
+285	}
+286	
+287	fn fill_event(seq: u64, order: &OrderId, client_ref: &str, qty: Qty, at: Timestamp) -> FillEvent {
+288	    FillEvent {
+289	        seq,
+290	        order_id: order.clone(),
+291	        client_ref: client_ref.into(),
+292	        strategy_id: StrategyId::from("unused"),
+293	        instrument_id: InstrumentId::from("unused"),
+294	        venue: Venue::North,
+295	        cumulative_filled_qty: qty,
+296	        price: 0.45,
+297	        at,
+298	    }
+299	}
+300	
+301	// ---------------------------------------------------------------------------
+302	// Scenarios
+303	// ---------------------------------------------------------------------------
+304	
+305	/// Custody already holds exactly one leg's worth before the mandate starts.
+306	/// Nothing was acquired for this order, so no pairing may be recorded.
+307	fn scenario_pre_existing_inventory(report: &mut Report) {
+308	    println!("\n[1] Pre-existing custody inventory is not a fill");
+309	    println!("    Custody holds 30 units of the North instrument from an earlier session.");
+310	    println!("    The engine submits a new 30-unit North leg. Nothing fills.");
+311	
+312	    let clock = FakeClock::new(Timestamp::from_seconds(1_000));
+313	    let inventory = FakeInventory::new();
+314	    let gateway = FakeGateway::new();
+315	    let strategies = FakeStrategies::new();
+316	    let fills = FakeFills::new();
+317	    let store = FakeStore::new();
+318	
+319	    inventory.set_instrument(InstrumentId::from("inst_north_s1"), 30);
+320	    strategies.set_candidates(vec![candidate("strategy1", "inst_north_s1", "inst_south_s1", 30)]);
+321	
+322	    let mut engine = Engine::new(
+323	        config(),
+324	        &strategies,
+325	        &inventory,
+326	        &gateway,
+327	        &fills,
+328	        &store,
+329	        &clock,
+330	    );
+331	
+332	    engine.run_cycle().unwrap();
+333	    let pending_after_entry = engine.pending_orders().len();
+334	    report.check(
+335	        "both legs are submitted and tracked",
+336	        pending_after_entry == 2,
+337	        format!("expected 2 tracked orders, saw {pending_after_entry}"),
+338	    );
+339	
+340	    clock.advance(Duration::from_seconds(10));
+341	    engine.run_cycle().unwrap();
+342	
+343	    let positions = engine.positions();
+344	    report.check(
+345	        "no pairing is recorded from pre-existing inventory",
+346	        positions.is_empty(),
+347	        format!(
+348	            "expected 0 positions, saw {}. The 30 units predate the order and prove nothing about it.",
+349	            positions.len()
+350	        ),
+351	    );
+352	
+353	    let takers = gateway.taker_orders().len();
+354	    report.check(
+355	        "no corrective order is sent when neither leg filled",
+356	        takers == 0,
+357	        format!("expected 0 taker orders, saw {takers}"),
+358	    );
+359	
+360	    let still_tracked = engine.pending_orders().len();
+361	    report.check(
+362	        "both live legs remain tracked",
+363	        still_tracked == 2,
+364	        format!("expected 2 tracked orders, saw {still_tracked}"),
+365	    );
+366	}
+367	
+368	/// Two mandates on one instrument identifier. A fill for the first must not
+369	/// complete a leg of the second.
+370	fn scenario_shared_instrument(report: &mut Report) {
+371	    println!("\n[2] A shared instrument identifier does not cross-attribute");
+372	    println!("    Mandates A and B both reference inst_north_shared.");
+373	    println!("    Only A's North leg fills, and only A's 30 units arrive in custody.");
+374	
+375	    let clock = FakeClock::new(Timestamp::from_seconds(1_000));
+376	    let inventory = FakeInventory::new();
+377	    let gateway = FakeGateway::new();
+378	    let strategies = FakeStrategies::new();
+379	    let fills = FakeFills::new();
+380	    let store = FakeStore::new();
+381	
+382	    strategies.set_candidates(vec![
+383	        candidate("strategyA", "inst_north_shared", "inst_south_a", 30),
+384	        candidate("strategyB", "inst_north_shared", "inst_south_b", 30),
+385	    ]);
+386	
+387	    let mut engine = Engine::new(
+388	        config(),
+389	        &strategies,
+390	        &inventory,
+391	        &gateway,
+392	        &fills,
+393	        &store,
+394	        &clock,
+395	    );
+396	
+397	    engine.run_cycle().unwrap();
+398	    let tracked = engine.pending_orders().len();
+399	    report.check(
+400	        "all four legs are submitted and tracked",
+401	        tracked == 4,
+402	        format!("expected 4 tracked orders, saw {tracked}"),
+403	    );
+404	
+405	    // Mandate A's North leg fills for its full size. Custody rises to 30 on the
+406	    // shared identifier, which is also mandate B's North instrument.
+407	    let at = clock.now();
+408	    if let Some(order) = gateway.order_id_for("test-1") {
+409	        fills.push(fill_event(1, &order, "test-1", 30, at));
+410	    }
+411	    inventory.set_instrument(InstrumentId::from("inst_north_shared"), 30);
+412	
+413	    clock.advance(Duration::from_seconds(10));
+414	    engine.run_cycle().unwrap();
+415	
+416	    let positions = engine.positions();
+417	    let b_completed = positions.iter().any(|p| p.strategy_id.as_str() == "strategyB");
+418	    report.check(
+419	        "mandate B records no pairing from mandate A's fill",
+420	        !b_completed,
+421	        "expected strategyB to record nothing: those 30 units belong to strategyA",
+422	    );
+423	
+424	    let a_takers = gateway
+425	        .taker_orders()
+426	        .iter()
+427	        .filter(|r| r.strategy_id.as_str() == "strategyA")
+428	        .count();
+429	    report.check(
+430	        "mandate A's unfilled South leg draws at most one corrective order",
+431	        a_takers <= 1,
+432	        format!("expected 0 or 1 corrective orders for strategyA, saw {a_takers}"),
+433	    );
+434	}
+435	
+436	/// The feed repeats the same event for many cycles. Redelivery is normal and
+437	/// must be absorbed without duplicating anything.
+438	fn scenario_stale_and_repeated(report: &mut Report) {
+439	    println!("\n[3] Repeated and stale observations do not compound");
+440	    println!("    One genuine fill for the North leg, then eight cycles of the same");
+441	    println!("    event redelivered and a frozen custody figure.");
+442	
+443	    let clock = FakeClock::new(Timestamp::from_seconds(1_000));
+444	    let inventory = FakeInventory::new();
+445	    let gateway = FakeGateway::new();
+446	    let strategies = FakeStrategies::new();
+447	    let fills = FakeFills::new();
+448	    let store = FakeStore::new();
+449	
+450	    strategies.set_candidates(vec![candidate("strategy1", "inst_north_s1", "inst_south_s1", 30)]);
+451	
+452	    let mut engine = Engine::new(
+453	        config(),
+454	        &strategies,
+455	        &inventory,
+456	        &gateway,
+457	        &fills,
+458	        &store,
+459	        &clock,
+460	    );
+461	
+462	    engine.run_cycle().unwrap();
+463	
+464	    let at = clock.now();
+465	    if let Some(order) = gateway.order_id_for("test-1") {
+466	        fills.push(fill_event(1, &order, "test-1", 30, at));
+467	    }
+468	    inventory.set_instrument(InstrumentId::from("inst_north_s1"), 30);
+469	
+470	    for _ in 0..8 {
+471	        clock.advance(Duration::from_seconds(10));
+472	        engine.run_cycle().unwrap();
+473	    }
+474	
+475	    let positions = engine.positions();
+476	    report.check(
+477	        "eight cycles of redelivery record at most one pairing",
+478	        positions.len() <= 1,
+479	        format!("expected 0 or 1 positions, saw {}", positions.len()),
+480	    );
+481	
+482	    let takers = gateway.taker_orders().len();
+483	    report.check(
+484	        "redelivery does not multiply corrective orders",
+485	        takers <= 1,
+486	        format!(
+487	            "expected at most 1 corrective order across 8 cycles, saw {takers}. \
+488	             The same observation arriving again is not new information."
+489	        ),
+490	    );
+491	}
+492	
+493	/// One leg genuinely fills and the other does not. That is a real exposure and
+494	/// it must draw exactly one corrective order, sized to the gap.
+495	fn scenario_one_legged_fill(report: &mut Report) {
+496	    println!("\n[4] A genuine one-legged fill is neutralized once");
+497	    println!("    The North leg fills for its full 30 units. The South leg does not.");
+498	
+499	    let clock = FakeClock::new(Timestamp::from_seconds(1_000));
+500	    let inventory = FakeInventory::new();
+501	    let gateway = FakeGateway::new();
+502	    let strategies = FakeStrategies::new();
+503	    let fills = FakeFills::new();
+504	    let store = FakeStore::new();
+505	
+506	    strategies.set_candidates(vec![candidate("strategy1", "inst_north_s1", "inst_south_s1", 30)]);
+507	
+508	    let mut engine = Engine::new(
+509	        config(),
+510	        &strategies,
+511	        &inventory,
+512	        &gateway,
+513	        &fills,
+514	        &store,
+515	        &clock,
+516	    );
+517	
+518	    engine.run_cycle().unwrap();
+519	
+520	    let north = gateway.order_id_for("test-1");
+521	    let south = gateway.order_id_for("test-2");
+522	    let at = clock.now();
+523	    if let Some(order) = &north {
+524	        fills.push(fill_event(1, order, "test-1", 30, at));
+525	    }
+526	
+527	    // The South leg is still resting and visible; the North leg has left the
+528	    // book because it filled.
+529	    if let (Some(south_id), Some(request)) = (south, gateway.submitted().get(1).cloned()) {
+530	        gateway.set_open_orders(vec![OpenOrder {
+531	            order_id: south_id,
+532	            client_ref: request.client_ref.clone(),
+533	            strategy_id: request.strategy_id.clone(),
+534	            instrument_id: request.instrument_id.clone(),
+535	            venue: Venue::South,
+536	            kind: OrderKind::RestingLimit,
+537	            venue_seq: 3,
+538	            limit_price: request.limit_price,
+539	            size: request.size,
+540	            filled_qty: 0,
+541	        }]);
+542	    }
+543	
+544	    for _ in 0..4 {
+545	        clock.advance(Duration::from_seconds(10));
+546	        engine.run_cycle().unwrap();
+547	    }
+548	
+549	    let takers = gateway.taker_orders();
+550	    report.check(
+551	        "the open exposure draws exactly one corrective order",
+552	        takers.len() == 1,
+553	        format!(
+554	            "expected exactly 1 corrective order, saw {}. Progress matters as much as safety: \
+555	             a genuine one-legged fill must still be neutralized.",
+556	            takers.len()
+557	        ),
+558	    );
+559	
+560	    let taker_size = takers.first().map(|taker| taker.size);
+561	    report.check(
+562	        "the corrective order is sized to the unresolved quantity",
+563	        taker_size == Some(30),
+564	        match taker_size {
+565	            Some(size) => format!("expected size 30, saw {size}"),
+566	            None => String::from("expected size 30, saw no corrective order at all"),
+567	        },
+568	    );
+569	}
+570	
+571	/// State is restored from the store, and custody still holds what it held.
+572	/// Neither may be reinterpreted as new activity.
+573	fn scenario_restart(report: &mut Report) {
+574	    println!("\n[5] A restart does not reinterpret old inventory");
+575	    println!("    Two legs are tracked, custody holds 30 pre-existing units, the");
+576	    println!("    process restarts and reloads from the store.");
+577	
+578	    let clock = FakeClock::new(Timestamp::from_seconds(1_000));
+579	    let inventory = FakeInventory::new();
+580	    let gateway = FakeGateway::new();
+581	    let strategies = FakeStrategies::new();
+582	    let fills = FakeFills::new();
+583	    let store = FakeStore::new();
+584	
+585	    inventory.set_instrument(InstrumentId::from("inst_north_s1"), 30);
+586	    strategies.set_candidates(vec![candidate("strategy1", "inst_north_s1", "inst_south_s1", 30)]);
+587	
+588	    {
+589	        let mut engine = Engine::new(
+590	            config(),
+591	            &strategies,
+592	            &inventory,
+593	            &gateway,
+594	            &fills,
+595	            &store,
+596	            &clock,
+597	        );
+598	        engine.run_cycle().unwrap();
+599	        clock.advance(Duration::from_seconds(10));
+600	        engine.run_cycle().unwrap();
+601	    }
+602	
+603	    // Restart: a fresh Engine over the same store, venue and custody account.
+604	    let mut engine = Engine::new(
+605	        config(),
+606	        &strategies,
+607	        &inventory,
+608	        &gateway,
+609	        &fills,
+610	        &store,
+611	        &clock,
+612	    );
+613	
+614	    clock.advance(Duration::from_seconds(10));
+615	    engine.run_cycle().unwrap();
+616	
+617	    let positions = engine.positions();
+618	    report.check(
+619	        "the restart records no pairing from pre-existing inventory",
+620	        positions.is_empty(),
+621	        format!(
+622	            "expected 0 positions after restart, saw {}. A restart clears process memory \
+623	             but not the custody account.",
+624	            positions.len()
+625	        ),
+626	    );
+627	
+628	    let takers = gateway.taker_orders().len();
+629	    report.check(
+630	        "the restart sends no corrective order",
+631	        takers == 0,
+632	        format!("expected 0 corrective orders, saw {takers}"),
+633	    );
+634	
+635	    let tracked = engine.pending_orders().len();
+636	    report.check(
+637	        "unresolved orders survive the restart",
+638	        tracked == 2,
+639	        format!(
+640	            "expected 2 tracked orders after restart, saw {tracked}. Live orders must remain \
+641	             recoverable."
+642	        ),
+643	    );
+644	}
+645	
+646	fn main() {
+647	    println!("Offline reproducer for /app — fill attribution diagnostics");
+648	    println!("Diagnostic only. The graded suite is broader; see instruction.md.");
+649	
+650	    let mut report = Report::default();
+651	    scenario_pre_existing_inventory(&mut report);
+652	    scenario_shared_instrument(&mut report);
+653	    scenario_stale_and_repeated(&mut report);
+654	    scenario_one_legged_fill(&mut report);
+655	    scenario_restart(&mut report);
+656	
+657	    let total = report.passed + report.failed;
+658	    println!("\n=== {} passed, {} failed, {total} checks ===", report.passed, report.failed);
+659	
+660	    if report.failed > 0 {
+661	        println!("\nThese are coarse, whole-cycle checks. A failure above means the engine's");
+662	        println!("reading of the venue disagrees with /app/spec/venue-semantics.md somewhere");
+663	        println!("that a five-scenario walkthrough can see.");
+664	        println!("\nThe finer rules - window boundaries, the exact division of a block, the");
+665	        println!("remainder tie-break, redelivery - are not visible here. Check those with");
+666	        println!("`cargo test --offline --test diagnostics`.");
+667	        println!("\nSee /app/spec/source-map.md for where each concern lives.");
+668	        std::process::exit(1);
+669	    }
+670	
+671	    println!("\nThese coarse checks pass. They do not cover the exact rules in");
+672	    println!("/app/spec/venue-semantics.md: attribution window boundaries, integer");
+673	    println!("division of a block fill, the remainder tie-break, or block idempotency.");
+674	    println!("For those, run `cargo test --offline --test diagnostics`.");
+675	    println!("Both are diagnostics, not the grader.");
+676	}
+677
+

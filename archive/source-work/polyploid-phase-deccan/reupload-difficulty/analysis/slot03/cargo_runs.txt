@@ -1,0 +1,910 @@
+[11] CMD: cargo build --release 2>&1 | tail -3 && ./target/release/phase 2>&1 | tail -3
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.01s
+markers=12 offspring=10
+total_log_likelihood=-725.2001583337
+wrote /app/result.json
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.01s
+markers=12 offspring=10
+total_log_likelihood=-725.2001583337
+wrote /app/result.json
+[metadata] {"noOutputExpected": false}
+
+[27] CMD: cargo build --release 2>&1 | grep -E "^(error|warning: unused|warning: unre)" -A 6 | head -80
+--- obs tail ---
+33]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:24:5
+   |
+24 | use solver::canon::{canonicalise, distinct_key, remap_table, row_permutations};
+   |     ^^^^^^ use of undeclared crate or module `solver`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:25:5
+   |
+25 | use solver::model::{Model, NJ};
+   |     ^^^^^^ use of undeclared crate or module `solver`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:26:5
+   |
+26 | use solver::search::Searcher;
+   |     ^^^^^^ use of undeclared crate or module `solver`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:27:5
+   |
+27 | use solver::viterbi::{forward_backward, haplotypes_from_cols, lexicographic_path, propagate, total_all};
+   |     ^^^^^^ use of undeclared crate or module `solver`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:41:8
+   |
+41 |     if solver::debug() {
+   |        ^^^^^^ use of undeclared crate or module `solver`
+
+error[E0433]: failed to resolve: use of undeclared crate or module `solver`
+  --> src/solver.rs:58:8
+   |
+58 |     if solver::debug() {
+   |        ^^^^^^ use of undeclared crate or module `solver`
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `polyploid-phase` (lib) due to 7 previous errors
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: sed -i 's/^use solver::/use crate::solver::/; s/if solver::debug()/if crate::solver::debug()/' src/solver.rs && cargo build --release 2>&1 | grep -E "^(error|warning)" -A 8 | head -60
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: cargo test --offline --locked --test diagnostics 2>&1 | tail -5; cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+--- obs tail ---
+mized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.33s
+
+[stdout]
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.33s
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: python3 - <<'EOF' import re p='tests/brute_check.rs' s=open(p).read() # drop the broken/unused helpers start=s.index("/// Every admissible column index sequence for one parent.") end=s.index("/// Maximum over every admis
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+warning: function `reconstruct` is never used
+   --> tests/brute_check.rs:231:4
+    |
+231 | fn reconstruct(model: &Model, cols: &[(usize, usize)]) -> Reconstruction {
+    |    ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (test "brute_check") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.86s
+     Running tests/brute_check.rs (target/release/deps/brute_check-44e155210d354db2)
+
+running 2 tests
+test matches_enumeration_with_ties ... ok
+test matches_enumeration_on_random_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: function `reconstruct` is never used
+   --> tests/brute_check.rs:231:4
+    |
+231 | fn reconstruct(model: &Model, cols: &[(usize, usize)]) -> Reconstruction {
+    |    ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (test "brute_check") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.86s
+     Running tests/brute_check.rs (target/release/deps/brute_check-44e155210d354db2)
+
+running 2 tests
+test matches_enumeration_with_ties ... ok
+test matches_enumeration_on_random_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+[metadata] {"noOutputExpected": false}
+
+[41] CMD: cat >> src/solver.rs <<'EOF' /// Whether the search should trace its branch and bound walk. pub fn trace() -> bool { std::env::var("PHASE_TRACE").map(|v| v == "1").unwrap_or(false) } EOF cargo build --release 2>&1 | grep
+--- obs tail ---
+ 111111 dec_b 011110 cmp 0 best_key Some(96)
+depth 11 dec_a 111111 dec_b 111111 cmp 0 best_key Some(96)
+depth 11 dec_a 111111 dec_b 011110 cmp 0 best_key Some(96)
+depth 10 dec_a 011110 dec_b 111111 cmp 0 best_key Some(96)
+depth 10 dec_a 011110 dec_b 011110 cmp 0 best_key Some(96)
+---- total trace lines:
+63
+
+[stdout]
+depth 0 dec_a 000000 dec_b 000000 cmp 1 best_key None
+depth 0 dec_a 000000 dec_b 000000 cmp 0 best_key None
+depth 1 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 2 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 3 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 4 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 5 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 6 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 7 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 8 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 9 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 10 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 11 dec_a 011110 dec_b 011110 cmp 0 best_key None
+depth 11 dec_a 011110 dec_b 111111 cmp 0 best_key Some(96)
+depth 11 dec_a 011110 dec_b 011110 cmp 0 best_key Some(96)
+depth 11 dec_a 111111 dec_b 011110 cmp 0 best_key Some(96)
+depth 11 dec_a 111111 dec_b 111111 cmp 0 best_key Some(96)
+depth 11 dec_a 111111 dec_b 011110 cmp 0 best_key Some(96)
+depth 10 dec_a 011110 dec_b 111111 cmp 0 best_key Some(96)
+depth 10 dec_a 011110 dec_b 011110 cmp 0 best_key Some(96)
+---- total trace lines:
+63
+[metadata] {"noOutputExpected": false}
+
+[48] CMD: cargo build --release --offline 2>&1 | tail -3 && PHASE_TRACE=1 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>&1 | grep -E "node d=(0|1|2|10|11) " | head -30
+--- obs tail ---
+392940", "-740.42392940", "-740.42392940", "-740.42392940", "-740.42392940"] floor=-128.72686337
+  node d=2 kids=18 bounds=["-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272", "-750.64406272"] floor=-128.72686337
+  node d=2 kids=36 bounds=["-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604", "-760.86419604"] floor=-128.72686337
+  node d=2 kids=18 bounds=["-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937", "-771.08432937"] floor=-128.72686337
+[metadata] {"noOutputExpected": false}
+
+[51] CMD: cargo test --offline --locked --release --test probe -- --nocapture 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.34s
+     Running tests/probe.rs (target/release/deps/probe-9beceacf7ce9c69c)
+
+running 1 test
+cols[0][0] = [12, 10, 6, 9, 5, 3]
+gl[0][0] = [-0.1344, -0.1344, -0.1344, -0.1344, -0.1344]
+all first: -128.72686336
+marker5 = (0,0): -128.72686336
+marker5 = (1,1): -128.72686336
+marker5 = (2,2): -128.72686336
+marker5 = (3,3): -128.72686336
+marker5 = (4,4): -128.72686336
+marker5 = (5,5): -128.72686336
+marker5 = (1,0): -128.72686336
+test probe_flat ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.34s
+     Running tests/probe.rs (target/release/deps/probe-9beceacf7ce9c69c)
+
+running 1 test
+cols[0][0] = [12, 10, 6, 9, 5, 3]
+gl[0][0] = [-0.1344, -0.1344, -0.1344, -0.1344, -0.1344]
+all first: -128.72686336
+marker5 = (0,0): -128.72686336
+marker5 = (1,1): -128.72686336
+marker5 = (2,2): -128.72686336
+marker5 = (3,3): -128.72686336
+marker5 = (4,4): -128.72686336
+marker5 = (5,5): -128.72686336
+marker5 = (1,0): -128.72686336
+test probe_flat ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" -A 5 | head -30; echo "build done"
+--- obs tail ---
+build done
+
+[stdout]
+build done
+[metadata] {"noOutputExpected": false}
+
+[63] CMD: cargo build --release --offline 2>&1 | grep -E "^(error|warning)" -A 8 | head -40; echo "=== build finished"
+--- obs tail ---
+=== build finished
+
+[stdout]
+=== build finished
+[metadata] {"noOutputExpected": false}
+
+[72] CMD: cargo build --release --offline 2>&1 | grep -E "^(error|warning)" -A 8 | head -40; echo "=== done"
+--- obs tail ---
+=== done
+
+[stdout]
+=== done
+[metadata] {"noOutputExpected": false}
+
+[75] CMD: cargo test --offline --locked --test diagnostics 2>&1 | tail -8; echo ===; cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+--- obs tail ---
+t; finished in 0.00s
+
+===
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.34s
+
+[stdout]
+running 4 tests
+test relabelling_resorts_the_unordered_pair ... ok
+test inheritance_states_are_unordered_and_complete ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+===
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.34s
+[metadata] {"noOutputExpected": false}
+
+[76] CMD: cargo test --offline --locked --release --test brute_check 2>&1 | tail -8
+--- obs tail ---
+Running tests/brute_check.rs (target/release/deps/brute_check-44e155210d354db2)
+
+running 2 tests
+test matches_enumeration_with_ties ... ok
+test matches_enumeration_on_random_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+[stdout]
+     Running tests/brute_check.rs (target/release/deps/brute_check-44e155210d354db2)
+
+running 2 tests
+test matches_enumeration_with_ties ... ok
+test matches_enumeration_on_random_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+[metadata] {"noOutputExpected": false}
+
+[78] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace(""" let (lower, start) = local_search(&model, 24); let (prices, upper) = optimise_prices(&model, lower, 250);""", """ let restarts: usize = std::env::var("
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+restarts=24:
+
+[error] tool reported failure
+
+[80] CMD: timeout 900 cargo test --offline --locked --release --test dual -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+Running tests/dual.rs (target/release/deps/dual-3eef35b445285ea1)
+
+running 1 test
+first columns: -1477.616071
+rounds 100: dual -inf  (6.918442ms)
+rounds 400: dual -inf  (6.798752ms)
+rounds 1600: dual -inf  (6.837778ms)
+rounds 6400: dual -inf  (6.728285ms)
+test dual_convergence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+[stdout]
+     Running tests/dual.rs (target/release/deps/dual-3eef35b445285ea1)
+
+running 1 test
+first columns: -1477.616071
+rounds 100: dual -inf  (6.918442ms)
+rounds 400: dual -inf  (6.798752ms)
+rounds 1600: dual -inf  (6.837778ms)
+rounds 6400: dual -inf  (6.728285ms)
+test dual_convergence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+[metadata] {"noOutputExpected": false}
+
+[82] CMD: timeout 900 cargo test --offline --locked --release --test dual -- --nocapture 2>&1 | tail -14
+--- obs tail ---
+instance /tmp/big28.json: all first columns -1477.6161
+polyak rounds 200: dual -870.7033 (421.523507ms)
+polyak rounds 1000: dual -870.7033 (1.857608287s)
+polyak rounds 5000: dual -870.7033 (9.176850854s)
+sqrt rounds 200: dual -870.7033 (363.951075ms)
+sqrt rounds 1000: dual -870.7033 (1.815393753s)
+sqrt rounds 5000: dual -870.7033 (9.419936067s)
+fixed rounds 200: dual -870.7033 (361.531697ms)
+fixed rounds 1000: dual -870.7033 (1.952156448s)
+fixed rounds 5000: dual -870.7033 (9.557139672s)
+test dual_convergence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 34.93s
+
+[stdout]
+instance /tmp/big28.json: all first columns -1477.6161
+polyak rounds 200: dual -870.7033 (421.523507ms)
+polyak rounds 1000: dual -870.7033 (1.857608287s)
+polyak rounds 5000: dual -870.7033 (9.176850854s)
+sqrt rounds 200: dual -870.7033 (363.951075ms)
+sqrt rounds 1000: dual -870.7033 (1.815393753s)
+sqrt rounds 5000: dual -870.7033 (9.419936067s)
+fixed rounds 200: dual -870.7033 (361.531697ms)
+fixed rounds 1000: dual -870.7033 (1.952156448s)
+fixed rounds 5000: dual -870.7033 (9.557139672s)
+test dual_convergence ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 34.93s
+[metadata] {"noOutputExpected": false}
+
+[83] CMD: cat >> /app/tests/dual.rs <<'EOF' #[test] fn consensus_at_zero_prices() { let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into()); let text = std::fs::read_to_string(&path).unwrap(); let c
+--- obs tail ---
+relaxed -870.703326, markers where every progeny agrees: 2/28
+consensus total: -1390.964048
+test consensus_at_zero_prices ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+[stdout]
+relaxed -870.703326, markers where every progeny agrees: 2/28
+consensus total: -1390.964048
+test consensus_at_zero_prices ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[84] CMD: cat >> /app/tests/dual.rs <<'EOF' #[test] fn line_search() { let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into()); let text = std::fs::read_to_string(&path).unwrap(); let cross = parse_
+--- obs tail ---
+||g||^2 = 518.3125
+t = 0.0001: D = -870.681055  (change 0.022272)
+t = 0.001: D = -870.480608  (change 0.222719)
+t = 0.01: D = -868.476139  (change 2.227188)
+t = 0.1: D = -848.431451  (change 22.271875)
+t = 0.5: D = -759.343951  (change 111.359375)
+test line_search ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.01s
+
+[stdout]
+||g||^2 = 518.3125
+t = 0.0001: D = -870.681055  (change 0.022272)
+t = 0.001: D = -870.480608  (change 0.222719)
+t = 0.01: D = -868.476139  (change 2.227188)
+t = 0.1: D = -848.431451  (change 22.271875)
+t = 0.5: D = -759.343951  (change 111.359375)
+test line_search ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.01s
+[metadata] {"noOutputExpected": false}
+
+[85] CMD: cat >> /app/tests/dual.rs <<'EOF' #[test] fn gradient_sign() { let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into()); let text = std::fs::read_to_string(&path).unwrap(); let cross = pars
+--- obs tail ---
+m=3 c=0 pick=2: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 2
+m=4 c=1 pick=5: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 5
+m=5 c=2 pick=1: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 1
+m=6 c=3 pick=0: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 0
+test gradient_sign ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.02s
+
+[stdout]
+m=3 c=0 pick=2: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 2
+m=4 c=1 pick=5: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 5
+m=5 c=2 pick=1: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 1
+m=6 c=3 pick=0: D(+eps)-D(0) = 0.010000, D(-eps)-D(0) = 0.000000, pick now 0
+test gradient_sign ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.02s
+[metadata] {"noOutputExpected": false}
+
+[87] CMD: cat >> /app/tests/dual.rs <<'EOF' /// Bound that keeps the columns shared but lets each progeny jump between /// states freely, paying the best transition an interval could ever give. fn marker_bound_root(model: &Model) 
+--- obs tail ---
+/tmp/big28.json: price bound -870.7033, marker bound -863.7766, all first columns -1477.6161
+/app/cross.json: price bound -684.7190, marker bound -682.9689, all first columns -725.2002
+test compare_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+
+[stdout]
+/tmp/big28.json: price bound -870.7033, marker bound -863.7766, all first columns -1477.6161
+/app/cross.json: price bound -684.7190, marker bound -682.9689, all first columns -725.2002
+test compare_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+[metadata] {"noOutputExpected": false}
+
+[88] CMD: python3 - <<'EOF' import random, json, sys sys.path.insert(0,'tools') from gen import gen # regenerate with the same seed and recover the planted columns rng = random.Random(7) def cols(d): return [c for c in range(16) i
+--- obs tail ---
+planted A [5, 4, 3, 7, 0, 0, 15, 12]
+planted B [14, 11, 6, 0, 9, 9, 3, 0]
+266 |     let truth: serde_json::Value =
+    |                ^^^^^^^^^^ use of undeclared crate or module `serde_json`
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `polyploid-phase` (test "dual") due to 2 previous errors
+
+[stdout]
+planted A [5, 4, 3, 7, 0, 0, 15, 12]
+planted B [14, 11, 6, 0, 9, 9, 3, 0]
+266 |     let truth: serde_json::Value =
+    |                ^^^^^^^^^^ use of undeclared crate or module `serde_json`
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `polyploid-phase` (test "dual") due to 2 previous errors
+[metadata] {"noOutputExpected": false}
+
+[89] CMD: python3 - <<'EOF' p='/app/tests/dual.rs' s=open(p).read() i=s.index('#[test]\nfn planted_truth_value') s=s[:i]+'''#[test] fn planted_truth_value() { let text = std::fs::read_to_string("/tmp/big28.json").unwrap(); let cro
+--- obs tail ---
+planted truth total: -1184.355772
+test planted_truth_value ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+[stdout]
+planted truth total: -1184.355772
+test planted_truth_value ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[96] CMD: python3 - <<'PY' p='/app/src/solver.rs' s=open(p).read() s=s.replace("use crate::solver::bound::{optimise_prices, Backward};", "use crate::solver::bound::{dual_value, optimise_prices, Backward, Prices};") s=s.replace("us
+--- obs tail ---
+=== built
+
+[stdout]
+=== built
+[metadata] {"noOutputExpected": false}
+
+[99] CMD: python3 - <<'PY' p='/app/src/solver/search.rs' s=open(p).read() # 1. fields s = s.replace(""" /// `[parent][decided][marker]` the smallest column the row ordering still /// admits, used to bound an open marker's contribu
+--- obs tail ---
+=== built
+
+[stdout]
+=== built
+[metadata] {"noOutputExpected": false}
+
+[106] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(""" if norm <= 1e-12 { break; } let step = scale * (value - lower) / norm;""", """ if norm <= 1e-12 { break; } let step = scale * (value - lo
+--- obs tail ---
+p 0.00293 scale 0.0039 norm 148.875
+round 8: value -147.676296 best -159.352345 step 0.00147 scale 0.0020 norm 147.875
+round 9: value -147.796891 best -159.352345 step 0.00071 scale 0.0010 norm 152.875
+round 10: value -147.862896 best -159.352345 step 0.00037 scale 0.0005 norm 147.250
+round 11: value -147.902726 best -159.352345 step 0.00018 scale 0.0002 norm 148.000
+round 12: value -147.915867 best -159.352345 step 0.00009 scale 0.0001 norm 150.000
+round 13: value -147.926068 best -159.352345 step 0.00005 scale 0.0001 norm 145.125
+round 14: value -147.931138 best -159.352345 step 0.00002 scale 0.0000 norm 145.500
+round 15: value -147.933806 best -159.352345 step 0.00001 scale 0.0000 norm 144.625
+round 16: value -147.935071 best -159.352345 step 0.00001 scale 0.0000 norm 149.375
+round 17: value -147.935647 best -159.352345 step 0.00000 scale 0.0000 norm 146.750
+round 18: value -147.935950 best -159.352345 step 0.00000 scale 0.0000 norm 147.875
+round 19: value -147.936127 best -159.352345 step 0.00000 scale 0.0000 norm 150.250
+round 20: value -147.936211 best -159.352345 step 0.00000 scale 0.0000 norm 146.125
+round 21: value -147.936248 best -159.352345 step 0.00000 scale 0.0000 norm 146.250
+round 22: value -147.936271 best -159.352345 step 0.00000 scale 0.0000 norm 149.375
+round 23: value -147.936282 best -159.352345 step 0.00000 scale 0.0000 norm 145.625
+round 24: value -147.936287 best -159.352345 step 0.00000 scale 0.0000 norm 146.125
+[metadata] {"noOutputExpected": false}
+
+[108] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() old = """ if norm <= 1e-12 { break; } let step = scale * (value - lower) / norm; if crate::solver::debug() && _round < 60 { eprintln!("round {_round}: va
+--- obs tail ---
+error[E0308]: mismatched types
+   --> src/solver/bound.rs:175:27
+    |
+175 |         let step = if let Some(rule) = &STEP_RULE {
+    |                           ^^^^^^^^^^   ---------- this expression has type `&OnceLock<Option<String>>`
+    |                           |
+    |                           expected `OnceLock<Option<String>>`, found `Option<_>`
+    |
+    = note: expected struct `OnceLock<Option<String>>`
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+built
+
+[stdout]
+error[E0308]: mismatched types
+   --> src/solver/bound.rs:175:27
+    |
+175 |         let step = if let Some(rule) = &STEP_RULE {
+    |                           ^^^^^^^^^^   ---------- this expression has type `&OnceLock<Option<String>>`
+    |                           |
+    |                           expected `OnceLock<Option<String>>`, found `Option<_>`
+    |
+    = note: expected struct `OnceLock<Option<String>>`
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+built
+[metadata] {"noOutputExpected": false}
+
+[109] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace("if let Some(rule) = &STEP_RULE {","if let Some(rule) = rule.as_ref().and_then(|r| r.as_ref()) {") open(p,'w').write(s) PY cargo build --rele
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+error[E0308]: mismatched types
+   --> src/solver/bound.rs:175:67
+    |
+175 |         let step = if let Some(rule) = rule.as_ref().and_then(|r| r.as_ref()) {
+    |                                                                   ^^^^^^^^^^ expected `Option<_>`, found `&_`
+    |
+    = note:   expected enum `Option<_>`
+            found reference `&_`
+help: try wrapping the expression in `Some`
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+built
+== fixed
+
+[error] tool reported failure
+
+[110] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace("if let Some(rule) = rule.as_ref().and_then(|r| r.as_ref()) {","if let Some(rule) = rule {") open(p,'w').write(s) PY cargo build --release --
+--- obs tail ---
+built
+
+[stdout]
+built
+[metadata] {"noOutputExpected": false}
+
+[113] CMD: cd /app; cargo build --release --offline --tests 2>&1 | grep -E "^error" -A6 | head -20 for r in fixed half small tiny decay; do echo "== $r"; PHASE_DUAL=$r PHASE_ROUNDS=400 PHASE_INSTANCE=/tmp/b_12_16.json timeout 60 ca
+--- obs tail ---
+== fixed
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 223.166433ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== half
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 224.799329ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== small
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 219.486953ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== tiny
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 220.284029ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== decay
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 221.942388ms
+recomputed -159.352345
+markers with full agreement: 0/12
+
+[stdout]
+== fixed
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 223.166433ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== half
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 224.799329ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== small
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 219.486953ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== tiny
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 220.284029ms
+recomputed -159.352345
+markers with full agreement: 0/12
+== decay
+D(0) = -159.352345
+after 400 rounds: -159.352345 in 221.942388ms
+recomputed -159.352345
+markers with full agreement: 0/12
+[metadata] {"noOutputExpected": false}
+
+[120] CMD: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s=s.replace('''#[test] fn dual_trajectory() {''','''/// Value of the planted column assignment written by tools/gen.py. #[test] fn planted_value() { let path 
+--- obs tail ---
+planted total: -111.693224
+test planted_value ... ok
+planted total: -286.998912
+test planted_value ... ok
+planted total: -371.736015
+test planted_value ... ok
+
+[stdout]
+planted total: -111.693224
+test planted_value ... ok
+planted total: -286.998912
+test planted_value ... ok
+planted total: -371.736015
+test planted_value ... ok
+[metadata] {"noOutputExpected": false}
+
+[121] CMD: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() old_pool = """ non_dr = [s for s in states if s[0] != s[1]] pool = [] for m in range(M): if allowed_a[m] and allowed_b[m]: pool.append(states) elif allowed_a[m]
+--- obs tail ---
+Exit code 1
+ok
+== M=12 N=8
+thread 'planted_value' panicked at tests/dual2.rs:14:36:
+test planted_value ... FAILED
+    planted_value
+== M=12 N=16
+thread 'planted_value' panicked at tests/dual2.rs:14:36:
+test planted_value ... FAILED
+    planted_value
+== M=16 N=16
+thread 'planted_value' panicked at tests/dual2.rs:14:36:
+test planted_value ... FAILED
+    planted_value
+== M=20 N=24
+thread 'planted_value' panicked at tests/dual2.rs:14:36:
+test planted_value ... FAILED
+    planted_value
+
+[error] tool reported failure
+
+[122] CMD: cd /app; head -c 300 /tmp/d_12_8.json; echo; PHASE_INSTANCE=/tmp/d_12_8.json PHASE_TRUTH=/tmp/dtruth_12_8.json cargo test --offline --release --test dual2 planted_value -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+null
+called `Result::unwrap()` on an `Err` value: CrossError("top level value is not an object")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test planted_value ... FAILED
+
+failures:
+
+failures:
+    planted_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual2`
+
+[stdout]
+null
+called `Result::unwrap()` on an `Err` value: CrossError("top level value is not an object")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test planted_value ... FAILED
+
+failures:
+
+failures:
+    planted_value
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual2`
+[metadata] {"noOutputExpected": false}
+
+[124] CMD: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() s=s.replace(''' "B": {"allowed": allowed_b, "rate": rate_b}}, } if __name__''',''' "B": {"allowed": allowed_b, "rate": rate_b}}, } return out if __name__''') op
+--- obs tail ---
+Exit code 143
+ok
+== M=12 N=8
+planted total: -112.861630
+test planted_value ... ok
+markers=12 offspring=8 lower=-124.160480 dual=-106.474945
+optimum=-112.861630 nodes=10096 leaves=6
+markers=12 offspring=8
+== M=12 N=16
+planted total: -251.655024
+test planted_value ... ok
+markers=12 offspring=16 lower=-273.919299 dual=-189.557231
+Terminated
+== M=16 N=16
+planted total: -363.656087
+test planted_value ... ok
+markers=16 offspring=16 lower=-393.572170 dual=-271.016115
+Terminated
+
+[error] tool reported failure
+
+[127] CMD: cd /app; cargo build --release --offline 2>&1 | grep -E "^error" -A6 | head; for r in 24 100 400; do echo "== restarts $r"; ( time PHASE_RESTARTS=$r PHASE_PRIMAL_ONLY=1 PHASE_DEBUG=1 ./target/release/phase /tmp/d_12_16.j
+--- obs tail ---
+== restarts 24
+
+real	0m0.198s
+user	0m0.194s
+sys	0m0.007s
+== restarts 100
+
+real	0m0.376s
+user	0m0.360s
+sys	0m0.020s
+== restarts 400
+
+real	0m1.026s
+user	0m0.986s
+sys	0m0.044s
+
+[stdout]
+== restarts 24
+
+real	0m0.198s
+user	0m0.194s
+sys	0m0.007s
+== restarts 100
+
+real	0m0.376s
+user	0m0.360s
+sys	0m0.020s
+== restarts 400
+
+real	0m1.026s
+user	0m0.986s
+sys	0m0.044s
+[metadata] {"noOutputExpected": false}
+
+[132] CMD: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s=s.replace("use polyploid_phase::solver::bound::{dual_value, optimise_prices};", "use polyploid_phase::solver::bound::{dual_value, optimise_prices, optimise_
+--- obs tail ---
+built
+
+[stdout]
+built
+[metadata] {"noOutputExpected": false}
+
+[133] CMD: cd /app; for mu in 1.0 0.5 0.2; do for a in 0.5 2.0; do echo -n "mu=$mu alpha=$a : "; PHASE_INSTANCE=/tmp/d_12_16.json PHASE_LOWER=-255 PHASE_ROUNDS=300 PHASE_MU=$mu PHASE_ALPHA=$a timeout 100 cargo test --offline --rele
+--- obs tail ---
+mu=1.0 alpha=0.5 : after 300 rounds: -189.557231 in 161.369529ms
+smooth mu=1 alpha=0.5: -189.557231 in 1.267094368s
+mu=1.0 alpha=2.0 : after 300 rounds: -189.557231 in 184.435957ms
+smooth mu=1 alpha=2: -189.557231 in 1.240179567s
+mu=0.5 alpha=0.5 : after 300 rounds: -189.557231 in 170.621742ms
+smooth mu=0.5 alpha=0.5: -189.557231 in 1.26525658s
+mu=0.5 alpha=2.0 : after 300 rounds: -189.557231 in 176.200151ms
+smooth mu=0.5 alpha=2: -189.557231 in 1.295978979s
+mu=0.2 alpha=0.5 : after 300 rounds: -189.557231 in 163.995571ms
+smooth mu=0.2 alpha=0.5: -189.557231 in 1.21972003s
+mu=0.2 alpha=2.0 : after 300 rounds: -189.557231 in 161.741872ms
+smooth mu=0.2 alpha=2: -189.557231 in 1.199775431s
+
+[stdout]
+mu=1.0 alpha=0.5 : after 300 rounds: -189.557231 in 161.369529ms
+smooth mu=1 alpha=0.5: -189.557231 in 1.267094368s
+mu=1.0 alpha=2.0 : after 300 rounds: -189.557231 in 184.435957ms
+smooth mu=1 alpha=2: -189.557231 in 1.240179567s
+mu=0.5 alpha=0.5 : after 300 rounds: -189.557231 in 170.621742ms
+smooth mu=0.5 alpha=0.5: -189.557231 in 1.26525658s
+mu=0.5 alpha=2.0 : after 300 rounds: -189.557231 in 176.200151ms
+smooth mu=0.5 alpha=2: -189.557231 in 1.295978979s
+mu=0.2 alpha=0.5 : after 300 rounds: -189.557231 in 163.995571ms
+smooth mu=0.2 alpha=0.5: -189.557231 in 1.21972003s
+mu=0.2 alpha=2.0 : after 300 rounds: -189.557231 in 161.741872ms
+smooth mu=0.2 alpha=2: -189.557231 in 1.199775431s
+[metadata] {"noOutputExpected": false}
+
+[134] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(""" if crate::solver::debug() && round < 40 { eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6}"); }""", ""
+--- obs tail ---
+e to 1 previous error
+== alpha=0.02
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+== alpha=0.1
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+== alpha=0.5
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+
+[stdout]
+error[E0425]: cannot find value `norm` in this scope
+   --> src/solver/bound.rs:286:103
+    |
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+    |                                                                                                       ^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error
+== alpha=0.02
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+== alpha=0.1
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+== alpha=0.5
+286 |             eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");
+[metadata] {"noOutputExpected": false}
+
+[135] CMD: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(''' eprintln!("smooth round {round}: soft {soft:.6} hard {hard:.6} best {best_value:.6} norm {norm:.4}");''', ''' eprintln!("smooth round {ro
+--- obs tail ---
+smooth round 32: soft -41.333730 hard -185.791059 best -189.557231
+== alpha=0.5
+smooth round 0: soft -46.941040 hard -189.557231 best -189.557231
+smooth round 8: soft -22.617399 hard -171.869176 best -189.557231
+smooth round 16: soft -22.498109 hard -172.212973 best -189.557231
+smooth round 24: soft -23.604161 hard -172.941382 best -189.557231
+smooth round 32: soft -17.205264 hard -169.613763 best -189.557231
+
+[stdout]
+== alpha=0.02
+smooth round 0: soft -46.941040 hard -189.557231 best -189.557231
+smooth round 8: soft -45.972958 hard -188.848175 best -189.557231
+smooth round 16: soft -45.919834 hard -188.822726 best -189.557231
+smooth round 24: soft -45.998803 hard -188.873164 best -189.557231
+smooth round 32: soft -45.793285 hard -188.787867 best -189.557231
+== alpha=0.1
+smooth round 0: soft -46.941040 hard -189.557231 best -189.557231
+smooth round 8: soft -42.341762 hard -186.226363 best -189.557231
+smooth round 16: soft -42.015548 hard -186.010433 best -189.557231
+smooth round 24: soft -42.725849 hard -186.451036 best -189.557231
+smooth round 32: soft -41.333730 hard -185.791059 best -189.557231
+== alpha=0.5
+smooth round 0: soft -46.941040 hard -189.557231 best -189.557231
+smooth round 8: soft -22.617399 hard -171.869176 best -189.557231
+smooth round 16: soft -22.498109 hard -172.212973 best -189.557231
+smooth round 24: soft -23.604161 hard -172.941382 best -189.557231
+smooth round 32: soft -17.205264 hard -169.613763 best -189.557231
+[metadata] {"noOutputExpected": false}
+
+[136] CMD: cd /app; for mu in 0.3 0.1 0.03; do for a in 0.02 0.1; do echo -n "mu=$mu a=$a: "; PHASE_INSTANCE=/tmp/d_12_16.json PHASE_ROUNDS=300 PHASE_MU=$mu PHASE_ALPHA=$a timeout 120 cargo test --offline --release --test dual2 dua
+--- obs tail ---
+mu=0.3 a=0.02: smooth mu=0.3 alpha=0.02: -189.557231 in 1.370506776s
+mu=0.3 a=0.1: smooth mu=0.3 alpha=0.1: -189.557231 in 1.363936724s
+mu=0.1 a=0.02: smooth mu=0.1 alpha=0.02: -189.557231 in 1.366742134s
+mu=0.1 a=0.1: smooth mu=0.1 alpha=0.1: -189.557231 in 1.297192471s
+mu=0.03 a=0.02: smooth mu=0.03 alpha=0.02: -189.557231 in 1.35447553s
+mu=0.03 a=0.1: smooth mu=0.03 alpha=0.1: -189.557231 in 1.284408386s
+
+[stdout]
+mu=0.3 a=0.02: smooth mu=0.3 alpha=0.02: -189.557231 in 1.370506776s
+mu=0.3 a=0.1: smooth mu=0.3 alpha=0.1: -189.557231 in 1.363936724s
+mu=0.1 a=0.02: smooth mu=0.1 alpha=0.02: -189.557231 in 1.366742134s
+mu=0.1 a=0.1: smooth mu=0.1 alpha=0.1: -189.557231 in 1.297192471s
+mu=0.03 a=0.02: smooth mu=0.03 alpha=0.02: -189.557231 in 1.35447553s
+mu=0.03 a=0.1: smooth mu=0.03 alpha=0.1: -189.557231 in 1.284408386s
+[metadata] {"noOutputExpected": false}
+
+[140] CMD: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s+=''' /// Is the negative projected subgradient a descent direction at all? #[test] fn line_along_gradient() { let path = std::env::var("PHASE_INSTANCE").unw
+--- obs tail ---
+D(0) = -189.557231
+t =  0.01: D = -188.982231   (change +0.575000)
+t =  0.05: D = -186.682231   (change +2.875000)
+t =   0.2: D = -178.057231   (change +11.500000)
+t =   0.5: D = -160.807231   (change +28.750000)
+t =     1: D = -132.057231   (change +57.500000)
+t =     2: D = -74.427336   (change +115.129896)
+t =     5: D = 122.337630   (change +311.894861)
+t =    20: D = 1259.163527   (change +1448.720758)
+
+[stdout]
+D(0) = -189.557231
+t =  0.01: D = -188.982231   (change +0.575000)
+t =  0.05: D = -186.682231   (change +2.875000)
+t =   0.2: D = -178.057231   (change +11.500000)
+t =   0.5: D = -160.807231   (change +28.750000)
+t =     1: D = -132.057231   (change +57.500000)
+t =     2: D = -74.427336   (change +115.129896)
+t =     5: D = 122.337630   (change +311.894861)
+t =    20: D = 1259.163527   (change +1448.720758)
+[metadata] {"noOutputExpected": false}

@@ -1,0 +1,3 @@
+b05_tiebreak_tensor_before_replica
+selection
+breaks ties by tensor name before replica (no observable effect by construction)

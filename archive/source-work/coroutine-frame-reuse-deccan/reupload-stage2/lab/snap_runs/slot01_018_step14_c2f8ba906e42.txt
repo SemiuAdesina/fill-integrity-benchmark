@@ -1,0 +1,22 @@
+/b/runtime.cpp:139:9: error: use of undeclared identifier 'release_pending'
+  139 |         release_pending();
+      |         ^
+/b/runtime.cpp:203:11: error: no member named 'target' in 'roundel::Conductor::Pending'
+  203 |         t.target = st->parked;
+      |         ~ ^
+/b/runtime.cpp:255:5: error: use of undeclared identifier 'pending_release_'
+  255 |     pending_release_ = job;
+      |     ^
+/b/runtime.cpp:258:17: error: out-of-line definition of 'release_pending' does not match any declaration in 'roundel::Conductor'
+  258 | void Conductor::release_pending() {
+      |                 ^~~~~~~~~~~~~~~
+/b/runtime.cpp:259:37: error: use of undeclared identifier 'pending_release_'
+  259 |     const JobId job = std::exchange(pending_release_, kNoJob);
+      |                                     ^
+/b/runtime.cpp:275:12: error: no member named 'target' in 'roundel::Conductor::Pending'
+  275 |     if (!t.target) {
+      |          ~ ^
+/b/runtime.cpp:281:52: error: no member named 'target' in 'roundel::Conductor::Pending'
+  281 |     auto typed = Duty::handle_type::from_address(t.target.address());
+      |                                                  ~ ^
+7 errors generated.

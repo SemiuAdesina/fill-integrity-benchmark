@@ -1,0 +1,11 @@
+case                                                                        nop slot01 slot02 slot03 slot04 slot05 slot06 slot07 slot08
+n1_caught_child_fault_then_repark_trace                                    FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+n2_stale_child_ticket_after_child_fault_and_reuse_trace                    FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+n3_deep_child_failure_recovery_trace                                       FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+n4_job_launched_from_inside_a_running_job_settles_and_releases_at_once     FAIL   PASS   PASS   PASS   FAIL   FAIL   PASS   PASS   PASS
+n5_fault_into_child_caught_then_root_ticket_trace                          FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+n6_cancel_parent_with_child_ticket_queued_then_reuse                       FAIL   PASS   PASS   PASS   FAIL   PASS   PASS   PASS   PASS
+n7_child_fault_caught_then_parent_faults_once                              FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+n8_self_post_from_inside_child_frame_is_unbound_trace                      FAIL   PASS   PASS   PASS   FAIL   PASS   PASS   PASS   PASS
+n9_parent_continued_on_failure_path_trace                                  FAIL   FAIL   FAIL   PASS   FAIL   PASS   FAIL   FAIL   PASS
+passed                                                                     0/9    3/9    3/9    9/9    0/9    8/9    3/9    3/9    9/9 

@@ -1,0 +1,3 @@
+b05_addend_after_scale
+expression
+the addend is added after dividing by the scale

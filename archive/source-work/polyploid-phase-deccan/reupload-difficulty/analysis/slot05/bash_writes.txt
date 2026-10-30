@@ -1,0 +1,73 @@
+[47]
+cat > /tmp/run.sh <<'EOF'
+#!/bin/bash
+for f in "$@"; do
+  s=$(date +%s.%N)
+  out=$(./target/release/phase "$f" /tmp/out_$(basename $f) 2>&1)
+  e=$(date +%s.%N)
+  printf "%-28s %8.2f s   %s\n" "$(basename $f)" "$(echo "$e - $s" | bc)" "$(echo "$out" | grep total_log)"
+done
+EOF
+chmod +x /tmp/run.sh && /tmp/run.sh /tmp/x12_10_1.json /tmp/x12_10_2.json /tmp/x12_10_3.json /tmp/x20_20_1.json
+
+[64]
+cat > /tmp/ladder.sh <<'EOF'
+#!/bin/bash
+for f in "$@"; do
+  s=$SECONDS
+  timeout 240 env PHASE_TIMING=1 ./target/release/phase "$f" /tmp/o_$(basename $f) >/dev/null 2>/tmp/err_$(basename $f)
+  rc=$?
+  printf "%-22s rc=%s %ss  %s\n" "$(basename $f)" "$rc" "$((SECONDS-s))" "$(grep timing /tmp/err_$(basename $f))"
+done
+EOF
+chmod +x /tmp/ladder.sh; /tmp/ladder.sh /tmp/sk_20_20_11.json /tmp/sk_20_20_12.json /tmp/sk_24_24_11.json /tmp/un_20_20_11.json
+
+[83]
+cat > /app/tests/dual_probe.rs <<'EOF'
+// scratch: is the splitting relaxation tight, and does the subgradient find it?
+use polyploid_phase::cross_input::parse_cross;
+use polyploid_phase::solver::branch::{assignment_value, local_search};
+use polyploid_phase::solver::dual;
+use polyploid_phase::solver::model::Model;
+
+const JSON: &str = include_str!("/tmp/tiny.json");
+
+#[test]
+fn probe() {
+    let cross = parse_cross(JSON).unwrap();
+    let model = Model::new(&cross);
+    let (lb, _) = local_search(&model, 64);
+
+    // Brute force: every column pair per marker.
+    let m = model.markers;
+    let mut total_counts = 1usize;
+    for mm in 0..m {
+        total_counts *= model.na[mm] * model.nb[mm];
+    }
+    let mut best = f64::NEG_INFINITY;
+    let mut idx = vec![0usize; m];
+    for _ in 0..total_counts {
+        let assign: Vec<(usize, usize)> = (0..m)
+            .map(|mm| (idx[mm] / model.nb[mm], idx[mm] % model.nb[mm]))
+            .collect();
+        let v = assignment_value(&model, &assign);
+        if v > best {
+            best = v;
+        }
+        for mm in (0..m).rev() {
+            idx[mm] += 1;
+            if idx[mm] < model.na[mm] * model.nb[mm] {
+                break;
+            }
+            idx[mm] = 0;
+        }
+    }
+
+    for iters in [1usize, 50, 500, 5000] {
+        let out = dual::optimise(&model, lb, iters);
+        println!("iters={iters} dual={:.6}", out.bound);
+    }
+    println!("opt={best:.6} lb={lb:.6}");
+}
+EOF
+cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | tail -15

@@ -78,7 +78,6 @@ Restated from the user's constraints, and binding on this workspace:
 - **No canary value appears anywhere in this planning workspace.** Confirmed: these 20
   documents contain no canary string.
 - Two destinations exist and both are required: inside every text file of the task, and the
-  platform's separate `canary_string` upload field. The visible upload page does not show
   that field; its absence from view is not evidence it is unnecessary.
 - It must **not** go into: Task name, Task category, Programming language, Subcategory, or
   the ZIP filename.

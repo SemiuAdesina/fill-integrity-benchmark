@@ -1,0 +1,111 @@
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.rs" -o -name "*.toml" -o -name "*.json" | head -50; echo  :: 6 Sep  7 17:46 spec drwxr-xr-x 1 root root  176 Sep  7 17:46 src drwxr-xr-x 1 root root   80 Sep  7 17:46 target drwxr-xr-x 1 root root   60 Sep  7 17:46 tests 
+[15] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('cross.json')) print('markers',d['markers'],'offspring',d[ :: 289772, 0, 0, 0, 0.233696, 0.18933, 0.181965, 0.280416, 0, 0.266179, 0.218749]} Counter({3: 7, 4: 2, 0: 1, 2: 1, 1: 1}) Counter({2: 4, 0: 2, 3: 2, 4: 2, 1: 2}) 
+[16] BASH rc=0 0.0s :: cat /app/Cargo.toml; echo ---; cat /app/examples/README.md; echo ---; head -c 1200 /app/examples/sma :: as four homologs and there are ten unordered inheritance states per parent — a hundred jointly. `spec/cross-format-v1.md` gives the validation rules in full. 
+[17] BASH rc=0 0.0s :: wc -l /app/tests/diagnostics.rs /app/src/json.rs; grep -n "^fn \|^pub fn \|^#\[test\]" /app/tests/di :: ption<bool> { 64:    pub fn as_str(&self) -> Option<&str> { 72:pub fn parse(text: &str) -> Result<Json, JsonError> { 261:pub fn write(value: &Json) -> String { 
+[19] BASH rc=0 0.0s :: cargo build --release --offline --locked 2>&1 | tail -5 && time ./target/release/phase && cargo test :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.010s user	0m0.010s sys	0m0.000s 
+[20] BASH rc=0 0.0s :: sed -n 1,40p /app/tests/diagnostics.rs :: ::new(0, 2).unwrap(), State::new(2, 3).unwrap()],         }],     } }  #[test] fn inheritance_states_are_unordered_and_complete() {     assert_eq!(STATES, 10); 
+[21] WRITE /app/src/solver/model.rs -> W ok
+[22] EDIT /app/src/solver/model.rs -> E ok
+[23] WRITE /app/src/solver/local.rs -> W ok
+[24] WRITE /app/src/solver.rs -> W ok
+[25] BASH rc=0 0.0s :: cargo test --offline --locked --lib -- --nocapture 2>&1 | tail -20 :: 
+[26] WRITE /app/src/solver/bounds.rs -> W ok
+[27] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/bounds.rs' s=open(p).read() s=s.replace(""" let mut single :: 103:        let mut pair_r: Vec<Vec<Vec<f64>>> = Vec::with_capacity(markers + 1); 105:            for _ in 0..=markers { 215:        let row = &self.single[m]; 
+[28] BASH rc=0 0.1s :: python3 - <<'EOF' p='src/solver/bounds.rs' s=open(p).read() # fill index 0 with Q[0] for both tables ::  continuation from marker -1, 227:        self.bound_single_at(depth + 1, fwd) 231:    pub fn bound_single_at(&self, m: usize, fwd: &[Vec<[f64; NJ]>]) -> f64 { 
+[29] BASH rc=0 0.0s :: sed -n 220,250p src/solver/bounds.rs ::        total += best;         }         total     }      /// Tight bound: each pair shares an assignment, and so does any leftover     /// progeny with itself. 
+[30] BASH rc=0 0.1s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod local;\nmod model;","mod bound :: 
+[31] BASH rc=0 0.0s :: cargo test --offline --locked --release --lib -- --nocapture measure 2>&1 | grep -E "^error|-->|expe :: 
+[32] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/bounds.rs' s=open(p).read() s=s.replace("fwd: &[Vec<[f64; NJ]>]","fw :: 
+[33] WRITE /app/src/solver/dev.rs -> W ok
+[34] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod bounds;\nmod local;\nmod model :: 
+[35] BASH rc=0 0.0s :: cargo test --offline --locked --release --lib -- --nocapture 2>&1 | grep -E "^error" -A 6 | head -40 :: 
+[36] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("f64::from(rng.below(","(rng.be :: arkers - 1).map(|_| 0.02 + (rng.below(45)) / 100.0).collect(); 62:    let rec_b: Vec<f64> = (0..markers - 1).map(|_| 0.02 + (rng.below(45)) / 100.0).collect(); 
+[37] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("row[d] = -(rng.below(400)) / 1 :: 
+[38] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace(""" let pick = |rng: &mut local :: 
+[39] WRITE /app/src/solver/lagrange.rs -> W ok
+[40] WRITE /app/src/solver/lagrange.rs -> W ok
+[42] EDIT /app/src/solver.rs -> E ok
+[43] EDIT /app/src/solver.rs -> E ok
+[44] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -5; cargo test --release -- :: 
+[45] BASH rc=0 0.0s :: ls && wc -c cross.json && python3 -c " import json d=json.load(open('cross.json')) print(d.keys()) p :: 3, 3, 4, 2, 4, 3, 3, 3, 3, 3, 1] B [0, 2, 2, 3, 4, 1, 4, 0, 3, 1, 2, 2] diagnostics.rs solver_checks.rs cross-format-v1.md result-format-v1.md scoring-model.md 
+[46] EDIT /app/src/solver.rs -> E ok
+[47] BASH rc=0 0.0s :: cargo test --release --offline --locked --lib lagrange_trace -- --nocapture 2>&1 | grep -E "round|ag :: 
+[48] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('cross.json')) M=d['markers'] for K in (6,7): e={'format_v :: 6 55296 7 221184 
+[49] EDIT /app/src/solver/dev.rs -> E ok
+[50] BASH rc=0 0.0s :: cargo test --release --offline --locked --lib local_search_on_a_real_prefix -- --nocapture 2>&1 | gr :: 
+[51] BASH rc=0 0.0s :: sed -n 176,195p /app/src/solver/dev.rs :: imum:.6} local {found:.6}", space_size(&model));     } }  #[test] fn bounds_are_admissible() {     use crate::solver::bounds::Bounds;     for seed in 1..6u64 { 
+[52] BASH rc=0 0.0s :: grep -n "MIN_\|MAX_\|outside the supported\|fn validate" /app/src/cross_input.rs | head -40 :: 07:    if !(MIN_OFFSPRING..=MAX_OFFSPRING).contains(&offspring) { 108:        return Err(reject(format!("offspring {offspring} outside the supported range"))); 
+[53] BASH rc=0 0.0s :: sed -n 1,80p /app/src/cross_input.rs :: tion", ];  /// Parses and fully validates a cross document. pub fn parse_cross(text: &str) -> Result<Cross, CrossError> {     if text.len() > MAX_INPUT_BYTES { 
+[54] BASH rc=0 0.0s :: python3 -c " import json from math import comb d=json.load(open('cross.json')) for K in (5,6): e=jso :: free markers 0..4 13824 free markers 0..5 55296 
+[55] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/dev.rs' s=open(p).read() s=s.replace('["/tmp/cross6.json", :: 
+[56] EDIT /app/src/solver/dev.rs -> E ok
+[57] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("use crate::solver::local;","us :: 
+[58] BASH rc=0 0.0s :: cat /app/spec/result-format-v1.md :: ore than `1e-8`. - `canonical_digest` is not sixteen lowercase hexadecimal characters, or does   not match the digest of the reported canonical reconstruction. 
+[60] WRITE /app/src/solver/search.rs -> W ok
+[61] BASH rc=0 0.0s :: grep -n "pub fn transition_term" -A 30 /app/src/scoring.rs :: otals are equal within the documented tolerance. 216-pub fn scores_equal(left: f64, right: f64) -> bool { 217-    (left - right).abs() <= SCORE_TOLERANCE 218-} 
+[62] WRITE /app/src/solver/search.rs -> W ok
+[63] EDIT /app/src/solver/search.rs -> E ok
+[64] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod local;\nmod model;","mod local :: 
+[65] EDIT /app/src/solver.rs -> E ok
+[66] BASH rc=0 0.0s :: timeout 900 cargo test --release --offline --locked --lib search_matches_enumeration -- --nocapture  :: 
+[67] BASH rc=0 0.0s :: timeout 1800 cargo test --release --offline --locked --lib search_on_the_fixture -- --nocapture 2>&1 :: 
+[68] BASH rc=0 0.0s :: cat >> /app/src/solver/dev.rs <<'EOF' /// How the search grows with the cross. #[test] fn search_sca :: 
+[69] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace(''' for &(markers, offspring) i :: == 12,8 == 16,16 == 16,8 == 12,32 
+[70] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("let complete = search.run(valu :: == 12,8 == 12,32 
+[71] BASH rc=0 0.0s :: wc -l /app/tests/*.rs; head -60 /app/tests/diagnostics.rs :: t_eq!(repeated.switch_count(State::new(2, 3).unwrap()), 2); }  #[test] fn relabelling_resorts_the_unordered_pair() {     let state = State::new(0, 3).unwrap(); 
+[72] BASH rc=0 0.0s :: sed -n 1,120p /app/tests/solver_checks.rs :: d, slot) in out.iter_mut().enumerate() {         let distance = (d as f64 - f64::from(truth)).abs();         *slot = -slope * distance - tilt * d as f64;     } 
+[73] BASH rc=0 0.0s :: sed -n 120,330p /app/tests/solver_checks.rs ::          "parent {} has a relabelling that sorts earlier than the answer",                     parent.label()                 ));             }         }     } 
+[74] BASH rc=0 0.0s :: sed -n 330,520p /app/tests/solver_checks.rs :: 8; HOMOLOGS]; M];     cols_b[3] = [0, 1, 1, 0];     for m in [0, 8] {         cols_b[m] = [0, 0, 0, 0];     }     let hap_a = haplotypes_from_columns(&cols_a); 
+[75] BASH rc=0 0.0s :: sed -n 520,738p /app/tests/solver_checks.rs :: .canonical_digest,             canonical_digest(&first),             "{name}: the document's digest is not the digest of its reconstruction"         );     } } 
+[76] WRITE /app/src/solver/canon.rs -> W ok
+[77] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/canon.rs' s=open(p).read() # fix answer_for to return the  :: 181:} 196:} 207:} 211:pub fn answer_for(model: &Model, z: &[usize]) -> (Vec<u8>, Reconstruction) { 246:} 251:} 439:} 473:} 
+[79] EDIT /app/src/solver.rs -> E ok
+[80] BASH rc=0 0.0s :: cargo build --release --offline --locked 2>&1 | grep -E "^error" -A 10 | head -40 :: 
+[81] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -30 :: 
+[82] BASH rc=0 0.0s :: time ./target/release/phase && python3 -c " import json; d=json.load(open('result.json')) print(d['t :: , 2], [1, 2]], 'B': [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3]]}  real	0m0.011s user	0m0.009s sys	0m0.001s 
+[83] BASH rc=0 0.0s :: cat /app/src/bin/phase.rs :: rs={} offspring={}", cross.markers, cross.offspring);     println!("total_log_likelihood={total:.10}");     println!("wrote {output}");     ExitCode::SUCCESS } 
+[84] BASH rc=0 0.1s :: cat > /tmp/gen.py <<'EOF' import json, random, sys from math import comb def gen(M, N, slope, seed,  :: 6 /tmp/h16x16.json space 7.09e+20 /tmp/h20x24.json space 1.05e+26 /tmp/h28x32.json space 3.88e+37 /tmp/w16x8.json space 5.39e+21 /tmp/w12x8.json space 1.62e+16 
+[85] BASH rc=0 0.0s :: for f in h12x8 h16x16 w16x8; do echo -n "$f: "; /usr/bin/time -f "%e s" ./target/release/phase /tmp/ :: time: No such file or directory  h16x16: bash: line 1: /usr/bin/time: No such file or directory  w16x8: bash: line 1: /usr/bin/time: No such file or directory  
+[86] BASH rc=0 0.1s :: for f in h12x8 h16x16 w16x8; do echo "== $f"; ( time timeout 300 ./target/release/phase /tmp/$f.json :: 00s == h16x16 wrote /tmp/out_h16x16.json  real	0m0.010s user	0m0.010s sys	0m0.000s == w16x8 wrote /tmp/out_w16x8.json  real	0m0.006s user	0m0.005s sys	0m0.001s 
+[87] BASH rc=1 0.0s :: cat >> /app/src/solver/dev.rs <<'EOF' /// Nodes and time for one cross on disk. #[test] fn profile_f :: 
+[88] BASH rc=1 0.0s :: cat >> /app/src/solver/dev.rs <<'EOF' /// Does the consensus dual actually tighten the single bound  :: 
+[90] BASH rc=0 0.0s :: ls -la /app /app/tests /app/spec 2>&1 | head -60; echo ---; wc -l /app/tests/*.rs /app/spec/* :: ostics.rs   738 /app/tests/solver_checks.rs   140 /app/spec/cross-format-v1.md   148 /app/spec/result-format-v1.md   142 /app/spec/scoring-model.md  1247 total 
+[90] BASH rc=0 0.0s :: python3 -c " import json c=json.load(open('cross.json')) print('markers',c['markers'],'offspring',c[ :: [0, 2, 2, 3, 4, 1, 4, 0, 3, 1, 2, 2] 0 0 0 1 1 3 2 24 2 3 2 24 3 4 3 4 4 2 4 6 5 4 1 4 6 3 4 4 7 3 0 4 8 3 3 16 9 3 1 16 10 3 2 24 11 1 2 24 space 130459631616 
+[92] BASH rc=0 0.0s :: grep -n "fn \|fixture\|markers\|offspring\|assert" /app/tests/solver_checks.rs | head -80 :: rkers, cross.offspring) 727:        assert_eq!(decoded.answer, first, "{name}: the document does not round-trip"); 728:        assert!( 732:        assert_eq!( 
+[93] BASH rc=0 0.0s :: sed -n 1,60p /app/tests/solver_checks.rs; echo ...; sed -n 110,135p /app/tests/solver_checks.rs ::  dr_allowed[m] {             rate[m] = dr_rate;         }     }     ParentSpec { dosage, recombination: uniform_rec(recombination), dr_allowed, dr_rate: rate } 
+[95] BASH rc=0 0.0s :: sed -n 500,600p /app/tests/solver_checks.rs :: ross() {         let cross = spec.parse();         let (_, found) = solve_and_score(&cross);         let optimum = exhaustive_optimum(&cross);         assert!( 
+[96] EDIT /app/src/solver/model.rs -> E ok
+[97] EDIT /app/src/solver/model.rs -> E ok
+[98] EDIT /app/src/solver/model.rs -> E ok
+[99] WRITE /app/src/solver/search.rs -> W ok
+[100] EDIT /app/src/solver/search.rs -> E ok
+[101] EDIT /app/src/solver/search.rs -> E ok
+[102] EDIT /app/src/solver.rs -> E ok
+[103] BASH rc=0 0.1s :: cargo build --release --offline --locked 2>&1 | tail -20 :: 
+[104] BASH rc=0 0.0s :: grep -n "\.run(" src/solver/dev.rs src/solver.rs :: E_CAP); src/solver.rs:163:            let complete = search.run(value, z, 5_000_000); src/solver.rs:184:        let complete = search.run(value, z, 3_000_000); 
+[105] BASH rc=0 0.0s :: python3 - <<'EOF' import re for path, subs in [ ("src/solver.rs", [ ("let complete = search.run(valu :: BUILD_DONE 
+[106] BASH rc=0 0.0s :: cargo test --offline --locked --release --lib -- --nocapture search_on_the_fixture search_matches_en :: 
+[107] BASH rc=1 0.0s :: ls /tmp/*.json /tmp/gen.py 2>/dev/null; echo ---; SOLVER_FILE=/tmp/h12x8.json timeout 600 cargo test :: /h12x8.json /tmp/h16x16.json /tmp/h20x24.json /tmp/h28x32.json /tmp/out_h12x8.json /tmp/out_h16x16.json /tmp/out_w16x8.json /tmp/w12x8.json /tmp/w16x8.json --- 
+[108] BASH rc=1 0.1s :: cat >> /app/src/solver/dev.rs <<'EOF' /// Root bound against the optimum, and where in the tree the  :: 
+[109] BASH rc=1 0.0s :: cat >> /app/src/solver/dev.rs <<'EOF' /// How close the local search gets to the proven optimum. #[t :: 
+[110] BASH rc=1 0.0s :: cat > /tmp/loc.rs <<'EOF' EOF cat >> /app/src/solver/dev.rs <<'EOF' /// Cost of the local search acr :: 
+[112] BASH rc=1 0.0s :: cat >> /app/src/solver/dev.rs <<'EOF' /// Why more restarts can come out worse: split `search_local` :: 
+[113] EDIT /app/src/solver/local.rs -> E ok
+[114] EDIT /app/src/solver/local.rs -> E ok
+[115] EDIT /app/src/solver/local.rs -> E ok
+[116] EDIT /app/src/solver/local.rs -> E ok
+[117] BASH rc=0 0.0s :: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("""fn backward( ta: &[f6 :: DONE 
+[118] BASH rc=0 0.0s :: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("//! re-optimised rather :: DONE 
+[119] BASH rc=1 0.0s :: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json time :: 
+[120] BASH rc=0 0.0s :: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json timeout 900 cargo test --offline --locked --release --l :: 
+[121] BASH rc=0 0.0s :: cargo test --offline --locked --release --lib local_cost 2>&1 | grep -E "^error" -A 12 | head -30 :: 
+[122] BASH rc=1 0.0s :: python3 - <<'EOF' p='/app/src/solver/dev.rs' t=open(p).read() start=t.index("/// Why more restarts c :: 
+[123] BASH rc=0 0.0s :: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json time :: 
+[124] BASH rc=0 0.0s :: grep -n "^/// \|^#\[test\]\|^fn \|^pub fn " /app/src/solver/dev.rs | tail -30; wc -l /app/src/solver :: cal_cost() { 445:/// Why more restarts can come out worse: split `search_local` into its stages. 446:#[test] 447:fn local_stages() { 483 /app/src/solver/dev.rs 
+[125] BASH rc=0 0.0s :: python3 - <<'EOF' p='/app/src/solver/dev.rs' t=open(p).read() # drop the duplicate local_cost and th :: 283:#[test] 284:fn dual_probe() { 352:#[test] 353:fn gap_and_depth() { 376:#[test] 377:fn incumbent_quality() { 400:#[test] 401:fn local_cost() { OK 
+[126] BASH rc=1 0.0s :: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json time :: 
+[127] EDIT /app/src/solver/local.rs -> E ok
+[128] EDIT /app/src/solver/local.rs -> E ok
+[129] EDIT /app/src/solver/local.rs -> E ok
+[130] BASH rc=1 0.0s :: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("""/// Sweeps of single  :: BUILT 
+[132] EDIT /app/src/solver/local.rs -> E ok

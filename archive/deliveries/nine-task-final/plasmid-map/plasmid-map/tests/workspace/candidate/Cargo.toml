@@ -1,0 +1,9 @@
+[package]
+name="plasmid_candidate"
+version="0.1.0"
+edition="2021"
+publish=false
+[lib]
+name="plasmid_candidate"
+path="src/lib.rs"
+[dependencies]

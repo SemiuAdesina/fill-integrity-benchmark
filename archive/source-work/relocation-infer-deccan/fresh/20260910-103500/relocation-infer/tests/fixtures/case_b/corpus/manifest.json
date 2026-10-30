@@ -1,0 +1,931 @@
+{
+ "format_version": 1,
+ "machine": 22104,
+ "relocation_types": [
+  {
+   "type": 1,
+   "name": "R_VX_1",
+   "container_bits": 32,
+   "pair_group": null
+  },
+  {
+   "type": 2,
+   "name": "R_VX_2",
+   "container_bits": 32,
+   "pair_group": null
+  },
+  {
+   "type": 3,
+   "name": "R_VX_3",
+   "container_bits": 32,
+   "pair_group": null
+  }
+ ],
+ "objects": [
+  {
+   "id": "obj01",
+   "file": "objects/obj01.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 16985202784,
+      ".rodata": 16985206960,
+      ".shared": 13734100992,
+      ".text": 16985202688
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": ".data",
+       "value": 16985186459
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 16985207448
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 16985201275
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 16985143733
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 16985202707
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 16985173257
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 16985171362
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 16985202720,
+      ".rodata": 16985206896,
+      ".shared": 13734100992,
+      ".text": 16985202624
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": ".data",
+       "value": 16985186459
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 16985207448
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 16985201275
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 16985143733
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 16985202707
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 16985173257
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 16985171362
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l02.out"
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 16985202784,
+      ".rodata": 16985206960,
+      ".shared": 120284635136,
+      ".text": 16985202688
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": ".data",
+       "value": 16985186459
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 16985207448
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 16985201275
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 16985143733
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 16985202707
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 16985173257
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 16985171362
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 16985202784,
+      ".rodata": 16985206960,
+      ".shared": 13734100992,
+      ".text": 16985202688
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 16985197613
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 16985202682
+      },
+      "ext_0_2": {
+       "section": ".shared",
+       "value": 16985185517
+      },
+      "ext_0_3": {
+       "section": ".shared",
+       "value": 3251094080
+      },
+      "ext_0_4": {
+       "section": ".shared",
+       "value": 16985197171
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 16985198317
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 16985235495
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 45620838752,
+      ".rodata": 45620838848,
+      ".shared": 115838173184,
+      ".text": 45620838400
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": ".data",
+       "value": 45620852407
+      },
+      "ext_0_1": {
+       "section": ".rodata",
+       "value": 45620832826
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 45620810685
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 45620772901
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 45620822046
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 45620832827
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 45620805002
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 44
+       },
+       {
+        "section": ".text",
+        "offset": 64
+       }
+      ]
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 41029005424,
+      ".rodata": 41029005568,
+      ".shared": 18832011264,
+      ".text": 41029005312
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": ".data",
+       "value": 41028990251
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 41028999242
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 41029014004
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 41029005350
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 41028999895
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 41028988974
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 41028975861
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  },
+  {
+   "id": "obj02",
+   "file": "objects/obj02.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 23612432496,
+      ".rodata": 23612432560,
+      ".shared": 78275612672,
+      ".text": 23612432384
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 23612443652
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 23612432369
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 23612384643
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 23612421474
+      },
+      "ext_1_4": {
+       "section": ".shared",
+       "value": 23612431605
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 23612414506
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 23612432423
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 23612441133
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 23612432560,
+      ".rodata": 23612432624,
+      ".shared": 78275612672,
+      ".text": 23612432448
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 23612443652
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 23612432369
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 23612384643
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 23612421474
+      },
+      "ext_1_4": {
+       "section": ".shared",
+       "value": 23612431605
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 23612414506
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 23612432423
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 23612441133
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l02.out"
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 23612432496,
+      ".rodata": 23612432560,
+      ".shared": 27392966656,
+      ".text": 23612432384
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 23612443652
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 23612432369
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 23612384643
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 23612421474
+      },
+      "ext_1_4": {
+       "section": ".shared",
+       "value": 23612431605
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 23612414506
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 23612432423
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 23612441133
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 23612432496,
+      ".rodata": 23612432560,
+      ".shared": 78275612672,
+      ".text": 23612432384
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 23612421461
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 23612434599
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 23612410567
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 23612412999
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 23612420530
+      },
+      "ext_1_5": {
+       "section": ".rodata",
+       "value": 23612418944
+      },
+      "ext_1_6": {
+       "section": ".rodata",
+       "value": 23358
+      },
+      "ext_1_7": {
+       "section": ".data",
+       "value": 23612448824
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 18804097120,
+      ".rodata": 18804097184,
+      ".shared": 119434051584,
+      ".text": 18804092928
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 18804070504
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 18804092929
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 18804027417
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 18804060174
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 18804109350
+      },
+      "ext_1_5": {
+       "section": ".rodata",
+       "value": 18804125737
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 18804027433
+      },
+      "ext_1_7": {
+       "section": ".rodata",
+       "value": 18804110705
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 32
+       },
+       {
+        "section": ".text",
+        "offset": 40
+       },
+       {
+        "section": ".text",
+        "offset": 60
+       }
+      ]
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 16743465056,
+      ".rodata": 16743469216,
+      ".shared": 46194847744,
+      ".text": 16743464960
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": ".data",
+       "value": 16743464964
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 16743448594
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 16743399070
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 16743463863
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 16743451592
+      },
+      "ext_1_5": {
+       "section": ".shared",
+       "value": 16743448793
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 16743465005
+      },
+      "ext_1_7": {
+       "section": ".shared",
+       "value": 16743476686
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  },
+  {
+   "id": "obj03",
+   "file": "objects/obj03.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 11233620048,
+      ".rodata": 11233620352,
+      ".shared": 43168407552,
+      ".text": 11233619968
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".data",
+       "value": 11233606976
+      },
+      "ext_2_1": {
+       "section": ".shared",
+       "value": 11233619972
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 11233554053
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 11233603597
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 11233619990
+      },
+      "ext_2_5": {
+       "section": ".data",
+       "value": 11233619999
+      },
+      "ext_2_6": {
+       "section": ".rodata",
+       "value": 11233651228
+      },
+      "ext_2_7": {
+       "section": ".data",
+       "value": 11233603769
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 11233623313
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 11233620112,
+      ".rodata": 11233620416,
+      ".shared": 43168407552,
+      ".text": 11233620032
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".data",
+       "value": 11233606976
+      },
+      "ext_2_1": {
+       "section": ".shared",
+       "value": 11233619972
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 11233554053
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 11233603597
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 11233619990
+      },
+      "ext_2_5": {
+       "section": ".data",
+       "value": 11233619999
+      },
+      "ext_2_6": {
+       "section": ".rodata",
+       "value": 11233651228
+      },
+      "ext_2_7": {
+       "section": ".data",
+       "value": 11233603769
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 11233623313
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 20
+       }
+      ]
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 11233620048,
+      ".rodata": 11233620352,
+      ".shared": 120418975744,
+      ".text": 11233619968
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".data",
+       "value": 11233606976
+      },
+      "ext_2_1": {
+       "section": ".shared",
+       "value": 11233619972
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 11233554053
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 11233603597
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 11233619990
+      },
+      "ext_2_5": {
+       "section": ".data",
+       "value": 11233619999
+      },
+      "ext_2_6": {
+       "section": ".rodata",
+       "value": 11233651228
+      },
+      "ext_2_7": {
+       "section": ".data",
+       "value": 11233603769
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 11233623313
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 11233620048,
+      ".rodata": 11233620352,
+      ".shared": 43168407552,
+      ".text": 11233619968
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": null,
+       "value": 11233610088
+      },
+      "ext_2_1": {
+       "section": ".rodata",
+       "value": 11233587833
+      },
+      "ext_2_2": {
+       "section": ".rodata",
+       "value": 29839
+      },
+      "ext_2_3": {
+       "section": ".rodata",
+       "value": 11233614160
+      },
+      "ext_2_4": {
+       "section": ".rodata",
+       "value": 22539
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 11233592855
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 11233639880
+      },
+      "ext_2_7": {
+       "section": ".shared",
+       "value": 11233610533
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 11233594606
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 29301915728,
+      ".rodata": 29301915776,
+      ".shared": 135707910144,
+      ".text": 29301915648
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": null,
+       "value": 29301899249
+      },
+      "ext_2_1": {
+       "section": ".data",
+       "value": 29301882887
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 29301940060
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 29301899276
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 29301915669
+      },
+      "ext_2_5": {
+       "section": ".data",
+       "value": 29301948726
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 29301890168
+      },
+      "ext_2_7": {
+       "section": ".shared",
+       "value": 29301932076
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 29301853964
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 0
+       },
+       {
+        "section": ".text",
+        "offset": 12
+       },
+       {
+        "section": ".text",
+        "offset": 20
+       },
+       {
+        "section": ".text",
+        "offset": 36
+       }
+      ]
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 22577205584,
+      ".rodata": 22577205648,
+      ".shared": 136756682752,
+      ".text": 22577205248
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": null,
+       "value": 22577191430
+      },
+      "ext_2_1": {
+       "section": null,
+       "value": 22577208057
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 22577160716
+      },
+      "ext_2_3": {
+       "section": ".data",
+       "value": 22577198926
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 22577139730
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 22577220277
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 22577205298
+      },
+      "ext_2_7": {
+       "section": ".data",
+       "value": 22577188907
+      },
+      "ext_2_8": {
+       "section": null,
+       "value": 22577141795
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  }
+ ]
+}

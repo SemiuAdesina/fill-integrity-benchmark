@@ -1,0 +1,20 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==970==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x000000000000 bp 0xffffc3938cd0 sp 0xffffc3938ca0 T0)
+==970==Hint: pc points to the zero page.
+==970==The signal is caused by a READ memory access.
+==970==Hint: address points to the zero page.
+    #0 0x0  (<unknown module>)
+    #1 0xaaaabcc23b3c in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:292:11
+    #2 0xaaaabcc23f14 in roundel::Conductor::step() /b/runtime.cpp:302:5
+    #3 0xaaaabcb9e710 in (anonymous namespace)::Tracer::step() /s/scenario.cpp:332:30
+    #4 0xaaaabcb7e3a8 in l_compound_schedule_trace_is_exact() /s/scenario.cpp:1821:5
+    #5 0xaaaabcbd403c in harness::main_impl(int, char**) /h/harness.hpp:89:13
+    #6 0xaaaabcb89e8c in main /s/scenario.cpp:2109:42
+    #7 0xffffa6117740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xffffa6117814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #9 0xaaaabca62cac in _start (/b/cand+0x72cac) (BuildId: 4162cf6c21e8e8cd2f3c63e80ac821c014169e88)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (<unknown module>) 
+==970==ABORTING

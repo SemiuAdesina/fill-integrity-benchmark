@@ -1,0 +1,278 @@
+
+schema_version = "1.4"
+
+artifacts = ["/app"]
+
+[task]
+name = "benchmark-suite/coroutine-frame-reuse"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "Science"
+subcategory = "Computer Systems and Runtime Semantics"
+tags = ["cpp", "coroutines", "runtime-systems", "object-lifetime", "memory-pool", "asynchronous-scheduling", "memory-safety"]
+expert_time_estimate_hours = 3.0
+relevant_experience = "C++20 coroutine runtimes, object lifetime and memory safety, pooled frame allocation, deterministic scheduling, and asynchronous completion and cancellation."
+
+difficulty_explanation = """
+This is an object lifetime and ownership problem, not a syntax problem. The
+runtime already compiles, already runs its own reproducer, and already gets the
+simple path right: a job starts, parks, receives a completion, returns a value
+and reports it. The control flow is not what is broken. What is broken is the
+question the runtime asks when a completion arrives, and the moment at which it
+decides a frame is no longer needed.
+
+Coroutine frames are allocated from a fixed pool of equal sized slots through
+promise_type::operator new. A slot is handed out again once the frame using it
+has been destroyed, so two different jobs, at two different times, legitimately
+occupy the same address. The runtime resolves an in flight completion by looking
+at the frame it remembered, which is the one assumption the pool makes false.
+
+Nine defects are present at once and each has a different observable signature:
+
+1. A queued completion carries a coroutine handle captured when it was posted.
+   By delivery time the job may be gone and the slot reissued, so the completion
+   resumes whatever occupies that address now. Under a sanitizer this is a use
+   after free when the slot is idle and a silent cross job resume when it is not.
+   An address is not a frame identity here: the arena names a frame by slot index
+   and slot generation together, and each half on its own is satisfied by a frame
+   that is not the one the completion was made for.
+2. Settling is not once per job. A cancellation and a delivery for the same job
+   both settle it, so one job produces two outcomes and two reports.
+3. Storage is not always returned. The paths that end badly abandon a slot
+   instead of destroying the frame that holds it, so the pool is short of
+   capacity it should have back and slots are still missing at shutdown.
+4. A parent awaiting a child observes the child's result before the child frame
+   is destroyed. The awaiter reports the continuation and only later tears the
+   child down, so for a window both frames are live and the inner frame outlives
+   the point at which the outer one was told it was gone.
+5. The failing path does not match the succeeding path. A child that throws is
+   left undestroyed while the exception propagates, which leaks its slot, and the
+   failure is announced both where it was raised and where it was settled.
+6. Reclamation is deferred to the wrong place and has room for one job. A frame
+   is only handed back at the end of a delivery, so a job settled outside one
+   keeps its storage; and because a single job is remembered as waiting for
+   release, a second job settling first is forgotten and its frame is never
+   destroyed at all.
+7. Delivery order is whatever order the queue happens to hold. The runtime takes
+   the front of the deque, so a completion with a later ready time is delivered
+   before an earlier one, and two completions ready at the same time are ordered
+   by when they were queued rather than by job identifier.
+8. The clock counts steps instead of following delivery. It advances by one per
+   step regardless of the ready time of the completion that step delivered, so
+   every observed time is wrong and a delay computed from it is wrong with it.
+9. Cancellation counts requests instead of outcomes. A request naming a job that
+   was never launched returns without recording anything, so the record of what
+   was asked for is incomplete while the record of what happened is not.
+
+The trap is that each defect has an obvious local shortcut that makes the visible
+symptom disappear and breaks something else. Refusing every late completion
+fixes the stale resume and stops valid completions being delivered. Never freeing
+a cancelled frame fixes the double destroy and leaks. Allocating frames outside
+the pool removes reuse, which is the pool's reason to exist, and the frozen
+arena's slot lookup is then reading a header that is not there. Holding all
+frames until shutdown fixes the reuse hazard and breaks the requirement that
+storage comes back when a job settles. Draining the queue on every post makes
+ordering tests pass and destroys independent progress. Checking only that the
+right job is parked accepts a completion made for that job's other frame.
+Comparing only the slot generation lets a completion cross between two frames
+alive at the same time; comparing only the slot index lets a recycled address
+accept its previous occupant's completion. Shortcuts of exactly this kind were
+built from the reference solution and run against the graded suite; every one of
+them scores 0.
+
+The real fix requires deciding that a completion authorises one job parked in one
+named frame, that the frame is named by slot index and slot generation together
+and both are compared, that the job record is the only authority on whether it is
+still waiting, that settling and destroying are each once per job while a request
+to cancel is recorded once per call, that delivery follows ready time then job
+identifier then queue order with the clock moving to the ready time of what was
+delivered, that a child frame is destroyed before its result becomes visible to
+the parent on both the value and the throwing path, and that a frame may only be
+destroyed while suspended, which means a job that settles while its own frame is
+on the stack has to be torn down at the next quiet point rather than immediately.
+
+Mid level C++ engineer who has written a coroutine type before: roughly 3 hours.
+An engineer who has not reasoned about symmetric transfer and about when
+destroy() is legal can spend considerably longer, because the wrong version does
+pass its own reproducer.
+"""
+
+solution_explanation = """
+The reference solution is ordinary C++ source, laid out under `solution/fixed/`
+in the same relative structure as the project:
+
+```
+solution/solve.sh
+solution/reference_plan.md
+solution/fixed/include/roundel/runtime.hpp
+solution/fixed/src/runtime.cpp
+```
+
+`solution/solve.sh` is a thin launcher. It sets strict shell mode, resolves its
+own directory so it works from any working directory, confirms the project is at
+/app, copies the two corrected files to their matching paths under /app, and
+finishes with an offline configure and build. It installs nothing and fetches
+nothing. Two files change; the frozen arena and journal are untouched.
+
+The corrected design rests on six decisions.
+
+A queued completion carries no coroutine handle. It names a job, and it records
+the identity of the frame that job was parked in at the moment it was queued:
+the slot index and that slot's generation, taken from the arena. A completion
+queued while the job was not parked records no frame and is bound to nothing. At
+delivery the job record is consulted, never the address: the completion is
+accepted only when the record exists, has not settled, holds a parked frame, and
+that frame's index and generation both equal what the completion recorded. Every
+other case is refused and touches nothing. Comparing both halves is what
+separates a recycled slot at the same address, which differs in generation, from
+the job's own other frame, which differs in index but can share a generation. A
+job that parks again in the very same frame matches on both and is still
+delivered to.
+
+Delivery order is computed, not inherited from the container. Each step selects
+the pending completion with the lowest ready time, then the lowest job
+identifier, then the earliest queue sequence, and removes it from wherever it sat
+rather than from the front. The clock then moves to that completion's ready time
+and at no other moment, so it never moves backwards and never moves on its own. A
+delay is resolved against the clock as it stands when the completion is queued,
+which is what makes a completion queued from inside a running job never ready
+before the step that resumed it.
+
+A request to cancel is recorded once per call, including a call for a job that has
+already settled and a call naming an identifier that was never launched. That is
+separate from settling, which happens once per job. The two counts differ on
+purpose.
+
+Settling is once per job, guarded by the job record rather than by anything
+living in pooled storage. The first settle fixes the outcome, records it, clears
+the parked handle, and announces a failure exactly once when the outcome is a
+failure. Later attempts return immediately, whether they come from a
+cancellation, a delivery, a failure or shutdown.
+
+Destroying is once per frame, and only ever while the frame is suspended. The
+root handle is moved out of the job record before destroy() is called, so a
+second attempt finds nothing to do. A job that settles while its own frame is on
+the stack cannot be destroyed there, so it is queued and torn down at the next
+quiet point, after control has returned to the conductor. Destroying the root
+runs the destructors of everything in that frame, and an awaiter living in that
+frame destroys its child, so inner frames go before outer ones without any
+explicit walk.
+
+The child awaiter destroys the child before the parent learns anything. It takes
+the handle out of itself, copies out the produced value and the pending
+exception, destroys the frame, records the destruction and the continuation, and
+only then returns the value or rethrows. Both exits go through the same
+destruction, which is what makes the failing path behave like the succeeding one.
+Failure is announced once, at the settle, not also at the raise.
+
+The public contract is unchanged: Conductor keeps its constructor and every
+method with the same signatures, Duty and park() keep theirs, and the frozen
+arena and journal headers are used exactly as given.
+"""
+
+verification_explanation = """
+Verification runs in a separate verifier image built from tests/Dockerfile. The
+verifier owns its build configuration and its tests; neither is taken from the
+candidate. It copies pristine copies of the frozen contract and exactly two
+allow-listed candidate paths, include/roundel/runtime.hpp and src/runtime.cpp,
+rejecting either if it is a symlink, and rebuilds everything from source with
+-Wall -Wextra -Wpedantic -Werror and with address and undefined behaviour
+sanitizers plus leak detection. The candidate's own build files are never used.
+There is no network access at any point. The agent image contains no test, no
+harness, no verifier file and no reference solution.
+
+The trust boundary is a link boundary, and it is recorded on every run. The
+candidate's two files are compiled into a scenario process that also links the
+frozen arena and journal; that process only ever prints what it observed. The
+judge that decides correctness is built from verifier_driver.cpp alone, links no
+candidate object, and holds the expected transcript digests the scenario process
+is never given. Both link commands are written to /logs/verifier, and the runner
+fails the build outright if the judge's link line mentions candidate code.
+
+Grading is outcome based. Nothing greps the candidate's source. Nothing requires
+a particular field, function name, container or internal layout. The runtime is
+driven only through its documented public surface, so any correct internal design
+passes. Where a check needs ground truth about lifetimes it does not read the
+journal for it: objects with destructors are placed inside coroutine frames and
+counted, and the pool's own live slot count is sampled at the exact instant a
+parent resumes. A candidate that writes the expected reports without destroying
+the frame behind them reports the wrong count and fails.
+
+The suite holds seventy graded checks in thirteen groups: basic lifecycle;
+cancellation in every position relative to a completion; slot reuse and stale
+completions against a reissued address; nested children and the order inner and
+outer frames are destroyed in; exceptions on both the thrown-inside and
+raised-at-the-park paths; independent progress across unrelated jobs; pool
+invariants including capacity, reuse, double return and exhaustion; an
+adversarial group that interleaves cancellation with delivery, swaps two jobs
+between slots repeatedly, lets a completion arrive after two reuses, and cancels
+a job from inside itself; the delivery order and the clock; frame binding;
+cancellation request accounting, separating the number of requests recorded from
+the number of outcomes settled; two whole-schedule traces; and a final group of
+five compound schedules, each of which needs at least three of the published
+rules to hold at once.
+
+The trace checks are the load-bearing ones. The protocol states the reduction
+rules -- which marks contribute a line, what each line looks like, when the clock
+is read, and how lines are joined -- but not the resulting string for any
+schedule. The expected string is a consequence of the delivery order, the clock,
+the frame binding and the destruction order all being right at once, so a
+candidate cannot satisfy it by matching a pattern; it has to execute the schedule
+correctly. The compound group covers a completion refused on slot generation
+while the job is parked at the same index one generation later, a delay resolved
+against a clock that has already moved and then settled on the identifier
+tie-break, a completion for an outer frame arriving while the job is parked in a
+child, a job that cancels itself and whose slot is then reused, and a completion
+queued while nothing was waiting that never becomes valid however the job parks
+afterwards.
+
+Each check runs in its own process, so a sanitizer abort fails one check rather
+than the run. Alongside the seventy there is one intentional negative control
+which must fail; the runner requires it to fail, excludes it from the graded
+total, and scores zero regardless of everything else if it ever reports a pass.
+The verifier writes 0 to /logs/verifier/reward.txt before doing anything, writes
+a CTRF report to /logs/verifier/report.json, and overwrites the reward with 1
+only when all seventy graded checks pass and the control is intact.
+
+The untouched project executes all seventy and passes 26, scoring 0. The
+reference solution passes 70 of 70 with the control failing as required, scoring
+1, with no sanitizer finding and no leaked frame.
+
+Ten realistic partial fixes were built from the reference solution and measured,
+each otherwise identical to it and each taking one plausible shortcut: binding a
+completion by job identifier alone, by slot index alone, by slot generation
+alone, or by the frame's address; refusing every completion that arrives after
+any slot has been reused; letting a completion queued while nothing was waiting
+bind to whatever is parked at delivery; holding every frame until shutdown;
+telling the parent the child is gone before destroying it; breaking equal ready
+times by queue order instead of identifier; and advancing the clock by step
+count. Every one scores 0, and every one fails at least two independent checks,
+so no single hidden case carries the difficulty on its own. The weakest of them
+still passes 68 of 70, which is the point: a shortcut that is right almost
+everywhere earns nothing.
+
+Control behaviour was exercised against the untouched project with hostile
+artefacts added one at a time, and the reward stayed 0 in every case: a
+reward file pre-written to 1; a candidate-supplied CMakeLists.txt that writes a
+reward itself; a planted passing binary under the candidate's build directory;
+and a candidate source replaced by a symlink, which the runner refuses outright.
+The runner scrubs the compiler, linker, sanitizer, preload and CMake environment,
+resolves its tools by absolute path under a sanitized PATH, builds and runs the
+candidate as an unprivileged user from a staging tree that holds no expected
+data, and deletes that tree before the scenario process is executed.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

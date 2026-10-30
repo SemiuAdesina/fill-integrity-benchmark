@@ -1,0 +1,8 @@
+{
+ "fixture": "h_ordering",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 24,
+ "retained": true
+}

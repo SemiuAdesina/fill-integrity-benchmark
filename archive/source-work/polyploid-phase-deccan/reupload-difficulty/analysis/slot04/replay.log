@@ -1,0 +1,156 @@
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.toml" -o -name "*.json" | head -50; echo "---"; ls -la /a :: 6 Sep  7 17:46 spec drwxr-xr-x 1 root root  176 Sep  7 17:46 src drwxr-xr-x 1 root root   80 Sep  7 17:46 target drwxr-xr-x 1 root root   60 Sep  7 17:46 tests 
+[4] BASH rc=0 0.0s :: ls -la /app/src /app/src/solver /app/tests /app/examples 2>/dev/null; echo "---"; wc -l /app/src/*.r :: as four homologs and there are ten unordered inheritance states per parent — a hundred jointly. `spec/cross-format-v1.md` gives the validation rules in full. 
+[9] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('cross.json')) print('markers',d['markers'],'offspring',d[ ::  True, True, False, True, True] rec A [0.262022, 0.195683, 0.029096, 0.283482, 0.147239] ... gl[0][0] [-0.181824, -2.709946, -6.238325, -12.123663, -35.208207] 
+[9] BASH rc=0 0.0s :: cat src/lib.rs src/bin/phase.rs examples/README.md && head -c 1200 examples/small.result.json && ech :: log_likelihood":-44.65149744151981} dict_keys(['child_gl', 'double_reduction', 'format_version', 'markers', 'offspring', 'parent_dosage', 'recombination']) 5 3 
+[13] BASH rc=0 0.0s :: mkdir -p /tmp/exp && cat > /tmp/exp/base.py <<'EOF' import json, numpy as np, itertools, math, rando :: ok 
+[14] BASH rc=1 0.0s :: cat >> /tmp/exp/base.py <<'EOF' def emissions(ca,cb): E=np.empty((N,M,NJ)) for m in range(M): d=(CTA :: t call last):   File "/tmp/exp/base.py", line 1, in <module>     import json, numpy as np, itertools, math, random ModuleNotFoundError: No module named 'numpy' 
+[15] BASH rc=0 0.0s :: python3 -c "import sys; print(sys.version)"; ls /usr/lib/python3/dist-packages 2>/dev/null | head; p :: 3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0] /usr/local/cargo/bin/cargo /usr/local/cargo/bin/rustc 
+[16] BASH rc=0 0.0s :: cat /app/tests/diagnostics.rs; grep -rn "solver::" /app/tests/ /app/src/ | head -20 :: ded.canonical_digest, first); } /app/tests/solver_checks.rs:31:use polyploid_phase::solver::solve; /app/src/bin/phase.rs:14:use polyploid_phase::solver::solve; 
+[17] WRITE /app/src/solver/core.rs -> W ok
+[18] EDIT /app/src/solver/core.rs -> E ok
+[19] EDIT /app/src/solver/core.rs -> E ok
+[20] WRITE /app/src/solver/search.rs -> W ok
+[21] WRITE /app/src/solver/canonical.rs -> W ok
+[22] WRITE /app/src/solver.rs -> W ok
+[23] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | tail -20 :: 
+[24] BASH rc=0 0.0s :: cargo test --offline --release --test solver_checks -- --nocapture --test-threads=1 2>&1 | tail -30 :: 
+[25] BASH rc=0 0.0s :: cargo test --offline --release --lib experiment_real_cross -- --nocapture 2>&1 | tail -12 :: 
+[26] WRITE /app/src/solver/bound.rs -> W ok
+[27] WRITE /app/src/solver/bound.rs -> W ok
+[28] BASH rc=0 0.0s :: sed -i 's/^pub mod canonical;/pub mod bound;\npub mod canonical;/' src/solver.rs && cargo test --off :: 
+[29] BASH rc=0 0.0s :: cat >> src/solver/search.rs <<'EOF' #[cfg(test)] mod experiments { use super::*; use crate::cross_in :: 
+[30] WRITE /app/src/solver/exact.rs -> W ok
+[31] WRITE /app/src/solver/exact.rs -> W ok
+[32] BASH rc=0 0.0s :: sed -i 's/^pub mod core;/pub mod core;\npub mod exact;/' src/solver.rs && cargo test --offline --rel :: 
+[33] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/exact.rs' s=open(p).read() # add bases field s = s.replace :: 
+[34] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/exact.rs' s=open(p).read() # add symmetry check method before `fn re :: 
+[35] WRITE /app/src/solver/selftest.rs -> W ok
+[36] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() start=s.index(" /// The optimum by enu :: 
+[37] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() start=s.index(" let list = |items: &[u :: 
+[38] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() s = s.replace(""" let allowed_a = bool :: 
+[42] BASH rc=0 0.1s :: grep -n "fn remap\|fn low\|fn high\|pub struct State\|impl State\|fn new\|fn is_double_reduction\|fn :: (&self, perm: &[u8; HOMOLOGS]) -> Haplotypes { 236:        for (i, s) in ALL_STATES.iter().enumerate() { 242:    fn switch_count_treats_states_as_multisets() { 
+[44] BASH rc=0 0.0s :: grep -n -A 30 "path signature\|distinct optima\|Distinct optima" /app/spec/result-format-v1.md | hea :: `'|'` after the parent's four rows. 115-2. For each progeny in index order: 116-   - for parent `A`, then parent `B`: for each marker in order, the ASCII digit 
+[46] WRITE /app/src/solver/tiebreak.rs -> W ok
+[47] EDIT /app/src/solver/tiebreak.rs -> E ok
+[48] EDIT /app/src/solver/core.rs -> E ok
+[51] BASH rc=0 0.0s :: grep -n -i "range\|at most\|at least\|<= \|≥" /app/spec/input-format-v1.md | head -40 :: grep: /app/spec/input-format-v1.md: No such file or directory 
+[52] BASH rc=0 0.0s :: ls /app/spec/; grep -rn -i "at most\|no more than\|offspring\b.*[0-9][0-9]" /app/spec/*.md | head -3 :: same score when they differ by at most `1e-8`, as /app/spec/scoring-model.md:136:Two totals are considered equal when they differ by at most `1e-8` in absolute 
+[53] BASH rc=0 0.0s :: grep -n -B3 -A3 "12..=28" /app/spec/cross-format-v1.md; grep -n "markers\`" /app/spec/cross-format-v :: values. 17:| `markers` | integer | Number of markers, `M`. Must satisfy `12 <= M <= 28`. | 122:3. `markers` outside `12..=28`, or `offspring` outside `8..=32`. 
+[54] EDIT /app/src/solver.rs -> E ok
+[55] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -30 :: 
+[56] BASH rc=0 0.0s :: time ./target/release/phase :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.009s user	0m0.009s sys	0m0.000s 
+[57] BASH rc=0 0.0s :: cargo test --offline --locked --test diagnostics 2>&1 | tail -30 :: 
+[58] BASH rc=0 0.0s :: timeout 3000 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -40 :: 
+[59] BASH rc=0 0.0s :: wc -l /app/tests/solver_checks.rs; grep -n "fn \|//!" /app/tests/solver_checks.rs | head -40 :: &Reconstruction) -> Option<String> { 336:fn distinct_key(answer: &Reconstruction) -> Vec<u8> { 354:fn solve_and_score(cross: &Cross) -> (Reconstruction, f64) { 
+[60] BASH rc=0 0.0s :: sed -n 354,520p /app/tests/solver_checks.rs :: 8; HOMOLOGS]; M];     cols_b[3] = [0, 1, 1, 0];     for m in [0, 8] {         cols_b[m] = [0, 0, 0, 0];     }     let hap_a = haplotypes_from_columns(&cols_a); 
+[61] BASH rc=0 0.0s :: sed -n 520,738p /app/tests/solver_checks.rs :: .canonical_digest,             canonical_digest(&first),             "{name}: the document's digest is not the digest of its reconstruction"         );     } } 
+[63] EDIT /app/src/solver/selftest.rs -> E ok
+[64] BASH rc=0 0.0s :: timeout 900 cargo test --offline --release --lib scaling_at_the_top -- --nocapture --test-threads=1  :: 
+[65] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('result.json')) print(list(d.keys())) print(d['total_log_l ::  3], [2, 3], [2, 3], [2, 3], [2, 3], [1, 2], [1, 2]], 'B': [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3]]} 10 
+[66] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('result.json')) for i,p in enumerate(d['paths']): print(i, :: 84161, -9.429516, -4.85203, -2.107736, -0.141419] recA [0.262022, 0.195683, 0.029096, 0.283482] drA [True, True, True, False] [0.243796, 0.298073, 0.235085, 0] 
+[67] EDIT /app/src/solver/search.rs -> E ok
+[68] EDIT /app/src/solver/search.rs -> E ok
+[69] EDIT /app/src/solver/exact.rs -> E ok
+[70] EDIT /app/src/solver/exact.rs -> E ok
+[71] EDIT /app/src/solver/selftest.rs -> E ok
+[72] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | grep -E "^(warning|error)" -A6 | head -40; echo "---"; cargo  :: --- 
+[73] BASH rc=0 0.0s :: touch /app/src/lib.rs && cargo build --offline --release 2>&1 | tail -20 :: 
+[74] BASH rc=0 0.0s :: cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bcva4d17w.output 2>/dev/null | tai :: 
+[75] BASH rc=0 0.0s :: ls -la /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/ 2>/dev/null | head :: 
+[76] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bcva4d17w.output :: cat: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bcva4d17w.output: No such file or directory 
+[78] EDIT /app/src/solver/selftest.rs -> E ok
+[79] EDIT /app/src/solver/selftest.rs -> E ok
+[80] BASH rc=0 0.0s :: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 timeout 600 cargo test --offline --release --lib scaling_a :: 
+[81] BASH rc=0 0.0s :: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 cargo test --offline --release --lib scaling_at_the_top 2> :: 
+[82] BASH rc=0 0.0s :: cargo test --offline --release --lib scaling_at_the_top 2>&1 | grep -A12 "E0308" | head -20 :: 
+[83] EDIT /app/src/solver/selftest.rs -> E ok
+[84] BASH rc=0 0.0s :: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 timeout 600 cargo test --offline --release --lib scaling_a :: 
+[85] BASH rc=0 0.0s :: sed -n 110,130p /app/tests/solver_checks.rs; python3 -c " import json c=json.load(open('/app/cross.j :: -0.22]] [[-0.16, -2.41, -5.55, -10.78, -31.3], [-15.73, -6.59, -5.55, -6.59, -15.73], [-7.9, -3.9, -4.16, -5.99, -15.69], [-31.3, -10.78, -5.55, -2.41, -0.16]] 
+[86] EDIT /app/src/solver/selftest.rs -> E ok
+[87] EDIT /app/src/solver/selftest.rs -> E ok
+[88] EDIT /app/src/solver/selftest.rs -> E ok
+[89] EDIT /app/src/solver/selftest.rs -> E ok
+[90] BASH rc=0 0.0s :: timeout 900 cargo test --offline --release --lib planted_scaling -- --nocapture --test-threads=1 --i :: 
+[91] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output :: cat: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output: No such file or directory 
+[92] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output :: cat: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output: No such file or directory 
+[93] BASH rc=1 0.0s :: cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output; echo "==="; ps a :: === 0 cat: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output: No such file or directory bash: line 1: ps: command not found 
+[95] BASH rc=0 0.0s :: (timeout 1200 cargo test --offline --release --lib planted_scaling -- --nocapture --test-threads=1 - :: 
+[97] EDIT /app/src/solver/exact.rs -> E ok
+[98] EDIT /app/src/solver/exact.rs -> E ok
+[99] EDIT /app/src/solver/exact.rs -> E ok
+[101] EDIT /app/src/solver/exact.rs -> E ok
+[102] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | grep -E "error|warning: unused" -A8 | head -40; cargo build - :: 
+[103] BASH rc=0 0.0s :: touch /app/src/solver/exact.rs && cargo build --offline --release 2>&1 | tail -30 :: 
+[104] BASH rc=0 0.0s :: cat /tmp/planted.log | tail -5 :: 
+[105] BASH rc=0 0.0s :: pkill -f polyploid_phase; sleep 0; echo killed :: killed bash: line 1: pkill: command not found 
+[106] EDIT /app/src/solver/selftest.rs -> E ok
+[107] BASH rc=0 0.0s :: sed -i 's/branch.run(5_000_000)/branch.run(budget)/' src/solver/selftest.rs && grep -n "branch.run"  :: 375:            let finished = branch.run(budget); 416:            let finished = branch.run(budget); 442:            let finished = branch.run(50_000_000); 
+[108] BASH rc=0 0.0s :: SCALE_BUDGET=200000 timeout 300 cargo test --offline --release --lib planted_scaling -- --nocapture  :: 
+[109] BASH rc=1 0.0s :: grep "^M=" /tmp/p2.log :: 
+[110] EDIT /app/src/solver/selftest.rs -> E ok
+[111] BASH rc=1 0.0s :: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 :: 
+[112] BASH rc=0 0.0s :: cat /tmp/ils.log :: 
+[113] EDIT /app/src/solver/selftest.rs -> E ok
+[114] BASH rc=0 0.0s :: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 :: 
+[115] EDIT /app/src/solver/selftest.rs -> E ok
+[116] BASH rc=0 0.0s :: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 :: 
+[117] EDIT /app/src/solver.rs -> E ok
+[118] EDIT /app/src/solver.rs -> E ok
+[119] EDIT /app/src/solver.rs -> E ok
+[120] EDIT /app/src/solver.rs -> E ok
+[121] EDIT /app/src/solver.rs -> E ok
+[122] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -5 && time ./target/release/phase :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.009s user	0m0.009s sys	0m0.000s 
+[123] EDIT /app/src/solver/selftest.rs -> E ok
+[124] BASH rc=0 0.0s :: timeout 900 cargo test --offline --release --lib solve_on_planted -- --nocapture --test-threads=1 -- :: 
+[126] EDIT /app/src/solver.rs -> E ok
+[127] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -5 :: 
+[128] BASH rc=0 0.0s :: cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bqxvtl8ma.output 2>/dev/null | sed :: 
+[129] EDIT /app/src/solver.rs -> E ok
+[130] EDIT /app/src/solver.rs -> E ok
+[131] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -3; ./target/release/phase :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[132] BASH rc=0 0.0s :: cat /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bqxvtl8ma.output 2>/dev/null | sed :: === log: 
+[133] EDIT /app/src/solver/selftest.rs -> E ok
+[134] BASH rc=0 0.0s :: timeout 900 cargo test --offline --release --lib solve_on_planted -- --nocapture --test-threads=1 -- :: 
+[135] BASH rc=0 0.0s :: sleep 0; cat /tmp/e2e2.log | sed -n '/running 1 test/,$p' :: 
+[136] EDIT /app/src/solver.rs -> E ok
+[137] EDIT /app/src/solver.rs -> E ok
+[138] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -2 && time ./target/release/phase :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.008s user	0m0.008s sys	0m0.000s 
+[139] BASH rc=0 0.0s :: pkill -f polyploid_phase; sleep 0; timeout 900 cargo test --offline --locked --test diagnostics 2>&1 :: bash: line 1: pkill: command not found 
+[140] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --test diagnostics 2>&1 | tail -8 :: 
+[141] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12 :: 
+[142] BASH rc=0 0.0s :: timeout 900 cargo test --offline --release --lib 2>&1 | tail -25 :: 
+[144] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/selftest.rs' s=open(p).read() start=s.index(" /// How much :: 389:    fn planted_scaling() { 
+[146] EDIT /app/src/solver/selftest.rs -> E ok
+[147] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/search.rs' s=open(p).read() i=s.index("#[cfg(test)]\nmod tests {") s ::         best_a = final_a;         best_b = final_b;     }     (best, best_a, best_b) } 160 
+[148] EDIT /app/src/solver/exact.rs -> E ok
+[149] BASH rc=0 0.0s :: cargo test --offline --release --lib 2>&1 | tail -22 :: 
+[150] BASH rc=0 0.0s :: git status --short 2>/dev/null | head -20; echo "---"; git diff --stat 2>/dev/null | tail -5 :: --- 
+[151] BASH rc=0 0.0s :: ls -la /app | head -20; ls /app/src /app/src/solver :: igest.rs json.rs lib.rs result_output.rs scoring.rs solver solver.rs  /app/src/solver: bound.rs canonical.rs core.rs exact.rs search.rs selftest.rs tiebreak.rs 
+[152] BASH rc=0 0.0s :: ls -la /app/src/*.rs /app/src/bin; echo "--- examples:"; ls -la /app/examples :: -- 1 root root 1968 Sep  7 14:52 README.md -rw-r--r-- 1 root root 1199 Aug 12 15:51 small.cross.json -rw-r--r-- 1 root root  455 Aug 12 15:51 small.result.json 
+[153] BASH rc=0 0.0s :: cat /app/examples/README.md; echo "=== ref result:"; cat /app/examples/small.result.json :: 0,1]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]},{"A":[[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]}],"total_log_likelihood":-44.65149744151981}
+[154] BASH rc=0 0.0s :: grep -n "pub struct Cross\|pub struct ParentParams\|pub " /app/src/cross_input.rs | head -30 :: :    pub fn params(&self, parent: Parent) -> &ParentParams { 54:pub struct CrossError(String); 79:pub fn parse_cross(text: &str) -> Result<Cross, CrossError> { 
+[156] BASH rc=0 0.0s :: grep -n "pub fn canonical_digest\|pub fn " /app/src/digest.rs; grep -n "pub fn decode\|pub struct De :: .keys() { 113-        if !RESULT_FIELDS.contains(&key.as_str()) { 114-            return Err(reject(format!("unknown field '{key}'"))); 115-        } 116-    } 
+[157] EDIT /app/src/solver/canonical.rs -> E ok
+[158] BASH rc=0 0.0s :: cargo test --offline --release --lib canonical 2>&1 | tail -20 :: 
+[159] BASH rc=0 0.0s :: grep -rn "solver::" /app/tests/*.rs | head -20; echo "---"; grep -rn "state_at\|homolog_permutations :: /app/tests/solver_checks.rs:31:use polyploid_phase::solver::solve; --- 
+[160] BASH rc=0 0.0s :: cat /app/README.md :: as four homologs and there are ten unordered inheritance states per parent — a hundred jointly. `spec/cross-format-v1.md` gives the validation rules in full. 
+[161] BASH rc=0 0.0s :: grep -rn "state_at\|solver::homolog_permutations\|homolog_permutations()" /app/src/solver*.rs /app/s :: cal.rs:148:            for perm_b in homolog_permutations() { /app/src/solver/tiebreak.rs:45:    for perm in crate::solver::canonical::homolog_permutations() { 
+[163] EDIT /app/src/solver.rs -> E ok
+[164] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -6 :: 
+[165] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | grep -B5 "unused_imports" | head :: 
+[166] EDIT /app/src/solver.rs -> E ok
+[167] BASH rc=0 0.0s :: cargo build --offline --release 2>&1 | tail -3; cargo test --offline --release --lib 2>&1 | tail -4 :: 
+[168] BASH rc=0 0.0s :: ./target/release/phase > /tmp/run1.txt 2>&1 && cp result.json /tmp/r1.json && ./target/release/phase :: ,[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[1,2],[1,2]],"B":[[0,1],[0,1],[0 markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[170] BASH rc=0 0.0s :: cat > /tmp/verify.py <<'EOF' import json, math from itertools import permutations from collections i :: cal representative   - B: rows not ascending   - B: paths are not the canonical representative   - digest: expected bb9ba3563aa4501e, computed 5e501ac9d18fa705 
+[171] BASH rc=0 0.0s :: sed -n 100,140p /app/spec/result-format-v1.md :: aplotype value is not `0` or `1`, or a parent's rows do not sum to   `parent_dosage` at some marker. - A state pair is out of range or is written with `a > b`. 
+[172] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='/tmp/verify.py' s=open(p).read() old = """ for m in range(M): buf.app :: FAILED:   - A: rows not ascending   - A: paths are not the canonical representative   - B: rows not ascending   - B: paths are not the canonical representative 
+[173] BASH rc=1 4.8s :: cat > /tmp/verify2.py <<'EOF' import json, math from itertools import combinations_with_replacement, :: {col} scores {v:.9} > {best_total:.9}"            ^^^^^^^^^^^^^^^^^^^^^^ AssertionError: marker 1 parent A column [1, 1, 0, 1] scores -721.304186 > -725.200158 
+[174] BASH rc=0 1.8s :: cat > /tmp/verify2.py <<'EOF' import json, math from collections import Counter cross = json.load(op :: 725.2001583337 (document -725.2001583337) markers where a different column pair beats the reported one: none  both halves of the objective are at a fixed point 
+[176] EDIT /app/src/solver.rs -> E ok
+[177] BASH rc=0 0.1s :: cargo build --offline --release 2>&1 | tail -3 && ./target/release/phase && python3 /tmp/verify.py :: FAILED:   - A: rows not ascending   - A: paths are not the canonical representative   - B: rows not ascending   - B: paths are not the canonical representative 
+[178] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --test diagnostics 2>&1 | tail -4; timeout 900 cargo test  :: 
+[179] BASH rc=1 0.0s :: timeout 900 cargo test --offline --release --lib 2>&1 | tail -20; echo "=== warnings (all targets):" :: === warnings (all targets): 0 
+[180] BASH rc=0 0.0s :: cp src/solver.rs /tmp/solver.rs.bak && python3 - <<'EOF' p='src/solver.rs' s=open(p).read() old = s[ :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.008s user	0m0.008s sys	0m0.000s 
+[181] BASH rc=0 1.7s :: cargo test --offline --release --lib 2>&1 | tail -3 && ./target/release/phase && python3 /tmp/verify :: 725.2001583337 (document -725.2001583337) markers where a different column pair beats the reported one: none  both halves of the objective are at a fixed point 
+[183] BASH rc=0 0.1s :: cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --offline --locked --r :: 94254dadce8e69ec31ebf6a60b59c13b  result.json 94254dadce8e69ec31ebf6a60b59c13b  result.json 
+[184] BASH rc=0 0.1s :: touch src/solver.rs && cargo build --offline --locked --release --all-targets 2>&1 | grep -E "warnin :: ---build done--- 

@@ -1,0 +1,81 @@
+IMAGE BUILT
+slot01: replayed 190 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 2110
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot02: replayed 151 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot03: replayed 143 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 6138
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot04: replayed 184 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot05: replayed 115 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot06: replayed 150 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot07: replayed 130 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746
+slot08: replayed 136 tool calls; src files:
+    src/result_output.rs 8141
+    src/cross_input.rs 10222
+    src/scoring.rs 8454
+    src/cross_model.rs 7243
+    src/solver.rs 5979
+    src/lib.rs 857
+    src/digest.rs 3008
+    src/json.rs 10650
+    src/bin/phase.rs 1746

@@ -1,0 +1,59 @@
+{
+ "reference": {
+  "status": "infeasible",
+  "seconds": 0.005
+ },
+ "solver_d": {
+  "status": "infeasible",
+  "seconds": 0.005
+ },
+ "oracle_c": {
+  "status": "infeasible",
+  "seconds": 0.002,
+  "nodes": 1,
+  "leaves": 0,
+  "matching": 0
+ },
+ "oracle_d": {
+  "status": "infeasible",
+  "seconds": 0.0,
+  "nodes": 1,
+  "leaves": 0,
+  "matching": 0
+ },
+ "reference_v1_path_product": {
+  "status": "timeout",
+  "seconds": 130.0
+ },
+ "solver_b_tree_enumeration": {
+  "status": "timeout",
+  "seconds": 130.0
+ },
+ "tree_enumeration": "trees=93847552 (capped) seconds=60.0 rate=1563627/s top_branches_done=1/4",
+ "simple_paths_per_source": [
+  3260,
+  1012,
+  1497,
+  1003,
+  1723,
+  2109,
+  1001,
+  2673,
+  704,
+  1120,
+  2688,
+  3230
+ ],
+ "path_product": "3.297e+38",
+ "fixture": "s_infeasible_12",
+ "seed": 5501,
+ "sources": 12,
+ "links": 93,
+ "switches": 13,
+ "listed_links": 21,
+ "completion_listed": true,
+ "latent_completion": 8,
+ "latent_combines": 2,
+ "optimum_completion": 8,
+ "agreement": "reference = solver_d = oracle C = oracle D"
+}

@@ -1,0 +1,417 @@
+[69]
+python3 - <<'EOF'
+import re
+p='tests/diagnostics.rs'
+s=open(p).read()
+start=s.index('fn the_division_does_not_depend_on_the_order_of_covers')
+end=s.index('/// `block_ref` is the idempotency key for a block.')
+block=s[start:end]
+block=block.replace('let build = |order: &[usize]|','let build = |permutation: &[usize]|')
+block=block.replace('Some(order(&ids[position]))','Some(order(&ids[position]))')  # keep harness call
+block=block.replace('order.iter().map(|position| ids[*position].as_str())','permutation.iter().map(|position| ids[*position].as_str())')
+s=s[:start]+block+s[end:]
+open(p,'w').write(s)
+EOF
+grep -n "permutation\|order(&ids" tests/diagnostics.rs | head
+
+[90]
+mkdir -p /tmp/probe/src && cat > /tmp/probe/Cargo.toml <<'EOF'
+[package]
+name = "probe"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+pairing_engine = { path = "/app" }
+EOF
+echo ok
+
+[91]
+cp /app/tests/harness/mod.rs /tmp/probe/src/harness.rs && wc -l /tmp/probe/src/harness.rs
+
+[94]
+cd /tmp/probe && python3 - <<'PY'
+import re
+p='src/main.rs'
+s=open(p).read()
+s=s.replace("""fn engine_of(
+    clock: &FakeClock, strategies: &FakeStrategies, inventory: &FakeInventory,
+    gateway: &FakeGateway, fills: &FakeFills, store: &FakeStore,
+) -> Engine<'_> {""","""fn engine_of<'a>(
+    clock: &'a FakeClock, strategies: &'a FakeStrategies, inventory: &'a FakeInventory,
+    gateway: &'a FakeGateway, fills: &'a FakeFills, store: &'a FakeStore,
+) -> Engine<'a> {""")
+s=s.replace("let covers: Vec<&str> = covers.iter().cloned().filter(|c| seen.insert(*c)).cloned().collect();",
+            "let covers: Vec<&str> = covers.iter().copied().filter(|c| seen.insert(*c)).collect();")
+s=s.replace("out.insert(cref.clone(), *s);","out.insert(cref.clone(), s);")
+s=s.replace("harness::Cursor::new(\"k\")","pairing_engine::Cursor::new(\"k\")")
+s=s.replace("use pairing_engine::ports::{FillBatch, OrderKind, SubmitError};","use pairing_engine::ports::{FillBatch, SubmitError};")
+s=s.replace("use pairing_engine::types::ids::{ClientRef, OrderId, Qty};","use pairing_engine::types::ids::Qty;")
+open(p,'w').write(s)
+PY
+cargo run --offline 2>&1 | tail -70
+
+[96]
+cd /tmp/probe && python3 - <<'PY'
+p='src/main.rs'
+s=open(p).read()
+s=s.replace("if !(at_ms >= *wstart && at_ms < *wstart + ATTRIBUTION_WINDOW.as_millis()) {",
+            "if !(at_ms >= *wstart && at_ms < *wstart + ATTRIBUTION_WINDOW.as_seconds()) {")
+open(p,'w').write(s)
+PY
+cargo run --offline 2>&1 | head -20
+
+[99]
+cd /tmp/probe && python3 - <<'PY'
+p='src/main.rs'
+s=open(p).read()
+start=s.index("/// Direct transcription of venue-semantics.md")
+end=s.index("// ---------------------------------------------------------------------------\n// 2. Scenario probes")
+new = '''/// Direct transcription of venue-semantics.md "How a block divides".
+/// Inputs are in SECONDS; ATTRIBUTION_WINDOW is 900 s.
+fn spec_division(
+    orders: &[(String, String, u64, Qty, i64)], // (order_id, client_ref, venue_seq, size, window_start_s)
+    covers: &[&str],
+    block_qty: Qty,
+    block_at_s: i64,
+    attributed_before: &BTreeMap<String, Qty>,
+    finalized_before: &BTreeMap<String, bool>,
+) -> BTreeMap<String, Qty> {
+    let win = ATTRIBUTION_WINDOW.as_seconds();
+    let mut out: BTreeMap<String, Qty> = BTreeMap::new();
+    for (oid, cref, _, _, _) in orders {
+        if covers.contains(&oid.as_str()) {
+            out.insert(cref.clone(), 0);
+        }
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    let covers: Vec<&str> = covers.iter().copied().filter(|c| seen.insert(*c)).collect();
+
+    let mut eligible: Vec<(String, Qty, (i64, u64, String))> = Vec::new();
+    for id in &covers {
+        let Some((_oid, cref, vseq, size, wstart)) = orders.iter().find(|(o, _, _, _, _)| o == id) else {
+            continue;
+        };
+        if *finalized_before.get(cref).unwrap_or(&false) {
+            continue;
+        }
+        let outstanding = std::cmp::max(*size - attributed_before.get(cref).copied().unwrap_or(0), 0);
+        if !(block_at_s >= *wstart && block_at_s < *wstart + win) {
+            continue;
+        }
+        if outstanding <= 0 {
+            continue;
+        }
+        eligible.push((cref.clone(), outstanding, (*wstart, *vseq, id.to_string())));
+    }
+    eligible.sort_by(|a, b| a.2.cmp(&b.2));
+
+    let basis: Qty = eligible.iter().map(|(_, o, _)| *o).sum();
+    if basis <= 0 {
+        return out;
+    }
+    let q = std::cmp::min(block_qty, basis);
+    let mut shares: Vec<Qty> = eligible.iter().map(|(_, o, _)| (q * o) / basis).collect();
+    let mut r = q - shares.iter().sum::<Qty>();
+    for sh in shares.iter_mut() {
+        if r <= 0 { break; }
+        *sh += 1;
+        r -= 1;
+    }
+    for ((cref, _, _), sh) in eligible.iter().zip(shares) {
+        out.insert(cref.clone(), sh);
+    }
+    out
+}
+
+fn block_division_differential() {
+    let mut seed: u64 = 0xABCDEF_1234567;
+    let mut next = || {
+        seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        (seed >> 33) as usize
+    };
+    let mut failures = 0usize;
+    for case in 0..20000 {
+        let count = 1 + next() % 5;
+        let orders: Vec<(String, String, u64, Qty, i64)> = (0..count)
+            .map(|i| {
+                (
+                    format!("o{i}"),
+                    format!("c{i}"),
+                    (next() % 3) as u64,
+                    1 + (next() % 12) as Qty,
+                    OPEN + (next() % 5) as i64 * 400,
+                )
+            })
+            .collect();
+
+        let mut ledger = AttributionLedger::new();
+        for (oid, cref, vseq, size, wstart) in &orders {
+            ledger.track(client(cref), Some(order(oid)), Some(*vseq), *size, at(*wstart));
+        }
+
+        // Pre-existing progress: in-window fill events for a random subset.
+        for (oid, cref, _vseq, size, wstart) in &orders {
+            if next() % 3 == 0 {
+                let f = (next() % (*size as usize + 1)) as Qty;
+                let _ = ledger.absorb_batch(batch(vec![event(oid, cref, f, at(*wstart))], vec![], "pre"));
+            }
+        }
+        // Sometimes finalize one order with an earlier block.
+        if count > 1 && next() % 4 == 0 {
+            let victim = next() % count;
+            let (victim_id, _, _, _, _) = &orders[victim];
+            let _ = ledger.absorb_batch(batch(
+                vec![],
+                vec![block("pre-block", &[victim_id.as_str()], 1 + (next() % 4) as Qty, at(OPEN))],
+                "preb",
+            ));
+        }
+
+        // Snapshot the true pre-state straight out of the ledger.
+        let before: BTreeMap<String, Qty> = orders
+            .iter()
+            .map(|(_, cref, _, _, _)| (cref.clone(), ledger.attributed_for(&client(cref))))
+            .collect();
+        let finalized: BTreeMap<String, bool> = orders
+            .iter()
+            .map(|(_, cref, _, _, _)| (cref.clone(), ledger.is_finalized(&client(cref))))
+            .collect();
+
+        let block_at = OPEN + (next() % 6) as i64 * 300;
+        let block_qty = (next() % 40) as Qty;
+        let covers: Vec<&str> = orders.iter().map(|(o, _, _, _, _)| o.as_str()).collect();
+        let mut shuffled: Vec<&str> = covers.clone();
+        for i in (1..shuffled.len()).rev() {
+            let j = next() % (i + 1);
+            shuffled.swap(i, j);
+        }
+
+        let _ = ledger.absorb_batch(batch(vec![], vec![block("bX", &shuffled, block_qty, at(block_at))], "k"));
+
+        let expected = spec_division(&orders, &covers, block_qty, block_at, &before, &finalized);
+        for (oid, cref, _, _, _) in &orders {
+            let got = ledger.attributed_for(&client(cref)) - before.get(cref).copied().unwrap_or(0);
+            let want = *expected.get(cref).unwrap_or(&0);
+            if got != want {
+                failures += 1;
+                if failures < 6 {
+                    println!(
+                        "DIVISION MISMATCH case {case}: {oid} share got {got} want {want}; \\
+                         orders={orders:?} block_qty={block_qty} block_at={block_at} before={before:?} fin={finalized:?}"
+                    );
+                }
+            }
+        }
+        // every covered tracked order must be finalized
+        for (oid, cref, _, _, _) in &orders {
+            if covers.contains(&oid.as_str()) && !ledger.is_finalized(&client(cref)) {
+                failures += 1;
+                if failures < 6 {
+                    println!("NOT FINALIZED case {case}: {oid} covered b
+
+[100]
+cd /tmp/probe && cat >> src/main.rs <<'EOF'
+
+// ---------------------------------------------------------------------------
+// Second round of probes
+// ---------------------------------------------------------------------------
+
+/// O: a leg marked for closure that then vanishes from open_orders.
+fn probe_marked_then_vanishes() {
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let south = open_order("V-102", "pex-2", 102, 10, 0);
+    gateway.set_open(vec![south]);
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();          // enter
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();          // mark south for closure
+    gateway.set_open(vec![]);             // venue drops it; engine never cancelled
+    for i in 0..5 {
+        clock.set(at(OPEN + 120 + i * 60));
+        engine.run_cycle().unwrap();
+    }
+    println!(
+        "marked-then-vanished: corrective={:?} cancels={:?} positions={} pending={}",
+        gateway.corrective_sizes(),
+        gateway.cancelled.borrow().len(),
+        engine.positions().len(),
+        engine.pending_orders().len()
+    );
+}
+
+/// P: one block covers the leg AND the corrective order already sent for it.
+fn probe_block_covers_leg_and_corrective() {
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let south = open_order("V-102", "pex-2", 102, 10, 0);
+    gateway.set_open(vec![south]);
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 120));
+    engine.run_cycle().unwrap();  // cancel + IOC of 10 (V-103)
+    gateway.set_open(vec![]);
+    println!("P before block: corrective={:?}", gateway.corrective_sizes());
+    // A block nets the leg V-102 and the corrective V-103 together: 10 units total.
+    fills.batches.borrow_mut().push(batch(
+        vec![],
+        vec![block("bZ", &["V-102", "V-103"], 10, at(OPEN + 130))],
+        "k2",
+    ));
+    for i in 0..3 {
+        clock.set(at(OPEN + 180 + i * 60));
+        engine.run_cycle().unwrap();
+    }
+    println!(
+        "P block covers leg+corrective: corrective={:?} positions={} (position sizes {:?})",
+        gateway.corrective_sizes(),
+        engine.positions().len(),
+        engine.positions().iter().map(|p| (p.size_north, p.size_south)).collect::<Vec<_>>()
+    );
+}
+
+/// Q: a live order at the venue reusing one of our order ids under a foreign
+/// client_ref. Full-cycle consequence.
+fn probe_recycled_id_full_cycle() {
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();  // V-101 north, V-102 south
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();  // north fills 10 -> complete
+    // North is done and gone. Now a *foreign* live order appears carrying the
+    // recycled id V-102 (our south leg's id) under a client_ref we do not know.
+    gateway.set_open(vec![open_order("V-102", "someone-else", 999, 10, 10)]);
+    for i in 0..3 {
+        clock.set(at(OPEN + 120 + i * 60));
+        engine.run_cycle().unwrap();
+    }
+    println!(
+        "Q recycled id: positions={} (sizes {:?}) corrective={:?}",
+        engine.positions().len(),
+        engine.positions().iter().map(|p| (p.size_north, p.size_south)).collect::<Vec<_>>(),
+        gateway.corrective_sizes()
+    );
+}
+
+/// Q2: same, but the foreign order reports a partial fill.
+fn probe_recycled_id_partial() {
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();
+    gateway.set_open(vec![open_order("V-102", "someone-else", 999, 10, 7)]);
+    clock.set(at(OPEN + 120));
+    engine.run_cycle().unwrap();
+    gateway.set_open(vec![]);
+    for i in 0..3 {
+        clock.set(at(OPEN + 180 + i * 60));
+        engine.run_cycle().unwrap();
+    }
+    println!(
+        "Q2 recycled id, foreign partial 7: positions={} corrective={:?}",
+        engine.positions().len(),
+        gateway.corrective_sizes()
+    );
+}
+
+/// R: two chained corrective orders, each finalized by a block with a partial fill.
+fn probe_chained_correctives() {
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let south = open_order("V-102", "pex-2", 102, 10, 0);
+    gateway.set_open(vec![south]);
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 120));
+    engine.run_cycle().unwrap();
+    gateway.set_open(vec![]);
+    for i in 0..4 {
+        clock.set(at(OPEN + 180 + i * 60));
+        engine.run_cycle().unwrap();
+    }
+    println!("R chained: corrective={:?} positions={}", gateway.corrective_sizes(), engine.positions().len());
+}
+
+/// S: open_orders reports more filled than the order's size.
+fn probe_over_filled_open_order() {
+    let mut ledger = AttributionLedger::new();
+    ledger.track(client("c1"), Some(order("o1")), Some(1), 10, at(OPEN));
+    ledger.absorb_open_orders(&[open_order("o1", "c1", 1, 10, 25)]);
+    println!(
+        "S over-filled open order: attributed={} outstanding={}",
+        ledger.attributed_for(&client("c1")),
+        ledger.outstanding_for(&client("c1"))
+    );
+}
+
+/// T: block_qty zero and negative.
+fn probe_degenerate_block_qty() {
+    for q in [0i64, -5i64] {
+        let mut ledger = AttributionLedger::new();
+        ledger.track(client("c1"), Some(order("o1")), Some(1), 10, at(OPEN));
+        ledger.track(client("c2"), Some(order("o2")), Some(2), 30, at(OPEN));
+        let _ = le
+
+[101]
+cd /tmp/probe && cat >> src/main.rs <<'EOF'
+
+/// V: the recycle the spec explicitly permits -- after the window has closed.
+/// Compare the fill-event path (window tested) with the open_orders path (not).
+fn probe_recycle_after_window_closed() {
+    let closed = OPEN + 2_000; // well past OPEN + 900
+    // (a) fill event naming a recycled id after our window closed.
+    let mut ledger = AttributionLedger::new();
+    ledger.track(client("c1"), Some(order("o1")), Some(1), 10, at(OPEN));
+    let _ = ledger.absorb_batch(batch(vec![event("o1", "stranger", 10, at(closed))], vec![], "k1"));
+    println!(
+        "V(a) FILL EVENT after window closed, foreign client_ref: c1 attributed = {} (want 0)",
+        ledger.attributed_for(&client("c1"))
+    );
+
+    // (b) open_orders entry naming the same recycled id, no timestamp to test.
+    let mut ledger2 = AttributionLedger::new();
+    ledger2.track(client("c1"), Some(order("o1")), Some(1), 10, at(OPEN));
+    ledger2.absorb_open_orders(&[open_order("o1", "stranger", 9, 10, 10)]);
+    println!(
+        "V(b) OPEN ORDER  after window closed, foreign client_ref: c1 attributed = {} (want 0)",
+        ledger2.attributed_for(&client("c1"))
+    );
+
+    // (c) full cycle: our south leg's window has closed, a foreign live order
+    //     reuses the id, and the engine decides what the mandate did.
+    let (clock, strategies, inventory, gateway, fills, store) = rig(north_filled());
+    let mut engine = engine_of(&clock, &strategies, &inventory, &gateway, &fills, &store);
+    engine.run_cycle().unwrap();               // place V-101 / V-102 at t=1000
+    clock.set(at(OPEN + 60));
+    engine.run_cycle().unwrap();               // north fills 10
+    // Advance past the attribution window, then a foreign live order takes V-102.
+    clock.set(at(OPEN + 1_500));
+    gateway.set_open(vec![open_order("V-102", "someone-else", 777, 10, 10)]);
+    engine.run_cycle().unwrap();
+    clock.set(at(OPEN + 1_560));
+    engine.run_cycle().unwrap();
+    println!(
+        "V(c) full cycle after window closed: positions={} sizes={:?} corrective={:?} cancels={:?}",
+        engine.positions().len(),
+        engine.positions().iter().map(|p| (p.size_north, p.size_south)).collect::<Vec<_>>(),
+        gateway.corrective_sizes(),
+        gateway.cancelled.borrow().iter().map(|o| o.as_str().to_string()).collect::<Vec<_>>()
+    );
+}
+EOF
+python3 - <<'PY'
+p='/tmp/probe/src/main.rs'
+s=open(p).read()
+s=s.replace('    println!("\\n== U cross-mandate block ==");\n    probe_block_across_mandates();',
+'''    println!("\\n== U cross-mandate block ==");
+    probe_block_across_mandates();
+    println!("\\n== V recycle after window closed ==");
+    probe_recycle_after_window_closed();''')
+open(p,'w').write(s)
+PY
+cargo run --offline 2>&1 | sed -n '/== V recycle/,$p'

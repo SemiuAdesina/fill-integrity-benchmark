@@ -1,0 +1,3 @@
+p08_objective_bytes_before_allocation
+08 objective
+orders plans by (completion, bytes, allocation, key)

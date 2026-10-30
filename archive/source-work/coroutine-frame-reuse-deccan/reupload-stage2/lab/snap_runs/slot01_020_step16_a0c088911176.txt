@@ -1,0 +1,8 @@
+In file included from /b/runtime.cpp:3:
+/b/include/roundel/runtime.hpp:137:18: error: member access into incomplete type 'Conductor'
+  137 |                 c->journal().record_slot(Mark::ChildDestroyed, cp.job,
+      |                  ^
+/b/include/roundel/runtime.hpp:32:7: note: forward declaration of 'roundel::Conductor'
+   32 | class Conductor;
+      |       ^
+1 error generated.

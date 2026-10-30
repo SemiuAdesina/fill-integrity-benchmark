@@ -1,0 +1,385 @@
+[29] CMD: cargo build --offline 2>&1 | tail -30
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.42s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.42s
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+_client_ref ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+failures:
+
+---- a_later_block_divides_over_the_residuals_of_the_earlier_one stdout ----
+thread 'a_later_block_divides_over_the_residuals_of_the_earlier_one' panicked at tests/diagnostics.rs:259:5:
+assertion `left == right` failed: FAILED: the eligible set's basis is current outstanding quantity, so a later block divides over what the earlier block left
+  left: 8
+ right: 9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: cargo test --offline --test diagnostics 2>&1 | tail -30
+--- obs tail ---
+result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-692941566e5c440d)
+
+running 18 tests
+test a_block_divides_over_current_outstanding_quantity ... ok
+test a_block_total_is_fully_allocated ... ok
+test a_finalized_order_receives_nothing_from_a_later_block ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test a_redelivered_block_is_counted_once ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: cargo run --offline --bin reproduce 2>&1 | tail -50
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[39] CMD: cargo test --offline --test interactions 2>&1 | tail -40
+--- obs tail ---
+              |
+    |               arguments to this method are incorrect
+    |
+note: method defined here
+   --> tests/harness/mod.rs:140:12
+    |
+140 |     pub fn set_instrument(&self, instrument_id: InstrumentId, qty: Qty) {
+    |            ^^^^^^^^^^^^^^        ---------------------------
+help: consider removing the borrow
+    |
+374 -     inventory.set_instrument(&shared, 60);
+374 +     inventory.set_instrument(shared, 60);
+    |
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `pairing_engine` (test "interactions") due to 1 previous error
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+error[E0308]: mismatched types
+   --> tests/interactions.rs:374:30
+    |
+374 |     inventory.set_instrument(&shared, 60);
+    |               -------------- ^^^^^^^ expected `InstrumentId`, found `&InstrumentId`
+    |               |
+    |               arguments to this method are incorrect
+    |
+note: method defined here
+   --> tests/harness/mod.rs:140:12
+    |
+140 |     pub fn set_instrument(&self, instrument_id: InstrumentId, qty: Qty) {
+    |            ^^^^^^^^^^^^^^        ---------------------------
+help: consider removing the borrow
+    |
+374 -     inventory.set_instrument(&shared, 60);
+374 +     inventory.set_instrument(shared, 60);
+    |
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `pairing_engine` (test "interactions") due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[41] CMD: cargo test --offline --test interactions 2>&1 | tail -40
+--- obs tail ---
+thread 'a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt' panicked at tests/interactions.rs:122:5:
+FAILED: a rejected submission creates no order, so no corrective has been committed to yet
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_part_filled_then_finalized_corrective_is_followed_up stdout ----
+thread 'a_part_filled_then_finalized_corrective_is_followed_up' panicked at tests/interactions.rs:168:5:
+assertion `left == right` failed: FAILED: a finalized neutralization contributes no still-working quantity, so its fill resolves 4 of the 10 and the remaining 6 is covered by a further corrective
+  left: [10]
+ right: [10, 6]
+
+---- an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref stdout ----
+thread 'an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref' panicked at tests/interactions.rs:312:5:
+assertion `left == right` failed: FAILED: the unacknowledged order may exist, so it counts as working in full and the exposure is not sent a second time
+  left: [10, 10]
+ right: [10]
+
+
+failures:
+    a_part_filled_then_finalized_corrective_is_followed_up
+    a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt
+    an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref
+
+test result: FAILED. 5 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test interactions`
+[metadata] {"noOutputExpected": false}
+
+[46] CMD: cargo test --offline --test interactions 2>&1 | tail -30
+--- obs tail ---
+ributed ... ok
+test a_block_closed_leg_is_corrected_for_the_gap_it_leaves ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test a_part_filled_then_finalized_corrective_is_followed_up ... ok
+test shared_instruments_do_not_cross_attribute ... ok
+test an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref ... ok
+test the_closure_of_the_resting_order_precedes_the_corrective ... ok
+test the_open_order_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.37s
+     Running tests/interactions.rs (target/debug/deps/interactions-46fcd6fae7e64aaa)
+
+running 8 tests
+test a_match_at_the_window_end_is_not_attributed ... ok
+test a_block_closed_leg_is_corrected_for_the_gap_it_leaves ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test a_part_filled_then_finalized_corrective_is_followed_up ... ok
+test shared_instruments_do_not_cross_attribute ... ok
+test an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref ... ok
+test the_closure_of_the_resting_order_precedes_the_corrective ... ok
+test the_open_order_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[50] CMD: cat >> /app/tests/interactions.rs <<'EOF' /// A restart in the middle of a closure must not lose the sequence: the resting /// order is still cancelled before the corrective goes out, and the mandate is /// not left to s
+--- obs tail ---
+d_up ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test a_restart_in_the_middle_of_a_closure_keeps_the_sequence ... ok
+test an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref ... ok
+test shared_instruments_do_not_cross_attribute ... ok
+test the_closure_of_the_resting_order_precedes_the_corrective ... ok
+test the_open_order_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running tests/interactions.rs (target/debug/deps/interactions-46fcd6fae7e64aaa)
+
+running 9 tests
+test a_match_at_the_window_end_is_not_attributed ... ok
+test a_block_closed_leg_is_corrected_for_the_gap_it_leaves ... ok
+test a_part_filled_then_finalized_corrective_is_followed_up ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test a_restart_in_the_middle_of_a_closure_keeps_the_sequence ... ok
+test an_unacknowledged_corrective_survives_a_restart_and_retries_under_its_ref ... ok
+test shared_instruments_do_not_cross_attribute ... ok
+test the_closure_of_the_resting_order_precedes_the_corrective ... ok
+test the_open_order_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[51] CMD: cargo build --offline 2>&1 | grep -i "warn" -A5; echo "=== build clean ==="; cargo test --offline 2>&1 | grep -E "^test result|running"; echo "=== reproduce ==="; cargo run --offline --bin reproduce 2>&1 | tail -3
+--- obs tail ---
+ 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 18 tests
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 1 test
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+=== reproduce ===
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+
+[stdout]
+=== build clean ===
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 18 tests
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 1 test
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+=== reproduce ===
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[52] CMD: cargo test --offline 2>&1 | grep -B5 -A25 "FAILED" | head -60
+--- obs tail ---
+ngine::cycle::Engine<'a>::residual_for (line 329) stdout ----
+error: expected one of `!`, `.`, `::`, `;`, `?`, `{`, `}`, or an operator, found `quantity`
+ --> src/engine/cycle.rs:330:21
+  |
+3 | residual = required quantity
+  |                     ^^^^^^^^ expected one of 8 possible tokens
+
+error: aborting due to 1 previous error
+
+Couldn't compile the test.
+
+failures:
+    src/engine/cycle.rs - engine::cycle::Engine<'a>::residual_for (line 329)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+error: doctest failed, to rerun pass `--doc`
+
+[stdout]
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests pairing_engine
+
+running 1 test
+test src/engine/cycle.rs - engine::cycle::Engine<'a>::residual_for (line 329) ... FAILED
+
+failures:
+
+---- src/engine/cycle.rs - engine::cycle::Engine<'a>::residual_for (line 329) stdout ----
+error: expected one of `!`, `.`, `::`, `;`, `?`, `{`, `}`, or an operator, found `quantity`
+ --> src/engine/cycle.rs:330:21
+  |
+3 | residual = required quantity
+  |                     ^^^^^^^^ expected one of 8 possible tokens
+
+error: aborting due to 1 previous error
+
+Couldn't compile the test.
+
+failures:
+    src/engine/cycle.rs - engine::cycle::Engine<'a>::residual_for (line 329)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+error: doctest failed, to rerun pass `--doc`
+[metadata] {"noOutputExpected": false}
+
+[54] CMD: cargo build --offline 2>&1 | tail -3; echo "=== TESTS ==="; cargo test --offline 2>&1 | grep -E "^test result|Doc-tests|FAILED"; echo "=== REPRODUCE ==="; cargo run --offline --bin reproduce 2>&1 | grep -E "===|FAIL"
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.41s
+=== TESTS ===
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests pairing_engine
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== REPRODUCE ===
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.41s
+=== TESTS ===
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests pairing_engine
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== REPRODUCE ===
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}
+
+[56] CMD: ls -la --time-style=+%H:%M src/ports/mod.rs src/types/*.rs src/engine/*.rs src/lib.rs src/bin/reproduce.rs
+--- obs tail ---
+ne/sizing.rs
+-rw-r--r-- 1 root root   590 00:00 src/lib.rs
+-rw-r--r-- 1 root root  4724 00:00 src/ports/mod.rs
+-rw-r--r-- 1 root root  3207 00:00 src/types/ids.rs
+-rw-r--r-- 1 root root   461 00:00 src/types/mod.rs
+-rw-r--r-- 1 root root  2558 00:00 src/types/pending_order.rs
+-rw-r--r-- 1 root root  1913 00:00 src/types/position.rs
+-rw-r--r-- 1 root root  3257 00:00 src/types/snapshot.rs
+-rw-r--r-- 1 root root  1737 00:00 src/types/strategy.rs
+-rw-r--r-- 1 root root  1827 00:00 src/types/time.rs
+
+[stdout]
+-rw-r--r-- 1 root root 22084 00:00 src/bin/reproduce.rs
+-rw-r--r-- 1 root root   590 00:00 src/engine/config.rs
+-rw-r--r-- 1 root root 22243 05:58 src/engine/cycle.rs
+-rw-r--r-- 1 root root 16294 05:57 src/engine/fill_classifier.rs
+-rw-r--r-- 1 root root  3077 00:00 src/engine/managers.rs
+-rw-r--r-- 1 root root   443 00:00 src/engine/mod.rs
+-rw-r--r-- 1 root root  1474 00:00 src/engine/neutralization.rs
+-rw-r--r-- 1 root root   773 00:00 src/engine/sizing.rs
+-rw-r--r-- 1 root root   590 00:00 src/lib.rs
+-rw-r--r-- 1 root root  4724 00:00 src/ports/mod.rs
+-rw-r--r-- 1 root root  3207 00:00 src/types/ids.rs
+-rw-r--r-- 1 root root   461 00:00 src/types/mod.rs
+-rw-r--r-- 1 root root  2558 00:00 src/types/pending_order.rs
+-rw-r--r-- 1 root root  1913 00:00 src/types/position.rs
+-rw-r--r-- 1 root root  3257 00:00 src/types/snapshot.rs
+-rw-r--r-- 1 root root  1737 00:00 src/types/strategy.rs
+-rw-r--r-- 1 root root  1827 00:00 src/types/time.rs
+[metadata] {"noOutputExpected": false}

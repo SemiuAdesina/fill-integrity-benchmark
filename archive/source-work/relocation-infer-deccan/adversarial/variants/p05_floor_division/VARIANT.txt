@@ -1,0 +1,3 @@
+p05_floor_division
+05 negative arithmetic
+divides by the scale with floor semantics instead of truncation toward zero

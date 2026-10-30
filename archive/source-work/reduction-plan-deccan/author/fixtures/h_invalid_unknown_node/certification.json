@@ -1,0 +1,17 @@
+{
+ "status_a": "invalid",
+ "status_b": "invalid",
+ "agree": true,
+ "seconds_a": 0.0,
+ "seconds_b": 0.0,
+ "replays": null,
+ "legal": null,
+ "matching": null,
+ "within_budget": true,
+ "fixture": "h_invalid_unknown_node",
+ "seed": 1600,
+ "separations": [],
+ "sources": 3,
+ "links": 12,
+ "switches": 2
+}

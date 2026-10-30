@@ -1,0 +1,10 @@
+/usr/bin/ld: /b/scenario.o: in function `(anonymous namespace)::parent_of_value(int, int, long)':
+/s/scenario.cpp:219: undefined reference to `roundel::Duty::ChildAwaiter::~ChildAwaiter()'
+/usr/bin/ld: /s/scenario.cpp:219: undefined reference to `roundel::Duty::ChildAwaiter::~ChildAwaiter()'
+/usr/bin/ld: /b/scenario.o: in function `(anonymous namespace)::parent_counting(int, int, long, std::vector<int, std::allocator<int> >*)':
+/s/scenario.cpp:229: undefined reference to `roundel::Duty::ChildAwaiter::~ChildAwaiter()'
+/usr/bin/ld: /s/scenario.cpp:229: undefined reference to `roundel::Duty::ChildAwaiter::~ChildAwaiter()'
+/usr/bin/ld: /b/scenario.o: in function `(anonymous namespace)::parent_of_parking(int, int)':
+/s/scenario.cpp:244: undefined reference to `roundel::Duty::ChildAwaiter::~ChildAwaiter()'
+/usr/bin/ld: /b/scenario.o:/s/scenario.cpp:244: more undefined references to `roundel::Duty::ChildAwaiter::~ChildAwaiter()' follow
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)

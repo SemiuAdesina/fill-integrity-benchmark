@@ -1,0 +1,2 @@
+hanging build: verifier rc=2 elapsed=604s reward=0
+FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)

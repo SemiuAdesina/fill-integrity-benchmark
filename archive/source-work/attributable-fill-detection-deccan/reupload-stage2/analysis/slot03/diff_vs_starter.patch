@@ -1,0 +1,519 @@
+diff -ru /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/pkg/environment/src/engine/cycle.rs /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/replay/slot03/final/src/engine/cycle.rs
+--- /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/pkg/environment/src/engine/cycle.rs	2026-09-09 01:58:50
++++ /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/replay/slot03/final/src/engine/cycle.rs	2026-09-09 02:03:42
+@@ -14,7 +14,7 @@
+ use crate::engine::sizing::leg_size;
+ use crate::ports::{
+     InventorySource, Clock, FillEventSource, StrategySource, OrderGateway, OrderKind, OrderRequest,
+-    PortError, StateStore,
++    PortError, StateStore, SubmitError,
+ };
+ use crate::types::ids::{ClientRef, StrategyId, OrderId, Qty, Venue};
+ use crate::types::strategy::StrategyCandidate;
+@@ -187,21 +187,34 @@
+             .collect();
+         for record in unconfirmed {
+             let request = Self::neutralization_request(&record);
+-            if let Ok(accepted) = self.gateway.submit(&request) {
+-                self.ledger.track(
+-                    record.client_ref.clone(),
+-                    Some(accepted.order_id.clone()),
+-                    Some(accepted.venue_seq),
+-                    record.size,
+-                    now,
+-                );
+-                if let Some(slot) = self
+-                    .neutralizations
+-                    .iter_mut()
+-                    .find(|slot| slot.client_ref == record.client_ref)
+-                {
+-                    slot.order_id = Some(accepted.order_id);
++            match self.gateway.submit(&request) {
++                Ok(accepted) => {
++                    self.ledger.track(
++                        record.client_ref.clone(),
++                        Some(accepted.order_id.clone()),
++                        Some(accepted.venue_seq),
++                        record.size,
++                        now,
++                    );
++                    if let Some(slot) = self
++                        .neutralizations
++                        .iter_mut()
++                        .find(|slot| slot.client_ref == record.client_ref)
++                    {
++                        slot.order_id = Some(accepted.order_id);
++                    }
+                 }
++                // Still unknown, so still unconfirmed. The record stays and the
++                // next cycle tries again under the same client reference.
++                Err(SubmitError::AcknowledgementLost) => {}
++                // The venue's idempotency means a retry under a reference it
++                // already knows resolves onto that order, so a rejection here
++                // says nothing exists under this reference. Nothing was created,
++                // so the record goes and a later cycle recomputes the exposure.
++                Err(_) => {
++                    self.neutralizations
++                        .retain(|slot| slot.client_ref != record.client_ref);
++                }
+             }
+         }
+     }
+@@ -311,11 +324,54 @@
+         self.acquired_for(leg) >= leg.size
+     }
+ 
++    /// The exposure still to cover on a leg.
++    ///
++    /// ```text
++    /// residual = required quantity
++    ///          - quantity already attributed to that leg
++    ///          - quantity still working in committed neutralizations
++    /// ```
++    ///
++    /// The second term is `acquired_for`: the leg's own resting order plus the
++    /// neutralizations already placed for the same mandate and venue, whose
++    /// fills resolve the exposure. The third term is what stops consecutive
++    /// cycles from sending the same exposure twice.
++    fn residual_for(&self, leg: &PendingOrder) -> Qty {
++        let working: Qty = self
++            .records_for(leg)
++            .iter()
++            .map(|record| self.working_for(record))
++            .sum();
++        leg.size - self.acquired_for(leg) - working
++    }
++
++    /// How much of a committed neutralization is still expected to land.
++    ///
++    /// - an acknowledged one contributes its own outstanding quantity;
++    /// - one whose acknowledgement was lost contributes its full size, because
++    ///   the venue may have created it and the engine cannot yet see it;
++    /// - one the venue has finalized contributes nothing, whatever it managed to
++    ///   fill, because the venue has closed it and the gap it leaves is real.
++    fn working_for(&self, record: &NeutralizationRecord) -> Qty {
++        match &record.order_id {
++            None => record.size,
++            Some(_) if self.ledger.is_finalized(&record.client_ref) => 0,
++            Some(_) => self
++                .ledger
++                .outstanding_or(&record.client_ref, record.size),
++        }
++    }
++
+     fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+-        if self.resting_at_venue.contains(&leg.order_id) {
+-            LegVisibility::Resting
+-        } else if self.replaced.contains(&leg.order_id) {
++        if self.replaced.contains(&leg.order_id)
++            || self.ledger.is_finalized(&leg.client_ref)
++        {
++            // Known not to be live: either this engine withdrew it, or the venue
++            // closed it. A finalized order is not a momentarily unknown one, so
++            // the gap it leaves behind is real and may be covered.
+             LegVisibility::Withdrawn
++        } else if self.resting_at_venue.contains(&leg.order_id) {
++            LegVisibility::Resting
+         } else {
+             LegVisibility::Unconfirmed
+         }
+@@ -357,6 +413,11 @@
+     fn close_gap(&mut self, leg: &PendingOrder, now: Timestamp) -> Result<(), PortError> {
+         match self.visibility(leg) {
+             LegVisibility::Resting => {
++                // A resting order may not be treated as gone merely because a
++                // correction has become necessary. The first cycle moves it into
++                // closure; the cancellation has to have been issued before any
++                // corrective order goes out, which gives a fill already in
++                // flight a cycle in which to land and be attributed.
+                 if self.closing.insert(leg.order_id.clone()) {
+                     return Ok(());
+                 }
+@@ -366,12 +427,26 @@
+                 self.resting_at_venue.remove(&leg.order_id);
+                 self.replaced.insert(leg.order_id.clone());
+             }
+-            // Not resting at the venue, so there is nothing to cancel first.
+-            LegVisibility::Withdrawn | LegVisibility::Unconfirmed => {}
++            // Closed, so there is nothing to cancel first.
++            LegVisibility::Withdrawn => {}
++            // Absent from the live list for a reason this engine cannot see: it
++            // may have filled with the fill not yet through the feed. It is
++            // never neutralized against, because neutralizing quantity the desk
++            // already owns doubles the exposure the correction was meant to
++            // close.
++            LegVisibility::Unconfirmed => return Ok(()),
+         }
+ 
+-        let gap = leg.size - self.acquired_for(leg);
+-        let plan = match plan_neutralization(self.gateway, leg, gap, self.config.neutralization_slippage)? {
++        // Only the residual is corrected: what is still missing after what is
++        // already attributed to this leg and what is already working on
++        // neutralizations this engine committed to.
++        let residual = self.residual_for(leg);
++        let plan = match plan_neutralization(
++            self.gateway,
++            leg,
++            residual,
++            self.config.neutralization_slippage,
++        )? {
+             Some(plan) => plan,
+             None => return Ok(()),
+         };
+@@ -393,6 +468,10 @@
+         let request = Self::neutralization_request(&record);
+         self.neutralizations.push(record);
+ 
++        // Tracked from the moment it is committed to, so its window opens now
++        // rather than whenever the venue chooses to acknowledge it.
++        self.ledger.track(client_ref.clone(), None, None, size, now);
++
+         match self.gateway.submit(&request) {
+             Ok(accepted) => {
+                 self.ledger.track(
+@@ -410,8 +489,14 @@
+                     slot.order_id = Some(accepted.order_id);
+                 }
+             }
+-            // Nothing came back from the venue, so drop the record and let a later
+-            // cycle work out what is still missing.
++            // The venue may have created the order and its identifier is
++            // unknown, so it counts as working in full. The record keeps its
++            // client reference and a later cycle retries under it, which is what
++            // stops the venue's idempotency from placing a second economic order.
++            Err(SubmitError::AcknowledgementLost) => {}
++            // Nothing was created by the attempt, so the record goes and a later
++            // cycle recomputes the residual and tries again. A mandate is not
++            // latched shut by one failed attempt.
+             Err(_) => {
+                 self.neutralizations.retain(|slot| slot.client_ref != client_ref);
+             }
+diff -ru /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/pkg/environment/src/engine/fill_classifier.rs /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/replay/slot03/final/src/engine/fill_classifier.rs
+--- /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/pkg/environment/src/engine/fill_classifier.rs	2026-09-09 01:58:50
++++ /Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/replay/slot03/final/src/engine/fill_classifier.rs	2026-09-09 02:03:42
+@@ -1,4 +1,4 @@
+ //! Per-order fill attribution.
+ //!
+ //! Custody inventory is per instrument, shared and lagging, so it cannot show that
+@@ -13,7 +13,8 @@
+ //!
+ //! `/app/spec/venue-semantics.md` is the authority on what each of those three
+ //! sources means, on the attribution window, and on how a block total divides
+-//! across the orders it covers.
++//! across the orders it covers. `/app/spec/reconciliation-contract.md` is the
++//! authority on how the parts accumulate.
+ //!
+ //! The ledger also owns the feed cursor, because the cursor and the state it
+ //! produced have to be saved and restored together.
+@@ -21,7 +22,7 @@
+ use std::collections::{BTreeMap, BTreeSet};
+ 
+ use crate::ports::{BlockFill, FillBatch, FillEvent, OpenOrder};
+-use crate::types::ids::{proportional_share, BlockRef, ClientRef, OrderId, Qty};
++use crate::types::ids::{proportional_share, BlockRef, ClientRef, OrderId, Qty, QTY_UNIT};
+ use crate::types::pending_order::ATTRIBUTION_WINDOW;
+ use crate::types::snapshot::{Cursor, SubmissionRecord};
+ use crate::types::time::Timestamp;
+@@ -77,11 +78,17 @@
+             .collect();
+     }
+ 
+-    /// Record an order the engine has just submitted, opening its window now.
++    /// Record an order the engine has just committed to, opening its window now.
+     ///
++    /// The window opens at the instant the engine starts tracking the order, so
++    /// it is opened here rather than when the venue acknowledges: an order whose
++    /// acknowledgement was lost may already exist at the venue from this instant.
++    ///
+     /// Called again for the same `client_ref` — which is what a resubmission
+-    /// looks like — this fills in whatever the venue has since supplied and
+-    /// leaves the existing attribution state alone.
++    /// under the engine's idempotency key looks like — this fills in whatever the
++    /// venue has since supplied and leaves the existing window start and
++    /// attribution state alone. A restart must not reopen a window: the original
++    /// start is what an out-of-window observation has to be tested against.
+     pub fn track(
+         &mut self,
+         client_ref: ClientRef,
+@@ -114,7 +121,8 @@
+         });
+     }
+ 
+-    /// Quantity attributed to one submission so far.
++    /// Quantity attributed to one submission so far: direct progress plus block
++    /// progress.
+     pub fn attributed_for(&self, client_ref: &ClientRef) -> Qty {
+         self.record(client_ref)
+             .map(SubmissionRecord::attributed)
+@@ -131,6 +139,23 @@
+         }
+     }
+ 
++    /// As `outstanding_for`, for a submission the engine knows it committed to
++    /// and whose size it remembers itself. A submission the ledger has no record
++    /// of has not been closed by anything, so it is still working in full.
++    pub fn outstanding_or(&self, client_ref: &ClientRef, fallback_size: Qty) -> Qty {
++        match self.record(client_ref) {
++            Some(record) if record.finalized => 0,
++            Some(record) => record.outstanding(),
++            None => fallback_size,
++        }
++    }
++
++    /// Whether the venue has closed this submission. A closed order is not live
++    /// and is not still working, so whatever gap it leaves is real.
++    pub fn is_finalized(&self, client_ref: &ClientRef) -> bool {
++        self.record(client_ref).map_or(false, |record| record.finalized)
++    }
++
+     /// The venue's id for a submission, once anything has reported one.
+     pub fn order_for(&self, client_ref: &ClientRef) -> Option<OrderId> {
+         self.record(client_ref).and_then(|record| record.order_id.clone())
+@@ -148,21 +173,35 @@
+             .position(|record| record.order_id.as_ref() == Some(order_id))
+     }
+ 
+-    /// Resolve an observation to one of our submissions, by venue id first and
+-    /// then by the client reference the engine chose. Learning an id this way is
+-    /// what lets an observation reach a submission the venue never acknowledged.
++    /// Resolve an observation to one of our submissions.
++    ///
++    /// The `client_ref` is the engine's own key and the only one it always
++    /// knows, so it is tried first; the venue's `order_id` resolves the same
++    /// record once the venue has named it. Learning an id this way is what lets
++    /// an observation reach a submission the venue never acknowledged.
++    ///
++    /// An id is only adopted for a record when no other record already holds
++    /// it, so one venue identifier never ends up naming two of our orders.
+     fn locate(&mut self, order_id: &OrderId, client_ref: &ClientRef) -> Option<usize> {
+-        if let Some(index) = self.index_of_order(order_id) {
++        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {
++            let unclaimed = self.submissions[index].order_id.is_none()
++                && self.index_of_order(order_id).is_none();
++            if unclaimed {
++                self.submissions[index].order_id = Some(order_id.clone());
++            }
+             return Some(index);
+         }
+-        let index = self.index_by_client_ref.get(client_ref).copied()?;
+-        self.submissions[index].order_id = Some(order_id.clone());
+-        Some(index)
++        self.index_of_order(order_id)
+     }
+ 
+     /// Whether a venue match timestamp falls in this record's attribution window.
++    ///
++    /// The window is half-open: `[start, start + ATTRIBUTION_WINDOW)`. An
++    /// observation at the start is inside it, one exactly at the end is outside,
++    /// because by then the venue may have recycled the identifier onto an
++    /// unrelated order and counting it would be a misattribution.
+     fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {
+-        at >= record.window_start && at <= record.window_start + ATTRIBUTION_WINDOW
++        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW
+     }
+ 
+     /// Fold one polled batch into the ledger and advance the cursor.
+@@ -181,6 +220,13 @@
+         count
+     }
+ 
++    /// Fold one per-order fill event in.
++    ///
++    /// `cumulative_filled_qty` is the running total the venue has matched for
++    /// this order, not the size of this particular match, and the feed delivers
++    /// at least once. Direct progress is therefore a high-water mark over
++    /// everything ever observed for the order: folding the figure in as an
++    /// increment inflates the order every time the feed replays.
+     fn absorb_event(&mut self, event: FillEvent) {
+         let Some(index) = self.locate(&event.order_id, &event.client_ref) else {
+             return;
+@@ -189,8 +235,9 @@
+         if !Self::in_window(record, event.at) {
+             return;
+         }
+-        // What this event reports the venue matched for this order.
+-        record.direct_filled += event.cumulative_filled_qty;
++        if event.cumulative_filled_qty > record.direct_filled {
++            record.direct_filled = event.cumulative_filled_qty;
++        }
+     }
+ 
+     /// Divide one block match across the orders it covers.
+@@ -200,17 +247,30 @@
+     /// is integer arithmetic, and any part of the block that no tracked order can
+     /// account for is dropped rather than assigned.
+     fn absorb_block(&mut self, block: BlockFill) {
+-        // The same match, redelivered, is the same match.
++        // The same match, redelivered, is the same match. `block_ref` is the
++        // idempotency key, so however often the feed delivers it the block
++        // contributes exactly once.
+         if !self.absorbed_blocks.insert(block.block_ref.clone()) {
+             return;
+         }
+ 
+-        let mut eligible: Vec<(OrderId, usize, Qty)> = Vec::new();
++        // Step 1: the eligible set. Tracked, ordered by the block's own match
++        // timestamp under the half-open window rule, not yet closed by the
++        // venue, and still short of its size. An order's outstanding quantity is
++        // its size minus what has already been attributed to it.
++        let mut eligible: Vec<Eligible> = Vec::new();
++        let mut seen: BTreeSet<usize> = BTreeSet::new();
+         for order_id in &block.covers {
+             let Some(index) = self.index_of_order(order_id) else {
+                 continue;
+             };
++            if !seen.insert(index) {
++                continue;
++            }
+             let record = &self.submissions[index];
++            if record.finalized {
++                continue;
++            }
+             if !Self::in_window(record, block.at) {
+                 continue;
+             }
+@@ -218,54 +278,70 @@
+             if outstanding <= 0 {
+                 continue;
+             }
+-            eligible.push((order_id.clone(), index, outstanding));
++            eligible.push(Eligible {
++                index,
++                outstanding,
++                window_start: record.window_start,
++                venue_seq: record.venue_seq,
++                order_id: order_id.clone(),
++            });
+         }
+ 
+-        // `covers` arrives in whatever order the venue happened to build it, and
+-        // the outcome must not depend on that, so put the eligible set in a
+-        // stable order of our own before dividing anything.
+-        eligible.sort_by(|left, right| left.0.cmp(&right.0));
++        // Step 2: order the eligible set deterministically, ascending by window
++        // start, then venue sequence, then order id. `covers` arrives in
++        // whatever order the venue happened to build it, and no container's
++        // iteration order may decide the outcome.
++        eligible.sort();
+ 
+-        let basis: Qty = eligible.iter().map(|(_, _, outstanding)| *outstanding).sum();
++        // Step 3: the basis is the sum of the outstanding quantities in the set.
++        let basis: Qty = eligible.iter().map(|entry| entry.outstanding).sum();
+         if basis <= 0 {
++            // No eligible order, so nothing is allocated. The block still
++            // closes every tracked order it names.
+             self.finalize(&block.covers);
+             return;
+         }
+ 
+-        // Quantity above the basis belongs to orders this engine does not track.
++        // Step 4: quantity above the basis is not attributable to anything this
++        // engine is tracking, and is dropped.
+         let divisible = if block.block_qty < basis {
+             block.block_qty
+         } else {
+             basis
+         };
+ 
++        // Step 5: base shares, `(q * outstanding) / basis` truncated toward zero.
+         let mut assigned: Qty = 0;
+         let mut shares: Vec<Qty> = Vec::with_capacity(eligible.len());
+-        for (_, _, outstanding) in &eligible {
+-            let share = proportional_share(divisible, *outstanding, basis);
++        for entry in &eligible {
++            let share = proportional_share(divisible, entry.outstanding, basis);
+             assigned += share;
+             shares.push(share);
+         }
+ 
+-        // Truncation leaves a few base units unassigned. Place them on the
+-        // largest outstanding order, which has the most room to take them.
+-        let remainder = divisible - assigned;
++        // Step 6: truncation leaves `r` base units, with `0 <= r < |E|`. The
++        // first `r` orders in the ordering from step 2 take one extra unit each,
++        // not the largest order and not the largest truncated fraction.
++        let mut remainder = divisible - assigned;
+         if remainder > 0 {
+-            let mut largest = 0usize;
+-            for (position, (_, _, outstanding)) in eligible.iter().enumerate() {
+-                if *outstanding > eligible[largest].2 {
+-                    largest = position;
++            for share in shares.iter_mut() {
++                if remainder <= 0 {
++                    break;
+                 }
++                *share += QTY_UNIT;
++                remainder -= QTY_UNIT;
+             }
+-            if let Some(share) = shares.get_mut(largest) {
+-                *share += remainder;
+-            }
+         }
+ 
+-        for ((_, index, _), share) in eligible.iter().zip(shares) {
+-            self.submissions[*index].block_filled += share;
++        for (entry, share) in eligible.iter().zip(shares) {
++            self.submissions[entry.index].block_filled += share;
+         }
+ 
++        // Every tracked order the block names is closed by the venue, including
++        // one it allocated nothing to — one that was ineligible because the
++        // match fell outside its window, or because it had no outstanding
++        // quantity left. Eligibility decides what an order is allocated; it does
++        // not decide whether the venue closed it.
+         self.finalize(&block.covers);
+     }
+ 
+@@ -280,9 +356,14 @@
+ 
+     /// Fold the live order list into the ledger.
+     ///
+-    /// Entries carry no match timestamp: `open_orders` is point-in-time truth
+-    /// about what is live right now, and it also supplies a `venue_seq` for an
+-    /// order the engine had not been told one for.
++    /// Entries carry no match timestamp and none is needed: `open_orders` is
++    /// point-in-time truth about what is live right now, and an identifier that
++    /// is live is by definition still the order the engine tracked, so the
++    /// attribution window does not apply to it.
++    ///
++    /// `filled_qty` is that order's running total, the same quantity a fill
++    /// event reports. It is not a second fill to add on top of one, so it raises
++    /// the order's high-water mark and never lowers it.
+     pub fn absorb_open_orders(&mut self, open_orders: &[OpenOrder]) {
+         for open_order in open_orders {
+             let Some(index) = self.locate(&open_order.order_id, &open_order.client_ref) else {
+@@ -296,5 +377,34 @@
+                 record.direct_filled = open_order.filled_qty;
+             }
+         }
++    }
++}
++
++/// One member of a block's eligible set, ordered by the rule the specification
++/// states: window start, then venue sequence, then order id.
++#[derive(Debug, Clone, PartialEq, Eq)]
++struct Eligible {
++    index: usize,
++    outstanding: Qty,
++    window_start: Timestamp,
++    venue_seq: Option<u64>,
++    order_id: OrderId,
++}
++
++impl Ord for Eligible {
++    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
++        self.window_start
++            .cmp(&other.window_start)
++            .then_with(|| self.venue_seq.cmp(&other.venue_seq))
++            .then_with(|| self.order_id.cmp(&other.order_id))
++            // Covered orders are distinct, so this never decides anything; it
++            // is here only to keep the ordering total and consistent with `Eq`.
++            .then_with(|| self.index.cmp(&other.index))
++    }
++}
++
++impl PartialOrd for Eligible {
++    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
++        Some(self.cmp(other))
+     }
+ }

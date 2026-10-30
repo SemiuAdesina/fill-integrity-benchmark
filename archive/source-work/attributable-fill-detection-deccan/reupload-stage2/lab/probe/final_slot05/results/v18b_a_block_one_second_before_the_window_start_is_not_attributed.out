@@ -1,0 +1,6 @@
+
+running 1 test
+test v18b_a_block_one_second_before_the_window_start_is_not_attributed ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 36 filtered out; finished in 0.00s
+

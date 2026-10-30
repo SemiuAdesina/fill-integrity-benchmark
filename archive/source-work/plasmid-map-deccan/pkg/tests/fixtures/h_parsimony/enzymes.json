@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "BspHI",
+   "site": "TCATGA",
+   "cut_offset": 1
+  },
+  {
+   "name": "BstBI",
+   "site": "TTCGAA",
+   "cut_offset": 2
+  },
+  {
+   "name": "FspI",
+   "site": "TGCGCA",
+   "cut_offset": 3
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "AatII",
+   "position": 1224
+  },
+  {
+   "enzyme": "ApaI",
+   "position": 3858
+  },
+  {
+   "enzyme": "EcoRV",
+   "position": 4097
+  }
+ ]
+}

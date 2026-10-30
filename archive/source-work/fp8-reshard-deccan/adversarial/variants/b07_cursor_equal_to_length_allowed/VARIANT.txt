@@ -1,0 +1,3 @@
+b07_cursor_equal_to_length_allowed
+validation
+accepts a cursor equal to the ring length

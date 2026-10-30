@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/macbok/benchmark-suite-work/polyploid-phase-deccan/reupload-difficulty/tools/corner_reeval.py", line 13, in <module>
+    cross=json.load(open(f"{d}/{r['name']}.cross.json")); exp=json.load(open(f"{d}/{r['name']}.expected.json"))
+                    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/macbok/benchmark-suite-work/polyploid-phase-deccan/reupload-difficulty/lab/corners/dr0/dr0_s109.cross.json'

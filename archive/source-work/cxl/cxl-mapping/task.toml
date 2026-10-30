@@ -1,0 +1,100 @@
+schema_version = "1.3"
+
+artifacts = ["/app"]
+
+[task]
+name = "cxl-mapping"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["rust", "cxl", "coherent-memory", "address-decoder", "routing", "constraint-recovery"]
+expert_time_estimate_hours = 3.0
+
+difficulty_explanation = """
+The visible implementation makes the natural local mistake: it creates one
+granularity-sized decoder for every positive probe and accepts the first route.
+A correct repair has to reconstruct ranges that were never printed directly.
+It must use positive and negative evidence, decoder alignment, half-open
+endpoints, device-capacity bounds, cross-host DMA consistency, route legality,
+and a global minimum-decoder objective together.
+
+The exactness rules interact. Extending a decoder can reduce the count but may
+cover a negative observation, cross capacity, overlap a neighbouring decoder,
+or cause a DMA range to cross an endpoint. Different hosts may map the same
+device bytes at unrelated bases, so a single global host view fails. Adjacent
+compatible decoders must coalesce, while touching decoders for different targets
+remain distinct. Equal-cost routes use hop-sequence order rather than input
+order. Equal decoder solutions use the published serialized ordering.
+
+One compound schedule uses two host views, an adjacent target boundary, a DMA
+ending exactly at device capacity, and competing equal-cost routes. Its
+load-bearing DMA result is obtained by interpreting both recovered decoder maps;
+it is not stated as a shortcut. Plausible partial repairs—per-probe decoders,
+inclusive endpoints, unaligned ranges, a global view, first-route selection,
+probe lookup, or failure to coalesce—each violate independent behavioural tests.
+This mirrors the work of CXL fabric, firmware, and datacenter platform engineers
+who diagnose host-specific decoder windows and routing from cross-host memory
+and DMA observations, because the actual fabric map is not directly readable and
+has to be inferred from what each host observes.
+"""
+
+solution_explanation = """
+The reference repair validates the bounded input and derives every aligned
+decoder compatible with the host window, device capacity, and all positive and
+negative probes. It globally searches compatible subsets, rejecting overlap,
+uncoalesced adjacent equivalents, incomplete probe coverage, and incorrect DMA
+predictions. Candidates are compared by decoder count and canonical decoder
+serialization. It then selects one legal route for each used host/device pair by
+cost and hop sequence and emits both collections in canonical order.
+
+`solution/solve.sh` is a thin launcher. It copies the corrected `src/lib.rs`
+into `/app` and performs only an offline Cargo build. It installs and downloads
+nothing.
+"""
+
+verification_explanation = """
+The separate verifier image owns its Cargo manifest, lock file, graded tests,
+and build command. It accepts only the regular non-symlink file
+`/app/src/lib.rs`, copies that file into a verifier-owned crate, scrubs Rust
+compiler wrappers, runners, flags, HOME and PATH, and invokes trusted Cargo by
+absolute path in offline mode. Candidate manifests, build scripts, `.cargo`
+configuration, planted test binaries, reward files, and source binaries are not
+used. Each verifier-owned case is graded by a probe/judge split. A probe links the
+candidate, calls the candidate API for one named case, and serializes the raw
+translations, routes and DMA outcomes it observed; it compares nothing, and its
+stdout, stderr and exit status are captured for diagnostics with no grading
+authority. The judge links no candidate code, owns every expected value, and
+performs the authoritative comparisons. Reward and the deterministic report are
+written solely by the verifier from judge counts, so no candidate-produced output
+can determine reward. A verifier-owned negative control that corrupts exactly one
+expected value, and a verifier-owned probe wrong by construction that still emits
+success in every plausible shape, together confirm the trust boundary holds.
+Reward starts at zero and becomes one only after the full expected case
+population is evaluated with no failures and both controls behave as required.
+
+The suite covers basic translation, negative observations, aligned range
+recovery, touching versus overlapping ranges, capacity endpoints, decoder
+coalescing, canonical map ordering, route cost and hop ties, distinct per-host
+views, coherent and incoherent cross-host DMA, DMA endpoint crossing, missing
+routes, malformed input, a device offset that no granularity lattice admits, a
+compound multi-host case, and a compound case where a
+coherent DMA span forces coverage that cannot stay inside a capacity endpoint.
+Expected translations
+and DMA outcomes are computed through recovered maps. The untouched local
+implementation and every prepared partial variant score zero.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 900
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

@@ -1,0 +1,3 @@
+b20_occupancy_floor
+link model
+computes the occupancy as floor(bytes / rate)

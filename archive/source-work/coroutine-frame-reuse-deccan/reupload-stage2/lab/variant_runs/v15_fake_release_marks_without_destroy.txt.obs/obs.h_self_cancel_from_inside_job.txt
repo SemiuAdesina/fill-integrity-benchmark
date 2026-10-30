@@ -1,0 +1,64 @@
+OBS 0 B 4:true
+OBS 1 E 1:1
+OBS 2 E 1:1
+OBS 3 E 1:1
+OBS 4 E 1:1
+OBS 5 E 1:3
+END 6 0
+
+=================================================================
+==773==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 528 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaac8f64a7c in operator new(unsigned long) (/b/cand+0x154a7c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xaaaac9040ab0 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaac9056ec8 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:141:46
+    #3 0xaaaac8f85588 in h_self_cancel_from_inside_job() /s/scenario.cpp:1403:15
+    #4 0xaaaac900b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaac8fa3490 in main /s/scenario.cpp:2423:42
+    #6 0xffffb7577740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffb7577814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaac8e8a12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x516000000080 (528 bytes)
+
+Indirect leak of 144 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaac8f2a59c in malloc (/b/cand+0x11a59c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xffffb78c1154 in __cxa_allocate_exception (/lib/aarch64-linux-gnu/libstdc++.so.6+0xa1154) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #2 0xaaaac9056990 in roundel::ParkAwaiter::await_resume() /b/runtime.cpp:126:9
+    #3 0xaaaac8fe52cc in (anonymous namespace)::cancels_self(roundel::Conductor*, unsigned long const*) (.resume) /s/scenario.cpp:475:37
+    #4 0xaaaac9060c3c in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #5 0xaaaac905c210 in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:393:11
+    #6 0xaaaac905ca44 in roundel::Conductor::step() /b/runtime.cpp:414:5
+    #7 0xaaaac8f8567c in h_self_cancel_from_inside_job() /s/scenario.cpp:1408:5
+    #8 0xaaaac900b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #9 0xaaaac8fa3490 in main /s/scenario.cpp:2423:42
+    #10 0xffffb7577740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #11 0xffffb7577814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #12 0xaaaac8e8a12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x50d000000040 (144 bytes)
+
+Indirect leak of 38 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaac8f64a7c in operator new(unsigned long) (/b/cand+0x154a7c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xffffb7907788 in std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) (/lib/aarch64-linux-gnu/libstdc++.so.6+0xe7788) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #2 0xffffb78e85f4 in std::runtime_error::runtime_error(char const*) (/lib/aarch64-linux-gnu/libstdc++.so.6+0xc85f4) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #3 0xaaaac905e868 in roundel::Abandoned::Abandoned() /b/include/roundel/runtime.hpp:40:19
+    #4 0xaaaac90569dc in roundel::ParkAwaiter::await_resume() /b/runtime.cpp:126:15
+    #5 0xaaaac8fe52cc in (anonymous namespace)::cancels_self(roundel::Conductor*, unsigned long const*) (.resume) /s/scenario.cpp:475:37
+    #6 0xaaaac9060c3c in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #7 0xaaaac905c210 in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:393:11
+    #8 0xaaaac905ca44 in roundel::Conductor::step() /b/runtime.cpp:414:5
+    #9 0xaaaac8f8567c in h_self_cancel_from_inside_job() /s/scenario.cpp:1408:5
+    #10 0xaaaac900b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #11 0xaaaac8fa3490 in main /s/scenario.cpp:2423:42
+    #12 0xffffb7577740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #13 0xffffb7577814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #14 0xaaaac8e8a12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x504000000ad0 (38 bytes)
+
+SUMMARY: AddressSanitizer: 710 byte(s) leaked in 3 allocation(s).

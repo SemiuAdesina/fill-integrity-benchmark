@@ -1,0 +1,5 @@
+lab/pool3/p3_M12N12_d2.5_ibdA_r0.2_s540
+lab/pool3/p3_M12N12_d5.0_noibd_r0.1_s549
+lab/pool3/p3_M12N8_d3.5_noibd_r0.1_s507
+lab/pool3/p3_M14N10_d2.5_ibdA_r0.1_s611
+lab/pool3/p3_M15N10_d3.5_ibdboth_r0.1_s655

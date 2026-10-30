@@ -1,0 +1,3 @@
+b13_wrap_before_division
+arithmetic
+the value is wrapped to the field width before the division by the scale

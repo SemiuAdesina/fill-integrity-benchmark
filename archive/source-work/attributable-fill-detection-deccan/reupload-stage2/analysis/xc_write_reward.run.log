@@ -1,0 +1,22 @@
+runner v30_a_correction_whose_acknowledgement_is_lost_twice_is_placed_once exit=0 budget=60s (diagnostic only)
+runner cancel_lead_is_five_minutes exit=0 budget=60s (diagnostic only)
+runner pending_order_cancels_only_inside_the_cancel_lead exit=0 budget=60s (diagnostic only)
+runner pending_order_reports_remaining_seconds exit=0 budget=60s (diagnostic only)
+runner exit_window_bounds_are_unchanged exit=0 budget=60s (diagnostic only)
+runner position_exit_window_is_inclusive_at_both_ends exit=0 budget=60s (diagnostic only)
+runner position_flags_the_final_minute_and_expiry exit=0 budget=60s (diagnostic only)
+runner position_costs_are_derived_from_entry_prices_and_sizes exit=0 budget=60s (diagnostic only)
+runner strategy_candidate_exposes_per_venue_fields exit=0 budget=60s (diagnostic only)
+runner venue_has_an_opposite exit=0 budget=60s (diagnostic only)
+runner quantity_comparisons_are_exact_with_no_tolerance exit=0 budget=60s (diagnostic only)
+runner proportional_share_truncates_toward_zero exit=0 budget=60s (diagnostic only)
+runner proportional_share_allocates_nothing_without_a_basis exit=0 budget=60s (diagnostic only)
+runner attribution_window_is_fifteen_minutes_and_half_open exit=0 budget=60s (diagnostic only)
+runner timestamp_and_duration_arithmetic_is_in_milliseconds exit=0 budget=60s (diagnostic only)
+runner cursor_starts_empty_and_round_trips exit=0 budget=60s (diagnostic only)
+runner engine_config_defaults_are_unchanged exit=0 budget=60s (diagnostic only)
+reward reset to 0 after the candidate phase
+CONTROL ok
+timing runner_build=2 runner_execution=0 judge=0
+verdict total=53 failed=22 control=1 reward=0
+final reward=0

@@ -1,0 +1,43 @@
+{
+ "format_version": 1,
+ "records": [
+  {
+   "tensor": "norm.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 256,
+   "logical_begin": 0,
+   "logical_end": 128,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 2097152,
+   "inverse_scale": 8,
+   "amax_history": [
+    5,
+    4,
+    4
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "norm.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 256,
+   "logical_begin": 128,
+   "logical_end": 256,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 2097152,
+   "inverse_scale": 8,
+   "amax_history": [
+    4,
+    6,
+    4
+   ],
+   "cursor": 2
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+#
+# Verifier-owned crate manifest.
+#
+# tests/test.sh assembles a fresh runner crate from this manifest plus the
+# candidate's src/ tree, so /app/Cargo.toml is never used for grading. The
+# verifier-owned graded scenarios and frozen observation binary produce only
+# raw functional records; a separate process performs every comparison.
+#
+# There are no dependencies, and the verifier runs cargo with --offline.
+[package]
+name = "pairing_engine"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "pairing_engine"
+path = "src/lib.rs"
+
+[dependencies]
+
+[[test]]
+name = "graded"
+path = "tests/graded.rs"
+
+[[bin]]
+name = "frozen_probe"
+path = "src/bin/frozen_probe.rs"

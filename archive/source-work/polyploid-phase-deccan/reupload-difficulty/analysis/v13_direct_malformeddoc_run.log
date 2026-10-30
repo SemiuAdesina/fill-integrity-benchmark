@@ -1,0 +1,38 @@
+probe baseline exit=0 budget=300s (diagnostic only)
+probe greedy_trap exit=0 budget=300s (diagnostic only)
+probe dr_legality exit=0 budget=300s (diagnostic only)
+probe symmetry exit=0 budget=300s (diagnostic only)
+probe compound exit=0 budget=300s (diagnostic only)
+probe coupled_ties exit=0 budget=300s (diagnostic only)
+probe path_order exit=0 budget=300s (diagnostic only)
+probe shared_phase exit=0 budget=300s (diagnostic only)
+probe low_information exit=0 budget=300s (diagnostic only)
+probe unlinked_interval exit=0 budget=300s (diagnostic only)
+probe marker0_dr exit=0 budget=300s (diagnostic only)
+probe low_depth exit=0 budget=300s (diagnostic only)
+probe unlinked_ties exit=0 budget=300s (diagnostic only)
+probe unlinked_ties_again exit=0 budget=300s (diagnostic only)
+probe symmetry_again exit=0 budget=300s (diagnostic only)
+probe compound_again exit=0 budget=300s (diagnostic only)
+probe baseline_shifted exit=0 budget=300s (diagnostic only)
+probe symmetry_shifted exit=0 budget=300s (diagnostic only)
+probe compound_shifted exit=0 budget=300s (diagnostic only)
+probe artifacts=19/19
+reward reset to 0 after the probe phase
+FAIL a_required_output_document_holds_the_optimum
+FAIL b_haplotypes_respect_parent_dosage
+FAIL c_inheritance_states_are_ordered_pairs
+FAIL d_double_reduction_never_appears_where_forbidden
+FAIL e_double_reduction_is_used_where_it_is_optimal
+FAIL f_answers_are_in_canonical_form
+FAIL g_canonicalisation_remaps_paths_and_is_idempotent
+FAIL h_every_fixture_reaches_the_global_optimum
+FAIL i_marker_at_a_time_reconstruction_falls_short
+FAIL j_recombination_between_markers_is_accounted_for
+FAIL k_ties_resolve_to_the_documented_representative
+FAIL l_the_compound_case_is_solved
+FAIL m_answers_follow_the_supplied_cross
+CONTROL ok
+timing judge_build=3 runner_build=1 runner_execution=0 judge=0
+verdict passed=0/13 control=1 probe_failed_closed=0 reward=0
+final reward=0

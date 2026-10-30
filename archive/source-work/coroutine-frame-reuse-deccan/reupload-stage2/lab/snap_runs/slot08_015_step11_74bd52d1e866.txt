@@ -1,0 +1,54 @@
+/b/runtime.cpp:203:18: error: no viable overloaded '='
+  203 |         t.target = st->parked;
+      |         ~~~~~~~~ ^ ~~~~~~~~~~
+/frozen/include/roundel/journal.hpp:31:8: note: candidate function (the implicit copy assignment operator) not viable: no known conversion from 'std::coroutine_handle<>' to 'const SlotId' for 1st argument
+   31 | struct SlotId {
+      |        ^~~~~~
+/frozen/include/roundel/journal.hpp:31:8: note: candidate function (the implicit move assignment operator) not viable: no known conversion from 'std::coroutine_handle<>' to 'SlotId' for 1st argument
+   31 | struct SlotId {
+      |        ^~~~~~
+/b/runtime.cpp:255:22: error: no viable overloaded '='
+  255 |     pending_release_ = job;
+      |     ~~~~~~~~~~~~~~~~ ^ ~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:746:7: note: candidate function not viable: no known conversion from 'JobId' (aka 'unsigned long') to 'const vector<unsigned long>' for 1st argument
+  746 |       operator=(const vector& __x);
+      |       ^         ~~~~~~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:761:7: note: candidate function not viable: no known conversion from 'JobId' (aka 'unsigned long') to 'vector<unsigned long>' for 1st argument
+  761 |       operator=(vector&& __x) noexcept(_Alloc_traits::_S_nothrow_move())
+      |       ^         ~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:783:7: note: candidate function not viable: no known conversion from 'JobId' (aka 'unsigned long') to 'initializer_list<value_type>' (aka 'initializer_list<unsigned long>') for 1st argument
+  783 |       operator=(initializer_list<value_type> __l)
+      |       ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /b/runtime.cpp:3:
+In file included from /b/include/roundel/runtime.hpp:19:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/deque:60:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algobase.h:64:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_pair.h:61:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/move.h:160:13: error: no viable overloaded '='
+  160 |       __obj = std::forward<_Up>(__new_val);
+      |       ~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/utility:96:19: note: in instantiation of function template specialization 'std::__exchange<std::vector<unsigned long>, const unsigned long &>' requested here
+   96 |     { return std::__exchange(__obj, std::forward<_Up>(__new_val)); }
+      |                   ^
+/b/runtime.cpp:259:28: note: in instantiation of function template specialization 'std::exchange<std::vector<unsigned long>, const unsigned long &>' requested here
+  259 |     const JobId job = std::exchange(pending_release_, kNoJob);
+      |                            ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:746:7: note: candidate function not viable: no known conversion from 'const unsigned long' to 'const vector<unsigned long>' for 1st argument
+  746 |       operator=(const vector& __x);
+      |       ^         ~~~~~~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:761:7: note: candidate function not viable: no known conversion from 'const unsigned long' to 'vector<unsigned long>' for 1st argument
+  761 |       operator=(vector&& __x) noexcept(_Alloc_traits::_S_nothrow_move())
+      |       ^         ~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_vector.h:783:7: note: candidate function not viable: no known conversion from 'const unsigned long' to 'initializer_list<value_type>' (aka 'initializer_list<unsigned long>') for 1st argument
+  783 |       operator=(initializer_list<value_type> __l)
+      |       ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/b/runtime.cpp:259:17: error: no viable conversion from 'std::vector<unsigned long>' to 'const JobId' (aka 'const unsigned long')
+  259 |     const JobId job = std::exchange(pending_release_, kNoJob);
+      |                 ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/b/runtime.cpp:275:9: error: invalid argument type 'const SlotId' to unary expression
+  275 |     if (!t.target) {
+      |         ^~~~~~~~~
+/b/runtime.cpp:281:59: error: no member named 'address' in 'roundel::SlotId'
+  281 |     auto typed = Duty::handle_type::from_address(t.target.address());
+      |                                                  ~~~~~~~~ ^
+6 errors generated.

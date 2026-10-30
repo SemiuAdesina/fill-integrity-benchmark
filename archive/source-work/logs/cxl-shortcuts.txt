@@ -1,0 +1,35 @@
+LABEL=cxl-one_decoder_per_probe POPULATION=20 TOTAL=20 FAILED=11 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL reconstructs_one_maximal_half_open_decoder decoders: expected [Decoder { host: "h0", start: 8192, end: 20480, device: "m0", device_offset: 0 }], observed [Decoder { host: "h0", start: 8192, end: 12288, device: "m0", device_offset: 0 }, Decoder { host: "h0", start: 16384, end: 20480, device: "m0", device_offset: 8192 }]
+FAIL negative_observation_splits_otherwise_plausible_span decoder count: expected 2, observed 3
+FAIL touching_ranges_are_legal_but_not_overlapping decoder count: expected 2, observed 4
+FAIL per_host_views_share_device_bytes decoders[1].start: expected 32768, observed 16384
+FAIL capacity_endpoint_is_excluded decoders: expected [Decoder { host: "h", start: 4096, end: 12288, device: "m", device_offset: 0 }], observed [Decoder { host: "h", start: 8192, end: 12288, device: "m", device_offset: 4096 }]
+FAIL canonical_decoder_serialization_breaks_global_tie decoders[0].start: expected 0, observed 4096
+FAIL compound_two_views_adjacent_boundary_capacity_and_route_tie decoder count: expected 3, observed 6
+FAIL compound_dma_span_forces_coverage_past_capacity_endpoint expected recovery to fail: covering the coherent DMA span with whole granules cannot stay inside the device capacity
+FAIL rejects_inconsistent_dma_evidence expected recovery to fail on inconsistent DMA evidence
+FAIL alignment_is_not_inferred_from_probe_address decoders[0] range: expected (8192, 24576), observed (8192, 16384)
+FAIL device_offset_must_be_granularity_aligned expected recovery to fail: no decoder whose device offset is on the granularity lattice reproduces this observation
+LABEL=cxl-inclusive_endpoints POPULATION=20 TOTAL=20 FAILED=5 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL reconstructs_one_maximal_half_open_decoder recovery failed: "no coherent decoder map"
+FAIL touching_ranges_are_legal_but_not_overlapping translate(h,0x2000): expected a translation, observed none
+FAIL capacity_endpoint_is_excluded recovery failed: "no coherent decoder map"
+FAIL compound_two_views_adjacent_boundary_capacity_and_route_tie recovery failed: "no coherent decoder map"
+FAIL translate_is_half_open translate(h,20): expected None, observed Some(TargetOffset { device: "m", offset: 40 })
+LABEL=cxl-ignore_negative_probes POPULATION=20 TOTAL=20 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL negative_observation_splits_otherwise_plausible_span decoder count: expected 2, observed 1
+LABEL=cxl-global_host_view POPULATION=20 TOTAL=20 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL identical_host_addresses_can_name_different_targets recovery failed: "no coherent decoder map"
+LABEL=cxl-first_legal_route POPULATION=20 TOTAL=20 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL chooses_route_by_cost_then_hop_sequence routes: expected [Route { host: "h", device: "m", hops: ["b", "a"], cost: 2 }], observed [Route { host: "h", device: "m", hops: ["a"], cost: 4 }]
+FAIL compound_two_views_adjacent_boundary_capacity_and_route_tie route(h0,shared).hops: expected ["a", "q"], observed ["z"]
+LABEL=cxl-ignore_full_dma_span POPULATION=20 TOTAL=20 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL dma_interpreter_checks_entire_half_open_length predicts_dma: expected false, observed true
+FAIL compound_dma_span_forces_coverage_past_capacity_endpoint expected recovery to fail: covering the coherent DMA span with whole granules cannot stay inside the device capacity
+LABEL=cxl-ignore_capacity POPULATION=20 TOTAL=20 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_dma_span_forces_coverage_past_capacity_endpoint expected recovery to fail: covering the coherent DMA span with whole granules cannot stay inside the device capacity
+LABEL=cxl-no_canonical_ordering POPULATION=20 TOTAL=20 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL capacity_endpoint_is_excluded decoders: expected [Decoder { host: "h", start: 4096, end: 12288, device: "m", device_offset: 0 }], observed [Decoder { host: "h", start: 8192, end: 12288, device: "m", device_offset: 4096 }]
+FAIL canonical_decoder_serialization_breaks_global_tie decoders[0].start: expected 0, observed 4096
+LABEL=cxl-ignore_offset_alignment POPULATION=20 TOTAL=20 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL device_offset_must_be_granularity_aligned expected recovery to fail: no decoder whose device offset is on the granularity lattice reproduces this observation

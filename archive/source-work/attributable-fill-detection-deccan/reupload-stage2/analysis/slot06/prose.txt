@@ -1,0 +1,51 @@
+[step 2] I'll start by reading the specification documents and thesource tree.
+
+[step 10] Now let me run the existing diagnostics to see the baseline.
+
+[step 12] Now I have the full picture. Let me note the defects I've found and start fixing. First, `fill_classifier.rs`:
+
+[step 13] Now the cycle logic:
+
+[step 16] Now `place_leg`, `visibility`, `acquired_for`, and `close_gap`:
+
+[step 19] Now the exposure computation and `close_gap`:
+
+[step 23] 16 of 17 now. The last one is a genuine conflict between a stale diagnostic and the spec. Let me verify the reproduce binary first:
+
+[step 24] The last failure is a stale diagnostic that contradicts the spec. Let me confirm by re-reading the normative text:
+
+[step 25] The spec is explicit and repeated — finality removes an order from a *later* block's basis. That diagnostic is stale, so I'll rewrite it spec-faithfully and add diagnostics for the rules it was conflating:
+
+[step 27] All 22 pass. Now let me extend the harness and add whole-cycle diagnostics for the multi-rule interactions the graded suite will combine:
+
+[step 34] Now let me append the whole-cycle interaction diagnostics:
+
+[step 36] All 31 pass. Let me review the complete cycle code once more for coherence:
+
+[step 37] Let me add two more interaction diagnostics — identity recovery for a lost corrective, and a failed `open_orders` call:
+
+[step 47] Everything is green: clean build, 33/33 diagnostics, 14/14 reproducer checks, exit 0. Only `src/engine/cycle.rs` and `src/engine/fill_classifier.rs` changed in `src/` — `src/types/` and `src/ports/` are untouched.
+
+## What was wrong and what I changed
+
+**Reading observations** (`fill_classifier.rs`)
+
+1. **Window end** — `in_window` used `at <= start + ATTRIBUTION_WINDOW`. The interval is half-open, so an observation exactly at the end (a recycled identifier) was counted. Now `<`.
+2. **Cumulative quantity** — `absorb_event` did `direct_filled += cumulative_filled_qty`, treating a running total as an increment, so every replay added. Now a high-water mark (`max`), which is also what makes the feed and the open-order list combine instead of double count.
+3. **Ordering of a block's eligible set** — sorted by `order_id` alone; now (window start, `venue_seq`, `order_id`), the documented order.
+4. **Remainder** — all units left by truncation went to the largest outstanding order; now one each to the first `r` orders in that ordering.
+5. **Eligibility** — now excludes orders a block has already closed (a closed order contributes no outstanding quantity to a later basis) and de-duplicates an id repeated in `covers`. Finalization already covered every named order; it now also runs when the block is over the basis or empty.
+6. **`locate`** — tried `order_id` before `client_ref`. Now `client_ref` first: it is the only key the engine always knows, the one a retry is made under, and the one that recovers a lost acknowledgement. `order_id` remains the fallback.
+
+**Derived quantities** (`cycle.rs`)
+
+7. **Residual exposure** — `close_gap` sized the corrective at `size − attributed`, ignoring quantity already working in committed neutralizations, so consecutive cycles sent the same exposure twice. Now `required − attributed − still working`, where an acknowledged corrective contributes its outstanding quantity, a lost-ack one its full size, and a finalized one nothing (the gap it leaves is real and gets covered once).
+8. **Unconfirmed legs** — were neutralized against. Now never; the cycle returns instead of sending.
+9. **Submission outcomes** — the record was dropped on *any* submit error, so a lost acknowledgement was retried under a fresh `client_ref` (a second economic order). Now: lost → keep the record, retry under the same reference; rejected/transport → drop it, so a later cycle recomputes and the mandate is not latched shut. The commitment is tracked in the ledger *before* the order is sent, so an unacknowledged order carries its original window start and its identity is recoverable from any later observation.
+10. **Visibility** — a leg a block has closed is absent from `open_orders` and was not engine-cancelled, which the literal three-state reading calls "unconfirmed". I gave it its own known state: finality is exactly what makes its quantity knowable, and its residual is still covered. Plain absence (no block) is still unconfirmed and still never corrected against.
+
+Durability needed no new `Snapshot` fields — the existing ones already cover window starts, cursor, attribution, finalized state, absorbed blocks, closure state, committed neutralizations and the reference sequence.
+
+## One diagnostic I had to rewrite
+
+`a_later_block_divides_over_the_residuals_of_the_earlier_one` expected a second block naming the *same two orders* to allocate over their residuals. That contradicts the contract's block-finality section, which states a finalized order "contributes no outstanding quantity to a later block's basis" — and it fails against the spec-correct implementation. I followed the documents (they are the stated authority; `tests/` is explicitly not graded) and replaced it with four checks that separate the two rules it conflated: finality, later blocks over orders the earlier one did not name, and finalization of orders the division skipped.

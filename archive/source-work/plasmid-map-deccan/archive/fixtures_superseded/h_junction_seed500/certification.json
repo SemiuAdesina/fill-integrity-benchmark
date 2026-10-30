@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.02,
+  "internal": 3,
+  "deviation": 7909,
+  "c": 2978,
+  "L": 3221
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 10.99
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 1.7,
+  "nodes": 5470,
+  "ties_at_count_and_deviation": 2
+ },
+ "held_out": [
+  "BspHI+DraI",
+  "BstBI+DraI"
+ ],
+ "truth": {
+  "internal": 3,
+  "deviation": 8407,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_junction",
+ "seed": 500,
+ "description": "the insert sits in one site of an enzyme that cuts the vector several times, so that window is torn",
+ "vector": "pACYC177",
+ "vector_header": "X06402.1 Cloning vector pACYC177",
+ "source": "T7",
+ "source_header": "V01146.1 Genome of bacteriophage T7",
+ "fragment": {
+  "left_enzyme": "SspI",
+  "left_cut": 9614,
+  "right_enzyme": "XbaI",
+  "right_cut": 12830
+ },
+ "cloning_site": [
+  "StuI",
+  2978
+ ],
+ "insert_length": 3216,
+ "enzymes": [
+  "BspHI",
+  "BstBI",
+  "DraI",
+  "StuI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 8
+}

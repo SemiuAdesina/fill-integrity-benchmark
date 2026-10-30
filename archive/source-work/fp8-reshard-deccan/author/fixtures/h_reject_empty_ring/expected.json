@@ -1,0 +1,6 @@
+{
+ "fixture": "h_reject_empty_ring",
+ "outcome": "reject",
+ "result": null,
+ "replay": []
+}

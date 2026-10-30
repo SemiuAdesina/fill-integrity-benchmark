@@ -1,0 +1,6 @@
+v05_penalised_forbidden_dr                 REWARD=1 RC=0
+v07_rows_only_canonical                    REWARD=1 RC=0
+v08_joint_canonical                        REWARD=1 RC=0
+v09_wrong_perm_direction                   REWARD=1 RC=0
+v11_no_canonical                           REWARD=1 RC=0
+v22c_scramble_then_sort_rows_first         REWARD=1 RC=0

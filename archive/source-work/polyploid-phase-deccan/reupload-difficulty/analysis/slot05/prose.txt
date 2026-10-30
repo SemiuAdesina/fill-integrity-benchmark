@@ -1,0 +1,33 @@
+[step 2] I'll start by reading
+
+the spec and the existing code.
+
+[step 8] Let me check the environment and prototype the bound quality before committing to a design.
+
+[step 9] No numpy, so I'll prototype in Rust. First, let me measure how tight the natural bounds are on the real instance — that determines whether branch-and-bound is viable.
+
+[step 16] Bounds are surprisingly tight (~28 nats gap at the root over 120 marker×progeny cells). Let me build the branch-and-bound and measure node counts.
+
+[step 21] Branch-and-bound works well on the fixture (6.6k nodes, 0.8 s). Let me now write the real solver properly, with exact tie-breaking.
+
+[step 29] Now the solver entry point:
+
+[step 36] Tests pass. Now let me reverse-engineer the fixture's likelihood model so I can generate realistic stress instances.
+
+[step 65] Now let me implement a Lagrangian (dual) bound — the current bound relaxes "all progeny share one parental assignment", which is exactly what the multipliers can repair.
+
+[step 68] Now the local-search refactor, so dual candidates can be polished too:
+
+[step 69] Now rewire `branch_and_bound` to take the dual:
+
+[step 80] The dual isn't tightening. Let me determine whether that's my optimiser or the relaxation itself, with a brute-force probe on a tiny instance.
+
+[step 92] The subgradient is ascending — the tie degeneracy in the consensus makes a single argmin a bad subgradient. Let me spread it over the tied set:
+
+[step 96] Let me measure how much a perfect incumbent would help, versus a tighter bound — that decides where to invest.
+
+[step 100] The relaxation is provably weak (0% closed). Let me test whether richer prices — depending on the progeny's inheritance state as well as the column — close the gap:
+
+[step 107] The relaxation is tight — 100% closed— with state-dependent prices and a working optimiser. Let me check whether the cheaper column-only prices also suffice:
+
+[step 108] Column-only prices are tight too — so the relaxation is fine and my optimiser was the bug. Let me check sensitivity to the lower bound and iteration count:

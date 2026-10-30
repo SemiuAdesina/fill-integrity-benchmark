@@ -1,0 +1,3 @@
+b01_place_without_base
+ELF/addressing
+P = r_offset, the section base forgotten

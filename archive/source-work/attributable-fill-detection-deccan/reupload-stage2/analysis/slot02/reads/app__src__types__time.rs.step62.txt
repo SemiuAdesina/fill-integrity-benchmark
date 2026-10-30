@@ -1,0 +1,87 @@
+2	use std::fmt;
+3	use std::ops::{Add, Sub};
+4	
+5	#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+6	pub struct Duration {
+7	    millis: i64,
+8	}
+9	
+10	impl Duration {
+11	    pub const fn from_millis(millis: i64) -> Self {
+12	        Self { millis }
+13	    }
+14	
+15	    pub const fn from_seconds(seconds: i64) -> Self {
+16	        Self {
+17	            millis: seconds * 1_000,
+18	        }
+19	    }
+20	
+21	    pub const fn as_millis(self) -> i64 {
+22	        self.millis
+23	    }
+24	
+25	    pub const fn as_seconds(self) -> i64 {
+26	        self.millis / 1_000
+27	    }
+28	}
+29	
+30	impl fmt::Display for Duration {
+31	    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+32	        write!(f, "{}ms", self.millis)
+33	    }
+34	}
+35	
+36	#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+37	pub struct Timestamp {
+38	    millis: i64,
+39	}
+40	
+41	impl Timestamp {
+42	    pub const fn from_millis(millis: i64) -> Self {
+43	        Self { millis }
+44	    }
+45	
+46	    pub const fn from_seconds(seconds: i64) -> Self {
+47	        Self {
+48	            millis: seconds * 1_000,
+49	        }
+50	    }
+51	
+52	    pub const fn as_millis(self) -> i64 {
+53	        self.millis
+54	    }
+55	
+56	    pub fn saturating_add(self, delta: Duration) -> Self {
+57	        Self {
+58	            millis: self.millis.saturating_add(delta.as_millis()),
+59	        }
+60	    }
+61	}
+62	
+63	impl Add<Duration> for Timestamp {
+64	    type Output = Timestamp;
+65	
+66	    fn add(self, rhs: Duration) -> Self::Output {
+67	        Timestamp {
+68	            millis: self.millis + rhs.as_millis(),
+69	        }
+70	    }
+71	}
+72	
+73	impl Sub<Timestamp> for Timestamp {
+74	    type Output = Duration;
+75	
+76	    fn sub(self, rhs: Timestamp) -> Self::Output {
+77	        Duration {
+78	            millis: self.millis - rhs.millis,
+79	        }
+80	    }
+81	}
+82	
+83	impl fmt::Display for Timestamp {
+84	    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+85	        write!(f, "t{}", self.millis)
+86	    }
+87	}
+88

@@ -1,0 +1,42 @@
+OBS 0 E 1:3
+OBS 1 E 1:3
+OBS 2 B 4:true
+OBS 3 B 4:true
+OBS 4 E 33:A1@0;C1;P1:2;C1;P1:1;C1;P1:1;S1=D
+OBS 5 E 1:0
+OBS 6 E 1:7
+OBS 7 E 1:2
+OBS 8 E 1:2
+OBS 9 E 1:1
+OBS 10 E 1:4
+OBS 11 E 2:47
+OBS 12 E 2:46
+OBS 13 E 2:48
+OBS 14 E 2:45
+OBS 15 E 1:0
+OBS 16 E 1:3
+OBS 17 E 1:4
+OBS 18 E 1:3
+OBS 19 B 4:true
+OBS 20 E 1:1
+OBS 21 E 1:0
+END 22 0
+
+=================================================================
+==1157==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 528 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaada684a7c in operator new(unsigned long) (/b/cand+0x154a7c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xaaaada760ab0 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaada776ec8 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:141:46
+    #3 0xaaaada6be6b8 in n_deep_child_failure_recovered_by_middle_frame_trace() /s/scenario.cpp:2261:15
+    #4 0xaaaada72b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaada6c3490 in main /s/scenario.cpp:2423:42
+    #6 0xffff882c7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffff882c7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaada5aa12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x516000000080 (528 bytes)
+
+SUMMARY: AddressSanitizer: 528 byte(s) leaked in 1 allocation(s).

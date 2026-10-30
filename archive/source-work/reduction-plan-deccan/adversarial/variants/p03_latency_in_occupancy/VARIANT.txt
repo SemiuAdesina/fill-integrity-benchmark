@@ -1,0 +1,3 @@
+p03_latency_in_occupancy
+03 link model
+a link stays busy until the payload has arrived (latency counted in the occupancy)

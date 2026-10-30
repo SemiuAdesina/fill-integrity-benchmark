@@ -1,0 +1,3 @@
+b22_members_fitted_independently
+pairs
+each pair member is fitted as an ordinary relocation with its own place

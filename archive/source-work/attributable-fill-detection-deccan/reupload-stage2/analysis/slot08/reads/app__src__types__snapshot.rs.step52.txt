@@ -1,0 +1,133 @@
+2	use crate::types::ids::{
+3	    BlockRef, ClientRef, InstrumentId, OrderId, Price, Qty, StrategyId, Venue,
+4	};
+5	use crate::types::pending_order::PendingOrder;
+6	use crate::types::position::Position;
+7	use crate::types::time::Timestamp;
+8	
+9	#[derive(Debug, Clone, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+10	pub struct Cursor(String);
+11	
+12	impl Cursor {
+13	    pub fn new(value: impl Into<String>) -> Self {
+14	        Self(value.into())
+15	    }
+16	
+17	    pub fn beginning() -> Self {
+18	        Self(String::new())
+19	    }
+20	
+21	    pub fn as_str(&self) -> &str {
+22	        &self.0
+23	    }
+24	}
+25	
+26	impl From<&str> for Cursor {
+27	    fn from(value: &str) -> Self {
+28	        Self::new(value)
+29	    }
+30	}
+31	
+32	impl From<String> for Cursor {
+33	    fn from(value: String) -> Self {
+34	        Self::new(value)
+35	    }
+36	}
+37	
+38	/// One corrective order the engine has decided to send, or has sent.
+39	///
+40	/// The record exists from the moment the engine commits to the order, before the
+41	/// venue has said anything about it, so `order_id` is optional: a submission whose
+42	/// acknowledgement was lost has a `client_ref` and no id.
+43	#[derive(Debug, Clone, PartialEq)]
+44	pub struct NeutralizationRecord {
+45	    pub strategy_id: StrategyId,
+46	    pub venue: Venue,
+47	    pub instrument_id: InstrumentId,
+48	    pub client_ref: ClientRef,
+49	    pub order_id: Option<OrderId>,
+50	    pub limit_price: Price,
+51	    pub size: Qty,
+52	    pub expiry_time: Timestamp,
+53	}
+54	
+55	/// One order this engine submitted, and the attribution state held against it.
+56	///
+57	/// `client_ref` is the engine's own key and is always known. `order_id` and
+58	/// `venue_seq` come from the venue and are therefore optional: an order whose
+59	/// acknowledgement was lost has neither until some later observation supplies
+60	/// them.
+61	#[derive(Debug, Clone, PartialEq)]
+62	pub struct SubmissionRecord {
+63	    pub client_ref: ClientRef,
+64	    pub order_id: Option<OrderId>,
+65	    /// Engine clock at the instant this order began being tracked.
+66	    pub window_start: Timestamp,
+67	    pub venue_seq: Option<u64>,
+68	    pub size: Qty,
+69	    /// Quantity attributed to this order by per-order fill events.
+70	    pub direct_filled: Qty,
+71	    /// Quantity attributed to this order by block matches.
+72	    pub block_filled: Qty,
+73	    /// Set once a block naming this order has been observed.
+74	    pub finalized: bool,
+75	}
+76	
+77	impl SubmissionRecord {
+78	    pub fn attributed(&self) -> Qty {
+79	        self.direct_filled + self.block_filled
+80	    }
+81	
+82	    pub fn outstanding(&self) -> Qty {
+83	        let remaining = self.size - self.attributed();
+84	        if remaining > 0 {
+85	            remaining
+86	        } else {
+87	            0
+88	        }
+89	    }
+90	}
+91	
+92	/// One leg of a mandate the engine has tried to enter but has not yet seen
+93	/// accepted.
+94	///
+95	/// A leg whose acknowledgement was lost may exist at the venue under an
+96	/// identifier the engine does not know, so what has to survive is the identity
+97	/// the retry depends on — the `client_ref` — together with everything needed to
+98	/// place the leg again under that same reference, and the original window start.
+99	#[derive(Debug, Clone, PartialEq)]
+100	pub struct LegAttempt {
+101	    pub strategy_id: StrategyId,
+102	    pub instrument_id: InstrumentId,
+103	    pub venue: Venue,
+104	    pub limit_price: Price,
+105	    pub size: Qty,
+106	    pub expiry_time: Timestamp,
+107	    pub client_ref: ClientRef,
+108	    /// When the engine started tracking this leg. Its attribution window starts
+109	    /// here, not at the instant a retry happens to succeed.
+110	    pub created_at: Timestamp,
+111	}
+112	
+113	/// Everything that must survive a restart.
+114	///
+115	/// `StateStore::load` returns exactly what the matching `save` wrote, so a field
+116	/// here is durable and a field held only on `Engine` is not.
+117	#[derive(Debug, Clone, Default, PartialEq)]
+118	pub struct Snapshot {
+119	    pub positions: Vec<Position>,
+120	    pub pending_orders: Vec<PendingOrder>,
+121	    pub attempted_strategies: Vec<StrategyId>,
+122	    pub client_seq: u64,
+123	    pub fill_cursor: Cursor,
+124	    pub submissions: Vec<SubmissionRecord>,
+125	    pub absorbed_blocks: Vec<BlockRef>,
+126	    pub closing_orders: Vec<OrderId>,
+127	    pub replaced_orders: Vec<OrderId>,
+128	    pub neutralizations: Vec<NeutralizationRecord>,
+129	    /// Legs entered but not yet confirmed at the venue. A restart must not
+130	    /// leave them unrecoverable, and must not re-enter the mandate under a
+131	    /// reference the venue may already know.
+132	    pub leg_attempts: Vec<LegAttempt>,
+133	}
+134

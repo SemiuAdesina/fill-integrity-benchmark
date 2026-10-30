@@ -1,0 +1,7 @@
+{
+ "fixture": "h_reject_zero_target_length",
+ "expected_outcome": "reject",
+ "oracle_a": "reject:zero target history",
+ "oracle_b": "reject:zero target length",
+ "retained": true
+}

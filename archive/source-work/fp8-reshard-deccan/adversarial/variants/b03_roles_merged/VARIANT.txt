@@ -1,0 +1,3 @@
+b03_roles_merged
+identity
+forward and backward records share one state per block

@@ -1,0 +1,340 @@
+[12] CMD: cargo build --offline 2>&1 | tail -20 && echo "=== TESTS ===" && cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+t be neutralized a second time
+  left: [10, 10]
+ right: [10]
+
+---- the_lower_venue_sequence_breaks_a_shared_window_start stdout ----
+thread 'the_lower_venue_sequence_breaks_a_shared_window_start' panicked at tests/diagnostics.rs:219:5:
+assertion `left == right` failed: FAILED: with an equal window start the lower venue_seq sorts first, ahead of the order_id comparison
+  left: 9
+ right: 10
+
+---- window_end_is_exclusive stdout ----
+thread 'window_end_is_exclusive' panicked at tests/diagnostics.rs:63:5:
+assertion `left == right` failed: FAILED: the attribution window end is exclusive - a fill at exactly window_start + ATTRIBUTION_WINDOW is outside the window
+  left: 4
+ right: 0
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+    a_lost_acknowledgement_is_retried_under_the_same_client_ref
+    an_absent_order_this_engine_did_not_cancel_is_not_withdrawn
+    attribution_state_survives_a_restart_without_double_counting
+    block_remainder_units_go_to_the_first_orders_in_the_ordering
+    block_shares_are_truncated_never_rounded_up
+    cumulative_fill_quantities_are_a_high_water_mark
+    quantity_already_working_is_not_neutralized_twice
+    the_earlier_attribution_window_sorts_first
+    the_lower_venue_sequence_breaks_a_shared_window_start
+    window_end_is_exclusive
+
+test result: FAILED. 6 passed; 11 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[17] CMD: cargo build --offline 2>&1 | tail -20
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.45s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.45s
+[metadata] {"noOutputExpected": false}
+
+[18] CMD: cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+_client_ref ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+failures:
+
+---- a_later_block_divides_over_the_residuals_of_the_earlier_one stdout ----
+thread 'a_later_block_divides_over_the_residuals_of_the_earlier_one' panicked at tests/diagnostics.rs:259:5:
+assertion `left == right` failed: FAILED: the eligible set's basis is current outstanding quantity, so a later block divides over what the earlier block left
+  left: 8
+ right: 9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[22] CMD: sed -i 's/^use pairing_engine::types::time::Timestamp;$/use pairing_engine::types::time::Timestamp;\nuse pairing_engine::types::Venue;/' tests/diagnostics.rs && cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+block_basis_is_current_outstanding_not_order_size ... ok
+test a_closed_order_is_left_out_of_a_later_blocks_basis ... ok
+test a_later_block_allocates_nothing_to_an_order_an_earlier_block_closed ... ok
+test a_closed_corrective_leaves_a_real_gap_that_is_covered_again ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test a_rejected_entry_submission_does_not_latch_the_mandate_shut ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_fill_feed_and_the_open_order_list_are_one_quantity ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[23] CMD: cargo run --offline --bin reproduce 2>&1 | tail -50
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: cargo build --offline 2>&1 | tail -20 && cargo test --offline --test diagnostics 2>&1 | tail -8 && cargo run --offline --bin reproduce 2>&1 | tail -4
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.78s
+test the_fill_feed_and_the_open_order_list_are_one_quantity ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.78s
+test the_fill_feed_and_the_open_order_list_are_one_quantity ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: sed -i 's/^use pairing_engine::ports::{FillBatch, SubmitError};$/use pairing_engine::engine::AttributionLedger;\nuse pairing_engine::ports::{FillBatch, SubmitError};/' tests/interactions.rs && cargo test --offline --test
+--- obs tail ---
+ons-46fcd6fae7e64aaa)
+
+running 8 tests
+test a_block_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... ok
+test a_shared_block_divides_between_two_mandates ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.47s
+     Running tests/interactions.rs (target/debug/deps/interactions-46fcd6fae7e64aaa)
+
+running 8 tests
+test a_block_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... ok
+test a_shared_block_divides_between_two_mandates ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: cp src/engine/fill_classifier.rs /tmp/fc.bak && cp src/engine/cycle.rs /tmp/cy.bak # Mutation 1: revert locate() to order_id-first python3 - <<'EOF' import re p='/app/src/engine/fill_classifier.rs' s=open(p).read() old="
+--- obs tail ---
+test a_block_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test a_shared_block_divides_between_two_mandates ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... FAILED
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+test a_block_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test a_shared_block_divides_between_two_mandates ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... FAILED
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: python3 - <<'EOF' p='/app/src/engine/cycle.rs' s=open(p).read() old=""" if north_placed && south_placed { self.attempted.insert(candidate.strategy_id.clone()); }""" new=""" self.attempted.insert(candidate.strategy_id.clo
+--- obs tail ---
+lock_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... FAILED
+test a_shared_block_divides_between_two_mandates ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... ok
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: FAILED. 22 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+--- mutation 2: latch attempted unconditionally ---
+test a_block_at_the_window_end_allocates_nothing_but_still_closes ... ok
+test a_lost_acknowledgement_survives_a_restart ... ok
+test a_lost_entry_is_recovered_from_a_later_observation ... FAILED
+test a_shared_block_divides_between_two_mandates ... ok
+test a_restart_mid_closure_does_not_send_the_correction_twice ... ok
+test a_slowly_filling_corrective_is_not_covered_twice ... ok
+test an_in_flight_fill_is_attributed_and_shrinks_the_gap ... ok
+test the_client_reference_wins_over_a_recycled_venue_id ... ok
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: FAILED. 22 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: cargo build --offline 2>&1 | tail -3 && echo "--- diagnostics ---" && cargo test --offline --test diagnostics 2>&1 | grep "test result" && echo "--- interactions ---" && cargo test --offline --test interactions 2>&1 | gr
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.46s
+--- diagnostics ---
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- interactions ---
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- reproduce ---
+14
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.46s
+--- diagnostics ---
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- interactions ---
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- reproduce ---
+14
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}
+
+[36] CMD: ls -la --time-style=+%H:%M src/types/ src/ports/ && echo "--- warnings ---" && cargo build --offline 2>&1 | grep -i warn | head; cargo clippy --offline 2>&1 2>/dev/null | grep -E "^(warning|error)" | sort | uniq -c | hea
+--- obs tail ---
+src/ports/:
+total 20
+drwxr-xr-x 2 root root 4096 00:00 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 4724 00:00 mod.rs
+
+src/types/:
+total 44
+drwxr-xr-x 1 root root 4096 05:51 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 3207 00:00 ids.rs
+-rw-r--r-- 1 root root  461 00:00 mod.rs
+-rw-r--r-- 1 root root 2558 00:00 pending_order.rs
+-rw-r--r-- 1 root root 1913 00:00 position.rs
+-rw-r--r-- 1 root root 4323 05:51 snapshot.rs
+-rw-r--r-- 1 root root 1737 00:00 strategy.rs
+-rw-r--r-- 1 root root 1827 00:00 time.rs
+--- warnings ---
+
+[stdout]
+src/ports/:
+total 20
+drwxr-xr-x 2 root root 4096 00:00 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 4724 00:00 mod.rs
+
+src/types/:
+total 44
+drwxr-xr-x 1 root root 4096 05:51 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 3207 00:00 ids.rs
+-rw-r--r-- 1 root root  461 00:00 mod.rs
+-rw-r--r-- 1 root root 2558 00:00 pending_order.rs
+-rw-r--r-- 1 root root 1913 00:00 position.rs
+-rw-r--r-- 1 root root 4323 05:51 snapshot.rs
+-rw-r--r-- 1 root root 1737 00:00 strategy.rs
+-rw-r--r-- 1 root root 1827 00:00 time.rs
+--- warnings ---
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: cargo build --offline 2>&1|tail -2 && cargo test --offline --test diagnostics 2>&1|grep "test result" && cargo test --offline --test interactions 2>&1|grep "test result" && cargo run --offline --bin reproduce 2>&1|grep "
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.50s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.50s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}

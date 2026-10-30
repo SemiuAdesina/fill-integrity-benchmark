@@ -1,0 +1,3 @@
+b27_majority_vote_across_objects
+global inference
+each object is fitted alone; the most frequent program wins

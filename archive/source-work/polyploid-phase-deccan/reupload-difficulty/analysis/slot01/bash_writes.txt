@@ -1,0 +1,370 @@
+[16]
+mkdir -p /tmp/proto && cat > /tmp/proto/proto.py <<'EOF'
+import json, itertools, random, math
+import numpy as np
+
+STATES=[(a,b) for a in range(4) for b in range(4) if a<=b]
+S=len(STATES)
+
+def switch_count(s1,s2):
+    right=list(s2); shared=0
+    for x in s1:
+        for i in range(len(right)):
+            if right[i]==x:
+                right[i]=-1; shared+=1; break
+    return 2-shared
+
+KK=np.array([[switch_count(s1,s2) for s2 in STATES] for s1 in STATES],dtype=np.int64)
+
+def load(path):
+    d=json.load(open(path))
+    M=d['markers']; N=d['offspring']
+    gl=np.array(d['child_gl'])  # N,M,5
+    rec={p:np.array(d['recombination'][p]) for p in 'AB'}
+    dra={p:d['double_reduction'][p]['allowed'] for p in 'AB'}
+    drr={p:d['double_reduction'][p]['rate'] for p in 'AB'}
+    dos={p:d['parent_dosage'][p] for p in 'AB'}
+    return d,M,N,gl,rec,dra,drr,dos
+
+class Prob:
+    def __init__(self,path):
+        (self.d,self.M,self.N,self.gl,self.rec,self.dra,self.drr,self.dos)=load(path)
+        M,N=self.M,self.N
+        # columns
+        self.cols={}
+        for p in 'AB':
+            arr=[]
+            for m in range(M):
+                c=[mask for mask in range(16) if bin(mask).count('1')==self.dos[p][m]]
+                arr.append(c)
+            self.cols[p]=arr
+        # legal states
+        self.legal={}
+        for p in 'AB':
+            L=np.zeros((M,S),dtype=bool)
+            for m in range(M):
+                for si,(a,b) in enumerate(STATES):
+                    L[m,si]= (a!=b) or self.dra[p][m]
+            self.legal[p]=L
+        # dr terms
+        self.dr={}
+        for p in 'AB':
+            D=np.zeros((M,S))
+            for m in range(M):
+                for si,(a,b) in enumerate(STATES):
+                    if a==b:
+                        D[m,si]= math.log(self.drr[p][m]) if self.drr[p][m]>0 else -1e18
+                    else:
+                        D[m,si]= math.log(1-self.drr[p][m])
+            self.dr[p]=D
+        # trans
+        self.T={}
+        for p in 'AB':
+            T=np.zeros((M-1,S,S))
+            for m in range(M-1):
+                r=self.rec[p][m]
+                for k in range(3):
+                    v=k*math.log(r)+(2-k)*math.log(1-r)
+                    T[m][KK==k]=v
+            self.T[p]=T
+        # u_of[mask][state]
+        self.u=np.array([[( (mask>>a)&1 )+((mask>>b)&1) for (a,b) in STATES] for mask in range(16)],dtype=np.int64)
+        # achievable u per (marker, state) for each parent
+        self.ach={}
+        for p in 'AB':
+            A=[]
+            for m in range(M):
+                row=[]
+                for si in range(S):
+                    vals=set()
+                    for mask in self.cols[p][m]:
+                        vals.add(int(self.u[mask][si]))
+                    row.append(sorted(vals))
+                A.append(row)
+            self.ach[p]=A
+        # ub emission: [c,m,joint(si*S+ti)]
+        self.ub=np.full((N,M,S*S),-1e18)
+        for c in range(N):
+            for m in range(M):
+             
+
+[23]
+cat > src/solver.rs <<'EOF'
+pub mod local;
+pub mod tables;
+pub mod viterbi;
+
+use crate::cross_input::Cross;
+use crate::cross_model::{Haplotypes, Parent, ProgenyPath, Reconstruction, State};
+use crate::solver::local::{Local, Rng};
+use crate::solver::tables::Tables;
+use crate::solver::viterbi::{Chain, SuffixBounds};
+
+pub fn solve(cross: &Cross) -> Reconstruction {
+    let tables = Tables::build(cross);
+    let _bounds = SuffixBounds::build(cross, &tables);
+    let mut rng = Rng::new(0x5eed);
+    let mut local = Local::new(cross, &tables);
+    let mut best = f64::NEG_INFINITY;
+    let mut best_picks: Vec<(usize, usize)> = Vec::new();
+    for _ in 0..8 {
+        let mut picks: Vec<(usize, usize)> = (0..cross.markers)
+            .map(|m| (rng.below(tables.cols[0][m].len()), rng.below(tables.cols[1][m].len())))
+            .collect();
+        let v = local.ascend(&mut picks);
+        if v > best {
+            best = v;
+            best_picks = picks;
+        }
+    }
+    let _ = best;
+    let chain = Chain::new(cross, &tables);
+    let mut hap_a = Haplotypes::zeros(cross.markers);
+    let mut hap_b = Haplotypes::zeros(cross.markers);
+    for m in 0..cross.markers {
+        let mask_a = tables.cols[0][m][best_picks[m].0];
+        let mask_b = tables.cols[1][m][best_picks[m].1];
+        for h in 0..4 {
+            hap_a.set(h, m, (mask_a >> h) & 1);
+            hap_b.set(h, m, (mask_b >> h) & 1);
+        }
+    }
+    let mut paths = Vec::with_capacity(cross.offspring);
+    for c in 0..cross.offspring {
+        let (_, joint) = chain.best_path(c, &best_picks);
+        let mut from_a = Vec::with_capacity(cross.markers);
+        let mut from_b = Vec::with_capacity(cross.markers);
+        for (m, j) in joint.iter().enumerate() {
+            let (sa, sb) = local::split(*j);
+            let _ = m;
+            from_a.push(state_of(sa));
+            from_b.push(state_of(sb));
+        }
+        paths.push(ProgenyPath { from_a, from_b });
+    }
+    let _ = Parent::A;
+    Reconstruction { haplotypes_a: hap_a, haplotypes_b: hap_b, paths }
+}
+
+fn state_of(index: usize) -> State {
+    crate::cross_model::ALL_STATES[index]
+}
+EOF
+cat > src/bin/scratch.rs <<'EOF'
+use polyploid_phase::cross_input::parse_cross;
+use polyploid_phase::scoring::score;
+use polyploid_phase::solver::local::{Local, Rng};
+use polyploid_phase::solver::tables::Tables;
+use polyploid_phase::solver::viterbi::SuffixBounds;
+use polyploid_phase::solver::solve;
+
+fn main() {
+    let path = std::env::args().nth(1).unwrap_or_else(|| "/app/cross.json".to_string());
+    let text = std::fs::read_to_string(&path).unwrap();
+    let cross = parse_cross(&text).expect("valid cross");
+    let tables = Tables::build(&cross);
+    let bounds = SuffixBounds::build(&cross, &tables);
+    println!("markers={} offspring={}", cross.markers, cross.offspring);
+    println!("root bound = {:.6}", bounds.root());
+    let mut rng = Rng::new(0x5eed1234);
+    let mut local = Local::new(&cross, &tables);
+    let mut best = f64::NEG_INFINI
+
+[31]
+python3 - <<'EOF'
+import re
+p='src/solver/bb.rs'
+s=open(p).read()
+s=s.replace("""    best_score: f64,
+    candidates: Vec<Candidate>,""","""    best_score: f64,
+    candidates: Vec<Candidate>,
+    /// `[progeny]` largest the progeny after this one can still contribute.
+    suffix_total: Vec<f64>,""")
+s=s.replace("""        let offspring = cross.offspring;
+        Search {""","""        let offspring = cross.offspring;
+        let mut suffix_total = vec![0.0f64; offspring];
+        let mut running = 0.0f64;
+        for c in (0..offspring).rev() {
+            suffix_total[c] = running;
+            running += bounds.total[c];
+        }
+        Search {""")
+s=s.replace("""            best_score: f64::NEG_INFINITY,
+            candidates: Vec::new(),""","""            best_score: f64::NEG_INFINITY,
+            candidates: Vec::new(),
+            suffix_total,""")
+s=s.replace("""                    bound += best;
+                    if bound + self.bounds_total_above(c, marker) < self.best_score - TOLERANCE {
+                        exhausted = true;
+                        break;
+                    }""","""                    bound += best;
+                    if bound + self.suffix_total[c] < self.best_score - TOLERANCE {
+                        exhausted = true;
+                        break;
+                    }""")
+s=s.replace("""    /// Largest the still unaccounted progeny can add, used to abandon a column
+    /// pair part way through.
+    fn bounds_total_above(&self, progeny: usize, marker: usize) -> f64 {
+        let mut sum = 0.0;
+        for c in progeny + 1..self.cross.offspring {
+            sum += self.bounds.total[c];
+        }
+        let _ = marker;
+        sum
+    }
+
+""","")
+open(p,'w').write(s)
+EOF
+cat >> src/bin/scratch.rs <<'EOF'
+EOF
+python3 - <<'EOF'
+p='src/bin/scratch.rs'
+s=open(p).read()
+s=s.replace("""    let answer = solve(&cross);
+    println!("solve score= {:.6}", score(&cross, &answer).unwrap());""","""    let mut search = polyploid_phase::solver::bb::Search::new(&cross, &tables, &bounds);
+    let t1 = std::time::Instant::now();
+    let cands = search.run(best);
+    println!("bb: nodes={} leaves={} time={:?} best={:.6} candidates={}",
+        search.nodes, search.leaves, t1.elapsed(), search.best_score(), cands.len());""")
+open(p,'w').write(s)
+EOF
+python3 - <<'EOF'
+p='src/solver.rs'
+s=open(p).read()
+s=s.replace("pub mod local;","pub mod bb;\npub mod local;")
+open(p,'w').write(s)
+EOF
+export PATH="/usr/local/cargo/bin:$PATH"; cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" -A5 | head -30; time ./target/release/scratch /app/cross.json 20
+
+[34]
+cat > src/bin/scratch2.rs <<'EOF'
+use polyploid_phase::cross_input::parse_cross;
+use polyploid_phase::solver::local::{Local, Rng};
+use polyploid_phase::solver::tables::Tables;
+use polyploid_phase::solver::viterbi::{Chain, SuffixBounds};
+
+fn main() {
+    let text = std::fs::read_to_string("/app/cross.json").unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let tables = Tables::build(&cross);
+    let bounds = SuffixBounds::build(&cross, &tables);
+    let mut rng = Rng::new(7);
+    let mut local = Local::new(&cross, &tables);
+    let mut best = f64::NEG_INFINITY;
+    let mut best_picks = Vec::new();
+    for _ in 0..30 {
+        let mut picks: Vec<(usize, usize)> = (0..cross.markers)
+            .map(|m| (rng.below(tables.cols[0][m].len()), rng.below(tables.cols[1][m].len())))
+            .collect();
+        let v = local.ascend(&mut picks);
+        if v > best { best = v; best_picks = picks; }
+    }
+    println!("incumbent {best:.9}");
+    // build rows
+    let mut rows = [[0u8; 32]; 2];
+    for p in 0..2 {
+        for m in 0..cross.markers {
+            let mask = tables.cols[p][m][best_picks[m].p];
+            for h in 0..4 { rows[p][h] |= ((mask >> h) & 1) << m; }
+        }
+    }
+    // sort rows of each parent: find permutation ordering rows ascending
+    for p in 0..2 {
+        let mut order: Vec<usize> = (0..4).collect();
+        order.sort_by_key(|&h| {
+            let mut key = 0u64;
+            for m in (0..cross.markers).rev() { key = key * 2 + rows[p][h] as u64 & 1; let _ = m; }
+            // build key from marker 0 first
+            let mut k = 0u64;
+            for m in 0..cross.markers { k = k * 2 + ((rows[p][h] >> m) & 1) as u64; }
+            let _ = key;
+            k
+        });
+        println!("parent {p} order {order:?}");
+        // rebuild masks in sorted order
+        let mut new_picks = Vec::new();
+        for m in 0..cross.markers {
+            let mut mask = 0u8;
+            for (newidx, &h) in order.iter().enumerate() {
+                if (tables.cols[p][m][best_picks[m].p] >> h) & 1 == 1 { mask |= 1 << newidx; }
+            }
+            let idx = tables.cols[p][m].iter().position(|&x| x == mask).unwrap();
+            new_picks.push(idx);
+        }
+        // check row state transitions
+        let mut st = 0u8;
+        for m in 0..cross.markers {
+            let mask = tables.cols[p][m][new_picks[m]];
+            for pair in 0..3u8 {
+                if st & (1 << pair) != 0 { continue; }
+                let lo = (mask >> pair) & 1;
+                let hi = (mask >> (pair + 1)) & 1;
+                assert!(lo <= hi, "marker {m} pair {pair} violates ascending rows");
+                if lo < hi { st |= 1 << pair; }
+            }
+        }
+        println!("  parent {p}: sorted column sequence passes ascending check");
+        for m in 0..cross.markers { best_picks[m].p = new_picks[m]; let _ = m; }
+        // apply per marker
+        for (m, idx) in new_picks.iter().enumerate() { best_picks[m].p = *idx; }
+    }
+  
+
+[45]
+export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/dump.rs <<'EOF'
+EOF
+grep -n "double_reduction" /app/src/bin/scratch2.rs
+
+[83]
+cat > /tmp/gen_large.rs <<'EOF'
+EOF
+export PATH="/usr/local/cargo/bin:$PATH" && cargo run --release --offline --quiet --bin scratch2 -- random 1 28 32 28 2>&1 | tail -2; cp /tmp/gen_cross.json /tmp/large_cross.json; ls -la /tmp/large_cross.json
+
+[115]
+export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/grid.sh <<'EOF'
+#!/bin/sh
+export PATH="/usr/local/cargo/bin:$PATH"
+cd /app
+for m in 12 16 20 24 28; do
+  for n in 8 12 16 24 32; do
+    f=/tmp/g_${m}_${n}.json
+    ./target/release/scratch2 make $((m*100+n)) $m $n $((m*3/4)) nonflat $f > /dev/null
+    echo "=== M=$m N=$n"
+    timeout 40 ./target/release/scratch2 profile $f 32 0 || echo "  TIMED OUT after 40s"
+  done
+done
+echo GRIDDONE
+EOF
+chmod +x /tmp/grid.sh && /tmp/grid.sh > /tmp/grid.out 2>&1
+
+[151]
+export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/hard.sh <<'EOF'
+#!/bin/sh
+export PATH="/usr/local/cargo/bin:$PATH"
+cd /app
+for f in /tmp/g_12_16.json /tmp/g_16_8.json /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_24.json /tmp/g_28_32.json; do
+  echo "=== $f"
+  timeout 150 ./target/release/scratch2 profile $f 32 0 || echo "  TIMED OUT"
+  echo "--- solve"
+  timeout 150 ./target/release/scratch2 time $f || echo "  TIMED OUT"
+done
+echo HARDDONE
+EOF
+chmod +x /tmp/hard.sh && /tmp/hard.sh > /tmp/hard.out 2>&1
+
+[160]
+export PATH="/usr/local/cargo/bin:$PATH" && sed -i 's/use polyploid_phase::solver::canon::haplotypes_of;/use polyploid_phase::solver::canon::{haplotypes_of, sorted_picks};/' /app/src/bin/scratch2.rs && cargo build --release --offline --locked 2>&1 | grep -E "^error" -A 6 | head -20; cargo build --release --offline --locked 2>&1 | tail -1
+
+[167]
+export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/hard2.sh <<'EOF'
+#!/bin/sh
+export PATH="/usr/local/cargo/bin:$PATH"
+cd /app
+for f in /tmp/g_12_16.json /tmp/g_16_8.json /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_8.json /tmp/g_28_24.json /tmp/g_28_32.json /app/cross.json; do
+  echo "=== $f"
+  timeout 200 ./target/release/scratch2 time $f || echo "  TIMED OUT"
+done
+echo HARD2DONE
+EOF
+chmod +x /tmp/hard2.sh && /tmp/hard2.sh > /tmp/hard2.out 2>&1

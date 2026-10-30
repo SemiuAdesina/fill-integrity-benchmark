@@ -1,0 +1,10 @@
+FRAME 112
+FRAME 88
+OBS 0 B 4:true
+OBS 1 E 1:4
+OBS 2 E 1:0
+OBS 3 B 4:true
+OBS 4 E 1:6
+OBS 5 E 1:0
+OBS 6 E 1:6
+END 7 0

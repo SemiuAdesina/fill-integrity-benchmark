@@ -1,0 +1,3 @@
+b03_symbol_index_off_by_one
+ELF/addressing
+symbol index resolved without the null entry (off by one)

@@ -1,0 +1,40 @@
+{
+ "fixture": "public",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l03",
+    "l22"
+   ],
+   [
+    "l12",
+    "l20"
+   ],
+   [
+    "l08"
+   ],
+   [
+    "l09",
+    "l19",
+    "l20"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 2134
+ },
+ "observables": {
+  "completion": 7,
+  "allocation": 0,
+  "total_bytes": 64,
+  "link_bytes": {
+   "l03": 8,
+   "l22": 8,
+   "l12": 8,
+   "l09": 8,
+   "l19": 8,
+   "l20": 16,
+   "l08": 8
+  }
+ }
+}

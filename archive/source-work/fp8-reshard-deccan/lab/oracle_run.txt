@@ -1,0 +1,7 @@
+MODE=oracle LABEL=base REWARD=1 RC=0 ELAPSED=9s
+RUNLOG: CONTROL ok verdict passed=13/13 control=1 probe_failed_closed=0 reward=0  FAILS: none
+WORKDIR: /tmp/rc8-hue4C7
+MODE=nop LABEL=nop REWARD=0 RC=0 ELAPSED=5s
+RUNLOG: CONTROL ok verdict passed=4/13 control=1 probe_failed_closed=0 reward=0  FAILS: accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output,
+WORKDIR: /tmp/rc8-bDWTie
+DONE

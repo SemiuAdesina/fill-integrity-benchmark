@@ -1,0 +1,879 @@
+[8] CMD: python3 -c "import numpy; print(numpy.__version__)" 2>&1 | head -2; cargo --version; rustc --version; cat /app/Cargo.toml; cat /app/README.md
+--- obs tail ---
+kes this crate disagree with the specification.
+
+## Building and running
+
+```sh
+cargo build --release
+./target/release/phase
+```
+
+`phase` reads `/app/cross.json` and writes `/app/result.json` by default. Both
+paths can be overridden positionally. It exits non-zero with a message on
+standard error if the input is invalid or the answer it produced does not score.
+
+The worked example is deliberately smaller than the accepted task range so it
+can be inspected by hand. It illustrates the two document formats and the
+canonical representative; the normal input reader correctly rejects it at the
+published 12-marker lower bound. Use the public diagnostics below for an
+executable check of the supplied mechanics.
+
+The public diagnostics cover the supplied domain types, unordered inheritance
+states, multiset transition semantics, relabelling, result encoding and the
+canonical digest without revealing or testing a particular search strategy:
+
+```sh
+cargo test --offline --locked --test diagnostics
+```
+
+## Dependencies
+
+None. The crate is standard library only, including its JSON handling, and the
+environment has no network access. `cargo build` works offline because there is
+nothing to fetch.
+
+## Scale
+
+`cross.json` holds 12 to 28 markers and 8 to 32 progeny. Both parents are
+tetraploid, so each has four homologs and there are ten unordered inheritance
+states per parent — a hundred jointly. `spec/cross-format-v1.md` gives the
+validation rules in full.
+[metadata] {"noOutputExpected": false}
+
+[11] CMD: cargo test --offline --locked --release --test proto -- --nocapture 2>&1 | tail -25
+--- obs tail ---
+                    ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (test "proto") generated 2 warnings
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error; 2 warnings emitted
+
+[stdout]
+    = note: expected mutable reference `&mut [f64; 100]`
+               found mutable reference `&mut Vec<f64>`
+note: method defined here
+   --> tests/proto.rs:116:8
+    |
+116 |     fn node(&self, c: usize, mm: usize, dose: &[u8; NJ], out: &mut [f64; NJ]) {
+    |        ^^^^                                              -------------------
+
+warning: unused variable: `c`
+   --> tests/proto.rs:125:23
+    |
+125 |     fn viterbi(&self, c: usize, nodes: &[Vec<f64>]) -> (f64, Vec<Vec<u8>>) {
+    |                       ^ help: if this is intentional, prefix it with an underscore: `_c`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `c`
+   --> tests/proto.rs:356:28
+    |
+356 | fn viterbi_path(ctx: &Ctx, c: usize, nodes: &[Vec<f64>]) -> (f64, Vec<usize>) {
+    |                            ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (test "proto") generated 2 warnings
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[12] CMD: python3 - <<'EOF' import re p='/app/tests/proto.rs' s=open(p).read() s = s.replace(""" let mut nd = vec![0.0f64; NJ]; ctx.node(c, mm, &dose, &mut nd);""",""" let mut nd = [0.0f64; NJ]; ctx.node(c, mm, &dose, &mut nd);"""
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+error: this file contains an unclosed delimiter
+   --> tests/proto.rs:362:3
+    |
+38  | impl Ctx {
+    |          - unclosed delimiter
+...
+362 | }
+    |  ^
+
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+error: this file contains an unclosed delimiter
+   --> tests/proto.rs:362:3
+    |
+38  | impl Ctx {
+    |          - unclosed delimiter
+...
+362 | }
+    |  ^
+
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[13] CMD: python3 - <<'EOF' p='/app/tests/proto.rs' s=open(p).read() s = s.replace(""" for j in 0..NJ { out[j] = g[dose[j] as usize] + d[j]; } } #[test]""",""" for j in 0..NJ { out[j] = g[dose[j] as usize] + d[j]; } } } #[test]"""
+--- obs tail ---
+Ctx, c: usize, nodes: &[Vec<f64>]) -> (f64, Vec<usize>) {
+    |                            ^ help: if this is intentional, prefix it with an underscore: `_c`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0308, E0599.
+For more information about an error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (test "proto") generated 1 warning
+error: could not compile `polyploid-phase` (test "proto") due to 2 previous errors; 1 warning emitted
+
+[stdout]
+    |                           |    expected `Vec<f64>`, found `[f64; 100]`
+    |                           arguments to this method are incorrect
+    |
+    = note: expected struct `Vec<f64>`
+                found array `[f64; 100]`
+note: method defined here
+   --> /rustc/90b35a6239c3d8bdabc530a6a0816f7ff89a0aaf/library/alloc/src/vec/mod.rs:2400:12
+
+warning: unused variable: `c`
+   --> tests/proto.rs:294:28
+    |
+294 | fn viterbi_path(ctx: &Ctx, c: usize, nodes: &[Vec<f64>]) -> (f64, Vec<usize>) {
+    |                            ^ help: if this is intentional, prefix it with an underscore: `_c`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0308, E0599.
+For more information about an error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (test "proto") generated 1 warning
+error: could not compile `polyploid-phase` (test "proto") due to 2 previous errors; 1 warning emitted
+[metadata] {"noOutputExpected": false}
+
+[14] CMD: python3 - <<'EOF' p='/app/tests/proto.rs' s=open(p).read() # nodes: Vec<Vec<f64>> -> use arrays: change viterbi_path signature to &[[f64; NJ]] s = s.replace("fn viterbi_path(ctx: &Ctx, c: usize, nodes: &[Vec<f64>]) -> (f
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+error[E0599]: no method named `viterbi` found for struct `Ctx` in the current scope
+   --> tests/proto.rs:158:26
+    |
+26  | struct Ctx {
+    | ---------- method `viterbi` not found for this struct
+...
+158 |         let (v, _) = ctx.viterbi(c, &nodes);
+    |                          ^^^^^^^ method not found in `Ctx`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+error[E0599]: no method named `viterbi` found for struct `Ctx` in the current scope
+   --> tests/proto.rs:158:26
+    |
+26  | struct Ctx {
+    | ---------- method `viterbi` not found for this struct
+...
+158 |         let (v, _) = ctx.viterbi(c, &nodes);
+    |                          ^^^^^^^ method not found in `Ctx`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `polyploid-phase` (test "proto") due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[15] CMD: python3 - <<'EOF' p='/app/tests/proto.rs' s=open(p).read() s = s.replace(""" let mut nodes: Vec<Vec<f64>> = Vec::new(); for mm in 0..ctx.m { let mut best = vec![NEG; NJ];""",""" let mut nodes: Vec<[f64; NJ]> = Vec::new()
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.74s
+     Running tests/proto.rs (target/release/deps/proto-fdfa4cdb29500dd0)
+
+running 1 test
+M=12 N=10
+pairs per marker: [1, 24, 24, 4, 6, 4, 4, 4, 16, 16, 24, 24]
+total joint assignments: 130459631616
+UB1 (per-progeny free columns, path consistent) = -684.7190
+UB2 (shared column, free states) = -682.9689
+LB (local search) = -712.8150
+gap UB1-LB = 28.0960
+gap UB2-LB = 29.8461
+test measure_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.74s
+     Running tests/proto.rs (target/release/deps/proto-fdfa4cdb29500dd0)
+
+running 1 test
+M=12 N=10
+pairs per marker: [1, 24, 24, 4, 6, 4, 4, 4, 16, 16, 24, 24]
+total joint assignments: 130459631616
+UB1 (per-progeny free columns, path consistent) = -684.7190
+UB2 (shared column, free states) = -682.9689
+LB (local search) = -712.8150
+gap UB1-LB = 28.0960
+gap UB2-LB = 29.8461
+test measure_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+[metadata] {"noOutputExpected": false}
+
+[20] CMD: timeout 600 cargo test --offline --locked --release --test proto -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+warning: `polyploid-phase` (test "proto") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.29s
+     Running tests/proto.rs (target/release/deps/proto-fdfa4cdb29500dd0)
+
+running 1 test
+initial LB = -710.609838
+nodes=6637 leaves=15 best=-705.140456 time=821.544006ms
+assign = [(0, 0), (0, 0), (1, 1), (0, 1), (1, 0), (0, 2), (3, 0), (3, 0), (2, 2), (3, 2), (0, 4), (3, 4)]
+test measure_bnb ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+
+[stdout]
+warning: `polyploid-phase` (test "proto") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.29s
+     Running tests/proto.rs (target/release/deps/proto-fdfa4cdb29500dd0)
+
+running 1 test
+initial LB = -710.609838
+nodes=6637 leaves=15 best=-705.140456 time=821.544006ms
+assign = [(0, 0), (0, 0), (1, 1), (0, 1), (1, 0), (0, 2), (3, 0), (3, 0), (2, 2), (3, 2), (0, 4), (3, 4)]
+test measure_bnb ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.84s
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: cargo build --release 2>&1 | grep -E "^(error|warning: unused|warning: unreach)" -A 6 | head -60
+--- obs tail ---
+`
+   --> src/solver/branch.rs:154:72
+    |
+154 |     let mut best_assign: Vec<(usize, usize)> = (0..model.markers).map(|m| (0usize, 0usize)).collect();
+    |                                                                        ^ help: if this is intentional, prefix it with an underscore: `_m`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+
+[stdout]
+warning: unused import: `State`
+  --> src/solver/canon.rs:11:75
+   |
+11 | use crate::cross_model::{Haplotypes, Parent, ProgenyPath, Reconstruction, State, ALL_STATES, HOMOLOGS};
+   |                                                                           ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+--
+error[E0608]: cannot index into a value of type `u8`
+   --> src/solver/canon.rs:152:42
+    |
+152 |             haps.set(h, m, columns[m][ia][h]);
+    |                                          ^^^
+
+warning: unused variable: `m`
+   --> src/solver/branch.rs:154:72
+    |
+154 |     let mut best_assign: Vec<(usize, usize)> = (0..model.markers).map(|m| (0usize, 0usize)).collect();
+    |                                                                        ^ help: if this is intentional, prefix it with an underscore: `_m`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: python3 - <<'EOF' p='src/solver/canon.rs' s=open(p).read() s=s.replace("use crate::cross_model::{Haplotypes, Parent, ProgenyPath, Reconstruction, State, ALL_STATES, HOMOLOGS};", "use crate::cross_model::{Haplotypes, Pare
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: cargo test --offline --locked --test diagnostics 2>&1 | tail -8
+--- obs tail ---
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: timeout 1800 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.33s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.50s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.33s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.50s
+[metadata] {"noOutputExpected": false}
+
+[42] CMD: cargo build --release --offline --locked 2>&1 | tail -5
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[55] CMD: cargo build --release --offline --locked 2>&1 | tail -3 && PHASE_TIMING=1 ./target/release/phase /tmp/x20_20_1.json /tmp/o.json
+--- obs tail ---
+Command did not complete within its 600s timeout and was moved to the background (ID: buwl1c1we). Output is being written to: /tmp/claude-0/-app/4bfd9d83-8082-4bcb-8b8a-6c0bb19907a4/tasks/buwl1c1we.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "buwl1c1we", "timedOutAfterMs": 600000}
+
+[60] CMD: cargo build --release --offline --locked 2>&1 | tail -3
+--- obs tail ---
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+
+[stdout]
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[61] CMD: cargo build --release --offline --locked 2>&1 | head -30
+--- obs tail ---
+-- value moved here
+...
+301 |         .map(|c| {
+    |              ^^^ value borrowed here after move
+...
+304 |                 let v = opt[c][0][j] + back[c][0][j];
+    |                                        ---- borrow occurs due to use in closure
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+290 |         back: back.clone(),
+    |             ++++++++++++++
+
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+error[E0382]: borrow of moved value: `back`
+   --> src/solver/branch.rs:301:14
+    |
+250 |     let mut back: Vec<Vec<[f64; NJ]>> = Vec::with_capacity(n);
+    |         -------- move occurs because `back` has type `Vec<Vec<[f64; 100]>>`, which does not implement the `Copy` trait
+...
+290 |         back,
+    |         ---- value moved here
+...
+301 |         .map(|c| {
+    |              ^^^ value borrowed here after move
+...
+304 |                 let v = opt[c][0][j] + back[c][0][j];
+    |                                        ---- borrow occurs due to use in closure
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+290 |         back: back.clone(),
+    |             ++++++++++++++
+
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[62] CMD: python3 - <<'EOF' p='src/solver/branch.rs' s=open(p).read() block = """ let root_bound: f64 = (0..n) .map(|c| { let mut best = NEG; for j in 0..NJ { let v = opt[c][0][j] + back[c][0][j]; if v > best { best = v; } } best 
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+[metadata] {"noOutputExpected": false}
+
+[70] CMD: python3 - <<'EOF' p='src/solver/branch.rs' s=open(p).read() old_head = """pub fn branch_and_bound(model: &Model, lower_bound: f64) -> Outcome { let n = model.offspring; let m = model.markers; // Best node score each prog
+--- obs tail ---
+  --> src/solver/branch.rs:239:8
+    |
+239 | pub fn branch_and_bound(model: &Model, lower_bound: f64, dual: &Dual) -> Outcome {
+    |        ^^^^^^^^^^^^^^^^ -------------  ----------------  -----------
+help: provide the argument
+    |
+54  |     let outcome = branch_and_bound(&model, lower_bound, /* dual */);
+    |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some errors have detailed explanations: E0061, E0432.
+For more information about an error, try `rustc --explain E0061`.
+error: could not compile `polyploid-phase` (lib) due to 2 previous errors
+
+[stdout]
+error[E0061]: this function takes 3 arguments but 2 arguments were supplied
+   --> src/solver.rs:54:19
+    |
+54  |     let outcome = branch_and_bound(&model, lower_bound);
+    |                   ^^^^^^^^^^^^^^^^--------------------- argument #3 is missing
+    |
+note: function defined here
+   --> src/solver/branch.rs:239:8
+    |
+239 | pub fn branch_and_bound(model: &Model, lower_bound: f64, dual: &Dual) -> Outcome {
+    |        ^^^^^^^^^^^^^^^^ -------------  ----------------  -----------
+help: provide the argument
+    |
+54  |     let outcome = branch_and_bound(&model, lower_bound, /* dual */);
+    |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some errors have detailed explanations: E0061, E0432.
+For more information about an error, try `rustc --explain E0061`.
+error: could not compile `polyploid-phase` (lib) due to 2 previous errors
+[metadata] {"noOutputExpected": false}
+
+[71] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("""pub mod branch; pub mod canon; pub mod model;""","""pub mod branch; pub mod canon; pub mod dual; pub mod model;""") s=s.replace("""use branch::{branch_a
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.73s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.73s
+[metadata] {"noOutputExpected": false}
+
+[75] CMD: python3 - <<'EOF' p='src/solver/dual.rs' s=open(p).read() s=s.replace(""" let mut nu = vec![vec![[NEG; NJ]; m]; n]; let mut arg = vec![vec![[0u8; NJ]; m]; n]; let mut chosen: Vec<Vec<usize>> = vec![vec![0usize; m]; n]; f
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.79s
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+[timing] local=0.107s bnb=0.755s nodes=6237 leaves=13 ties=1 best=-705.140456 lb=-709.293422 root=-684.719049
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /tmp/oo.json
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.79s
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+[timing] local=0.107s bnb=0.755s nodes=6237 leaves=13 ties=1 best=-705.140456 lb=-709.293422 root=-684.719049
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /tmp/oo.json
+[metadata] {"noOutputExpected": false}
+
+[76] CMD: python3 - <<'EOF' p='src/solver/dual.rs' s=open(p).read() s=s.replace(""" if value < best_l { best_l = value; best_lam.copy_from_slice(&lam); }""",""" if std::env::var("PHASE_TIMING").is_ok() { eprintln!("[iters] {} L={v
+--- obs tail ---
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+
+[stdout]
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `polyploid-phase` (lib) due to 1 previous error
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+[metadata] {"noOutputExpected": false}
+
+[77] CMD: python3 - <<'EOF' p='src/solver/dual.rs' s=open(p).read() s=s.replace(""" if std::env::var("PHASE_TIMING").is_ok() { eprintln!("[iters] {} L={value:.6} sq={square:.0}", used); } if value < best_l {""",""" if value < best
+--- obs tail ---
+ut]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.43s
+[iters] 1 L=-684.719049 sq=154 step=0.15957
+[iters] 2 L=-666.944382 sq=206 step=0.20558
+[iters] 3 L=-667.393770 sq=200 step=0.20950
+[iters] 4 L=-666.271819 sq=210 step=0.20486
+[iters] 5 L=-666.046165 sq=204 step=0.21200
+[iters] 6 L=-663.451429 sq=208 step=0.22039
+[iters] 7 L=-662.798251 sq=216 step=0.21526
+[iters] 8 L=-662.793748 sq=206 step=0.22573
+[iters] 9 L=-660.898894 sq=210 step=0.23045
+[iters] 10 L=-663.353798 sq=198 step=0.23202
+[iters] 11 L=-661.933553 sq=214 step=0.22131
+[iters] 12 L=-661.692121 sq=216 step=0.22038
+[iters] 13 L=-661.533153 sq=212 step=0.22528
+[iters] 14 L=-660.215001 sq=208 step=0.23595
+[iters] 15 L=-662.648893 sq=214 step=0.21797
+[iters] 16 L=-660.592660 sq=208 step=0.23414
+[iters] 17 L=-659.075711 sq=214 step=0.23466
+[iters] 18 L=-661.409162 sq=206 step=0.23245
+[iters] 19 L=-662.025239 sq=210 step=0.22509
+[iters] 20 L=-660.278000 sq=210 step=0.23341
+[iters] 21 L=-661.931495 sq=202 step=0.23446
+[iters] 22 L=-661.173945 sq=210 step=0.22914
+[iters] 23 L=-660.970421 sq=206 step=0.23458
+[iters] 24 L=-660.577295 sq=208 step=0.23421
+[iters] 25 L=-661.150276 sq=206 step=0.23370
+[iters] 26 L=-662.075305 sq=204 step=0.23146
+[iters] 27 L=-661.330926 sq=210 step=0.22839
+[iters] 28 L=-660.713334 sq=212 step=0.22915
+[iters] 29 L=-659.879144 sq=206 step=0.23988
+[iters] 30 L=-661.425664 sq=204 step=0.23465
+[metadata] {"noOutputExpected": false}
+
+[78] CMD: python3 - <<'EOF' p='src/solver/dual.rs' s=open(p).read() s=s.replace("""/// Step length as a fraction of the Polyak step. const STEP: f64 = 1.0;""","""/// Step length as a fraction of the Polyak step. const STEP: f64 = 
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.46s
+alpha=0.05
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+alpha=0.2
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+alpha=0.5
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.46s
+alpha=0.05
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+alpha=0.2
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+alpha=0.5
+[dual] plain=-684.719049 best=-684.719049 iters=200 lb=-709.293422
+[metadata] {"noOutputExpected": false}
+
+[81] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("""const DUAL_STEPS: usize = 200;""","""const DUAL_STEPS: usize = 200; fn dual_steps() -> usize { std::env::var("PHASE_DUAL") .ok() .and_then(|v| v.parse()
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.50s
+iters=1000
+[dual] plain=-684.719049 best=-684.719049 iters=1000 lb=-709.293422
+iters=5000
+[dual] plain=-684.719049 best=-684.719049 iters=5000 lb=-709.293422
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.50s
+iters=1000
+[dual] plain=-684.719049 best=-684.719049 iters=1000 lb=-709.293422
+iters=5000
+[dual] plain=-684.719049 best=-684.719049 iters=5000 lb=-709.293422
+[metadata] {"noOutputExpected": false}
+
+[83] CMD: cat > /app/tests/dual_probe.rs <<'EOF' // scratch: is the splitting relaxation tight, and does the subgradient find it? use polyploid_phase::cross_input::parse_cross; use polyploid_phase::solver::branch::{assignment_valu
+--- obs tail ---
+running 1 test
+thread 'probe' panicked at tests/dual_probe.rs:11:35:
+called `Result::unwrap()` on an `Err` value: CrossError("markers 4 outside the supported range")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test probe ... FAILED
+
+failures:
+
+failures:
+    probe
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual_probe`
+
+[stdout]
+running 1 test
+thread 'probe' panicked at tests/dual_probe.rs:11:35:
+called `Result::unwrap()` on an `Err` value: CrossError("markers 4 outside the supported range")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test probe ... FAILED
+
+failures:
+
+failures:
+    probe
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual_probe`
+[metadata] {"noOutputExpected": false}
+
+[84] CMD: cd /tmp && python3 -c " import gen, json c = gen.gen(12,4,3,'uniform') c['parent_dosage'] = {'A':[2,2,2]+[0]*9, 'B':[2,2,2]+[0]*9} json.dump(c, open('/tmp/tiny.json','w')) print('ok') " && cargo test --release --offline 
+--- obs tail ---
+ok
+error: could not find `Cargo.toml` in `/tmp` or any parent directory
+Shell cwd was reset to /app
+
+[stdout]
+ok
+error: could not find `Cargo.toml` in `/tmp` or any parent directory
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[85] CMD: cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+called `Result::unwrap()` on an `Err` value: CrossError("offspring 4 outside the supported range")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test probe ... FAILED
+
+failures:
+
+failures:
+    probe
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual_probe`
+
+[stdout]
+called `Result::unwrap()` on an `Err` value: CrossError("offspring 4 outside the supported range")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test probe ... FAILED
+
+failures:
+
+failures:
+    probe
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test dual_probe`
+[metadata] {"noOutputExpected": false}
+
+[88] CMD: cd /tmp && python3 -c " import gen, json c = gen.gen(12,8,3,'uniform') c['parent_dosage'] = {'A':[2,2]+[0]*10, 'B':[2,2]+[0]*10} json.dump(c, open('/tmp/tiny.json','w')) print('ok') " && cargo test --release --offline --
+--- obs tail ---
+ok
+error: could not find `Cargo.toml` in `/tmp` or any parent directory
+Shell cwd was reset to /app
+
+[stdout]
+ok
+error: could not find `Cargo.toml` in `/tmp` or any parent directory
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[89] CMD: cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+Running tests/dual_probe.rs (target/release/deps/dual_probe-046bf7c6ab4fbfe1)
+
+running 1 test
+iters=1 dual=-2057.633081
+iters=50 dual=-2057.633081
+iters=500 dual=-2057.633081
+iters=5000 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+test probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+
+[stdout]
+     Running tests/dual_probe.rs (target/release/deps/dual_probe-046bf7c6ab4fbfe1)
+
+running 1 test
+iters=1 dual=-2057.633081
+iters=50 dual=-2057.633081
+iters=500 dual=-2057.633081
+iters=5000 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+test probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+[metadata] {"noOutputExpected": false}
+
+[90] CMD: python3 - <<'EOF' p='tests/dual_probe.rs' s=open(p).read() s=s.replace(""" for iters in [1usize, 50, 500, 5000] {""",""" for iters in 1..=20usize {""") open(p,'w').write(s) EOF cargo test --release --offline --locked --t
+--- obs tail ---
+ters=1 dual=-2057.633081
+iters=2 dual=-2057.633081
+iters=3 dual=-2057.633081
+iters=4 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=6 dual=-2057.633081
+iters=7 dual=-2057.633081
+iters=8 dual=-2057.633081
+iters=9 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=11 dual=-2057.633081
+iters=12 dual=-2057.633081
+iters=13 dual=-2057.633081
+iters=14 dual=-2057.633081
+iters=15 dual=-2057.633081
+iters=16 dual=-2057.633081
+iters=17 dual=-2057.633081
+iters=18 dual=-2057.633081
+iters=19 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+test probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+[stdout]
+     Running tests/dual_probe.rs (target/release/deps/dual_probe-046bf7c6ab4fbfe1)
+
+running 1 test
+iters=1 dual=-2057.633081
+iters=2 dual=-2057.633081
+iters=3 dual=-2057.633081
+iters=4 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=6 dual=-2057.633081
+iters=7 dual=-2057.633081
+iters=8 dual=-2057.633081
+iters=9 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=11 dual=-2057.633081
+iters=12 dual=-2057.633081
+iters=13 dual=-2057.633081
+iters=14 dual=-2057.633081
+iters=15 dual=-2057.633081
+iters=16 dual=-2057.633081
+iters=17 dual=-2057.633081
+iters=18 dual=-2057.633081
+iters=19 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+test probe ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+[metadata] {"noOutputExpected": false}
+
+[91] CMD: PHASE_TIMING=1 cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | grep -E "iters\]|opt=" | head -25
+--- obs tail ---
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+[iters] 5 L=-2049.943543 sq=32 step=0.50323
+[iters] 6 L=-2050.018865 sq=32 step=0.50088
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+
+[stdout]
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+[iters] 5 L=-2049.943543 sq=32 step=0.50323
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+[iters] 5 L=-2049.943543 sq=32 step=0.50323
+[iters] 6 L=-2050.018865 sq=32 step=0.50088
+[iters] 1 L=-2057.633081 sq=16 step=0.52587
+[iters] 2 L=-2051.322663 sq=32 step=0.46013
+[iters] 3 L=-2051.059729 sq=32 step=0.46835
+[iters] 4 L=-2050.624244 sq=32 step=0.48196
+[metadata] {"noOutputExpected": false}
+
+[93] CMD: python3 - <<'EOF' p='src/solver/dual.rs' s=open(p).read() s=s.replace(""" let (cons, cons_val) = consensus(model, &lam, stride, &nd); let level: f64 = cons_val.iter().sum();""",""" let (cons, cons_val, tied) = consensus(
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.51s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.51s
+[metadata] {"noOutputExpected": false}
+
+[94] CMD: for a in 0.05 0.2 1.0; do echo "alpha=$a"; PHASE_ALPHA=$a PHASE_TIMING=1 cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | grep -E "^iters=(1|5|10|20) |^opt="; done
+--- obs tail ---
+alpha=0.05
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+alpha=0.2
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+alpha=1.0
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+
+[stdout]
+alpha=0.05
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+alpha=0.2
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+alpha=1.0
+iters=1 dual=-2057.633081
+iters=5 dual=-2057.633081
+iters=10 dual=-2057.633081
+iters=20 dual=-2057.633081
+opt=-2066.046972 lb=-2066.046972
+[metadata] {"noOutputExpected": false}
+
+[95] CMD: PHASE_ALPHA=0.2 PHASE_TIMING=1 cargo test --release --offline --locked --test dual_probe -- --nocapture 2>&1 | grep -E "iters\] 2 |iters\] 1 |iters\] 3 |iters\] 4 |iters\] 5 " | tail -6
+--- obs tail ---
+[iters] 5 L=-2056.116319 sq=15 step=0.13241
+[iters] 1 L=-2057.633081 sq=15 step=0.11122
+[iters] 2 L=-2056.320020 sq=15 step=0.12969
+[iters] 3 L=-2056.212297 sq=14 step=0.14050
+[iters] 4 L=-2056.124664 sq=15 step=0.13230
+[iters] 5 L=-2056.116319 sq=15 step=0.13241
+
+[stdout]
+[iters] 5 L=-2056.116319 sq=15 step=0.13241
+[iters] 1 L=-2057.633081 sq=15 step=0.11122
+[iters] 2 L=-2056.320020 sq=15 step=0.12969
+[iters] 3 L=-2056.212297 sq=14 step=0.14050
+[iters] 4 L=-2056.124664 sq=15 step=0.13230
+[iters] 5 L=-2056.116319 sq=15 step=0.13241
+[metadata] {"noOutputExpected": false}
+
+[96] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace(""" let mut incumbent = (lower_bound, fallback);""",""" let mut incumbent = (lower_bound, fallback); if let Ok(hint) = std::env::var("PHASE_LB") { if let O
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.66s
+lb=
+[timing] local=0.168s bnb=1.465s nodes=20892 leaves=19 ties=1 best=-1582.762023 lb=-1590.746252 root=-1556.142153
+lb=-1590.765
+[timing] local=0.167s bnb=1.453s nodes=20892 leaves=19 ties=1 best=-1582.762023 lb=-1590.746252 root=-1556.142153
+lb=-1582.762
+[timing] local=0.168s bnb=1.165s nodes=19374 leaves=0 ties=0 best=-1582.762000 lb=-1582.762000 root=-1556.142153
+lb=-1580.0
+[timing] local=0.168s bnb=0.399s nodes=9246 leaves=0 ties=0 best=-1580.000000 lb=-1580.000000 root=-1556.142153
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.66s
+lb=
+[timing] local=0.168s bnb=1.465s nodes=20892 leaves=19 ties=1 best=-1582.762023 lb=-1590.746252 root=-1556.142153
+lb=-1590.765
+[timing] local=0.167s bnb=1.453s nodes=20892 leaves=19 ties=1 best=-1582.762023 lb=-1590.746252 root=-1556.142153
+lb=-1582.762
+[timing] local=0.168s bnb=1.165s nodes=19374 leaves=0 ties=0 best=-1582.762000 lb=-1582.762000 root=-1556.142153
+lb=-1580.0
+[timing] local=0.168s bnb=0.399s nodes=9246 leaves=0 ties=0 best=-1580.000000 lb=-1580.000000 root=-1556.142153
+[metadata] {"noOutputExpected": false}

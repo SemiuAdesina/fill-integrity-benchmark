@@ -1,0 +1,6 @@
+REJECTED h_comigration      attempt=2 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.33, "internal": 4, "deviation": 9590, "c": 64, "L": 3248}}
+REJECTED h_comigration      attempt=4 python certifier over budget (2525s) {"reference": {"status": "ok", "seconds": 5.07, "internal": 7, "deviation": 9004, "c": 651, "L": 4169}, "enumeration_solver": {"status": "timeout", "seconds": 1
+REJECTED h_comigration      attempt=5 held-out bands of the optimum do not match the true construct (1s) {"reference": {"status": "ok", "seconds": 1.67, "internal": 7, "deviation": 7815, "c": 406, "L": 3757}}
+REJECTED h_comigration      attempt=7 held-out bands of the optimum do not match the true construct (1s) {"reference": {"status": "ok", "seconds": 1.64, "internal": 6, "deviation": 19075, "c": 229, "L": 2110}}
+REJECTED h_comigration      attempt=10 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.16, "internal": 5, "deviation": 10103, "c": 1870, "L": 1197}}
+RETAINED h_comigration      seed=413 pACYC177 V=3941 L=1127 e=2 D=150 enzymes=4 internal=4 (truth 4) dev=4453 ref=0.01s enum=ok py=0.5s ties=1 (4s)

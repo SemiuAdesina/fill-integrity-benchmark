@@ -1,0 +1,3 @@
+p03_rotation_from_newest
+03 cursor convention
+treats the cursor as the index of the newest sample and rotates from the slot after it

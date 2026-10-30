@@ -1,0 +1,123 @@
+{
+ "fixture": "s_large_a",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 663,
+  "insert_length": 3617,
+  "cuts": {
+   "DraI": [
+    5529,
+    5548,
+    6240
+   ],
+   "EcoRV": [
+    2938,
+    4314
+   ],
+   "FspI": [
+    479,
+    1479,
+    2526,
+    3097,
+    5885
+   ],
+   "PstI": [
+    1973,
+    4328
+   ],
+   "PvuI": [
+    500,
+    2392,
+    3652,
+    6033
+   ]
+  },
+  "held_out": {
+   "EcoRV+PstI": [
+    {
+     "length": 965,
+     "multiplicity": 1
+    },
+    {
+     "length": 1376,
+     "multiplicity": 1
+    },
+    {
+     "length": 4223,
+     "multiplicity": 1
+    }
+   ],
+   "PstI+PvuI": [
+    {
+     "length": 419,
+     "multiplicity": 1
+    },
+    {
+     "length": 676,
+     "multiplicity": 1
+    },
+    {
+     "length": 1045,
+     "multiplicity": 1
+    },
+    {
+     "length": 1260,
+     "multiplicity": 1
+    },
+    {
+     "length": 1473,
+     "multiplicity": 1
+    },
+    {
+     "length": 1705,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 7,
+ "deviation": 7050,
+ "held_out_truth": {
+  "EcoRV+PstI": [
+   {
+    "length": 948,
+    "multiplicity": 1
+   },
+   {
+    "length": 1369,
+    "multiplicity": 1
+   },
+   {
+    "length": 4223,
+    "multiplicity": 1
+   }
+  ],
+  "PstI+PvuI": [
+   {
+    "length": 410,
+    "multiplicity": 1
+   },
+   {
+    "length": 677,
+    "multiplicity": 1
+   },
+   {
+    "length": 1034,
+    "multiplicity": 1
+   },
+   {
+    "length": 1237,
+    "multiplicity": 1
+   },
+   {
+    "length": 1457,
+    "multiplicity": 1
+   },
+   {
+    "length": 1701,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 2
+}

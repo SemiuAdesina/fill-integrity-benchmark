@@ -1,0 +1,27 @@
+p3_M12N10_d2.5_ibdA_r0.1_s521            M=12 N=10  ref=ok:  30.49s exp=399044 gap=15.3 warmgap=0.12 ties=0 rr=[0, 0] dr=0 sw=1
+p3_M12N12_d5.0_ibdA_r0.2_s552            M=12 N=12  ref=ok:  31.83s exp=313644 gap=28.1 warmgap=0.00 ties=1 rr=[0, 0] dr=0 sw=3
+p3_M13N12_d3.5_ibdA_r0.1_s581            M=13 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M12N10_d5.0_ibdA_r0.2_s534            M=12 N=10  ref=ok:  42.34s exp=531281 gap=20.0 warmgap=0.00 ties=2 rr=[0, 0] dr=0 sw=12
+p3_M14N12_d2.5_ibdA_r0.1_s629            M=14 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M15N10_d5.0_ibdboth_r0.2_s662         M=15 N=10  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M12N8_d2.5_ibdboth_r0.1_s505          M=12 N=8   ref=ok:   0.26s exp=138 gap=3.7 warmgap=0.00 ties=1 rr=[0, 0] dr=0 sw=0
+p3_M14N8_d5.0_ibdA_r0.2_s606             M=14 N=8   ref=ok:  31.87s exp=677269 gap=15.2 warmgap=0.68 ties=0 rr=[0, 0] dr=0 sw=9
+p3_M14N12_d2.5_ibdboth_r0.1_s631         M=14 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M13N12_d2.5_ibdboth_r0.1_s577         M=13 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M15N10_d2.5_ibdA_r0.2_s648            M=15 N=10  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M12N10_d3.5_ibdboth_r0.2_s530         M=12 N=10  ref=ok:   2.16s exp=22274 gap=9.5 warmgap=-0.00 ties=1 rr=[0, 0] dr=0 sw=3
+p3_M14N10_d3.5_ibdboth_r0.1_s619         M=14 N=10  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M12N12_d5.0_ibdboth_r0.1_s553         M=12 N=12  ref=ok:   1.33s exp=16660 gap=21.8 warmgap=-0.00 ties=1 rr=[0, 0] dr=0 sw=7
+p3_M14N12_d2.5_noibd_r0.2_s628           M=14 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M14N8_d2.5_noibd_r0.1_s591            M=14 N=8   ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M14N10_d2.5_ibdboth_r0.2_s614         M=14 N=10  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M14N10_d2.5_ibdA_r0.1_s611            M=14 N=10  ref=ok:  55.98s exp=924394 gap=12.4 warmgap=-0.00 ties=1 rr=[0, 0] dr=0 sw=2
+p3_M12N8_d2.5_ibdboth_r0.2_s506          M=12 N=8   ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M13N12_d5.0_ibdboth_r0.1_s589         M=13 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M15N10_d5.0_noibd_r0.1_s657           M=15 N=10  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M14N12_d5.0_noibd_r0.1_s639           M=14 N=12  ref=timeout:  90.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p3_M14N8_d3.5_ibdA_r0.1_s599             M=14 N=8   ref=ok:  47.90s exp=523742 gap=12.7 warmgap=0.70 ties=0 rr=[0, 0] dr=0 sw=5
+p3_M13N12_d5.0_ibdboth_r0.2_s590         M=13 N=12  ref=ok:  60.15s exp=622571 gap=17.9 warmgap=-0.00 ties=1 rr=[0, 0] dr=0 sw=13
+p3_M12N12_d3.5_ibdboth_r0.1_s547         M=12 N=12  ref=ok:  75.81s exp=1081753 gap=16.5 warmgap=0.00 ties=1 rr=[0, 0] dr=0 sw=1
+p3_M12N12_d2.5_ibdboth_r0.1_s541         M=12 N=12  ref=ok:   6.34s exp=79733 gap=11.6 warmgap=0.00 ties=1 rr=[0, 0] dr=0 sw=1
+p3_M14N10_d5.0_ibdboth_r0.1_s625         M=14 N=10  ref=ok:  23.55s exp=240169 gap=19.1 warmgap=-0.00 ties=1 rr=[0, 0] dr=0 sw=3

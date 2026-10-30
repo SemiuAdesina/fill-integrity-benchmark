@@ -1,0 +1,149 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "head.weight",
+   "tie_group": "tie0",
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 3291,
+   "history_length": 14,
+   "active": true
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie0",
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 1,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 1750,
+   "history_length": 4,
+   "active": true
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie0",
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 1,
+   "shard": 1,
+   "logical_begin": 1367,
+   "logical_end": 4000,
+   "history_length": 4,
+   "active": true
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie0",
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 1,
+   "shard": 1,
+   "logical_begin": 1750,
+   "logical_end": 4000,
+   "history_length": 14,
+   "active": true
+  },
+  {
+   "tensor": "head.weight",
+   "tie_group": "tie0",
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 3143,
+   "history_length": 14,
+   "active": true
+  },
+  {
+   "tensor": "decoder.norm.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 413,
+   "history_length": 8,
+   "active": true
+  },
+  {
+   "tensor": "decoder.norm.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 815,
+   "history_length": 4,
+   "active": true
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie0",
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 1,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 1367,
+   "history_length": 14,
+   "active": true
+  },
+  {
+   "tensor": "head.weight",
+   "tie_group": "tie0",
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 3143,
+   "logical_end": 4000,
+   "history_length": 14,
+   "active": true
+  },
+  {
+   "tensor": "head.weight",
+   "tie_group": "tie0",
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 3291,
+   "logical_end": 4000,
+   "history_length": 8,
+   "active": true
+  },
+  {
+   "tensor": "decoder.norm.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 413,
+   "logical_end": 1500,
+   "history_length": 4,
+   "active": true
+  },
+  {
+   "tensor": "decoder.norm.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 815,
+   "logical_end": 1500,
+   "history_length": 14,
+   "active": true
+  }
+ ]
+}

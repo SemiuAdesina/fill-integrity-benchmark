@@ -1,0 +1,24 @@
+# Candidate-linked runner build. Contains no judge target or certified answer.
+[package]
+name = "plasmid-map-verifier"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "verifier_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "probe"
+path = "src/bin/probe/main.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

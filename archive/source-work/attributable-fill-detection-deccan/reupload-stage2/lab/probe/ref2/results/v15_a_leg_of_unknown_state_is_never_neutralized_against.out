@@ -1,0 +1,6 @@
+
+running 1 test
+test v15_a_leg_of_unknown_state_is_never_neutralized_against ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.00s
+

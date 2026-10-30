@@ -1,0 +1,7 @@
+{
+ "fixture": "h_reject_scale_unneeded",
+ "expected_outcome": "reject",
+ "oracle_a": "reject:scale",
+ "oracle_b": "reject:scale",
+ "retained": true
+}

@@ -1,0 +1,119 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 2,
+ "observed": [
+  {
+   "id": "BamHI",
+   "enzymes": [
+    "BamHI"
+   ],
+   "bands": [
+    {
+     "length": 5953,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI",
+   "enzymes": [
+    "DraI"
+   ],
+   "bands": [
+    {
+     "length": 689,
+     "multiplicity": 1
+    },
+    {
+     "length": 2471,
+     "multiplicity": 1
+    },
+    {
+     "length": 2711,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRI",
+   "enzymes": [
+    "EcoRI"
+   ],
+   "bands": [
+    {
+     "length": 5998,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 2830,
+     "multiplicity": 1
+    },
+    {
+     "length": 2901,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BamHI+EcoRI",
+   "enzymes": [
+    "BamHI",
+    "EcoRI"
+   ],
+   "bands": [
+    {
+     "length": 5896,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BamHI+DraI",
+   "enzymes": [
+    "BamHI",
+    "DraI"
+   ],
+   "bands": [
+    {
+     "length": 700,
+     "multiplicity": 1
+    },
+    {
+     "length": 831,
+     "multiplicity": 1
+    },
+    {
+     "length": 1905,
+     "multiplicity": 1
+    },
+    {
+     "length": 2509,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "DraI+EcoRI",
+   "enzymes": [
+    "DraI",
+    "EcoRI"
+   ]
+  }
+ ]
+}

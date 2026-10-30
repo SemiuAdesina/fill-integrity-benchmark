@@ -1,0 +1,2 @@
+[42]
+sed -i 's/            self.finalize(&block.covers);/            self.finalize(\&covered);/; s/^        self.finalize(&block.covers);/        self.finalize(\&covered);/' src/engine/fill_classifier.rs && grep -n "self.finalize" src/engine/fill_classifier.rs

@@ -1,0 +1,62 @@
+[step 2] I
+
+'ll start by reading the specification documents, since they're the authority here.
+
+[step 5] Now let me read the source tree.
+
+[step 12] Now I have the full picture. Let me check the current state first.
+
+[step 13] 11 failures confirmed. Now let me implement the fixes, starting with the ledger.
+
+[step 16] Now the cycle, which holds the residual-exposure and closure-sequence rules:
+
+[step 19] 16 of 17 pass. The last one is the diagnostic that contradicts the spec's block-finality rule. Let me verify that reading before touching it.
+
+[step 20] Confirmed — the spec is explicit and repeated in both documents. That diagnostic has the second block covering the *same* orders the first already closed, which finality forbids. Since `tests/` is mine and never graded, I'll rewrite it to check the actual rules and add coverage for the ones I just fixed.
+
+[step 21] Now let me add cycle-level diagnostics for the residual and submission-outcome rules I changed:
+
+[step 23] All 23 pass. Now the end-to-end reproducer:
+
+[step 24] All aids pass. Now let me go beyond them and check the interaction cases the aids can't see. First, a gap: an entry whose acknowledgement was lost can only recover identity through a retry — the spec also allows recovery from a later observation.
+
+[step 31] Both aids pass. Now let me stress-test the *combinations* the aids can't see, with a scratch test file.
+
+[step 33] All 8 pass first time —let me verify they genuinely discriminate by re-introducing each bug temporarily.
+
+[step 35] Both mutations are caught. Let me confirm everything is restored and re-verify:
+
+[step 37] Only `src/types/snapshot.rs` changed outside `src/engine/` (which the spec permits), and `src/ports/` is untouched. Let me make one hygiene fix — durable sets leaking after a mandate completes:
+
+[step 39] Let me do a final review of the changed engine logic against the spec's decision list.
+
+[step 41] Custody inventory is never read by the engine — only the port definition and the reproducer's fake. Work is confined to `cycle.rs`, `fill_classifier.rs` and `snapshot.rs`.
+
+## What was wrong, and what I changed
+
+**`fill_classifier.rs` — how observations are read**
+
+- **Window was closed at the wrong end.** `in_window` used `at <= start + WINDOW`. The window is half-open `[start, start+WINDOW)`, so an observation *exactly* at the end was being counted as the engine's own order after the venue had recycled the id. Now `at < start + WINDOW`.
+- **Cumulative quantity was summed.** `absorb_event` did `direct_filled += cumulative_filled_qty`. That quantity is the order's running total, not an increment, and the feed delivers at least once — replaying it inflated the order. Now it raises a high-water mark (matching what `absorb_open_orders` already got right; the two sources describe one figure, so they share one field rather than adding).
+- **Block ordering was `order_id` only.** The rule is `(window_start, venue_seq, order_id)`, coarsest field first. Now all three are evaluated, so container iteration order can't decide the outcome.
+- **Remainder went to the largest order.** Truncation's leftover units now go one each to the first `r` orders in that ordering.
+- **Finalized orders stayed eligible.** The eligible set used `record.outstanding()`, which ignores `finalized`, so an order an earlier block had closed still soaked up basis in a later block. Now skipped.
+
+**`cycle.rs` — how derived quantities are computed**
+
+- **`close_gap` ignored committed neutralizations.** `gap = size - acquired` re-sent the same exposure every cycle. Now `residual = size - acquired - working`, where acknowledged corrections contribute outstanding, unacknowledged ones contribute full size, and closed ones contribute nothing.
+- **Unconfirmed legs were neutralized.** Absence from `open_orders` isn't proof of withdrawal; the engine now leaves those legs alone entirely.
+- **A lost acknowledgement dropped the record**, so the next cycle minted a fresh reference and placed a second economic order. Records now survive `AcknowledgementLost` and retry under the original `client_ref`; only `Rejected`/`Transport` forget the attempt.
+- **One failed entry latched a mandate shut** — `attempted` was set before placement, so a rejected leg was never worked and the mandate could never be reconciled. Now latched only once both legs are live, and an unacknowledged entry is recovered from a later observation.
+
+**`locate`** resolved by venue id first. Since ids are recycled once a window closes, an observation is now resolved by the `client_ref` the engine chose, falling back to the venue id only for a reference it doesn't hold.
+
+**Persistence** gained `entry_attempts` (the `client_ref` a retry depends on); everything else in the restart list was already durable.
+
+## On one diagnostic
+
+`a_later_block_divides_over_the_residuals_of_the_earlier_one` had a second block covering the *same* orders the first block had already closed, and expected them to receive more units. That contradicts block finality, which both specs state emphatically and repeatedly — "every tracked order named in its `covers` list is finalized", "contributes no outstanding quantity to a later block's basis". Since `tests/` is mine and never graded, I followed the spec and replaced it with three checks of the actual rules (finality, exclusion from a later basis, and basis-as-current-outstanding). I verified the replacement still pins down the residual-basis behaviour using fill events, which don't trigger finality.
+
+## Verification
+
+`cargo build` clean, no warnings. Diagnostics 23/23, reproducer 14/14. I also added `tests/interactions.rs` (8 checks) for combinations no single-rule check can see — lost ack across a restart, restart mid-closure, in-flight fill after cancel, shared block across mandates, id recycling, block at the window boundary. I mutation-tested the two behaviours the provided aids don't cover (client-ref precedence, entry retry): reintroducing each bug fails exactly the intended test, so those checks discriminate rather than just passing.

@@ -1,0 +1,3 @@
+b15_slices_sorted_by_lsb
+fields
+slices are reported in ascending physical order, not logical order

@@ -1,0 +1,29 @@
+variant                                reward  passed failing_checks
+v01_marker_wise                        0       5/13   a e h i j k l m 
+v02_fixed_guess                        0       5/13   a e h i j k l m 
+v03_set_intersection                   0       6/13   e h i j k l m 
+v04_omit_non_dr                        0       6/13   e h i j k l m 
+v05_penalised_forbidden_dr             1       13/13  
+v06_backward_traceback                 0       12/13  h 
+v06b_nosym_backward_traceback          0       5/13   a e h i j k l m 
+v07_rows_only_canonical                1       13/13  
+v07b_nosym_rows_only_canonical         0       5/13   a e h i j k l m 
+v07s_scramble_rows_only_canonical      0       5/13   a e h i j k l m 
+v08_joint_canonical                    1       13/13  
+v08s_scramble_joint_canonical          0       3/13   a e f g h i j k l m 
+v09_wrong_perm_direction               1       13/13  
+v09s_scramble_wrong_perm_direction     0       3/13   a e f g h i j k l m 
+v10_interleaved_path_order             0       12/13  h 
+v10b_nosym_interleaved_path_order      0       5/13   a e h i j k l m 
+v11_no_canonical                       1       13/13  
+v11b_nosym_no_canonical                0       3/13   a e f g h i j k l m 
+v11s_scramble_no_canonical             0       3/13   a e f g h i j k l m 
+v15_non_admissible_bound               0       9/13   h j k m 
+v16_prune_ties                         0       12/13  h 
+v17_float_equality                     0       1/13   b c d e f g h i j k l m 
+v18_first_found_tie                    0       12/13  h 
+v18b_first_found_tie_reversed          0       11/13  e h 
+v20_hardcoded_visible_cross            0       3/13   b c e g h i j k l m 
+v22_nosym_full_canonical               0       5/13   a e h i j k l m 
+v22c_scramble_then_sort_rows_first     1       13/13  
+v22s_scramble_full_canonical           0       5/13   a e h i j k l m 

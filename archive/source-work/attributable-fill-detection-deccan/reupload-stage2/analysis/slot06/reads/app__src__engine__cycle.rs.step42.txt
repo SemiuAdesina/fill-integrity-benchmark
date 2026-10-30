@@ -1,0 +1,122 @@
+380	        if self.resting_at_venue.contains(&leg.order_id) {
+381	            LegVisibility::Resting
+382	        } else if self.replaced.contains(&leg.order_id) {
+383	            // Absent, and this engine cancelled it.
+384	            LegVisibility::Withdrawn
+385	        } else if self.ledger.is_finalized(&leg.client_ref) {
+386	            // Absent, and a block closed it at the venue. Its state is known
+387	            // exactly, so it is not the momentarily-unknown case.
+388	            LegVisibility::Closed
+389	        } else {
+390	            // Absent, and nothing has said why. It may still be resting and may
+391	            // still fill, so nothing may be concluded from its absence.
+392	            LegVisibility::Unconfirmed
+393	        }
+394	    }
+395	
+396	    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {
+397	        for strategy_id in self.pending.strategy_ids() {
+398	            if self.positions.has(&strategy_id) {
+399	                continue;
+400	            }
+401	            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {
+402	                Some(order) => order.clone(),
+403	                None => continue,
+404	            };
+405	            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {
+406	                Some(order) => order.clone(),
+407	                None => continue,
+408	            };
+409	
+410	            let north_complete = self.leg_is_complete(&north_leg);
+411	            let south_complete = self.leg_is_complete(&south_leg);
+412	
+413	            if north_complete && south_complete {
+414	                self.open_position(&north_leg, &south_leg, now);
+415	            } else if north_complete {
+416	                self.close_gap(&south_leg, now)?;
+417	            } else if south_complete {
+418	                self.close_gap(&north_leg, now)?;
+419	            }
+420	        }
+421	        Ok(())
+422	    }
+423	
+424	    /// Close the exposure left by a leg that did not complete.
+425	    ///
+426	    /// Closing a resting leg is not instantaneous: the first cycle marks it, and
+427	    /// the next one takes it out of the book before covering what is still
+428	    /// missing, so that a fill already in flight has a cycle in which to land
+429	    /// and be attributed. The observable sequence is what matters — closure of
+430	    /// the resting order first, corrective order afterwards.
+431	    ///
+432	    /// A leg whose state is momentarily unknown is never neutralized against:
+433	    /// covering quantity the desk may already own doubles the very exposure the
+434	    /// correction was meant to close.
+435	    fn close_gap(&mut self, leg: &PendingOrder, now: Timestamp) -> Result<(), PortError> {
+436	        match self.visibility(leg) {
+437	            LegVisibility::Resting => {
+438	                // Mark it now; cancel and cover from the next cycle onwards.
+439	                if self.closing.insert(leg.order_id.clone()) {
+440	                    return Ok(());
+441	                }
+442	                if self.gateway.cancel(&leg.order_id).is_err() {
+443	                    return Ok(());
+444	                }
+445	                self.resting_at_venue.remove(&leg.order_id);
+446	                self.replaced.insert(leg.order_id.clone());
+447	            }
+448	            // Not resting at the venue, and its state is known, so there is
+449	            // nothing to cancel first.
+450	            LegVisibility::Withdrawn | LegVisibility::Closed => {}
+451	            // Unknown: it may still be resting and may still fill.
+452	            LegVisibility::Unconfirmed => return Ok(()),
+453	        }
+454	
+455	        // Only the residual is covered, net of everything already attributed and
+456	        // everything already working, so consecutive cycles cannot send the same
+457	        // exposure twice.
+458	        let residual = self.residual_for(leg);
+459	        if residual <= 0 {
+460	            return Ok(());
+461	        }
+462	        let plan = match plan_neutralization(
+463	            self.gateway,
+464	            leg,
+465	            residual,
+466	            self.config.neutralization_slippage,
+467	        )? {
+468	            Some(plan) => plan,
+469	            None => return Ok(()),
+470	        };
+471	
+472	        // The record is written before the order is sent, so a submission whose
+473	        // outcome is unknown is still something this engine knows it committed to.
+474	        let client_ref = self.next_client_ref();
+475	        let size = plan.size;
+476	        let record = NeutralizationRecord {
+477	            strategy_id: plan.strategy_id,
+478	            venue: plan.venue,
+479	            instrument_id: plan.instrument_id,
+480	            client_ref: client_ref.clone(),
+481	            order_id: None,
+482	            limit_price: plan.limit_price,
+483	            size,
+484	            expiry_time: leg.expiry_time,
+485	        };
+486	        self.ledger
+487	            .track(client_ref.clone(), None, None, size, now);
+488	        self.neutralizations.push(record.clone());
+489	        let request = Self::neutralization_request(&record);
+490	
+491	        match self.gateway.submit(&request) {
+492	            Ok(accepted) => {
+493	                self.ledger.track(
+494	                    client_ref.clone(),
+495	                    Some(accepted.order_id.clone()),
+496	                    Some(accepted.venue_seq),
+497	                    size,
+498	                    now,
+499	                );
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "        if self.resting_at_venue.contains(&leg.order_id) {\n            LegVisibility::Resting\n        } else if self.replaced.contains(&leg.order_id) {\n            // Absent, and this engine cancelled it.\n            LegVisibility::Withdrawn\n        } else if self.ledger.is_finalized(&leg.client_ref) {\n            // Absent, and a block closed it at the venue. Its state is known\n            // exactly, so it is not the momentarily-unknown case.\n            LegVisibility::Closed\n        } else {\n            // Absent, and nothing has said why. It may still be resting and may\n            // still fill, so nothing may be concluded from its absence.\n            LegVisibility::Unconfirmed\n        }\n    }\n\n    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {\n        for strategy_id in self.pending.strategy_ids() {\n            if self.positions.has(&strategy_id) {\n                continue;\n            }\n            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n\n            let north_complete = self.leg_is_complete(&north_leg);\n            let south_complete = self.leg_is_complete(&south_leg);\n\n            if north_complete && south_complete {\n                self.open_position(&north_leg, &south_leg, now);\n            } else if north_complete {\n                self.close_gap(&south_leg, now)?;\n            } else if south_complete {\n                self.close_gap(&north_leg, now)?;\n            }\n        }\n        Ok(())\n    }\n\n    /// Close the exposure left by a leg that did not complete.\n    ///\n    /// Closing a resting leg is not instantaneous: the first cycle marks it, and\n    /// the next one takes it out of the book before covering what is still\n    /// missing, so that a fill already in flight has a cycle in which to land\n    /// and be attributed. The observable sequence is what matters — closure of\n    /// the resting order first, corrective order afterwards.\n    ///\n    /// A leg whose state is momentarily unknown is never neutralized against:\n    /// covering quantity the desk may already own doubles the very exposure the\n    /// correction was meant to close.\n    fn close_gap(&mut self, leg: &PendingOrder, now: Timestamp) -> Result<(), PortError> {\n        match self.visibility(leg) {\n            LegVisibility::Resting => {\n                // Mark it now; cancel and cover from the next cycle onwards.\n                if self.closing.insert(leg.order_id.clone()) {\n                    return Ok(());\n                }\n                if self.gateway.cancel(&leg.order_id).is_err() {\n                    return Ok(());\n                }\n                self.resting_at_venue.remove(&leg.order_id);\n                self.replaced.insert(leg.order_id.clone());\n            }\n            // Not resting at the venue, and its state is known, so there is\n            // nothing to cancel first.\n            LegVisibility::Withdrawn | LegVisibility::Closed => {}\n            // Unknown: it may still be resting and may still fill.\n            LegVisibility::Unconfirmed => return Ok(()),\n        }\n\n        // Only the residual is covered, net of everything already attributed and\n        // everything already working, so consecutive cycles cannot send the same\n        // exposure twice.\n        let residual = self.residual_for(leg);\n        if residual <= 0 {\n            return Ok(());\n        }\n        let plan = match plan_neutralization(\n            self.gateway,\n            leg,\n            residual,\n            self.config.neutralization_slippage,\n        )? {\n            Some(plan) => plan,\n            None => return Ok(()),\n        };\n\n        // The record is written before the order is sent, so a submission whose\n        // outcome is unknown is still something this engine knows it committed to.\n        let client_ref = self.next_client_ref();\n        let size = plan.size;\n        let record = NeutralizationRecord {\n            strategy_id: plan.strategy_id,\n            venue: plan.venue,\n            instrument_id: plan.instrument_id,\n            client_ref: client_ref.clone(),\n            order_id: None,\n            limit_price: plan.limit_price,\n            size,\n            expiry_time: leg.expiry_time,\n        };\n        self.ledger\n            .track(client_ref.clone(), None, None, size, now);\n        self.neutralizations.push(record.clone());\n        let request = Self::neutralization_request(&record);\n\n        match self.gateway.submit(&request) {\n            Ok(accepted) => {\n                self.ledger.track(\n                    client_ref.clone(),\n                    Some(accepted.order_id.clone()),\n                    Some(accepted.venue_seq),\n                    size,\n                    now,\n                );", "numLines": 120, "startLine": 380, "totalLines": 573}}

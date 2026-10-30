@@ -1,0 +1,57 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 19.42,
+  "internal": 7,
+  "deviation": 7050,
+  "c": 663,
+  "L": 3617
+ },
+ "enumeration_solver": {
+  "status": "timeout",
+  "seconds": 120.0
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 801.8,
+  "nodes": 1459090,
+  "ties_at_count_and_deviation": 2
+ },
+ "held_out": [
+  "EcoRV+PstI",
+  "PstI+PvuI"
+ ],
+ "truth": {
+  "internal": 7,
+  "deviation": 8992,
+  "optimum_equals_truth": false
+ },
+ "fixture": "s_large_a",
+ "seed": 909,
+ "description": "seven or more insert-region sites",
+ "vector": "pBluescriptIISK",
+ "vector_header": "X52328.1 pBluescript II SK(+) vector DNA, phagemid excised from lambda ZAPII",
+ "source": "ecoli_lac_region",
+ "source_header": "U00096.3:360000-372000 Escherichia coli str. K-12 substr. MG1655, complete genome",
+ "fragment": {
+  "left_enzyme": "ApaI",
+  "left_cut": 6953,
+  "right_enzyme": "StuI",
+  "right_cut": 10554
+ },
+ "cloning_site": [
+  "ApaI",
+  663
+ ],
+ "insert_length": 3601,
+ "enzymes": [
+  "DraI",
+  "EcoRV",
+  "FspI",
+  "PstI",
+  "PvuI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 10
+}

@@ -1,0 +1,10 @@
+[package]
+name="convex_judge"
+version="0.1.0"
+edition="2021"
+publish=false
+[[bin]]
+name="judge"
+path="src/main.rs"
+[dependencies]
+convex_model={path="../model"}

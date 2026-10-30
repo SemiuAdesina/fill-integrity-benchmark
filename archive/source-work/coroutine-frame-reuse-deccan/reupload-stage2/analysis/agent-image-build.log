@@ -1,0 +1,52 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.09kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/silkeh/clang@sha256:45c29eadcae5f9817d0d7dc8518a0cb2a565647e7e049656d1c0bc6e9d9649d3
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/9] FROM docker.io/silkeh/clang@sha256:45c29eadcae5f9817d0d7dc8518a0cb2a565647e7e049656d1c0bc6e9d9649d3
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 52.94kB done
+#5 DONE 0.0s
+
+#6 [3/9] COPY CMakeLists.txt /app/CMakeLists.txt
+#6 CACHED
+
+#7 [7/9] COPY spec /app/spec
+#7 CACHED
+
+#8 [6/9] COPY examples /app/examples
+#8 CACHED
+
+#9 [4/9] COPY include /app/include
+#9 CACHED
+
+#10 [5/9] COPY src /app/src
+#10 CACHED
+
+#11 [8/9] COPY README.md /app/README.md
+#11 CACHED
+
+#12 [2/9] WORKDIR /app
+#12 CACHED
+
+#13 [9/9] RUN cmake -S /app -B /app/build -DCMAKE_BUILD_TYPE=Debug     && cmake --build /app/build -j "$(nproc)"
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers done
+#14 writing image sha256:7fed2a2e44a95606e058437d1a62ca1eba6ed08c24cf1c2d3c5b945f2fc456f6 done
+#14 naming to docker.io/library/rc-agent:reup-base done
+#14 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/qy3ev9qcbk1zirtmsgrmss89n
+AGENT IMAGE BUILD rc=0

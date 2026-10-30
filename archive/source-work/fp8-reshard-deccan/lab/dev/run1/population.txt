@@ -1,0 +1,8 @@
+solver_b                                 reward=1 passed=13/13  fails=none
+p03_rotation_from_newest                 reward=0 passed=4/13  fails=accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output,
+p04_physical_identity                    reward=0 passed=4/13  fails=accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output,
+p05_full_ring_equality                   reward=0 passed=? patched build/run failed fails=none
+p06_identity_ignores_tie_group           reward=0 passed=10/13  fails=accept_layouts_restored_exactly,next_state_trace_replay,tied_tensors_and_replicas,
+p07_resize_keeps_oldest                  reward=0 passed=4/13  fails=accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output,
+p08_block_level_coverage                 reward=0 passed=11/13  fails=inconsistent_layouts_rejected,coverage_and_inactive_targets,
+DONE

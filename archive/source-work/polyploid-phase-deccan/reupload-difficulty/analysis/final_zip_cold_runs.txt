@@ -1,0 +1,36 @@
+zip sha256: 79fad00686f70c7085b37f9108101db0f43237b6b66c01053d9d3c7da153cb35
+extracted root: polyploid-phase
+=== preflight on extraction ===
+PASS  required files present
+PASS  schema_version 1.4
+PASS  name benchmark-suite/polyploid-phase
+PASS  category Science
+PASS  subcategory
+PASS  canary on every non-JSON file
+PASS  instruction.md uses absolute paths only
+PASS  instruction.md references /app
+PASS  no symlinks
+PASS  no junk (.DS_Store/target/__pycache__)
+PASS  13 fixtures / 13 answers
+PASS  19 probe jobs
+PASS  13 judge checks
+PASS  test.sh expects 19 jobs / 13 checks
+PASS  reward-forgery fix present
+PASS  budgets 300/1500/600
+PASS  instruction.md byte-identical to live package
+PASS  environment byte-identical to live package
+preflight failures: 0
+=== diff extraction vs pkg ===
+extraction identical to pkg
+=== cold oracle (no-cache builds) ===
+MODE=oracle LABEL=final-cold-oracle REWARD=1 RC=0
+RUNLOG: PASS a_required_output_document_holds_the_optimum PASS b_haplotypes_respect_parent_dosage PASS c_inheritance_states_are_ordered_pairs PASS d_double_reduction_never_appears_where_forbidden PASS e_double_reduction_is_used_where_it_is_optimal PASS f_answers_are_in_canonical_form PASS g_canonicalisation_remaps_paths_and_is_idempotent PASS h_every_fixture_reaches_the_global_optimum PASS i_marker_at_a_time_reconstruction_falls_short PASS j_recombination_between_markers_is_accounted_for PASS k_ties_resolve_to_the_documented_representative PASS l_the_compound_case_is_solved PASS m_answers_follow_the_supplied_cross CONTROL ok verdict passed=13/13 control=1 probe_failed_closed=0 reward=0 
+probe artifacts=19/19
+timing judge_build=1 runner_build=1 runner_execution=42 judge=0
+final reward=1
+=== NOP (same cold images) ===
+MODE=nop LABEL=final-cold-nop REWARD=0 RC=0
+RUNLOG: FAIL a_required_output_document_holds_the_optimum PASS b_haplotypes_respect_parent_dosage PASS c_inheritance_states_are_ordered_pairs PASS d_double_reduction_never_appears_where_forbidden FAIL e_double_reduction_is_used_where_it_is_optimal FAIL f_answers_are_in_canonical_form FAIL g_canonicalisation_remaps_paths_and_is_idempotent FAIL h_every_fixture_reaches_the_global_optimum FAIL i_marker_at_a_time_reconstruction_falls_short FAIL j_recombination_between_markers_is_accounted_for FAIL k_ties_resolve_to_the_documented_representative FAIL l_the_compound_case_is_solved FAIL m_answers_follow_the_supplied_cross CONTROL ok verdict passed=3/13 control=1 probe_failed_closed=0 reward=0 
+=== hanging solver via the cold verifier image ===
+hangsolve rc=0 elapsed=304s reward=0 probe baseline exceeded its budget; failing closed, no further candidate code is run|probe artifacts=0/19|final reward=0|
+ALL COLD RUNS DONE

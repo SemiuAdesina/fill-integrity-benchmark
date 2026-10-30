@@ -1,0 +1,42 @@
+    SNAPSHOT 000 stepstart ed2ac9061e16
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.toml" | head -50; echo "---"; ls -la /app ::  150 Sep  5 01:27 spec drwxr-xr-x 1 root root  50 Aug 12 15:43 src drwxr-xr-x 1 root root  72 Sep  5 01:27 target drwxr-xr-x 1 root root  42 Sep  5 01:27 tests 
+[2] BASH rc=0 0.0s :: find /app/src /app/tests -type f | sort :: .rs /app/src/types/position.rs /app/src/types/snapshot.rs /app/src/types/strategy.rs /app/src/types/time.rs /app/tests/diagnostics.rs /app/tests/harness/mod.rs 
+[12] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 && echo "=== TESTS ===" && cargo test --offline --test diagnos :: === TESTS === 
+[13] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 027 step13 4ac5675eb73d
+[14] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 028 step14 d006daf68452
+[15] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 029 step15 a94edded5336
+[16] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 030 step16 ce5da578d43d
+[17] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[18] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -40 :: 
+[19] BASH rc=0 0.0s :: grep -n -A3 "contributes no outstanding\|final for every order\|still finalizes" /app/spec/reconcili ::  never acquire another base unit; the venue has /app/spec/venue-semantics.md-126-  closed it. Any part of the order the block did not fill was cancelled by the 
+[20] EDIT /app/tests/diagnostics.rs -> E ok
+[21] EDIT /app/tests/diagnostics.rs -> E ok
+[22] BASH rc=0 0.0s :: sed -i 's/^use pairing_engine::types::time::Timestamp;$/use pairing_engine::types::time::Timestamp;\ :: 
+[23] BASH rc=0 0.0s :: cargo run --offline --bin reproduce 2>&1 | tail -50 :: 
+[24] EDIT SKIP (tool error) /app/src/types/snapshot.rs :: '<tool_use_error>Found 2 matches of the string to replace, but replace_all is false. To replace all occurrences, set repl'
+[25] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 039 step25 58dac65cf0c2
+[26] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 040 step26 f490eb70b8c1
+[27] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 041 step27 3ea494198a8b
+[28] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 042 step28 cca112c625ec
+[29] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 043 step29 9f415240e3ce
+[30] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 && cargo test --offline --test diagnostics 2>&1 | tail -8 && c :: 
+[31] WRITE /app/tests/interactions.rs -> W ok
+[32] BASH rc=0 0.0s :: sed -i 's/^use pairing_engine::ports::{FillBatch, SubmitError};$/use pairing_engine::engine::Attribu :: 
+[33] BASH rc=0 0.0s :: cp src/engine/fill_classifier.rs /tmp/fc.bak && cp src/engine/cycle.rs /tmp/cy.bak # Mutation 1: rev :: 
+[34] BASH rc=0 0.0s :: python3 - <<'EOF' p='/app/src/engine/cycle.rs' s=open(p).read() old=""" if north_placed && south_pla :: --- mutation 2: latch attempted unconditionally --- 
+[35] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -3 && echo "--- diagnostics ---" && cargo test --offline --test di :: --- diagnostics --- 
+[36] BASH rc=0 0.0s :: ls -la --time-style=+%H:%M src/types/ src/ports/ && echo "--- warnings ---" && cargo build --offline :: ition.rs -rw-r--r-- 1 root root 4323 01:03 snapshot.rs -rw-r--r-- 1 root root 1737 23:00 strategy.rs -rw-r--r-- 1 root root 1827 23:00 time.rs --- warnings --- 
+[37] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 051 step37 da515ef6cf0e
+[38] BASH rc=1 0.0s :: cargo build --offline 2>&1|tail -2 && cargo test --offline --test diagnostics 2>&1|grep "test result :: 
+[39] BASH rc=0 0.0s :: sed -n '1,60p' src/engine/fill_classifier.rs >/dev/null; echo "=== in_window / cumulative / locate = :: t self.submissions[index]; 237-        // Tested against the venue's own match timestamp, not against the cycle 238-        // that happened to read the event. 
+[40] BASH rc=0 0.0s :: echo "=== custody inventory use in engine (must not drive attribution) ==="; grep -rn "instrument_in :: 7 23:00 managers.rs -rw-r--r-- 1 root root   443 23:00 mod.rs -rw-r--r-- 1 root root  1474 23:00 neutralization.rs -rw-r--r-- 1 root root   773 23:00 sizing.rs 

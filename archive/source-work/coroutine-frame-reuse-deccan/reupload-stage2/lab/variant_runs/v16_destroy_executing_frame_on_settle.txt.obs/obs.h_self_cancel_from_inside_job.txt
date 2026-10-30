@@ -1,0 +1,59 @@
+=================================================================
+==726==ERROR: AddressSanitizer: use-after-poison on address 0x5160000000f8 at pc 0xaaaaaded50b8 bp 0xffffda38d670 sp 0xffffda38d668
+WRITE of size 8 at 0x5160000000f8 thread T0
+    #0 0xaaaaaded50b4 in (anonymous namespace)::cancels_self(roundel::Conductor*, unsigned long const*) (.resume) /s/scenario.cpp:475:37
+    #1 0xaaaaadf507fc in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #2 0xaaaaadf4bdd0 in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:387:11
+    #3 0xaaaaadf4c604 in roundel::Conductor::step() /b/runtime.cpp:408:5
+    #4 0xaaaaade755fc in h_self_cancel_from_inside_job() /s/scenario.cpp:1408:5
+    #5 0xaaaaadefb048 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #6 0xaaaaade93410 in main /s/scenario.cpp:2423:42
+    #7 0xffffaa8b7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xffffaa8b7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #9 0xaaaaadd7a0ac in _start (/b/cand+0x7a0ac) (BuildId: 6c91c2ce038d5a8d0a44c1e12e126ba1af18a05f)
+
+0x5160000000f8 is located 120 bytes inside of 528-byte region [0x516000000080,0x516000000290)
+allocated by thread T0 here:
+    #0 0xaaaaade549fc in operator new(unsigned long) (/b/cand+0x1549fc) (BuildId: 6c91c2ce038d5a8d0a44c1e12e126ba1af18a05f)
+    #1 0xaaaaadf30a30 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaaadf46a80 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:141:46
+    #3 0xaaaaade75508 in h_self_cancel_from_inside_job() /s/scenario.cpp:1403:15
+    #4 0xaaaaadefb048 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaaade93410 in main /s/scenario.cpp:2423:42
+    #6 0xffffaa8b7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffaa8b7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaaadd7a0ac in _start (/b/cand+0x7a0ac) (BuildId: 6c91c2ce038d5a8d0a44c1e12e126ba1af18a05f)
+
+SUMMARY: AddressSanitizer: use-after-poison /s/scenario.cpp:475:37 in (anonymous namespace)::cancels_self(roundel::Conductor*, unsigned long const*) (.resume)
+Shadow bytes around the buggy address:
+  0x515ffffffe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x515ffffffe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x515fffffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x515fffffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000000: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x516000000080: 00 00 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7[f7]
+  0x516000000100: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000180: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000200: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000280: f7 f7 fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x516000000300: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==726==ABORTING

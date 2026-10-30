@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.01,
+  "internal": 4,
+  "deviation": 4453,
+  "c": 3320,
+  "L": 1127
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 3.52
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 0.5,
+  "nodes": 2505,
+  "ties_at_count_and_deviation": 1
+ },
+ "held_out": [
+  "FspI+SspI",
+  "BspHI+DraI"
+ ],
+ "truth": {
+  "internal": 4,
+  "deviation": 5307,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_comigration",
+ "seed": 413,
+ "description": "an observed band carries two fragments",
+ "vector": "pACYC177",
+ "vector_header": "X06402.1 Cloning vector pACYC177",
+ "source": "phiX174",
+ "source_header": "J02482.1 Escherichia phage phiX174, complete genome",
+ "fragment": {
+  "left_enzyme": "XhoI",
+  "left_cut": 162,
+  "right_enzyme": "HpaI",
+  "right_cut": 1294
+ },
+ "cloning_site": [
+  "BamHI",
+  3320
+ ],
+ "insert_length": 1132,
+ "enzymes": [
+  "BspHI",
+  "DraI",
+  "FspI",
+  "SspI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 150,
+ "observed": 8
+}

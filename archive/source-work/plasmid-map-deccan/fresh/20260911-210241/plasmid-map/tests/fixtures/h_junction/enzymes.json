@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "AatII",
+   "site": "GACGTC",
+   "cut_offset": 5
+  },
+  {
+   "name": "KpnI",
+   "site": "GGTACC",
+   "cut_offset": 5
+  },
+  {
+   "name": "PvuII",
+   "site": "CAGCTG",
+   "cut_offset": 3
+  },
+  {
+   "name": "ScaI",
+   "site": "AGTACT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "PvuII",
+   "position": 54
+  },
+  {
+   "enzyme": "EcoRI",
+   "position": 230
+  },
+  {
+   "enzyme": "PstI",
+   "position": 273
+  }
+ ]
+}

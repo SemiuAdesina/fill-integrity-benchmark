@@ -1,0 +1,55 @@
+ref: probed 5 cases
+nop: probed 5 cases
+slot01: probed 5 cases
+slot02: probed 5 cases
+slot03: probed 5 cases
+slot04: probed 5 cases
+slot05: probed 5 cases
+slot06: probed 5 cases
+slot07: probed 5 cases
+slot08: probed 5 cases
+case                                                                                         nop  slot01  slot02  slot03  slot04  slot05  slot06  slot07  slot08
+h1_a_recycled_identifier_names_the_order_that_holds_it_now                                  same    DIFF    DIFF    DIFF    DIFF    DIFF    DIFF    DIFF    DIFF
+h2_a_block_naming_a_recycled_identifier_divides_over_the_order_that_holds_it_now            DIFF    same    DIFF    same    DIFF    DIFF    DIFF    same    same
+h3_an_entry_leg_whose_acknowledgement_was_lost_is_recovered_under_the_same_reference        same    same    same    same    same    same    same    DIFF    DIFF
+h4_a_block_that_closes_a_resting_leg_leaves_a_real_gap_to_cover                             DIFF    DIFF    DIFF    DIFF    same    DIFF    DIFF    same    DIFF
+h5_a_block_after_partial_fills_finalizes_the_orders_it_allocates_nothing_to                 DIFF    same    same    same    same    same    same    same    same
+
+== h1_a_recycled_identifier_names_the_order_that_holds_it_now
+       ref: pos=['ra'] takers=[('ra', '30')] cancelled-count=1 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot01: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot02: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot03: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot04: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot05: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot06: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot07: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot08: pos=['ra', 'rb'] takers=[('ra', '30'), ('rb', '30')] cancelled-count=2 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+
+== h2_a_block_naming_a_recycled_identifier_divides_over_the_order_that_holds_it_now
+       ref: pos=['bb', 'za'] takers=[('za', '10'), ('ba', '10'), ('bb', '10')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+       nop: pos=['bb', 'za'] takers=[('za', '10'), ('za', '10'), ('ba', '10'), ('bb', '10'), ('ba', '10'), ('bb', '10'), ('ba', '10'), ('ba', '10'), ('ba', '10'), ('ba', '10'), ('ba', '10'), ('ba', '10'), ('ba', '10')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot02: pos=['za'] takers=[('za', '10'), ('ba', '10'), ('bb', '10'), ('ba', '3'), ('bb', '2')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot04: pos=['za'] takers=[('za', '10'), ('ba', '10'), ('bb', '10'), ('ba', '3'), ('bb', '2')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot05: pos=['za'] takers=[('za', '10'), ('ba', '10'), ('bb', '10'), ('ba', '3'), ('bb', '2')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot06: pos=['bb', 'za'] takers=[('za', '10'), ('ba', '10'), ('bb', '10'), ('ba', '10')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+
+== h3_an_entry_leg_whose_acknowledgement_was_lost_is_recovered_under_the_same_reference
+       ref: pos=[] takers=[] cancelled-count=0 attempts=['accepted', 'acknowledgement-lost']
+    slot07: pos=['ca'] takers=[('ca', '30')] cancelled-count=1 attempts=['accepted', 'acknowledgement-lost', 'deduplicated', 'accepted']
+    slot08: pos=['ca'] takers=[('ca', '30')] cancelled-count=1 attempts=['accepted', 'acknowledgement-lost', 'deduplicated', 'accepted']
+
+== h4_a_block_that_closes_a_resting_leg_leaves_a_real_gap_to_cover
+       ref: pos=[] takers=[] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted']
+       nop: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot01: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot02: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot03: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot05: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot06: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+    slot08: pos=['da', 'db'] takers=[('da', '5'), ('db', '4')] cancelled-count=0 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+
+== h5_a_block_after_partial_fills_finalizes_the_orders_it_allocates_nothing_to
+       ref: pos=[] takers=[('fa', '10'), ('fb', '10'), ('fc', '30'), ('fa', '1'), ('fb', '1'), ('fc', '12')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+       nop: pos=[] takers=[('fa', '10'), ('fb', '10'), ('fc', '30'), ('fa', '10'), ('fb', '10'), ('fc', '30'), ('fa', '1'), ('fb', '1'), ('fc', '24'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12'), ('fa', '1'), ('fb', '1'), ('fc', '12')] cancelled-count=3 attempts=['accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted', 'accepted']
+PROBE ALL DONE

@@ -1,0 +1,77 @@
+330	    /// residual = required quantity
+331	    ///          - quantity already attributed to that leg
+332	    ///          - quantity still working in committed neutralizations
+333	    /// ```
+334	    ///
+335	    /// The second term is `acquired_for`: the leg's own resting order plus the
+336	    /// neutralizations already placed for the same mandate and venue, whose
+337	    /// fills resolve the exposure. The third term is what stops consecutive
+338	    /// cycles from sending the same exposure twice.
+339	    fn residual_for(&self, leg: &PendingOrder) -> Qty {
+340	        let working: Qty = self
+341	            .records_for(leg)
+342	            .iter()
+343	            .map(|record| self.working_for(record))
+344	            .sum();
+345	        leg.size - self.acquired_for(leg) - working
+346	    }
+347	
+348	    /// How much of a committed neutralization is still expected to land.
+349	    ///
+350	    /// - an acknowledged one contributes its own outstanding quantity;
+351	    /// - one whose acknowledgement was lost contributes its full size, because
+352	    ///   the venue may have created it and the engine cannot yet see it;
+353	    /// - one the venue has finalized contributes nothing, whatever it managed to
+354	    ///   fill, because the venue has closed it and the gap it leaves is real.
+355	    fn working_for(&self, record: &NeutralizationRecord) -> Qty {
+356	        match &record.order_id {
+357	            None => record.size,
+358	            Some(_) if self.ledger.is_finalized(&record.client_ref) => 0,
+359	            Some(_) => self
+360	                .ledger
+361	                .outstanding_or(&record.client_ref, record.size),
+362	        }
+363	    }
+364	
+365	    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+366	        if self.replaced.contains(&leg.order_id)
+367	            || self.ledger.is_finalized(&leg.client_ref)
+368	        {
+369	            // Known not to be live: either this engine withdrew it, or the venue
+370	            // closed it. A finalized order is not a momentarily unknown one, so
+371	            // the gap it leaves behind is real and may be covered.
+372	            LegVisibility::Withdrawn
+373	        } else if self.resting_at_venue.contains(&leg.order_id) {
+374	            LegVisibility::Resting
+375	        } else {
+376	            LegVisibility::Unconfirmed
+377	        }
+378	    }
+379	
+380	    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {
+381	        for strategy_id in self.pending.strategy_ids() {
+382	            if self.positions.has(&strategy_id) {
+383	                continue;
+384	            }
+385	            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {
+386	                Some(order) => order.clone(),
+387	                None => continue,
+388	            };
+389	            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {
+390	                Some(order) => order.clone(),
+391	                None => continue,
+392	            };
+393	
+394	            let north_complete = self.leg_is_complete(&north_leg);
+395	            let south_complete = self.leg_is_complete(&south_leg);
+396	
+397	            if north_complete && south_complete {
+398	                self.open_position(&north_leg, &south_leg, now);
+399	            } else if north_complete {
+400	                self.close_gap(&south_leg, now)?;
+401	            } else if south_complete {
+402	                self.close_gap(&north_leg, now)?;
+403	            }
+404	        }
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "    /// residual = required quantity\n    ///          - quantity already attributed to that leg\n    ///          - quantity still working in committed neutralizations\n    /// ```\n    ///\n    /// The second term is `acquired_for`: the leg's own resting order plus the\n    /// neutralizations already placed for the same mandate and venue, whose\n    /// fills resolve the exposure. The third term is what stops consecutive\n    /// cycles from sending the same exposure twice.\n    fn residual_for(&self, leg: &PendingOrder) -> Qty {\n        let working: Qty = self\n            .records_for(leg)\n            .iter()\n            .map(|record| self.working_for(record))\n            .sum();\n        leg.size - self.acquired_for(leg) - working\n    }\n\n    /// How much of a committed neutralization is still expected to land.\n    ///\n    /// - an acknowledged one contributes its own outstanding quantity;\n    /// - one whose acknowledgement was lost contributes its full size, because\n    ///   the venue may have created it and the engine cannot yet see it;\n    /// - one the venue has finalized contributes nothing, whatever it managed to\n    ///   fill, because the venue has closed it and the gap it leaves is real.\n    fn working_for(&self, record: &NeutralizationRecord) -> Qty {\n        match &record.order_id {\n            None => record.size,\n            Some(_) if self.ledger.is_finalized(&record.client_ref) => 0,\n            Some(_) => self\n                .ledger\n                .outstanding_or(&record.client_ref, record.size),\n        }\n    }\n\n    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {\n        if self.replaced.contains(&leg.order_id)\n            || self.ledger.is_finalized(&leg.client_ref)\n        {\n            // Known not to be live: either this engine withdrew it, or the venue\n            // closed it. A finalized order is not a momentarily unknown one, so\n            // the gap it leaves behind is real and may be covered.\n            LegVisibility::Withdrawn\n        } else if self.resting_at_venue.contains(&leg.order_id) {\n            LegVisibility::Resting\n        } else {\n            LegVisibility::Unconfirmed\n        }\n    }\n\n    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {\n        for strategy_id in self.pending.strategy_ids() {\n            if self.positions.has(&strategy_id) {\n                continue;\n            }\n            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n\n            let north_complete = self.leg_is_complete(&north_leg);\n            let south_complete = self.leg_is_complete(&south_leg);\n\n            if north_complete && south_complete {\n                self.open_position(&north_leg, &south_leg, now);\n            } else if north_complete {\n                self.close_gap(&south_leg, now)?;\n            } else if south_complete {\n                self.close_gap(&north_leg, now)?;\n            }\n        }", "numLines": 75, "startLine": 330, "totalLines": 559}}

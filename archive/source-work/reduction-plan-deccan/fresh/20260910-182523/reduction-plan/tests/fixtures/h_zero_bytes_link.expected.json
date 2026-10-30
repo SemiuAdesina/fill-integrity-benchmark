@@ -1,0 +1,34 @@
+{
+ "fixture": "h_zero_bytes_link",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l07",
+    "l12"
+   ],
+   [
+    "l02",
+    "l12"
+   ],
+   [
+    "l03",
+    "l14"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 773
+ },
+ "observables": {
+  "completion": 7,
+  "allocation": 0,
+  "total_bytes": 48,
+  "link_bytes": {
+   "l07": 8,
+   "l02": 8,
+   "l12": 16,
+   "l03": 8,
+   "l14": 8
+  }
+ }
+}

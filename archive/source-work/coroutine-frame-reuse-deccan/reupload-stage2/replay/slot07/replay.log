@@ -1,0 +1,70 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path '*/.git/*' | head -100 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[14] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /tmp/cmake.log 2>&1 && cmake --build build -j 4 >> /t ::  live=2 job-settled job=1 outcome=delivered frame-released job=1 slot=0/1 [arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0  demo finished 
+[15] BASH rc=0 0.0s :: echo "CXXFLAGS=$CXXFLAGS CXX=$CXX"; grep -o '\-fno-color-diagnostics' /app/build/CMakeFiles/roundel. :: CXXFLAGS= CXX= -fno-color-diagnostics 
+[16] BASH rc=0 0.0s :: rm -rf build build-asan && cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /tmp/cmake.log 2>&1 && cma :: 
+[17] BASH rc=0 0.0s :: ./build/roundel_demo 2>&1 | head -100 :: bash: line 1: ./build/roundel_demo: No such file or directory 
+[21] WRITE /app/include/roundel/runtime.hpp -> W ok
+    SNAPSHOT 016 step21 798be5c1fa7e
+[22] BASH rc=0 0.0s :: cat >> /app/include/roundel/runtime.hpp <<'EOF' // ------------------------------------------------- :: done 
+    SNAPSHOT 017 step22 234781456709
+[23] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 018 step23 773b5dee472d
+[24] BASH rc=0 0.0s :: cat >> /app/src/runtime.cpp <<'EOF' // ------------------------------------------------------------- :: 
+    SNAPSHOT 019 step24 a7fcbfb21f01
+[25] BASH rc=127 0.0s :: ./build/roundel_demo 2>&1 :: bash: line 1: ./build/roundel_demo: No such file or directory 
+[26] BASH rc=0 0.0s :: cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /tmp/asan.log 2>&1 && cmak :: bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[27] WRITE /tmp/t/harness.hpp -> W ok
+[28] WRITE /tmp/t/main.cpp -> W ok
+[29] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include  :: bash: line 1: ./t: No such file or directory 
+[30] EDIT /tmp/t/main.cpp -> E ok
+[31] EDIT /tmp/t/main.cpp -> E ok
+[32] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/^static std::string step_traced/static std::string step_traced_unused/' harne :: bash: line 1: ./t: No such file or directory 
+[33] WRITE /tmp/t/extra.cpp -> W ok
+[34] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/^static std::string step_traced/static std::string step_traced_unused/' harne :: bash: line 1: ./x: No such file or directory 
+[35] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/count_for(Mark::ChildDestroyed))/count(Mark::ChildDestroyed))/' extra.cpp &&  :: bash: line 1: ./x: No such file or directory 
+[36] EDIT /tmp/t/extra.cpp -> E ok
+[37] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include  :: bash: line 1: ./x: No such file or directory 
+[38] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -c /app/src/runtime.cpp -I/app/include -o :: runtime.cpp: no warnings runtime.hpp: clean 
+[39] BASH rc=0 0.0s :: cd /tmp/t && cat >> /dev/null <<'X' X python3 - <<'PY' import re p='/tmp/t/extra.cpp' s=open(p).read :: bash: line 40: ./x: No such file or directory 
+[40] BASH rc=0 0.0s :: cd /tmp/t && clang++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -I/ :: bash: line 1: ./tc: No such file or directory bash: line 1: ./xc: No such file or directory 
+[41] BASH rc=0 0.0s :: cd /tmp/t && sed -i '/^static std::string step_traced_unused_unused/,+4d' harness.hpp && sed -i '/^C :: bash: line 1: ./tc: No such file or directory 
+[42] BASH rc=0 0.0s :: cd /tmp/t && clang++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -I/ :: bash: line 1: ./xc: No such file or directory 
+[43] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 038 step43 22a6f8f51a7a
+[44] BASH rc=0 0.0s :: grep -n 'FrameArena::slot_of' src/runtime.cpp :: ()); 347:        t.slot = FrameArena::slot_of(st->parked.address()); 425:    if (!t.bound || !waiting || FrameArena::slot_of(st->parked.address()) != t.slot) { 
+[45] BASH rc=0 0.0s :: python3 - <<'PY' p='src/runtime.cpp' s=open(p).read() pairs=[ (" const SlotId slot = FrameArena::slo :: lot = SlotId{}; 403:            st.parked_slot = SlotId{}; 425:    if (!t.bound || !waiting || st->parked_slot != t.slot) { 433:    st->parked_slot = SlotId{}; 
+    SNAPSHOT 040 step45 511352a70631
+[46] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -I/app/ :: bash: line 1: ./t: No such file or directory bash: line 1: ./x: No such file or directory bash: line 1: ./build/roundel_demo: No such file or directory 
+[47] BASH rc=127 0.0s :: cmake --build build -j4 2>&1|tail -2 && ./build/roundel_demo >/dev/null && echo "debug demo ok" && c :: bash: line 1: ./build/roundel_demo: No such file or directory 
+[48] BASH rc=0 0.0s :: ./build-asan/roundel_demo 2>&1 | head -40 :: bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[49] BASH rc=0 0.0s :: ./build-asan/roundel_demo 2>&1 | tail -30 :: bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[50] BASH rc=0 0.0s :: ./build-asan/roundel_demo > /tmp/demo.out 2> /tmp/demo.err; echo "exit=$?"; head -40 /tmp/demo.err :: exit=127 bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[51] BASH rc=0 0.0s :: for i in 1 2 3; do ./build-asan/roundel_demo >/dev/null 2>/tmp/e; echo "run$i exit=$? err=$(wc -l </ :: run1 exit=127 err=1 run2 exit=127 err=1 run3 exit=127 err=1 bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[52] BASH rc=0 0.0s :: cd /tmp/t && cat > tiny.cpp <<'EOF' #include <cstdio> int main(){ std::printf("hi\n"); return 0; } E :: tiny run1 exit=127 tiny run2 exit=127 tiny run3 exit=127 tiny run4 exit=127 tiny run5 exit=127 0 
+[53] BASH rc=0 0.0s :: for i in 1 2 3; do ./build-asan/roundel_demo >/tmp/d.out 2>/tmp/d.err; echo "asan demo run$i exit=$? :: it=127 stderr_lines=1 tests1 exit=127  err=1 tests2 exit=127  err=1 tests1 exit=127  err=1 tests2 exit=127  err=1 tests1 exit=127  err=1 tests2 exit=127  err=1 
+[54] BASH rc=0 0.0s :: cd /tmp/t && fails=0; for i in $(seq 1 15); do out=$(ASAN_OPTIONS=detect_leaks=0 ./t 2>&1 | tail -1) :: ne 1: ./x: No such file or directory BAD: bash: line 1: ./x: No such file or directory BAD: bash: line 1: ./x: No such file or directory test2: 15 runs, 15 bad 
+[55] BASH rc=0 0.0s :: cd /tmp/t && for i in $(seq 1 10); do ./t >/tmp/o.$i 2>&1; echo "exit=$? stdout_tail='$(tail -1 /tmp :: =127 stdout_tail='bash: line 1: ./t: No such file or directory' has_summary=0 exit=127 stdout_tail='bash: line 1: ./t: No such file or directory' has_summary=0 
+[56] BASH rc=0 0.0s :: cd /tmp/t && for i in $(seq 1 12); do stdbuf -o0 -e0 ./t >/tmp/u.$i 2>&1; c=$?; echo "exit=$c summar :: it=127 summary=0 fatal=0 exit=127 summary=0 fatal=0 exit=127 summary=0 fatal=0 exit=127 summary=0 fatal=0 exit=127 summary=0 fatal=0 exit=127 summary=0 fatal=0 
+[57] BASH rc=0 0.0s :: head -20 /tmp/u.1; echo ---; cd /tmp/t && stdbuf -o0 -e0 ./t; echo "exit=$?" :: stdbuf: failed to run command './t': No such file or directory --- exit=127 stdbuf: failed to run command './t': No such file or directory 
+[58] BASH rc=0 0.0s :: cd /tmp/t && rm -f /tmp/asanlog.*; bad=0; for i in $(seq 1 20); do ASAN_OPTIONS=log_path=/tmp/asanlo :: bad runs: 20 
+[59] BASH rc=0 0.0s :: cd /tmp/t && b=0; for i in $(seq 1 20); do ./tiny >/dev/null 2>/dev/null || b=$((b+1)); done; echo " :: tiny(asan, prints hi): 20/20 segfaults tests: 20/20 segfaults tests(no asan): 20/20 failures bash: line 1: ./topt: No such file or directory 
+[62] WRITE /tmp/t/stress.cpp -> W ok
+[63] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include  :: bash: line 1: ./s: No such file or directory bash: line 1: ./s: No such file or directory bash: line 1: ./s: No such file or directory 
+[64] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/for (std::size_t i = released; i < es.size(); ++i) {/for (std::size_t i = rel :: bash: line 1: ./s: No such file or directory 
+[65] BASH rc=0 0.0s :: cd /tmp/t && python3 - <<'PY' p='stress.cpp' s=open(p).read() s=s.replace(""" if (op < 18 && jobs.si :: c.post(j, static_cast<std::int64_t>(rng() % 50));             } else if (op < 55 && !jobs.empty()) {                 const JobId j = jobs[rng() % jobs.size()]; 
+[66] BASH rc=0 0.0s :: cd /tmp/t && python3 - <<'PY' p='stress.cpp' s=open(p).read() s=s.replace(""" } catch (const std::ba :: exit=127 bash: line 13: ./s: No such file or directory 
+[67] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/seed <= 40/seed <= 200/' stress.cpp && g++ -std=c++20 -O1 -Wall -Wextra -Wped :: gcc exit=127 bash: line 1: ./s: No such file or directory clang exit=127 bash: line 1: ./sc: No such file or directory 
+[68] BASH rc=0 0.0s :: cd /tmp/t && cat > size.cpp <<'EOF' #include "roundel/runtime.hpp" #include <cstdio> #include <strin :: 198:Conductor::Conductor(std::size_t capacity) : arena_(capacity, 512) { 
+[69] BASH rc=0 0.0s :: cp src/runtime.cpp /tmp/runtime.cpp.bak && python3 - <<'PY' p='/app/src/runtime.cpp' s=open(p).read( :: main max frame bytes:  extra max frame bytes:  stress max frame bytes:  
+    SNAPSHOT 064 step69 8451ce2a725e
+[70] BASH rc=0 0.0s :: cd /tmp/t && for f in main extra stress; do g++ -std=c++20 -O0 -g -I/app/include $f.cpp /app/src/run :: gcc -O0 main max:  clang -O0 main max:  gcc -O0 extra max:  clang -O0 extra max:  gcc -O0 stress max:  clang -O0 stress max:  
+[71] BASH rc=0 0.0s :: cp /tmp/runtime.cpp.bak src/runtime.cpp && grep -c 'FRAME\|cstdio' src/runtime.cpp; cmake --build bu :: 0 bash: line 1: ./build/roundel_demo: No such file or directory 
+    SNAPSHOT 066 step71 511352a70631
+[72] BASH rc=0 0.0s :: cd /tmp && for opt in -O0 -O2 -O3; do for cc in g++ clang++; do $cc -std=c++20 $opt -Wall -Wextra -W :: warning check done 
+[73] BASH rc=0 0.0s :: cd /tmp/t && rm -f t x s tc xc sc && ok=1 g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanit :: h: line 5: ./x: No such file or directory (exit 0) s: bash: line 5: ./s: No such file or directory (exit 0) debug demo exit=127 asan demo exit=127 asan_lines=0 
+[74] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -O1 -g -fsanitize=address,undefined -I/app/include stress.cpp /app/src/r :: exit=127 (env segv) t run2: exit=127 (env segv) x run1: exit=127 (env segv) x run2: exit=127 (env segv) s run1: exit=127 (env segv) s run2: exit=127 (env segv) 
+[75] BASH rc=0 0.0s :: cd /tmp/t && cat > leak.cpp <<'EOF' #include <cstdio> int main(){ int* p = new int[10]; p[0]=1; std: :: leak-test exit=127 detected=0 leak-test exit=127 detected=0 leak-test exit=127 detected=0 
+[76] BASH rc=0 0.0s :: cd /tmp/t && for b in t x s; do got=""; for i in $(seq 1 8); do ./$b >/tmp/f.$b 2>/tmp/fe.$b; if [ $ :: t -> NO CLEAN RUN x -> NO CLEAN RUN s -> NO CLEAN RUN --- asan stderr on clean runs:   1 /tmp/fe.t   1 /tmp/fe.x   1 /tmp/fe.s   3 total 
+[78] BASH rc=0 0.0s :: ls -la /app /app/src /app/include/roundel /app/examples | grep -v '^total\|^d' | head -20; echo "--- :: onductor was --- md5 of deliverables: bad1e51e66e403c9866eb3272493faa6  /app/include/roundel/runtime.hpp 95444a3c157355e52ce20db6b23e6861  /app/src/runtime.cpp 
+[79] BASH rc=0 0.0s :: rm -rf /app/build /app/build-asan && cmake -S /app -B /app/build -DCMAKE_BUILD_TYPE=Debug >/dev/null :: v segv, retry asan demo: env segv, retry asan demo: env segv, retry asan demo: env segv, retry bash: line 1: /app/build/roundel_demo: No such file or directory 

@@ -1,0 +1,27 @@
+baseline               0.31s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+greedy_trap            0.13s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+dr_legality            0.13s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+symmetry               0.13s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+compound               0.28s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+coupled_ties           0.14s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+path_order             0.05s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+shared_phase          24.40s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+/bin/bash: line 9: bc: command not found
+low_information       15.10s digest_ok=yes
+unlinked_interval      4.55s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+marker0_dr             0.06s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+low_depth              0.08s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+unlinked_ties          0.05s digest_ok=yes
+/bin/bash: line 9: bc: command not found
+total 0.00s

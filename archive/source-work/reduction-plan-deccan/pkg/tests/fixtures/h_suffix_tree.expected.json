@@ -1,0 +1,36 @@
+{
+ "fixture": "h_suffix_tree",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l02",
+    "l10"
+   ],
+   [
+    "l06",
+    "l08"
+   ],
+   [
+    "l04",
+    "l14",
+    "l10"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 3804
+ },
+ "observables": {
+  "completion": 7,
+  "allocation": 0,
+  "total_bytes": 56,
+  "link_bytes": {
+   "l02": 8,
+   "l04": 8,
+   "l14": 8,
+   "l10": 16,
+   "l06": 8,
+   "l08": 8
+  }
+ }
+}

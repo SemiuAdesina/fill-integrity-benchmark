@@ -1,0 +1,192 @@
+{
+ "fixture": "case_e",
+ "seed": 6000,
+ "attempt": 0,
+ "retained": true,
+ "rows": [
+  {
+   "target": "type 1",
+   "visible_linked_obs": 22,
+   "visible_obs_total": 36,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 12
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 1,
+   "oracle_b_fits": 1,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 12
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  },
+  {
+   "target": "type 2",
+   "visible_linked_obs": 22,
+   "visible_obs_total": 36,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S+A",
+     "scale": 1,
+     "signedness": "unsigned",
+     "overflow": "wrap",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 2,
+   "oracle_b_fits": 2,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S+A",
+     "scale": 1,
+     "signedness": "unsigned",
+     "overflow": "wrap",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  },
+  {
+   "target": "type 3",
+   "visible_linked_obs": 22,
+   "visible_obs_total": 36,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S+B+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "wrap",
+     "slices": [
+      {
+       "lsb": 4,
+       "width": 12
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 2,
+   "oracle_b_fits": 2,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S+B+A-P",
+     "scale": 1,
+     "signedness": "unsigned",
+     "overflow": "wrap",
+     "slices": [
+      {
+       "lsb": 4,
+       "width": 12
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  },
+  {
+   "target": "type 4",
+   "visible_linked_obs": 22,
+   "visible_obs_total": 36,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S",
+     "scale": 1,
+     "signedness": "unsigned",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 24,
+       "width": 8
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 1,
+   "oracle_b_fits": 1,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S",
+     "scale": 1,
+     "signedness": "unsigned",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 24,
+       "width": 8
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  }
+ ]
+}

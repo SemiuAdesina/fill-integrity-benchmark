@@ -1,0 +1,578 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "s00",
+   "node": "E00",
+   "value": 4516
+  },
+  {
+   "id": "s05",
+   "node": "E01",
+   "value": -3927
+  },
+  {
+   "id": "s07",
+   "node": "E02",
+   "value": 4922
+  },
+  {
+   "id": "s02",
+   "node": "E03",
+   "value": -4785
+  },
+  {
+   "id": "s01",
+   "node": "E04",
+   "value": 2687
+  },
+  {
+   "id": "s06",
+   "node": "E05",
+   "value": -751
+  },
+  {
+   "id": "s04",
+   "node": "E06",
+   "value": 4024
+  },
+  {
+   "id": "s03",
+   "node": "E07",
+   "value": -1161
+  }
+ ],
+ "switches": [
+  {
+   "id": "L00",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  },
+  {
+   "id": "L01",
+   "reduction_capable": true,
+   "accumulator_capacity": 16
+  },
+  {
+   "id": "L02",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "L03",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "L04",
+   "reduction_capable": true,
+   "accumulator_capacity": 16
+  },
+  {
+   "id": "P00",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "P01",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  },
+  {
+   "id": "P02",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "P03",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "C00",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "C01",
+   "reduction_capable": true,
+   "accumulator_capacity": 16
+  }
+ ],
+ "links": [
+  {
+   "id": "k042",
+   "from": "L02",
+   "to": "L00",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k020",
+   "from": "E05",
+   "to": "L03",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k040",
+   "from": "L02",
+   "to": "P03",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k033",
+   "from": "L00",
+   "to": "L04",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k055",
+   "from": "P01",
+   "to": "S",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k012",
+   "from": "E03",
+   "to": "L04",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "k044",
+   "from": "L03",
+   "to": "P02",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "k051",
+   "from": "P00",
+   "to": "C01",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k066",
+   "from": "C01",
+   "to": "S",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "k031",
+   "from": "L00",
+   "to": "P03",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k022",
+   "from": "E06",
+   "to": "L01",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k061",
+   "from": "P03",
+   "to": "P02",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k050",
+   "from": "P00",
+   "to": "C00",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k043",
+   "from": "L03",
+   "to": "P00",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k010",
+   "from": "E02",
+   "to": "P03",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k003",
+   "from": "E00",
+   "to": "L04",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k037",
+   "from": "L01",
+   "to": "L04",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k062",
+   "from": "P03",
+   "to": "S",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k013",
+   "from": "E03",
+   "to": "L02",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k034",
+   "from": "L01",
+   "to": "P01",
+   "rate": 8,
+   "latency": 2
+  },
+  {
+   "id": "k046",
+   "from": "L03",
+   "to": "S",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k052",
+   "from": "P00",
+   "to": "P01",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k001",
+   "from": "E00",
+   "to": "L03",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k023",
+   "from": "E06",
+   "to": "L00",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k029",
+   "from": "E07",
+   "to": "P01",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k026",
+   "from": "E07",
+   "to": "L04",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k004",
+   "from": "E00",
+   "to": "L00",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k060",
+   "from": "P03",
+   "to": "C00",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k019",
+   "from": "E05",
+   "to": "L02",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k011",
+   "from": "E02",
+   "to": "S",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k039",
+   "from": "L02",
+   "to": "P01",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k064",
+   "from": "C00",
+   "to": "C01",
+   "rate": 8,
+   "latency": 4
+  },
+  {
+   "id": "k025",
+   "from": "E07",
+   "to": "L02",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k047",
+   "from": "L04",
+   "to": "P02",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k054",
+   "from": "P01",
+   "to": "P02",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k008",
+   "from": "E02",
+   "to": "L00",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k017",
+   "from": "E04",
+   "to": "L04",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k036",
+   "from": "L01",
+   "to": "L02",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k063",
+   "from": "C00",
+   "to": "S",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k058",
+   "from": "P02",
+   "to": "S",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k053",
+   "from": "P01",
+   "to": "C00",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k009",
+   "from": "E02",
+   "to": "L03",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k048",
+   "from": "L04",
+   "to": "P00",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k015",
+   "from": "E03",
+   "to": "P02",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "k028",
+   "from": "E07",
+   "to": "L00",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k005",
+   "from": "E01",
+   "to": "L04",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k038",
+   "from": "L02",
+   "to": "P02",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k065",
+   "from": "C00",
+   "to": "P03",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k018",
+   "from": "E04",
+   "to": "L00",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k035",
+   "from": "L01",
+   "to": "P03",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k014",
+   "from": "E03",
+   "to": "L03",
+   "rate": 4,
+   "latency": 1
+  },
+  {
+   "id": "k016",
+   "from": "E04",
+   "to": "L02",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k002",
+   "from": "E00",
+   "to": "L03",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k030",
+   "from": "L00",
+   "to": "P00",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k057",
+   "from": "P02",
+   "to": "P00",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k059",
+   "from": "P03",
+   "to": "C01",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k027",
+   "from": "E07",
+   "to": "L04",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k021",
+   "from": "E06",
+   "to": "L04",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k045",
+   "from": "L03",
+   "to": "L01",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k067",
+   "from": "C01",
+   "to": "C00",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k032",
+   "from": "L00",
+   "to": "P01",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k041",
+   "from": "L02",
+   "to": "L01",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k024",
+   "from": "E06",
+   "to": "S",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "k007",
+   "from": "E01",
+   "to": "L03",
+   "rate": 4,
+   "latency": 1
+  },
+  {
+   "id": "k056",
+   "from": "P02",
+   "to": "C00",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "k006",
+   "from": "E01",
+   "to": "L01",
+   "rate": 8,
+   "latency": 2
+  },
+  {
+   "id": "k049",
+   "from": "L04",
+   "to": "L02",
+   "rate": 8,
+   "latency": 2
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {}
+ }
+}

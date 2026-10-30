@@ -1,0 +1,39 @@
+[22]
+sed -i 's/^use pairing_engine::types::time::Timestamp;$/use pairing_engine::types::time::Timestamp;\nuse pairing_engine::types::Venue;/' tests/diagnostics.rs && cargo test --offline --test diagnostics 2>&1 | tail -40
+
+[32]
+sed -i 's/^use pairing_engine::ports::{FillBatch, SubmitError};$/use pairing_engine::engine::AttributionLedger;\nuse pairing_engine::ports::{FillBatch, SubmitError};/' tests/interactions.rs && cargo test --offline --test interactions 2>&1 | tail -45
+
+[33]
+cp src/engine/fill_classifier.rs /tmp/fc.bak && cp src/engine/cycle.rs /tmp/cy.bak
+# Mutation 1: revert locate() to order_id-first
+python3 - <<'EOF'
+import re
+p='/app/src/engine/fill_classifier.rs'
+s=open(p).read()
+old="""    fn locate(&mut self, order_id: &OrderId, client_ref: &ClientRef) -> Option<usize> {
+        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {"""
+new="""    fn locate(&mut self, order_id: &OrderId, client_ref: &ClientRef) -> Option<usize> {
+        if let Some(i) = self.index_of_order(order_id) { return Some(i); }
+        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {"""
+assert old in s
+open(p,'w').write(s.replace(old,new))
+EOF
+cargo test --offline --test interactions 2>&1 | grep -E "^test |test result" | head -12
+cp /tmp/fc.bak src/engine/fill_classifier.rs
+
+[34]
+python3 - <<'EOF'
+p='/app/src/engine/cycle.rs'
+s=open(p).read()
+old="""            if north_placed && south_placed {
+                self.attempted.insert(candidate.strategy_id.clone());
+            }"""
+new="""            self.attempted.insert(candidate.strategy_id.clone());"""
+assert old in s
+open(p,'w').write(s.replace(old,new))
+EOF
+echo "--- mutation 2: latch attempted unconditionally ---"
+cargo test --offline --test interactions 2>&1 | grep -E "^test |test result" | head -12
+cargo test --offline --test diagnostics 2>&1 | grep -E "test result" | head -3
+cp /tmp/cy.bak src/engine/cycle.rs

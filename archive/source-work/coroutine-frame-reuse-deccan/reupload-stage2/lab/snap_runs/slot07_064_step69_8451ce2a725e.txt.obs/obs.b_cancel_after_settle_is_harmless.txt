@@ -1,0 +1,8 @@
+FRAME 88
+OBS 0 B 4:true
+OBS 1 E 1:0
+OBS 2 E 1:0
+OBS 3 E 2:21
+OBS 4 E 1:1
+OBS 5 E 1:1
+END 6 0

@@ -1,0 +1,4 @@
+/Users/macbok/benchmark-suite-work/reduction-plan-deccan/lab/cand/S5_telemetry_filter/src/recover.cpp:154:5: warning: unused function 'plan_key' [-Wunused-function]
+  154 | Key plan_key(const Ctx& c, const std::vector<std::vector<std::string>>& paths, const std::vector<std::string>& combine) {
+      |     ^~~~~~~~
+1 warning generated.

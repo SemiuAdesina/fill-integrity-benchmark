@@ -1,0 +1,48 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" | head -50; echo "---"; find /app -type f -name "*.rs" | head -80; ec :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[2] BASH rc=0 0.0s :: ls -la /app; echo "---"; find /app -type d -not -path "*/target/*" -not -path "*/.git/*" | head -40 :: wxr-xr-x 1 root root 286 Sep  9 01:57 tests --- /app /app/target /app/tests /app/tests/harness /app/spec /app/src /app/src/engine /app/src/ports /app/src/types 
+[5] BASH rc=0 0.1s :: wc -l /app/src/lib.rs /app/src/types/*.rs /app/src/engine/*.rs /app/src/ports/mod.rs /app/tests/*.rs :: tests/neutralization_lifecycle.rs    124 /app/tests/observation_identity.rs    136 /app/tests/restart_recovery.rs   1192 /app/tests/harness/mod.rs   3734 total 
+[13] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[14] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[15] BASH rc=0 0.0s :: cargo test --offline --test direct_progress 2>&1 | grep -A4 "panicked" | head -60 :: 
+[15] BASH rc=0 0.0s :: cargo test --offline --test block_reconciliation 2>&1 | grep -A4 "panicked" | head -60 :: 
+[18] WRITE /app/src/types/snapshot.rs -> W ok
+    SNAPSHOT 040 step18 6a0165bf9361
+[19] BASH rc=1 0.0s :: grep -rn "pending_for\|pending_orders\|positions()" tests/ | grep -v "^tests/harness" :: 
+[21] BASH rc=0 0.0s :: grep -rn "pending" tests/*.rs | head -20 :: 
+[22] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 043 step22 2083aa087e58
+[23] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 044 step23 017ee6b824b6
+[24] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 045 step24 738a21f1c0b6
+[26] WRITE /app/src/engine/neutralization.rs -> W ok
+    SNAPSHOT 048 step26 c1bb441ba8a5
+[27] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 049 step27 c9d18187a2ee
+[28] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 050 step28 27ad61a1fabe
+[29] BASH rc=0 0.0s :: cargo build --offline 2>&1 | head -60 :: 
+[30] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 052 step30 49b6ae852d0c
+[31] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 053 step31 ff161b620868
+[32] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 054 step32 459aad3e4b9e
+[33] BASH rc=0 0.0s :: sed -i 's|pub fn positions(&self) -> Vec<crate::types::position::Position> {|pub fn positions(\&self :: 
+    SNAPSHOT 055 step33 c1fc4abb2626
+[34] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[35] BASH rc=0 0.0s :: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "^(warning|error)" -A5 | head -60 :: 
+[36] BASH rc=0 0.0s :: grep -n "PendingOrderManager\|plan_neutralization\|NeutralizationPlan" src/engine/mod.rs src/lib.rs :: ine/mod.rs:12:pub use neutralization::{plan_neutralization, NeutralizationPlan}; src/engine/mod.rs:13:pub use managers::{PendingOrderManager, PositionManager}; 
+[37] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/engine/managers.rs' s=open(p).read() i=s.index('#[derive(Debug, C :: 
+    SNAPSHOT 059 step37 6cfed43c55c2
+[39] WRITE /app/tests/contract_probe.rs -> W ok
+[40] BASH rc=0 0.0s :: cargo test --offline --test contract_probe 2>&1 | grep -E "^(test |test result)" -A3 | sed 's/^/ /'  :: 
+[41] BASH rc=1 0.0s :: cargo test --offline 2>&1 | grep -E "test result|^error" :: 
+[41] BASH rc=0 0.0s :: cargo clippy --offline --all-targets 2>&1 | grep -E "^(warning|error)" | sort | uniq -c | head -20 :: 
+[42] EDIT /app/tests/contract_probe.rs -> E ok
+[43] BASH rc=0 0.0s :: cargo test --offline --test contract_probe 2>&1 | grep -E "^(test |test result)" -A4 | sed 's/^/ /'  :: 
+[44] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -3; echo "--- unused check ---"; cargo build --offline 2>&1 | grep :: --- unused check --- 0 
+[45] BASH rc=0 0.0s :: ls -la --time-style=+%H:%M src/types/ src/ports/ src/engine/ | grep -v '^total\|^d' :: ot 1917 01:57 position.rs -rw-r--r-- 1 root root 6623 21:12 snapshot.rs -rw-r--r-- 1 root root 1741 01:57 strategy.rs -rw-r--r-- 1 root root 1831 01:57 time.rs 
+[45] BASH rc=1 0.0s :: rm -rf target && cargo build --offline 2>&1 | tail -3 && cargo test --offline 2>&1 | grep -E "test r :: 
+[46] BASH rc=1 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: t_progress                  block_reconciliation             neutralization_lifecycle         restart_recovery                 cross_mandate_isolation          

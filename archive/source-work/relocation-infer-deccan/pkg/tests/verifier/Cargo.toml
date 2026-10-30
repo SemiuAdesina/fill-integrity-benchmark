@@ -1,0 +1,39 @@
+# The verifier's own crate. Never present in the agent image.
+#
+# It carries its own copies of the frozen modules, so the candidate cannot
+# change what counts as a correct answer by editing the modules it was given.
+# Only `src/bin/probe/recover.rs` and `src/bin/probe/recover/` are taken from
+# the candidate, and the verifier owns this manifest and every build flag.
+#
+# Two binaries, and the split is a security boundary. `probe` is the only
+# target the candidate's recovery is compiled into; it runs one job and writes
+# one artifact. `judge` holds the certified answers, replays every submitted
+# program with its own engine, and links no candidate code at all.
+
+[package]
+name = "reloc-verifier"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "verifier_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "probe"
+path = "src/bin/probe/main.rs"
+
+[[bin]]
+name = "judge"
+path = "src/bin/judge/main.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

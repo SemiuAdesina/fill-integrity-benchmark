@@ -1,0 +1,74 @@
+[step 2] I'll start by reading the specification and understanding the existing code.
+
+[step 19] Now I understand the problem. Let me look at the remaining test file and then start building.
+
+[step 20] Now let me write the solver. First the precomputed tables module:
+
+[step 38] The landscape is very rugged (2000 random starts → 2000 distinct local optima). Let me measure how much the different search phases contribute:
+
+[step 47] Let me add a seed parameter so I can measure the search's variance:
+
+[step 53] Now let me test seed variance:
+
+[step 56] Let me isolate the contribution of each phase:
+
+[step 59] Now let me rewrite the search with a much stronger memetic (population + crossover) core:
+
+[step 63] Now update the experiment harness to the new budget fields:
+
+[step 70] Found it — `best_pair` was only updated on a lexicographic comparison, so a strictly better score with a larger row key was ignored. Fixing:
+
+[step 73] Much better. Let me test whether more rounds close the remaining gap:
+
+[step 76] 200k rounds hit the target on both seeds. Now let me add a stronger local search — one-marker re-optimisation with exact path re-optimisation via max-plus:
+
+[step 80] Now wire the strong local search into the engine:
+
+[step 86] 8/8 seeds now hit the target. Let me check whether anything better exists, with a much larger budget:
+
+[step 92] Let me make the strong local search cheaper withvalidated batch sweeps:
+
+[step 107] Now remove the weak (and now unused) optimistic bound:
+
+[step 120] Let me validate the heuristic path against brute force. First, the `Cross` type:
+
+[step 124] Now temporarily disable the exhaustive shortcut so the heuristic path is what gets tested:
+
+[step 126] 30/30 trials reach the enumerated optimum on the pure heuristic path. Let me try harder instances:
+
+[step 130] Let me make the reported total the value of the paths actually written, rather than the Viterbi maximum:
+
+[step 145] All good. Now let me clean up the temporary artifacts:
+
+[step 155] The solver is done. `/app/result.json` is written and everything passes.
+
+## What I built
+
+Four modules under `/app/src/solver/`, with `solver.rs` reduced to wiring:
+
+- **`tables.rs`** — flattens the cross into the arrays the inner loops need: per-marker admissible columns (≤6 each), transition matrices, combined double-reduction terms, legality masks.
+- **`dp.rs`** — one progeny's path as Viterbi over the 100 joint states, factored into two 10×10 passes; plus forward/backward max-plus tables and the lexicographically smallest optimal path.
+- **`canon.rs`** — canonical form, sorting permutations, and the ordering between distinct optima.
+- **`search.rs`** — the global search.
+
+## Why the search looks like this
+
+The alternating step (paths given columns, columns given paths — each exact in its block) alone is useless here: 2000 random starts give 2000 different fixed points, the best of them ~2 nats below the optimum. Branch and bound is worse — the natural bound is ~117 nats loose.
+
+So the descent sits inside a population search: a pool of 16 assignments, each round perturbing or crossing two of them marker by marker, then descending. Crossover is what makes it work — two assignments stuck for different reasons can share the markers they each got right.
+
+I also added a neighbourhood that neither block step contains: replace the columns at one marker and re-optimise **every** path around it. The forward/backward tables bracket that marker and don't depend on its columns, so each candidate costs one max over 100 states. Running this and the alternating step to a point neither can move is what closed the gap — before it, roughly half of all runs fell short; with it, 8/8 seeds hit the optimum.
+
+Where the space can be listed, two exact stages run as well: full enumeration when the joint space is small, and otherwise an alternation that optimises a whole parent at a time.
+
+## Verification
+
+- **Optimum**: `-705.140456203`, reached on 8/8 independent seeds; a 10× larger budget (2048 restarts, 200k rounds, 40k strong rounds, 170 s) found nothing better.
+- **Brute force**: with the enumeration shortcuts disabled, 36 random crosses (spaces up to 46 656 assignment pairs) all matched the enumerated optimum.
+- **Consistency**: the reported total is now the value of the paths actually written, not the Viterbi maximum — `delta = 0.0` against an independent Python scorer, and it can't drift by up to `N·eps` if paths tie.
+- **Canonical / deterministic**: no canonical defect, digest matches, and repeated runs are byte-identical.
+- **Tests**: `diagnostics` 4/4, `solver_checks` 6/6 (including `search_reaches_the_enumerated_optimum`).
+
+Runtime is 18 s on the fixture and 20–27 s across the declared size range (budgets scale with `offspring × markers`, deterministically from the input — no wall-clock anywhere).
+
+Two things worth flagging: I found and fixed a bug where `best_pair` only updated on a lexicographic comparison, so a strictly better score with a larger row key was silently discarded — that had been capping the search at `-725.2` regardless of seed. And the "global optimum" claim rests on the search rather than a proof: the evidence is unanimous agreement across seeds, budgets and brute-force checks, but for the largest instances (M=28, N=32 with all dosages at 2, a ~10²² space) it is a heuristic and I have no ground truth to check it against.

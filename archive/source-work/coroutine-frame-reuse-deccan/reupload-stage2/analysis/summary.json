@@ -1,0 +1,174 @@
+{
+ "01": {
+  "attempt": "hy4_difficulty-slot-01-a01-782db565",
+  "steps": 61,
+  "tools": {
+   "Bash": 28,
+   "Read": 15,
+   "Edit": 18,
+   "Write": 3
+  },
+  "files": [
+   "/app/src/runtime.cpp",
+   "/tmp/fuzz.cpp",
+   "/tmp/t.cpp"
+  ],
+  "bash_writes": 4,
+  "build_runs": 16,
+  "term": null,
+  "full_credit": false,
+  "turns": 60
+ },
+ "02": {
+  "attempt": "hy4_difficulty-slot-02-a01-d8fd1db5",
+  "steps": 94,
+  "tools": {
+   "Bash": 51,
+   "Read": 19,
+   "Edit": 15,
+   "Write": 6
+  },
+  "files": [
+   "/app/src/runtime.cpp",
+   "/tmp/t1.cpp",
+   "/tmp/t2.cpp",
+   "/tmp/t3.cpp",
+   "/tmp/t4.cpp",
+   "/tmp/t5.cpp"
+  ],
+  "bash_writes": 10,
+  "build_runs": 16,
+  "term": null,
+  "full_credit": false,
+  "turns": 93
+ },
+ "03": {
+  "attempt": "hy4_difficulty-slot-03-a01-13cb4217",
+  "steps": 83,
+  "tools": {
+   "Bash": 50,
+   "Read": 14,
+   "Write": 7,
+   "Edit": 16
+  },
+  "files": [
+   "/app/include/roundel/runtime.hpp",
+   "/app/src/runtime.cpp",
+   "/tmp/t/edge.cpp",
+   "/tmp/t/main.cpp",
+   "/tmp/t/nested.cpp",
+   "/tmp/t/trace.hpp"
+  ],
+  "bash_writes": 7,
+  "build_runs": 22,
+  "term": null,
+  "full_credit": true,
+  "turns": 82
+ },
+ "04": {
+  "attempt": "hy4_difficulty-slot-04-a01-64eda372",
+  "steps": 17,
+  "tools": {
+   "Bash": 1,
+   "Read": 10
+  },
+  "files": [],
+  "bash_writes": 0,
+  "build_runs": 0,
+  "term": "OutputTokenExceededError",
+  "full_credit": false,
+  "turns": 16
+ },
+ "05": {
+  "attempt": "hy4_difficulty-slot-05-a01-837c6c08",
+  "steps": 61,
+  "tools": {
+   "Bash": 45,
+   "Read": 12,
+   "Write": 6,
+   "Edit": 3
+  },
+  "files": [
+   "/app/include/roundel/runtime.hpp",
+   "/app/src/runtime.cpp",
+   "/tmp/spec_test.cpp",
+   "/tmp/spec_test2.cpp",
+   "/tmp/spec_test3.cpp",
+   "/tmp/spec_test4.cpp"
+  ],
+  "bash_writes": 12,
+  "build_runs": 29,
+  "term": null,
+  "full_credit": true,
+  "turns": 60
+ },
+ "06": {
+  "attempt": "hy4_difficulty-slot-06-a01-20f47395",
+  "steps": 90,
+  "tools": {
+   "Bash": 63,
+   "Read": 12,
+   "Write": 6,
+   "Edit": 5
+  },
+  "files": [
+   "/app/include/roundel/runtime.hpp",
+   "/app/src/runtime.cpp",
+   "/logs/agent/sessions/projects/-app/memory/MEMORY.md",
+   "/logs/agent/sessions/projects/-app/memory/asan-coroutine-flaky-signal.md",
+   "/tmp/rt/stress.cpp",
+   "/tmp/rt/test_main.cpp"
+  ],
+  "bash_writes": 20,
+  "build_runs": 32,
+  "term": null,
+  "full_credit": false,
+  "turns": 88
+ },
+ "07": {
+  "attempt": "hy4_difficulty-slot-07-a01-a35493fa",
+  "steps": 80,
+  "tools": {
+   "Bash": 51,
+   "Read": 13,
+   "Write": 6,
+   "Edit": 4
+  },
+  "files": [
+   "/app/include/roundel/runtime.hpp",
+   "/app/src/runtime.cpp",
+   "/tmp/t/extra.cpp",
+   "/tmp/t/harness.hpp",
+   "/tmp/t/main.cpp",
+   "/tmp/t/stress.cpp"
+  ],
+  "bash_writes": 16,
+  "build_runs": 28,
+  "term": null,
+  "full_credit": false,
+  "turns": 79
+ },
+ "08": {
+  "attempt": "hy4_difficulty-slot-08-a01-7f77492e",
+  "steps": 58,
+  "tools": {
+   "Bash": 38,
+   "Read": 12,
+   "Write": 7,
+   "Edit": 10
+  },
+  "files": [
+   "/app/include/roundel/runtime.hpp",
+   "/app/src/runtime.cpp",
+   "/tmp/stress.cpp",
+   "/tmp/t.cpp",
+   "/tmp/t2.cpp",
+   "/tmp/t3.cpp"
+  ],
+  "bash_writes": 5,
+  "build_runs": 17,
+  "term": null,
+  "full_credit": true,
+  "turns": 57
+ }
+}

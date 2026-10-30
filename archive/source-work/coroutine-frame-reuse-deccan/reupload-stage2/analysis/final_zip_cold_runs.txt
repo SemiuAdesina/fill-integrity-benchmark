@@ -1,0 +1,55 @@
+zip sha256: c282187f81d1c0d1b3bb9fbc5f350572b9391a66f5b9111ed5a08706099adec0
+extracted root: coroutine-frame-reuse
+=== preflight on extraction ===
+PASS  required files checked
+PASS  schema_version 1.4
+PASS  name benchmark-suite/coroutine-frame-reuse
+PASS  category Science
+PASS  subcategory
+PASS  expert time 3.0
+PASS  separate verifier environment
+PASS  canary on every file
+PASS  instruction.md uses absolute paths
+PASS  instruction.md references /app
+PASS  no symlinks
+PASS  no junk
+PASS  environment/Dockerfile digest-pinned
+PASS  environment/Dockerfile no network fetch
+PASS  tests/Dockerfile digest-pinned
+PASS  tests/Dockerfile no network fetch
+PASS  five diagnostic programs
+PASS  diagnostics copied into the image
+PASS  driver lists 75 cases (74 graded + control)
+PASS  graded.cpp defines 75 cases
+PASS  test.sh default graded 74
+PASS  test.sh trust-boundary hardening present
+PASS  judge link inspection present
+PASS  instruction.md hint phrases checked
+preflight failures: 0
+=== diff extraction vs pkg ===
+extraction identical to pkg
+=== cold oracle (no-cache builds) ===
+MODE=oracle LABEL=final-cold-oracle REWARD=1 RC=0
+passed=74
+graded=74
+control_ok=1
+judge link: /usr/bin/clang++ -O3 -DNDEBUG CMakeFiles/roundel_verifier.dir/verifier_driver.cpp.o -o roundel_verifier 
+=== NOP (same cold images) ===
+MODE=nop LABEL=final-cold-nop REWARD=0 RC=0
+passed=23
+graded=74
+control_ok=1
+=== hanging candidate via the cold verifier image ===
+MODE=patched LABEL=final-cold-hang REWARD=0 RC=0
+=== diagnostics from the extracted environment ===
+ref: runtime_smoke: 5 of 5 scenarios passed (17 checks run, 0 failed)
+ref: lifecycle: 6 of 6 scenarios passed (21 checks run, 0 failed)
+ref: ticket_identity: 4 of 4 scenarios passed (8 checks run, 0 failed)
+ref: nested_coroutines: 4 of 4 scenarios passed (13 checks run, 0 failed)
+ref: scheduler_clock: 5 of 5 scenarios passed (8 checks run, 0 failed)
+nop: runtime_smoke: 5 of 5 scenarios passed (17 checks run, 0 failed)
+nop: lifecycle: 1 of 6 scenarios passed (13 checks run, 5 failed)
+nop: ticket_identity: 1 of 4 scenarios passed (5 checks run, 3 failed)
+nop: nested_coroutines: 0 of 4 scenarios passed (10 checks run, 4 failed)
+nop: scheduler_clock: 1 of 5 scenarios passed (5 checks run, 4 failed)
+ALL COLD RUNS DONE

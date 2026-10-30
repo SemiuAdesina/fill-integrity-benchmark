@@ -1,0 +1,161 @@
+   Compiling pairing_engine v0.1.0 (/tmp/fill-runner.xF9wmS5U/runner)
+warning: unused import: `close`
+  --> tests/graded.rs:70:47
+   |
+70 |     block_takers, block_takers_at, candidate, close, fill_resting, fill_taker, run, instrument,
+   |                                               ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `position`
+   --> tests/graded.rs:136:9
+    |
+136 |     let position = outcome.position("m1").expect("position for m1");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `position`
+   --> tests/graded.rs:167:9
+    |
+167 |     let position = outcome.position("m2").expect("position for m2");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `takers`
+   --> tests/graded.rs:191:9
+    |
+191 |     let takers = outcome.takers_for("m3", Venue::South);
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_takers`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:207:9
+    |
+207 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:236:9
+    |
+236 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `takers`
+   --> tests/graded.rs:269:9
+    |
+269 |     let takers = outcome.takers_on_instrument("tA");
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_takers`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:284:9
+    |
+284 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:314:9
+    |
+314 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `progressed`
+   --> tests/graded.rs:331:9
+    |
+331 |     let progressed = run(
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_progressed`
+
+warning: unused variable: `position`
+   --> tests/graded.rs:373:9
+    |
+373 |     let position = outcome.position("m8").expect("position for m8");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:389:9
+    |
+389 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:418:9
+    |
+418 |     let outcome = run(Scenario::new(vec![
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:445:9
+    |
+445 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:470:9
+    |
+470 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:495:9
+    |
+495 |     let outcome = run(Scenario::new(vec![
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `position`
+   --> tests/graded.rs:540:9
+    |
+540 |     let position = outcome.position("m1").expect("position for m1");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `before`
+   --> tests/graded.rs:671:9
+    |
+671 |     let before = refs.len();
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_before`
+
+warning: unused variable: `intended_size`
+   --> tests/graded.rs:686:21
+    |
+686 |                 let intended_size = intended(outcome, strategy_id, venue);
+    |                     ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_intended_size`
+
+warning: unused variable: `first`
+   --> tests/graded.rs:772:13
+    |
+772 |         let first = run(seeded_scenario(seed));
+    |             ^^^^^ help: if this is intentional, prefix it with an underscore: `_first`
+
+warning: unused variable: `second`
+   --> tests/graded.rs:773:13
+    |
+773 |         let second = run(seeded_scenario(seed));
+    |             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_second`
+
+warning: function `distinct_taker_client_refs` is never used
+  --> tests/graded.rs:78:4
+   |
+78 | fn distinct_taker_client_refs(outcome: &Outcome) -> usize {
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: function `acquired` is never used
+  --> tests/graded.rs:91:4
+   |
+91 | fn acquired(outcome: &Outcome, strategy_id: &str, venue: Venue) -> Qty {
+   |    ^^^^^^^^
+
+warning: function `taker_sizes` is never used
+   --> tests/graded.rs:783:4
+    |
+783 | fn taker_sizes(outcome: &Outcome, strategy_id: &str, venue: Venue) -> Vec<Qty> {
+    |    ^^^^^^^^^^^
+
+warning: function `position_ids` is never used
+   --> tests/graded.rs:793:4
+    |
+793 | fn position_ids(outcome: &Outcome) -> Vec<String> {
+    |    ^^^^^^^^^^^^
+
+warning: `pairing_engine` (test "graded") generated 25 warnings (run `cargo fix --test "graded"` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+  Executable tests/graded.rs (/tmp/fill-runner.xF9wmS5U/target/debug/deps/graded-f014be8091214385)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s

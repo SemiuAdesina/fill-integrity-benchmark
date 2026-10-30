@@ -1,0 +1,3 @@
+b11_rate_zero_accepted
+validity
+accepts a link rate of zero (division guarded) and a negative latency

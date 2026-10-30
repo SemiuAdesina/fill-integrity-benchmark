@@ -1,0 +1,4 @@
+slot01                               PASS                 18.72s 
+slot05                               PASS                 80.94s 
+slot07                               PASS                 18.58s 
+slot08                               PASS                 38.02s 

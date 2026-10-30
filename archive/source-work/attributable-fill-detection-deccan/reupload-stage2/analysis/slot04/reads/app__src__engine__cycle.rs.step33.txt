@@ -1,0 +1,132 @@
+108	
+109	    pub fn run_cycle(&mut self) -> Result<(), PortError> {
+110	        self.ensure_loaded()?;
+111	        let now = self.clock.now();
+112	        self.sync_observations();
+113	        self.reconcile_neutralizations();
+114	        self.enter_new_strategies(now)?;
+115	        self.reconcile_open_strategies(now)?;
+116	        self.retire_stale_orders(now);
+117	        self.persist()?;
+118	        Ok(())
+119	    }
+120	
+121	    /// Restore the durable state on the first cycle after a start or restart.
+122	    fn ensure_loaded(&mut self) -> Result<(), PortError> {
+123	        if self.loaded {
+124	            return Ok(());
+125	        }
+126	        if let Some(snapshot) = self.store.load()? {
+127	            self.positions = PositionManager::from_positions(snapshot.positions);
+128	            self.pending = PendingOrderManager::from_orders(snapshot.pending_orders);
+129	            self.attempted = snapshot.attempted_strategies.into_iter().collect();
+130	            self.client_seq = snapshot.client_seq;
+131	            self.ledger = AttributionLedger::restore(
+132	                snapshot.submissions,
+133	                snapshot.absorbed_blocks,
+134	                snapshot.fill_cursor,
+135	            );
+136	            self.closing = snapshot.closing_orders.into_iter().collect();
+137	            self.replaced = snapshot.replaced_orders.into_iter().collect();
+138	            self.neutralizations = snapshot.neutralizations;
+139	        }
+140	        self.loaded = true;
+141	        Ok(())
+142	    }
+143	
+144	    /// Read both venue sources into the ledger before anything is decided.
+145	    ///
+146	    /// A failed `open_orders` says nothing about the venue, so no order can be
+147	    /// assumed live from it.
+148	    fn sync_observations(&mut self) {
+149	        match self.gateway.open_orders() {
+150	            Ok(open) => {
+151	                self.ledger.absorb_open_orders(&open);
+152	                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();
+153	            }
+154	            Err(_) => {
+155	                self.resting_at_venue.clear();
+156	            }
+157	        }
+158	        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {
+159	            self.observed_fill_events += self.ledger.absorb_batch(batch);
+160	        }
+161	    }
+162	
+163	    /// Match up corrective orders whose fate was unknown when they were sent.
+164	    ///
+165	    /// A record without an `order_id` is one the venue never acknowledged. The
+166	    /// venue may or may not have created it, so it stays a commitment until the
+167	    /// venue either names it or the attempt is shown to have created nothing.
+168	    fn reconcile_neutralizations(&mut self) {
+169	        // Identity first. The `client_ref` is echoed back on fill events and on
+170	        // the open-order list, so an observation can name an order this engine
+171	        // never got an acknowledgement for.
+172	        let recovered: Vec<(ClientRef, OrderId)> = self
+173	            .neutralizations
+174	            .iter()
+175	            .filter(|record| record.order_id.is_none())
+176	            .filter_map(|record| {
+177	                self.ledger
+178	                    .order_for(&record.client_ref)
+179	                    .map(|order_id| (record.client_ref.clone(), order_id))
+180	            })
+181	            .collect();
+182	        for (client_ref, order_id) in recovered {
+183	            if let Some(slot) = self.slot_mut(&client_ref) {
+184	                slot.order_id = Some(order_id);
+185	            }
+186	        }
+187	
+188	        // What is still unnamed may exist at the venue. Retry it under the same
+189	        // `client_ref`: that reference is the venue's idempotency key, so the
+190	        // retry resolves onto the original order, while a freshly minted one
+191	        // would ask for the same economic exposure a second time.
+192	        let unconfirmed: Vec<NeutralizationRecord> = self
+193	            .neutralizations
+194	            .iter()
+195	            .filter(|record| record.order_id.is_none())
+196	            .cloned()
+197	            .collect();
+198	        for record in unconfirmed {
+199	            let request = Self::neutralization_request(&record);
+200	            match self.gateway.submit(&request) {
+201	                Ok(accepted) => {
+202	                    self.ledger.track(
+203	                        record.client_ref.clone(),
+204	                        Some(accepted.order_id.clone()),
+205	                        Some(accepted.venue_seq),
+206	                        record.size,
+207	                        record.submitted_at,
+208	                    );
+209	                    if let Some(slot) = self.slot_mut(&record.client_ref) {
+210	                        slot.order_id = Some(accepted.order_id);
+211	                    }
+212	                }
+213	                // Still unknown. Keep the record and try again on a later cycle.
+214	                Err(SubmitError::AcknowledgementLost) => {}
+215	                // Nothing was created, so this commitment is void and a later
+216	                // cycle recomputes the residual. A mandate is not latched shut
+217	                // by one failed attempt.
+218	                Err(SubmitError::Rejected(_)) | Err(SubmitError::Transport(_)) => {
+219	                    self.neutralizations
+220	                        .retain(|slot| slot.client_ref != record.client_ref);
+221	                }
+222	            }
+223	        }
+224	    }
+225	
+226	    fn slot_mut(&mut self, client_ref: &ClientRef) -> Option<&mut NeutralizationRecord> {
+227	        self.neutralizations
+228	            .iter_mut()
+229	            .find(|slot| slot.client_ref == *client_ref)
+230	    }
+231	
+232	    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {
+233	        OrderRequest {
+234	            strategy_id: record.strategy_id.clone(),
+235	            instrument_id: record.instrument_id.clone(),
+236	            venue: record.venue,
+237	            kind: OrderKind::ImmediateOrCancel,
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "\n    pub fn run_cycle(&mut self) -> Result<(), PortError> {\n        self.ensure_loaded()?;\n        let now = self.clock.now();\n        self.sync_observations();\n        self.reconcile_neutralizations();\n        self.enter_new_strategies(now)?;\n        self.reconcile_open_strategies(now)?;\n        self.retire_stale_orders(now);\n        self.persist()?;\n        Ok(())\n    }\n\n    /// Restore the durable state on the first cycle after a start or restart.\n    fn ensure_loaded(&mut self) -> Result<(), PortError> {\n        if self.loaded {\n            return Ok(());\n        }\n        if let Some(snapshot) = self.store.load()? {\n            self.positions = PositionManager::from_positions(snapshot.positions);\n            self.pending = PendingOrderManager::from_orders(snapshot.pending_orders);\n            self.attempted = snapshot.attempted_strategies.into_iter().collect();\n            self.client_seq = snapshot.client_seq;\n            self.ledger = AttributionLedger::restore(\n                snapshot.submissions,\n                snapshot.absorbed_blocks,\n                snapshot.fill_cursor,\n            );\n            self.closing = snapshot.closing_orders.into_iter().collect();\n            self.replaced = snapshot.replaced_orders.into_iter().collect();\n            self.neutralizations = snapshot.neutralizations;\n        }\n        self.loaded = true;\n        Ok(())\n    }\n\n    /// Read both venue sources into the ledger before anything is decided.\n    ///\n    /// A failed `open_orders` says nothing about the venue, so no order can be\n    /// assumed live from it.\n    fn sync_observations(&mut self) {\n        match self.gateway.open_orders() {\n            Ok(open) => {\n                self.ledger.absorb_open_orders(&open);\n                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();\n            }\n            Err(_) => {\n                self.resting_at_venue.clear();\n            }\n        }\n        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {\n            self.observed_fill_events += self.ledger.absorb_batch(batch);\n        }\n    }\n\n    /// Match up corrective orders whose fate was unknown when they were sent.\n    ///\n    /// A record without an `order_id` is one the venue never acknowledged. The\n    /// venue may or may not have created it, so it stays a commitment until the\n    /// venue either names it or the attempt is shown to have created nothing.\n    fn reconcile_neutralizations(&mut self) {\n        // Identity first. The `client_ref` is echoed back on fill events and on\n        // the open-order list, so an observation can name an order this engine\n        // never got an acknowledgement for.\n        let recovered: Vec<(ClientRef, OrderId)> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .filter_map(|record| {\n                self.ledger\n                    .order_for(&record.client_ref)\n                    .map(|order_id| (record.client_ref.clone(), order_id))\n            })\n            .collect();\n        for (client_ref, order_id) in recovered {\n            if let Some(slot) = self.slot_mut(&client_ref) {\n                slot.order_id = Some(order_id);\n            }\n        }\n\n        // What is still unnamed may exist at the venue. Retry it under the same\n        // `client_ref`: that reference is the venue's idempotency key, so the\n        // retry resolves onto the original order, while a freshly minted one\n        // would ask for the same economic exposure a second time.\n        let unconfirmed: Vec<NeutralizationRecord> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .cloned()\n            .collect();\n        for record in unconfirmed {\n            let request = Self::neutralization_request(&record);\n            match self.gateway.submit(&request) {\n                Ok(accepted) => {\n                    self.ledger.track(\n                        record.client_ref.clone(),\n                        Some(accepted.order_id.clone()),\n                        Some(accepted.venue_seq),\n                        record.size,\n                        record.submitted_at,\n                    );\n                    if let Some(slot) = self.slot_mut(&record.client_ref) {\n                        slot.order_id = Some(accepted.order_id);\n                    }\n                }\n                // Still unknown. Keep the record and try again on a later cycle.\n                Err(SubmitError::AcknowledgementLost) => {}\n                // Nothing was created, so this commitment is void and a later\n                // cycle recomputes the residual. A mandate is not latched shut\n                // by one failed attempt.\n                Err(SubmitError::Rejected(_)) | Err(SubmitError::Transport(_)) => {\n                    self.neutralizations\n                        .retain(|slot| slot.client_ref != record.client_ref);\n                }\n            }\n        }\n    }\n\n    fn slot_mut(&mut self, client_ref: &ClientRef) -> Option<&mut NeutralizationRecord> {\n        self.neutralizations\n            .iter_mut()\n            .find(|slot| slot.client_ref == *client_ref)\n    }\n\n    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {\n        OrderRequest {\n            strategy_id: record.strategy_id.clone(),\n            instrument_id: record.instrument_id.clone(),\n            venue: record.venue,\n            kind: OrderKind::ImmediateOrCancel,", "numLines": 130, "startLine": 108, "totalLines": 557}}

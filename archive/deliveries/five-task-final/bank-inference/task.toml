@@ -1,0 +1,81 @@
+schema_version = "1.3"
+artifacts = ["/app"]
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["cpp", "gpu", "shared-memory", "inference", "exact-search"]
+expert_time_estimate_hours = 3.0
+difficulty_explanation = """
+Every rule in the published mapping contract feeds the next, so the search cannot
+be decomposed. A byte address becomes a word by exact integer truncation; the
+selected XOR stages then run as an ordered sequence in which a later stage reads
+the bit an earlier stage just wrote, so the same stages in a different order are a
+different mapping; the lane is rotated before it is XORed into the word; lanes
+issuing one byte address collapse into a broadcast that takes the bank of its
+lowest lane; and the conflict degree counts distinct addresses per bank over the
+collapsed groups. The evidence is incomplete and spread across several traces -
+some reveal banks, some only a conflict degree, some withhold individual lanes -
+so a mapping has to be fitted to all traces jointly, and among those that fit the
+answer is the one with the fewest operations, counting a nonzero rotation as one,
+then the fewest stages, then the smallest canonical string. The realistic failure
+modes are quiet rather than loud: treating the stages as an unordered set and
+enumerating subsets in the grammar's declaration order, applying every stage
+against the original word as a parallel bit mask, dropping the word division,
+computing each lane independently instead of collapsing broadcasts, fitting the
+first trace and stopping, or keeping the operation count but skipping the
+stage-count tier so that rotate=0 silently wins every tie. Each of those produces
+a mapping that is legal for part of the evidence, which is why graded cases
+include compounds where three or more rules must hold simultaneously. This is the
+daily work of a GPU or accelerator performance engineer reverse-engineering an
+undocumented shared-memory bank swizzle from replay traces and hardware counters:
+the mapping is never observed directly, the evidence is partial and arrives from
+separate runs, competing explanations differ only in bit-level detail, and the
+answer that gets reported has to be the simplest mapping consistent with every
+observation rather than the first one that fits the trace in hand.
+"""
+solution_explanation = """
+The reference solution enumerates the finite supplied grammar without repeating
+stages. It replays every candidate through the frozen model, rejects any revealed
+bank or conflict mismatch, and selects operation cost, stage count, then the
+canonical string. The launcher replaces only src/recover.cpp and builds offline.
+"""
+verification_explanation = """
+The separate verifier copies only the allow-listed recovery source, rejects a
+symlink, scrubs compiler and loader controls, and builds with its own pristine
+header, interpreter, tests, and CMake file. Twelve documented graded cases cover
+identity, word boundaries, broadcasts, conflict-only revelation, ordered XOR
+chaining, partial revelation with global evidence, minimum-and-canonical
+selection, two compound model-derived replays, no-solution behavior, a compound
+case whose required stage order is the reverse of the grammar's declaration
+order, and a case in which a rotation-only mapping ties on operation count with a
+one-stage mapping so the stage-count tier is what decides. Grading is split
+across two verifier-owned
+processes. A probe links the candidate, runs one named group, and serializes the
+raw recovered values it observed, including the compound model-derived replay; it
+asserts nothing, and its stdout, stderr and exit status carry no grading
+authority. The judge links no candidate code, owns every expected value, and
+performs the authoritative comparisons. Before grading, the judge re-derives every
+revealed observation in the shared fixture header from its own ground truth
+through the frozen interpreter and refuses to run if any of them disagrees.
+Reward and the CTRF report are written by
+the verifier from judge counts alone, so candidate output cannot determine
+reward. A verifier-owned negative control that corrupts exactly one expected
+value, and a verifier-owned probe wrong by construction that nonetheless emits
+confident success, together confirm the trust boundary holds. Reward begins at
+zero and becomes one only after every graded group passes.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

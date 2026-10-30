@@ -1,0 +1,309 @@
+[15] CMD: cargo build --offline 2>&1 | tail -5 && echo "=== TESTS ===" && cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+rder_id comparison
+  left: 9
+ right: 10
+
+---- quantity_already_working_is_not_neutralized_twice stdout ----
+thread 'quantity_already_working_is_not_neutralized_twice' panicked at tests/diagnostics.rs:407:5:
+assertion `left == right` failed: FAILED: quantity still working on an earlier corrective order is not exposure - it must not be neutralized a second time
+  left: [10, 10]
+ right: [10]
+
+---- window_end_is_exclusive stdout ----
+thread 'window_end_is_exclusive' panicked at tests/diagnostics.rs:63:5:
+assertion `left == right` failed: FAILED: the attribution window end is exclusive - a fill at exactly window_start + ATTRIBUTION_WINDOW is outside the window
+  left: 4
+ right: 0
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+    a_lost_acknowledgement_is_retried_under_the_same_client_ref
+    an_absent_order_this_engine_did_not_cancel_is_not_withdrawn
+    attribution_state_survives_a_restart_without_double_counting
+    block_remainder_units_go_to_the_first_orders_in_the_ordering
+    block_shares_are_truncated_never_rounded_up
+    cumulative_fill_quantities_are_a_high_water_mark
+    quantity_already_working_is_not_neutralized_twice
+    the_earlier_attribution_window_sorts_first
+    the_lower_venue_sequence_breaks_a_shared_window_start
+    window_end_is_exclusive
+
+test result: FAILED. 6 passed; 11 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: cargo build --offline 2>&1 | tail -20
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.41s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.41s
+[metadata] {"noOutputExpected": false}
+
+[29] CMD: cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+_client_ref ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+failures:
+
+---- a_later_block_divides_over_the_residuals_of_the_earlier_one stdout ----
+thread 'a_later_block_divides_over_the_residuals_of_the_earlier_one' panicked at tests/diagnostics.rs:259:5:
+assertion `left == right` failed: FAILED: the eligible set's basis is current outstanding quantity, so a later block divides over what the earlier block left
+  left: 8
+ right: 9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: cargo test --offline --test diagnostics 2>&1 | tail -30
+--- obs tail ---
+ed in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-692941566e5c440d)
+
+running 19 tests
+test a_block_finalizes_a_covered_order_it_did_not_allocate_to ... ok
+test a_block_divides_over_what_is_still_outstanding ... ok
+test a_block_total_is_fully_allocated ... ok
+test a_later_block_naming_an_already_finalized_order_allocates_nothing ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: cargo run --offline --bin reproduce 2>&1 | tail -50
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: cargo test --offline --test diagnostics 2>&1 | tail -35
+--- obs tail ---
+ent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_unacknowledged_correction_survives_a_restart ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+failures:
+
+---- a_closed_corrective_leaves_its_gap_open stdout ----
+thread 'a_closed_corrective_leaves_its_gap_open' panicked at tests/diagnostics.rs:572:5:
+assertion `left == right` failed: FAILED: a corrective order the venue has closed contributes nothing still working, so the gap it leaves behind is neutralized - and only the gap
+  left: [10]
+ right: [10, 6]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_closed_corrective_leaves_its_gap_open
+
+test result: FAILED. 23 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: cargo test --offline --test diagnostics 2>&1 | tail -15
+--- obs tail ---
+g ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+test an_unacknowledged_correction_survives_a_restart ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[40] CMD: cargo test --offline --test diagnostics 2>&1 | tail -6 && cargo run --offline --bin reproduce 2>&1 | tail -3
+--- obs tail ---
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+
+[stdout]
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[42] CMD: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning|error" | head -20; echo "--- build clean check done ---"; cargo clippy --offline 2>&1 | grep -E "^(warning|error)" | sort | uniq -c | head -20
+--- obs tail ---
+--- build clean check done ---
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+
+[stdout]
+--- build clean check done ---
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: cargo test --offline --test diagnostics 2>&1 | grep -E "^test |test result" | tail -30
+--- obs tail ---
+des_over_what_is_still_outstanding ... ok
+test a_block_finalizes_a_covered_order_it_did_not_allocate_to ... ok
+test a_block_total_is_fully_allocated ... ok
+test a_closed_corrective_leaves_its_gap_open ... ok
+test a_later_block_naming_an_already_finalized_order_allocates_nothing ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test a_resting_leg_is_cancelled_before_anything_is_covered ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_unacknowledged_correction_survives_a_restart ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[47] CMD: echo "### cargo build --offline" && cargo build --offline 2>&1 | tail -3 && echo && echo "### cargo test --offline --test diagnostics" && cargo test --offline --test diagnostics 2>&1 | grep "test result" && echo && echo 
+--- obs tail ---
+ultiply corrective orders
+  PASS  the open exposure draws exactly one corrective order
+  PASS  the corrective order is sized to the unresolved quantity
+  PASS  the restart records no pairing from pre-existing inventory
+  PASS  the restart sends no corrective order
+  PASS  unresolved orders survive the restart
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+### cargo build --offline
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+
+### cargo test --offline --test diagnostics
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+### cargo run --offline --bin reproduce
+  PASS  both legs are submitted and tracked
+  PASS  no pairing is recorded from pre-existing inventory
+  PASS  no corrective order is sent when neither leg filled
+  PASS  both live legs remain tracked
+  PASS  all four legs are submitted and tracked
+  PASS  mandate B records no pairing from mandate A's fill
+  PASS  mandate A's unfilled South leg draws at most one corrective order
+  PASS  eight cycles of redelivery record at most one pairing
+  PASS  redelivery does not multiply corrective orders
+  PASS  the open exposure draws exactly one corrective order
+  PASS  the corrective order is sized to the unresolved quantity
+  PASS  the restart records no pairing from pre-existing inventory
+  PASS  the restart sends no corrective order
+  PASS  unresolved orders survive the restart
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}

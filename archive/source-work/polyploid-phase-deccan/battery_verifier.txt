@@ -1,0 +1,17 @@
+variant                        reward  passed failing_checks
+v01_marker_wise                1       13/13  
+v02_fixed_guess                1       13/13  
+v03_set_intersection           0       6/13   e h i j k l m 
+v04_omit_non_dr                0       6/13   e h i j k l m 
+v05_penalised_forbidden_dr     1       13/13  
+v06_backward_traceback         1       13/13  
+v07_rows_only_canonical        1       13/13  
+v08_joint_canonical            1       13/13  
+v09_wrong_perm_direction       1       13/13  
+v10_interleaved_path_order     1       13/13  
+v11_no_canonical               1       13/13  
+v15_non_admissible_bound       0       9/13   h j k m 
+v16_prune_ties                 1       13/13  
+v17_float_equality             0       1/13   b c d e f g h i j k l m 
+v18_first_found_tie            1       13/13  
+v20_hardcoded_visible_cross    0       3/13   b c e g h i j k l m 

@@ -1,0 +1,64 @@
+[2] BASH find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app
+[2] Read {"file_path": "/app/spec/protocol.md"}
+[3] Read {"file_path": "/app/include/roundel/runtime.hpp"}
+[3] Read {"file_path": "/app/src/runtime.cpp"}
+[4] Read {"file_path": "/app/include/roundel/arena.hpp"}
+[4] Read {"file_path": "/app/include/roundel/journal.hpp"}
+[4] Read {"file_path": "/app/src/arena.cpp"}
+[4] Read {"file_path": "/app/src/journal.cpp"}
+[5] Read {"file_path": "/app/examples/demo.cpp"}
+[5] Read {"file_path": "/app/README.md"}
+[5] Read {"file_path": "/app/CMakeLists.txt"}
+[8] BASH cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug 2>&1 | tail -2 && cmake --build build -j 4 2>&1 | tail -5
+[9] BASH grep -i "color-diag\|CXX_FLAGS" /app/build/CMakeCache.txt | head
+[10] BASH env | grep -i "cxx\|cc\|flags" ; echo "---"; cat ~/.bashrc 2>/dev/null | grep -i "fno-color" ; echo "---"; ls /usr/local/bin/*cc* /usr/bin/*c++* 2>/dev/null
+[11] BASH grep -rn "fno-color-diagnostics" /app/build/CMakeFiles/roundel.dir/flags.make /app/build/CMakeFiles/3.25.1/CMakeCXXCompiler.cmake 2>/dev/null | head; echo "---"; cat /app/build/CMakeFiles/roundel.dir/flags.make
+[12] BASH rm -rf /app/build && cmake -S /app -B /app/build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build /app/build -j 4 2>&1 | tail -5
+[13] BASH ./build/roundel_demo 2>&1 | head -100
+[14] EDIT /app/include/roundel/runtime.hpp (1433->2504) NOFILE
+[15] EDIT /app/include/roundel/runtime.hpp (103->581) NOFILE
+[16] WRITE /app/src/runtime.cpp (15350 bytes)
+[17] BASH cmake --build build -j 4 2>&1 | tail -20
+[18] EDIT /app/include/roundel/runtime.hpp (581->210) NOFILE
+[19] EDIT /app/src/runtime.cpp (49->418) ok
+[20] BASH cmake --build build -j 4 2>&1 | tail -20 && ./build/roundel_demo 2>&1
+[21] BASH cmake -S /app -B /tmp/build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 && cmake --build /tmp/build-asan -j 4 2>&1 | tail -3 && /tmp/build-asan/roundel_demo 2>&1 | tail -25
+[22] BASH /tmp/build-asan/roundel_demo 2>&1 | head -60
+[23] BASH /tmp/build-asan/roundel_demo > /tmp/out.txt 2> /tmp/err.txt; echo "exit=$?"; echo "--- stderr:"; head -40 /tmp/err.txt; echo "--- tail stdout:"; tail -3 /tmp/out.txt
+[24] BASH cd /tmp && ./build-asan/roundel_demo 2>&1 | tail -5; echo "=== rerun piped to head:"; ./build-asan/roundel_demo 2>&1 | head -3; echo "=== rerun plain:"; ./build-asan/roundel_demo > /dev/null; echo "exit=$?"
+[25] WRITE /tmp/t.cpp (16606 bytes)
+[26] BASH g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1 | head -30 && /tmp/t
+[27] EDIT /tmp/t.cpp (754->884) ok
+[28] EDIT /tmp/t.cpp (161->412) ok
+[29] BASH g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1 | head -20 && /tmp/t
+[30] EDIT /app/include/roundel/runtime.hpp (137->299) NOFILE
+[31] EDIT /app/src/runtime.cpp (405->455) ok
+[32] EDIT /app/src/runtime.cpp (313->488) ok
+[33] EDIT /app/src/runtime.cpp (296->661) ok
+[34] EDIT /tmp/t.cpp (12->3886) ok
+[35] EDIT /tmp/t.cpp (31->150) ok
+[36] BASH g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1 | head -20 && timeout 60 /tmp/t 2>&1 |
+[37] EDIT /tmp/t.cpp (141->224) ok
+[38] EDIT /tmp/t.cpp (450->457) ok
+[39] BASH g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1 | head -20 && timeout 60 /tmp/t 2>&1 |
+[40] BASH cd /tmp && timeout 60 ./t > /tmp/o.txt 2>/tmp/e.txt; echo "exit=$?"; tail -20 /tmp/o.txt; echo "=== stderr ==="; head -50 /tmp/e.txt
+[41] EDIT /tmp/t.cpp (12->384) ok
+[42] BASH cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1|head -5; timeout 120 ./t > 
+[43] EDIT /tmp/t.cpp (67->2796) ok
+[44] EDIT /tmp/t.cpp (51->128) ok
+[45] BASH cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1|head -5; timeout 120 ./t > 
+[46] Read {"file_path": "/app/src/runtime.cpp", "offset": 1, "limit": 130}
+[47] Read {"file_path": "/app/src/runtime.cpp", "offset": 130, "limit": 180}
+[48] Read {"file_path": "/app/include/roundel/runtime.hpp", "offset": 120, "limit": 80}
+[49] EDIT /tmp/t.cpp (67->1221) ok
+[50] BASH cd /tmp && python3 - <<'EOF' import re p='/tmp/t.cpp' s=open(p).read() s=s.replace(" t_cancel_during_delivery();"," t_cancel_during_delivery();\n t_fault_after();\n t_value_after_caught_fault();") open(p,'w').write(s) EO
+[51] BASH rm -rf build build-asan && cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | grep -Ei "warn|error"; echo "debug build clean"; ./build/roundel_demo > /tmp/d1.txt 2>&1; echo "
+[52] BASH cmake -S /app -B /app/build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 && cmake --build /app/build-asan -j 4 2>&1 | grep -Ei "warn|error"; echo "asan build clean"; /app/build-asan/roundel_demo >
+[53] Read {"file_path": "/app/src/runtime.cpp", "offset": 309, "limit": 120}
+[54] WRITE /tmp/fuzz.cpp (6126 bytes)
+[55] BASH cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/fuzz.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/fz 2>&1|head -20; timeout 300 .
+[56] BASH cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace("switch (kind % 9) {","switch (kind % 10) {") s=s.replace(" default: return poster();"," case 9: return self_cancel();\n default: return poster(
+[57] BASH cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace(""" g_self = static_cast<JobId>(ids.size() + 1); const JobId id = c.launch(make(static_cast<int>(rng() % 10))); ids.push_back(id);""", """ g_sel
+[58] BASH cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace(""" // Journal invariants.""", """ // Bring everything down the way a caller would. for (JobId id : ids) { c.cancel(id); } c.drain(); for (JobId
+[59] BASH rm -rf /app/build-asan && cmake --build /app/build -j 4 2>&1 | tail -3 && /app/build/roundel_demo > /tmp/final.txt 2>&1; echo "demo exit=$?"; ls /app; echo "---"; ls /app/src /app/include/roundel
+[60] Read {"file_path": "/app/include/roundel/runtime.hpp", "offset": 240, "limit": 70}

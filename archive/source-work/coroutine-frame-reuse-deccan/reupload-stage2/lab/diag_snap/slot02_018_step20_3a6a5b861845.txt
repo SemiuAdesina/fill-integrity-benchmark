@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/src/runtime.cpp:95:19: error: return type of out-of-line definition of 'roundel::ParkAwaiter::await_suspend' differs from that in the declaration
+/app2/src/runtime.cpp:139:9: error: use of undeclared identifier 'release_pending'
+/app2/src/runtime.cpp:255:5: error: use of undeclared identifier 'pending_release_'

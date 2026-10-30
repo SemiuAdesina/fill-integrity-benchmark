@@ -1,0 +1,7 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "paths": [["a-x", "x-s"]],
+ "combine": [],
+ "sink_value": 90
+}

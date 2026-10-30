@@ -1,0 +1,57 @@
+=================================================================
+==910==ERROR: AddressSanitizer: use-after-poison on address 0x5160000003b8 at pc 0xaaaabb933a00 bp 0xffffe47bb090 sp 0xffffe47bb088
+WRITE of size 8 at 0x5160000003b8 thread T0
+    #0 0xaaaabb9339fc in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:285:34
+    #1 0xaaaabb933f14 in roundel::Conductor::step() /b/runtime.cpp:302:5
+    #2 0xaaaabb886eb0 in j_ticket_for_returned_child_rejected_after_reuse() /s/scenario.cpp:1655:5
+    #3 0xaaaabb8e403c in harness::main_impl(int, char**) /h/harness.hpp:89:13
+    #4 0xaaaabb899e8c in main /s/scenario.cpp:2109:42
+    #5 0xffffbd0f7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #6 0xffffbd0f7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xaaaabb772cac in _start (/b/cand+0x72cac) (BuildId: 4162cf6c21e8e8cd2f3c63e80ac821c014169e88)
+
+0x5160000003b8 is located 56 bytes inside of 528-byte region [0x516000000380,0x516000000590)
+allocated by thread T0 here:
+    #0 0xaaaabb84d5fc in operator new(unsigned long) (/b/cand+0x14d5fc) (BuildId: 4162cf6c21e8e8cd2f3c63e80ac821c014169e88)
+    #1 0xaaaabb91a3f4 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaabb92fab8 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:123:46
+    #3 0xaaaabb8866f8 in j_ticket_for_returned_child_rejected_after_reuse() /s/scenario.cpp:1639:15
+    #4 0xaaaabb8e403c in harness::main_impl(int, char**) /h/harness.hpp:89:13
+    #5 0xaaaabb899e8c in main /s/scenario.cpp:2109:42
+    #6 0xffffbd0f7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffbd0f7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaabb772cac in _start (/b/cand+0x72cac) (BuildId: 4162cf6c21e8e8cd2f3c63e80ac821c014169e88)
+
+SUMMARY: AddressSanitizer: use-after-poison /b/runtime.cpp:285:34 in roundel::Conductor::deliver(roundel::Conductor::Pending const&)
+Shadow bytes around the buggy address:
+  0x516000000100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000280: 00 00 fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x516000000300: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x516000000380: 00 00 f7 f7 f7 f7 f7[f7]f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000400: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000480: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000500: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000580: f7 f7 fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x516000000600: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==910==ABORTING

@@ -1,0 +1,3 @@
+b08_key_input_order
+objective
+enumerates links in document order and keeps the first plan among equal objectives

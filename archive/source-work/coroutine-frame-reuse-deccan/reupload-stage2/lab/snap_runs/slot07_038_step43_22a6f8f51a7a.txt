@@ -1,0 +1,4 @@
+/b/runtime.cpp:24:8: error: unused function 'slot_of_frame' [-Werror,-Wunused-function]
+   24 | SlotId slot_of_frame(const void* p) noexcept {
+      |        ^~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,29 @@
+[step 2] I'll start by reading the specification and the existing code.
+
+[step 15] Let me examine the example files and then prototype to gauge the search difficulty.
+
+[step 18] Now let me write the solver. Starting with the precomputed tables and Viterbi core:
+
+[step 30] Now the branch-and-bound core:
+
+[step 37] Found a bug — the shared `into` buffer is clobbered by deeper recursion. Let me fix it:
+
+[step 39] The B&B is fast. Now let me build a validation harness with random crosses and brute force:
+
+[step 66] B&B matches brute force across 70 random crosses. Now let me write the canonical path selection:
+
+[step 72] Now the solver entry point:
+
+[step 77] Let me add an independent verification harness that checks canonicality and min-key choice on random crosses:
+
+[step 94] The bound is too weak at scale (gap 128 for M=16,N=32). Let me add reduced-cost propagation to shrink the search space before branching:
+
+[step 96] Now the reduction module:
+
+[step 100] Now update the solver to use the reduction:
+
+[step 106] Let me validate canonicalization against the author's worked example:
+
+[step 121] Now let me implement the scaling strategy: a bounded search with a stronger heuristic floor, and better child ordering.
+
+[step 147] Now the `guide_order` helper:

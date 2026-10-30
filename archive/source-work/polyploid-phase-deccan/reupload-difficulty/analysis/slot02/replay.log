@@ -1,0 +1,132 @@
+[2] BASH rc=0 0.1s :: find /app -type f -name "*.rs" -o -name "*.md" -o -name "*.json" -o -name "*.toml" | head -50 :: rs /app/src/cross_model.rs /app/src/digest.rs /app/src/json.rs /app/src/lib.rs /app/src/result_output.rs /app/src/scoring.rs /app/src/solver.rs /app/Cargo.toml 
+[16] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('cross.json')) print(d['markers'], d['offspring']) print(d :: 9, 0.243089, 0.042395, 0.169954, 0.240795, 0.23096, 0.255173, 0.184416, 0.038924, 0.093131, 0.260733]} -rw-r--r-- 1 root root 7154 Aug 12 15:51 /app/cross.json 
+[17] BASH rc=0 0.0s :: grep -rn "homolog_permutations\|solver::" --include=*.rs . | grep -v "^./target" ; echo ---; cat Car :: field by field to check the formats and canonical ordering: the haplotype rows, every progeny's two state paths, `total_log_likelihood` and `canonical_digest`. 
+[18] BASH rc=0 0.0s :: cd /app/examples && cat small.cross.json && echo "---" && cat small.result.json && echo "---" && cat :: field by field to check the formats and canonical ordering: the haplotype rows, every progeny's two state paths, `total_log_likelihood` and `canonical_digest`. 
+[19] BASH rc=0 0.0s :: cd /app && sed -n 1,60p tests/diagnostics.rs && echo "..." && grep -n "^fn \|^ fn \|#\[test\]" tests :: multiset_semantics() { 58:#[test] 59:fn relabelling_resorts_the_unordered_pair() { 65:#[test] 66:fn result_encoding_round_trips_and_digest_is_deterministic() { 
+[20] WRITE /app/src/solver/tables.rs -> W ok
+[21] WRITE /app/src/solver/dp.rs -> W ok
+[22] WRITE /app/src/solver/canon.rs -> W ok
+[23] WRITE /app/src/solver/search.rs -> W ok
+[24] WRITE /app/src/solver/search.rs -> W ok
+[25] WRITE /app/src/solver.rs -> W ok
+[26] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | tail -30 :: 
+[27] EDIT /app/src/solver/canon.rs -> E ok
+[28] EDIT /app/src/solver.rs -> E ok
+[29] EDIT /app/src/solver.rs -> E ok
+[30] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | tail -30 :: 
+[31] BASH rc=0 0.0s :: time ./target/release/phase /app/cross.json /tmp/result_test.json && head -c 400 /tmp/result_test.js :: 0,0,0,0]]},"paths":[{"A":[[0,2],[0,2],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[1,2],[1,2]],"B":[[0,1],[0,1],[0 real	0m0.009s user	0m0.008s sys	0m0.001s 
+[32] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -30 :: 
+[33] WRITE /app/verify.py -> W ok
+[34] BASH rc=0 0.0s :: python3 verify.py cross.json /tmp/result_test.json ::            = 0.0 canonical defect  = parent A: permutation (0, 1, 3, 2) sorts earlier digest computed   = bb9ba3563aa4501e digest reported   = bb9ba3563aa4501e 
+[35] BASH rc=0 0.0s :: sed -i 's/^fn descend($/pub fn descend(/' src/solver/search.rs && grep -n "pub fn descend" src/solve :: 147:pub fn descend( 
+[36] WRITE /app/tests/exp.rs -> W ok
+[37] BASH rc=0 0.0s :: sed -i 's/use polyploid_phase::solver::search::{descend, evaluate, CtxOpt};/use polyploid_phase::sol :: 
+[38] WRITE /app/tests/exp.rs -> W ok
+[39] BASH rc=0 0.0s :: WHAT=lists cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "canonical|elapse :: 
+[40] BASH rc=0 0.0s :: WHAT=block TRIALS=1 ITERS=3 timeout 900 cargo test --offline --release --test exp -- --nocapture 2>& :: 
+[41] BASH rc=0 0.0s :: WHAT=ils ITERS=20000 timeout 900 cargo test --offline --release --test exp -- --nocapture 2>&1 | gre :: 
+[42] EDIT /app/tests/exp.rs -> E ok
+[43] BASH rc=0 0.0s :: WHAT=combo ITERS=3 timeout 1200 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep :: 
+[44] EDIT /app/tests/exp.rs -> E ok
+[45] BASH rc=0 0.0s :: WHAT=combo ITERS=4 timeout 1800 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep :: 
+[46] BASH rc=0 0.0s :: python3 -c " import json,math d=json.load(open('cross.json')) M,N=d['markers'],d['offspring'] tot=0  :: root UB -587.9156706226247 LB -705.1404562027 
+[47] EDIT /app/src/solver/search.rs -> E ok
+[48] EDIT /app/src/solver/search.rs -> E ok
+[49] EDIT /app/src/solver/search.rs -> E ok
+[50] EDIT /app/src/solver/search.rs -> E ok
+[51] BASH rc=0 0.0s :: grep -n "budget" src/solver/search.rs ::  if (a_list.len() as u128) + (b_list.len() as u128) <= budget.max(1) { 536:                block_scan(ctx, &mut engine, &a_list, &b_list, budget.block_rounds); 
+[52] EDIT /app/src/solver/search.rs -> E ok
+[53] WRITE /app/tests/exp.rs -> W ok
+[54] BASH rc=0 0.0s :: SEEDS=8 timeout 1800 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "seed | :: 
+[55] BASH rc=0 0.0s :: sleep 0; cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b37xtxr2d.output 2>/dev/n :: 
+[56] BASH rc=0 0.0s :: SEEDS=8 ROUNDS=0 ILS=20000 timeout 600 cargo test --offline --release --test exp -- --nocapture 2>&1 :: 
+[57] BASH rc=1 0.0s :: SEEDS=6 ROUNDS=8 ILS=20000 timeout 1200 cargo test --offline --release --test exp -- --nocapture 2>& :: 
+[58] BASH rc=0 0.0s :: cat /tmp/exp_ils_block.txt 2>/dev/null; echo "---"; cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0 :: --- 
+[59] WRITE /app/src/solver/search.rs -> W ok
+[61] EDIT /app/src/solver/search.rs -> E ok
+[62] EDIT /app/src/solver/search.rs -> E ok
+[63] WRITE /app/tests/exp.rs -> W ok
+[64] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -20 :: 
+[65] BASH rc=1 0.0s :: SEEDS=8 RESTARTS=512 ROUNDS=20000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | gre :: 
+[66] BASH rc=0 0.0s :: cat /tmp/exp_ils_block.txt 2>/dev/null; echo ---; cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-048 :: --- 
+[67] BASH rc=1 0.0s :: SEEDS=2 RESTARTS=512 ROUNDS=0 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E :: 
+[68] WRITE /app/tests/dbg.rs -> W ok
+[69] BASH rc=0 0.0s :: cargo test --release --test dbg -- --nocapture 2>&1 | tail -10 :: 
+[70] EDIT /app/src/solver/search.rs -> E ok
+[71] EDIT /app/src/solver/search.rs -> E ok
+[72] BASH rc=1 0.0s :: SEEDS=8 RESTARTS=512 ROUNDS=20000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | gre :: 
+[73] BASH rc=1 0.0s :: SEEDS=4 RESTARTS=512 ROUNDS=200000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | gr :: 
+[75] BASH rc=1 0.0s :: cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/bb087wkx4.output 2>/dev/null :: 
+[76] EDIT /app/src/solver/dp.rs -> E ok
+[77] EDIT /app/src/solver/search.rs -> E ok
+[78] EDIT /app/src/solver/search.rs -> E ok
+[79] EDIT /app/src/solver/search.rs -> E ok
+[80] EDIT /app/src/solver/search.rs -> E ok
+[81] EDIT /app/src/solver/search.rs -> E ok
+[82] EDIT /app/src/solver/search.rs -> E ok
+[83] EDIT /app/src/solver/search.rs -> E ok
+[84] BASH rc=0 0.0s :: sed -i 's/ block_sweeps: sweeps,/ strong,\n block_sweeps: sweeps,/' tests/exp.rs && sed -i 's/ let s :: 
+[85] BASH rc=1 0.0s :: SEEDS=8 RESTARTS=512 ROUNDS=20000 STRONG=2000 SWEEPS=0 cargo test --release --test exp -- --nocaptur :: 
+[86] BASH rc=1 0.0s :: SEEDS=4 RESTARTS=2048 ROUNDS=200000 STRONG=40000 SWEEPS=0 cargo test --release --test exp -- --nocap :: 
+[87] BASH rc=0 0.0s :: ls /app/tests/ && grep -rn "markers\|offspring" /app/spec/cross-format-v1.md | head -40 :: iffer. 122:3. `markers` outside `12..=28`, or `offspring` outside `8..=32`. 124:5. `child_gl` with the wrong number of progeny, the wrong number of markers for 
+[89] WRITE /app/gen.py -> W ok
+[90] BASH rc=1 0.0s :: python3 gen.py 28 32 1 /tmp/syn28.json && python3 -c " import json d=json.load(open('/tmp/syn28.json :: /tmp/syn28.json 28 32 32 28 
+[91] BASH rc=1 0.0s :: cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b68000de0.output 2>/dev/null :: 
+[92] EDIT /app/src/solver/search.rs -> E ok
+[93] BASH rc=0 0.0s :: cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b68000de0.output 2>/dev/null; echo :: --- 
+[94] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b68000de0.output 2>/dev/n :: 
+[96] BASH rc=1 0.0s :: cargo build --release 2>&1 | tail -5 && SEEDS=8 RESTARTS=512 ROUNDS=20000 STRONG=2000 SWEEPS=0 cargo :: 
+[97] BASH rc=1 0.0s :: SEEDS=1 RESTARTS=0 ROUNDS=200 STRONG=0 SWEEPS=0 CROSS=/tmp/syn28.json cargo test --release --test ex :: 
+[98] BASH rc=1 0.0s :: SEEDS=2 RESTARTS=512 ROUNDS=2000 STRONG=200 SWEEPS=0 CROSS=/tmp/syn28.json cargo test --release --te :: 
+[99] EDIT /app/src/solver/search.rs -> E ok
+[100] EDIT /app/src/solver/search.rs -> E ok
+[101] EDIT /app/src/solver/search.rs -> E ok
+[102] BASH rc=1 0.0s :: cargo build --release 2>&1 | tail -3 && SEEDS=2 RESTARTS=512 ROUNDS=2000 STRONG=200 SWEEPS=0 CROSS=/ :: 
+[105] EDIT /app/src/solver/search.rs -> E ok
+[106] EDIT /app/src/solver/search.rs -> E ok
+[107] EDIT /app/src/solver/search.rs -> E ok
+[108] EDIT /app/src/solver/search.rs -> E ok
+[109] EDIT /app/src/solver/search.rs -> E ok
+[110] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -20 :: 
+[111] BASH rc=0 0.1s :: time ./target/release/phase && python3 verify.py 2>&1 | head -20 :: t A: permutation (0, 1, 3, 2) sorts earlier digest computed   = bb9ba3563aa4501e digest reported   = bb9ba3563aa4501e  real	0m0.009s user	0m0.009s sys	0m0.000s 
+[112] EDIT /app/tests/exp.rs -> E ok
+[113] BASH rc=1 0.0s :: cargo build --release 2>&1|tail -2; for f in /tmp/syn28.json; do echo "== $f"; DEFAULT=1 CROSS=$f ca :: == /tmp/syn28.json 
+[114] BASH rc=0 0.0s :: cp result.json /tmp/r1.json && ./target/release/phase >/dev/null && cmp /tmp/r1.json result.json &&  :: byte-identical on repeat 
+[115] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -20 :: 
+[116] BASH rc=0 0.0s :: wc -l /app/tests/solver_checks.rs; grep -n "fn \|const \|seeds\|for .* in " /app/tests/solver_checks :: { 379:    for m in [1, 6, 7] { 405:fn double_reduction_cross() -> CrossSpec { 407:    for m in [3, 4, 5] { 410:    for m in [1, 9] { 415:    for m in [2, 10] { 
+[117] BASH rc=0 0.0s :: grep -n "fn \|assert" /app/tests/solver_checks.rs | sed -n '60,120p' :: 
+[118] BASH rc=0 0.0s :: sed -n '420,560p' /app/tests/solver_checks.rs :: -1.0, -0.0, -1.0, -2.0, -3.0], [-2.0, -0.0, -0.0, -0.0, -2.0], [-1.0, -0.0, -0.0, -2.0, -3.0], [-3.0, -2.0, -0.0, -0.0, -0.0], [-3.0, -2.0, -0.0, -0.0, -1.0]], 
+[119] BASH rc=0 0.0s :: sed -n '600,738p' /app/tests/solver_checks.rs :: .canonical_digest,             canonical_digest(&first),             "{name}: the document's digest is not the digest of its reconstruction"         );     } } 
+[120] BASH rc=0 0.0s :: grep -n "pub struct\|pub " /app/src/cross_input.rs | head -30 :: :    pub fn params(&self, parent: Parent) -> &ParentParams { 54:pub struct CrossError(String); 79:pub fn parse_cross(text: &str) -> Result<Cross, CrossError> { 
+[121] BASH rc=0 0.0s :: sed -n '1,60p' /app/src/cross_input.rs :: splay for CrossError {     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {         write!(f, "invalid cross document: {}", self.0)     } } 
+[122] WRITE /app/tests/dbg.rs -> W ok
+[123] EDIT /app/tests/dbg.rs -> E ok
+[124] BASH rc=0 0.0s :: cp src/solver/search.rs /tmp/search_backup.rs && python3 - <<'EOF' import re p='/app/src/solver/sear :: 795:    let listable = 0u128; 803:        && (a_list.len() as u128) * (b_list.len() as u128) <= 0 
+[125] BASH rc=0 0.0s :: TRIALS=30 FREE=2 cargo test --release --test dbg -- --nocapture 2>&1 | tail -15 :: 
+[126] BASH rc=0 0.0s :: TRIALS=6 FREE=3 cargo test --release --test dbg -- --nocapture 2>&1 | tail -8 :: 
+[127] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/bhvnx5u3u.output :: cat: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/bhvnx5u3u.output: No such file or directory 
+[128] BASH rc=0 0.0s :: cp /tmp/search_backup.rs src/solver/search.rs && grep -n "listable = \|<= 60_000" src/solver/search. :: 795:    let listable = 400_000u128; 803:        && (a_list.len() as u128) * (b_list.len() as u128) <= 60_000 
+[129] BASH rc=1 0.0s :: SEEDS=8 ROUNDS=30000 STRONG=2777 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep :: 
+[130] EDIT /app/src/solver/search.rs -> E ok
+[131] BASH rc=0 0.0s :: cargo build --release 2>&1|tail -3 && ./target/release/phase && python3 verify.py ::            = 0.0 canonical defect  = parent A: permutation (0, 1, 3, 2) sorts earlier digest computed   = bb9ba3563aa4501e digest reported   = bb9ba3563aa4501e 
+[132] BASH rc=0 0.0s :: grep -n "tied" src/solver/search.rs ::         if self.tied.len() < 4096 { 428:            if let Err(slot) = self.tied.binary_search(&key) { 429:                self.tied.insert(slot, key.clone()); 
+[134] EDIT /app/src/solver/search.rs -> E ok
+[135] EDIT /app/src/solver/search.rs -> E ok
+[136] EDIT /app/src/solver/search.rs -> E ok
+[137] EDIT /app/src/solver/search.rs -> E ok
+[138] BASH rc=0 0.0s :: cargo build --release 2>&1 | grep -E "^(warning|error)" -A5 | head -40; echo "=== build done" :: === build done 
+[139] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12 && cargo test --offline :: 
+[140] BASH rc=0 0.0s :: python3 - <<'EOF' import sys; sys.path.insert(0,'/app') from gen import gen cases = [ (12, 8, [0]*12 :: /tmp/c_min.json /tmp/c_28_8.json /tmp/c_12_32.json /tmp/c_1_3.json /tmp/c_mixed.json 
+[141] BASH rc=0 0.0s :: for f in /tmp/c_min.json /tmp/c_28_8.json /tmp/c_12_32.json /tmp/c_1_3.json /tmp/c_mixed.json; do pr :: /tmp/c_min.json        FAILED /tmp/c_28_8.json       FAILED /tmp/c_12_32.json      FAILED /tmp/c_1_3.json        FAILED /tmp/c_mixed.json      FAILED 
+[142] EDIT /app/src/solver/search.rs -> E ok
+[143] BASH rc=0 0.0s :: sed -i 's/ block_sweeps: 4,\n }\n }\n}/X/' src/solver/search.rs && python3 - <<'EOF' p='/app/src/sol ::  847:    if !a_list.is_empty() && budget.block_sweeps > 0 { 854:            let sweeps = (4_000_000u128 / per_sweep).min(budget.block_sweeps as u128) as usize; 
+[144] BASH rc=1 0.0s :: cargo build --release 2>&1|tail -2 && time ./target/release/phase && python3 verify.py && for f in / :: r digest computed   = bb9ba3563aa4501e digest reported   = bb9ba3563aa4501e /tmp/c_12_32.json    /tmp/syn28.json       real	0m0.008s user	0m0.008s sys	0m0.000s 
+[145] BASH rc=2 0.0s :: rm -f tests/exp.rs tests/dbg.rs gen.py verify.py && ls src/ src/solver/ tests/ /app/*.py /app/*.json :: digest.rs json.rs lib.rs result_output.rs scoring.rs solver solver.rs  src/solver/: canon.rs dp.rs search.rs tables.rs  tests/: diagnostics.rs solver_checks.rs 
+[146] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -3 && cargo test --offline --locked --test diagnostics 2>&1 | tail :: 
+[147] BASH rc=0 0.1s :: rm -f result.json && time ./target/release/phase && cp result.json /tmp/a.json && ./target/release/p :: 1,2],[1,2]],"B":[[0,1],[0,1],[0 ['canonical_digest', 'format_version', 'haplotypes', 'paths', 'total_log_likelihood']  real	0m0.008s user	0m0.008s sys	0m0.000s 
+[149] EDIT /app/src/solver/search.rs -> E ok
+[150] EDIT /app/src/solver/search.rs -> E ok
+[151] EDIT /app/src/solver/search.rs -> E ok
+[152] BASH rc=0 0.0s :: cargo build --release 2>&1 | grep -E "warning|error" -A6 | head -30; echo "=== ok"; ./target/release :: === ok markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json same answer as before 
+[153] EDIT /app/src/solver.rs -> E ok
+[154] BASH rc=0 0.0s :: cargo build --release 2>&1|tail -2 && cargo test --offline --locked --release --test solver_checks 2 :: final answer unchanged 

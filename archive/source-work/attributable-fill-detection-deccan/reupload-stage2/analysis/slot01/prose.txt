@@ -1,0 +1,35 @@
+[step 2] I'll start by reading the specification documents, then examine the code.
+
+[step 11] Now I have a clear picture. Let me write the corrected attribution ledger.
+
+[step 15] All 17 diagnostics and 14 reproducer checks pass. Since those are necessary but not sufficient, let me write my own scratch tests for the interacting rules.
+
+[step 17] Several of those failures are my test setups (feeds consumed before orders exist). Let me fix the scratch tests.
+
+[step 20] All 11 pass. Let me add a few more edge cases, including identifier recycling where the lookup key order matters.
+
+[step 26] The tree builds and all checks pass. Here is what was wrong and what I changed.
+
+## `src/engine/fill_classifier.rs`
+
+**`in_window`** — was `at <= start + ATTRIBUTION_WINDOW`, admitting an observation at the instant the window closes, where the venue is already free to have recycled the identifier. Now strictly `<`.
+
+**`absorb_event`** — was `direct_filled += cumulative_filled_qty`, so every redelivery added the running total again. Now raises a high-water mark. The window is tested against the event's `at` (the venue's match time), not the reading cycle, and the venue's `order_id` is only bound to the record once the observation has been accepted — binding from a rejected (recycled) observation relabels a submission.
+
+**`locate`** — resolved `order_id` before `client_ref`. Since the venue recycles identifiers, an observation naming a recycled id landed on the first holder of that id and was then dropped by its window check, so the real order got nothing. `client_ref` is now primary and `order_id` only a fallback.
+
+**`absorb_block`** — three defects. The eligible set was ordered lexicographically by `order_id` instead of by `(window_start, venue_seq, order_id)`. The truncation remainder went wholly to the largest outstanding order instead of one unit each to the first `r` in that ordering. And `covers` was not deduplicated. The basis, the `min(block_qty, basis)` cap and the fail-closed empty case are unchanged; every covered tracked order is still finalized, including one the division allocated nothing to.
+
+**`absorb_open_orders`** — semantics were already right (max, no window); it now goes through the corrected `locate` so a recycled id cannot misroute it.
+
+## `src/engine/cycle.rs`
+
+**`close_gap`** — the residual was `size - acquired`, missing the quantity already working in committed neutralizations, so consecutive cycles re-sent the same exposure. Now `size - acquired - working`, where an acknowledged neutralization contributes its outstanding quantity, a lost-acknowledgement one its full size, and a finalized one nothing — which is what lets a mandate make progress again after a block closes a corrective order part-filled.
+
+**`visibility`** — an unconfirmed leg fell through to neutralization; it now returns. A leg the venue has closed (block-finalized) is `Withdrawn` rather than `Unconfirmed`, so the gap a block leaves behind can actually be covered.
+
+**Submission outcomes** — an `AcknowledgementLost` corrective had its record dropped, losing the `client_ref` a retry depends on, so the retry would have placed the exposure twice. It is now retained and retried under the same reference; `Rejected`/`Transport` drop it instead, so one failed attempt does not latch the mandate shut. The order is also tracked in the ledger at commitment, so a fill reported under its `client_ref` is attributable even if the ack never arrives.
+
+Restart state needed no new `Snapshot` fields — window starts, cursor, progress, absorbed blocks, closure state, committed neutralizations and the client-ref sequence were all already persisted and are now restored correctly.
+
+Two judgement calls worth flagging: the division rule's step 1 defines the eligible set as tracked ∧ in-window ∧ outstanding > 0, with no mention of finalization, so a second block covering an already-finalized order still divides over its residual — this is what `a_later_block_divides_over_the_residuals_of_the_earlier_one` encodes. And I did not let a leg that leaves `open_orders` on its own after being marked for closure be neutralized; the spec's reason for the unconfirmed state is precisely "it may have filled, with the fill not yet through the feed", so blocking is the safe reading.

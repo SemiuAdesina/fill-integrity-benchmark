@@ -1,0 +1,3 @@
+b02_one_payload_combine_allowed
+reduction
+allows a selected switch reached by one payload

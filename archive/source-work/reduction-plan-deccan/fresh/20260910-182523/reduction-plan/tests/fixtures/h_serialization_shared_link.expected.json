@@ -1,0 +1,39 @@
+{
+ "fixture": "h_serialization_shared_link",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l07",
+    "l10"
+   ],
+   [
+    "l01",
+    "l10"
+   ],
+   [
+    "l01",
+    "l10"
+   ],
+   [
+    "l04",
+    "l09",
+    "l10"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 4304
+ },
+ "observables": {
+  "completion": 6,
+  "allocation": 0,
+  "total_bytes": 72,
+  "link_bytes": {
+   "l07": 8,
+   "l01": 16,
+   "l04": 8,
+   "l09": 8,
+   "l10": 32
+  }
+ }
+}

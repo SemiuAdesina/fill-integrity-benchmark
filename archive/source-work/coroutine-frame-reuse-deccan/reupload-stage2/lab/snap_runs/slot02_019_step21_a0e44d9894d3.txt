@@ -1,0 +1,4 @@
+/b/runtime.cpp:16:6: error: unused function 'comes_first' [-Werror,-Wunused-function]
+   16 | bool comes_first(const Conductor*) noexcept;
+      |      ^~~~~~~~~~~
+1 error generated.

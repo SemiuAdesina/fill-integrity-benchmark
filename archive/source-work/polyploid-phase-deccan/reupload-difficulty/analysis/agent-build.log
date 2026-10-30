@@ -1,0 +1,57 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.98kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 329B done
+#3 DONE 0.0s
+
+#4 [ 1/11] FROM docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 901B done
+#5 DONE 0.0s
+
+#6 [ 4/11] COPY Cargo.lock /app/Cargo.lock
+#6 CACHED
+
+#7 [ 5/11] COPY src /app/src
+#7 CACHED
+
+#8 [ 3/11] COPY Cargo.toml /app/Cargo.toml
+#8 CACHED
+
+#9 [ 7/11] COPY examples /app/examples
+#9 CACHED
+
+#10 [ 2/11] WORKDIR /app
+#10 CACHED
+
+#11 [ 6/11] COPY spec /app/spec
+#11 CACHED
+
+#12 [ 9/11] COPY cross.json /app/cross.json
+#12 CACHED
+
+#13 [ 8/11] COPY tests /app/tests
+#13 CACHED
+
+#14 [10/11] COPY README.md /app/README.md
+#14 CACHED
+
+#15 [11/11] RUN cargo build --offline --release && cargo build --offline
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 writing image sha256:eca4bd7f8491eb42dfb454f1bd3572b70a4752a66a3d7248937cd38bb8d0438b done
+#16 naming to docker.io/library/pc-agent:reup-base done
+#16 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/u7wt6lls9rzte78ysgzjo06ad

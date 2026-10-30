@@ -1,0 +1,3 @@
+p04_physical_identity
+04 physical identity
+keys blocks by stage and shard as well as by logical identity

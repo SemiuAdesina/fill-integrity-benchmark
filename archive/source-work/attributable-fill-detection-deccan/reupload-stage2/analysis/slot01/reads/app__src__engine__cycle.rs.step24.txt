@@ -1,0 +1,82 @@
+300	                now,
+301	            );
+302	            self.pending.insert(PendingOrder::new(
+303	                candidate.strategy_id.clone(),
+304	                candidate.instrument_for(venue).clone(),
+305	                venue,
+306	                accepted.order_id,
+307	                client_ref,
+308	                accepted.venue_seq,
+309	                request.limit_price,
+310	                size,
+311	                candidate.expiry_time,
+312	                now,
+313	            ));
+314	        }
+315	    }
+316	
+317	    /// Quantity attributable to this leg: the resting order itself, plus every
+318	    /// corrective order this engine sent for the same mandate and venue.
+319	    ///
+320	    /// A neutralization fill resolves the exposure, so it counts here once and
+321	    /// is never also counted a second time as a fill of the resting order.
+322	    fn acquired_for(&self, leg: &PendingOrder) -> Qty {
+323	        let mut total = self.ledger.attributed_for(&leg.client_ref);
+324	        for record in self.records_for(leg) {
+325	            total += self.ledger.attributed_for(&record.client_ref);
+326	        }
+327	        total
+328	    }
+329	
+330	    /// Quantity still working in corrective orders already committed to for one
+331	    /// leg.
+332	    ///
+333	    /// This is what stops consecutive cycles from covering the same exposure
+334	    /// twice. A neutralization counts as working until it resolves:
+335	    ///
+336	    /// - one the venue has acknowledged contributes its own outstanding quantity;
+337	    /// - one whose acknowledgement was lost contributes its whole size, because
+338	    ///   the venue may have created it and this engine cannot yet see it;
+339	    /// - one that has been finalized contributes nothing, whatever it managed to
+340	    ///   fill, because the venue closed it and the gap it leaves behind is real.
+341	    fn working_for(&self, leg: &PendingOrder) -> Qty {
+342	        let mut working = 0;
+343	        for record in self.records_for(leg) {
+344	            match record.order_id {
+345	                None => working += record.size,
+346	                Some(_) if self.ledger.is_finalized(&record.client_ref) => {}
+347	                Some(_) => {
+348	                    let outstanding = record.size - self.ledger.attributed_for(&record.client_ref);
+349	                    if outstanding > 0 {
+350	                        working += outstanding;
+351	                    }
+352	                }
+353	            }
+354	        }
+355	        working
+356	    }
+357	
+358	    /// The exposure still to cover: the leg's size, less what is already
+359	    /// attributable to it, less what is already working for it.
+360	    fn residual_for(&self, leg: &PendingOrder) -> Qty {
+361	        leg.size - self.acquired_for(leg) - self.working_for(leg)
+362	    }
+363	
+364	    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {
+365	        self.neutralizations
+366	            .iter()
+367	            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)
+368	            .collect()
+369	    }
+370	
+371	    /// Exact integer comparison. There is no tolerance: a leg short by one base
+372	    /// unit is short.
+373	    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {
+374	        self.acquired_for(leg) >= leg.size
+375	    }
+376	
+377	    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+378	        // The venue has closed this order, so it is neither live nor still
+379	        // working: there is nothing left to move into closure.
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "                now,\n            );\n            self.pending.insert(PendingOrder::new(\n                candidate.strategy_id.clone(),\n                candidate.instrument_for(venue).clone(),\n                venue,\n                accepted.order_id,\n                client_ref,\n                accepted.venue_seq,\n                request.limit_price,\n                size,\n                candidate.expiry_time,\n                now,\n            ));\n        }\n    }\n\n    /// Quantity attributable to this leg: the resting order itself, plus every\n    /// corrective order this engine sent for the same mandate and venue.\n    ///\n    /// A neutralization fill resolves the exposure, so it counts here once and\n    /// is never also counted a second time as a fill of the resting order.\n    fn acquired_for(&self, leg: &PendingOrder) -> Qty {\n        let mut total = self.ledger.attributed_for(&leg.client_ref);\n        for record in self.records_for(leg) {\n            total += self.ledger.attributed_for(&record.client_ref);\n        }\n        total\n    }\n\n    /// Quantity still working in corrective orders already committed to for one\n    /// leg.\n    ///\n    /// This is what stops consecutive cycles from covering the same exposure\n    /// twice. A neutralization counts as working until it resolves:\n    ///\n    /// - one the venue has acknowledged contributes its own outstanding quantity;\n    /// - one whose acknowledgement was lost contributes its whole size, because\n    ///   the venue may have created it and this engine cannot yet see it;\n    /// - one that has been finalized contributes nothing, whatever it managed to\n    ///   fill, because the venue closed it and the gap it leaves behind is real.\n    fn working_for(&self, leg: &PendingOrder) -> Qty {\n        let mut working = 0;\n        for record in self.records_for(leg) {\n            match record.order_id {\n                None => working += record.size,\n                Some(_) if self.ledger.is_finalized(&record.client_ref) => {}\n                Some(_) => {\n                    let outstanding = record.size - self.ledger.attributed_for(&record.client_ref);\n                    if outstanding > 0 {\n                        working += outstanding;\n                    }\n                }\n            }\n        }\n        working\n    }\n\n    /// The exposure still to cover: the leg's size, less what is already\n    /// attributable to it, less what is already working for it.\n    fn residual_for(&self, leg: &PendingOrder) -> Qty {\n        leg.size - self.acquired_for(leg) - self.working_for(leg)\n    }\n\n    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {\n        self.neutralizations\n            .iter()\n            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)\n            .collect()\n    }\n\n    /// Exact integer comparison. There is no tolerance: a leg short by one base\n    /// unit is short.\n    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {\n        self.acquired_for(leg) >= leg.size\n    }\n\n    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {\n        // The venue has closed this order, so it is neither live nor still\n        // working: there is nothing left to move into closure.", "numLines": 80, "startLine": 300, "totalLines": 571}}

@@ -1,0 +1,32 @@
+[35]
+sed -i 's/^fn descend($/pub fn descend(/' src/solver/search.rs && grep -n "pub fn descend" src/solver/search.rs
+
+[37]
+sed -i 's/use polyploid_phase::solver::search::{descend, evaluate, CtxOpt};/use polyploid_phase::solver::search::descend;/' tests/exp.rs && TRIALS=2000 cargo test --offline --release --test exp -- --nocapture 2>&1 | tail -30
+
+[84]
+sed -i 's/            block_sweeps: sweeps,/            strong,\n            block_sweeps: sweeps,/' tests/exp.rs && sed -i 's/    let sweeps: usize = std::env::var("SWEEPS").ok().and_then(|s| s.parse().ok()).unwrap_or(4);/    let sweeps: usize = std::env::var("SWEEPS").ok().and_then(|s| s.parse().ok()).unwrap_or(4);\n    let strong: usize = std::env::var("STRONG").ok().and_then(|s| s.parse().ok()).unwrap_or(0);/' tests/exp.rs && cargo build --release 2>&1 | tail -20
+
+[124]
+cp src/solver/search.rs /tmp/search_backup.rs && python3 - <<'EOF'
+import re
+p='/app/src/solver/search.rs'
+s=open(p).read()
+s=s.replace("let listable = 400_000u128;","let listable = 0u128;")
+s=s.replace("&& (a_list.len() as u128) * (b_list.len() as u128) <= 60_000","&& (a_list.len() as u128) * (b_list.len() as u128) <= 0")
+open(p,'w').write(s)
+EOF
+grep -n "listable = \|<= 0$" src/solver/search.rs | head
+
+[128]
+cp /tmp/search_backup.rs src/solver/search.rs && grep -n "listable = \|<= 60_000" src/solver/search.rs && cargo build --release 2>&1 | tail -2
+
+[143]
+sed -i 's/            block_sweeps: 4,\n        }\n    }\n}/X/' src/solver/search.rs && python3 - <<'EOF'
+p='/app/src/solver/search.rs'
+s=open(p).read()
+s=s.replace("            restarts: 512,\n            rounds: 40_000,\n            strong: 2_000,\n            block_sweeps: 4,","            restarts: 512,\n            rounds: 40_000,\n            strong: 2_000,\n            block_sweeps: 2,")
+s=s.replace("            restarts: (cheap / 40).clamp(128, 1_024),\n            rounds: cheap,\n            strong,\n            block_sweeps: 4,","            restarts: (cheap / 40).clamp(128, 1_024),\n            rounds: cheap,\n            strong,\n            block_sweeps: 2,")
+open(p,'w').write(s)
+EOF
+grep -n "block_sweeps" src/solver/search.rs

@@ -1,0 +1,24 @@
+prewritten_reward_1        rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 22 
+write_reward               rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 22 
+read_expected              rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 22 
+     leak: read_dir /tests/expected: Permission denied (os error 13)
+     leak: /tests/expected/v1_symmetric_paired_fill_creates_exactly_one_position: Permission denied (os error 13)
+     leak: /tests/judge.sh: Permission denied (os error 13)
+     leak: /tests/cases.txt: Permission denied (os error 13)
+     leak: /tests/graded.rs: Permission denied (os error 13)
+     leak: READ /logs/verifier/reward.txt: 2 bytes
+     leak: tmp entry "/tmp/fill-verify.EelWFRA4"
+     leak: tmp entry "/tmp/fill-runner.UxEGJOmg"
+crash                      rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 37 
+exit0_no_output            rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 37 
+fake_pass_output           rc=1 elapsed=3s reward=0 TOTAL 53 FAILED 22 
+malformed_output           rc=1 elapsed=2s reward=0 TOTAL 53 FAILED 37 
+symlink_reward_attempt     rc=1 elapsed=3s reward=0 TOTAL 53 FAILED 22 
+compile_failure            rc=2 elapsed=0s reward=0 <no verdict> FATAL candidate-linked graded runner did not build (or exceeded its build budget)|
+cargo_injection            rc=1 elapsed=4s reward=0 TOTAL 53 FAILED 22 
+source_symlink             rc=2 elapsed=1s reward=0 <no verdict> FATAL symlink present under candidate app|
+planted_binary             rc=1 elapsed=5s reward=0 TOTAL 53 FAILED 22 
+env_wrapper_vars           rc=1 elapsed=3s reward=0 TOTAL 53 FAILED 22 
+hang_in_cycle              rc=1 elapsed=65s reward=0 TOTAL 53 FAILED 53 case v1_symmetric_paired_fill_creates_exactly_one_position exceeded its budget; failing closed, no further candidate code is run|case v2_asymmetric_paired_fill_
+build_hang                 rc=2 elapsed=303s reward=0 <no verdict> FATAL candidate-linked graded runner did not build (or exceeded its build budget)|
+EXPLOIT CONTROLS DONE

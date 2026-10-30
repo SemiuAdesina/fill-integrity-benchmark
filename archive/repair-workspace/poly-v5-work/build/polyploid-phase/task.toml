@@ -1,0 +1,331 @@
+schema_version = "1.3"
+
+artifacts = ["/app"]
+
+[task]
+name = "polyploid-phase"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "science"
+tags = [
+  "rust",
+  "genomics",
+  "polyploid",
+  "haplotype-phasing",
+  "genotype-likelihoods",
+  "combinatorial-optimization",
+  "branch-and-bound",
+  "hidden-markov-model",
+]
+expert_time_estimate_hours = 4.0
+
+difficulty_explanation = """
+The real-world persona is a computational genetics engineer supporting a
+polyploid breeding programme: the person who turns low-depth progeny likelihoods
+into a reproducible parental phase that geneticists can use downstream. This is
+a combinatorial optimisation problem wearing genetics clothing, and the genetics
+is what makes the optimisation awkward rather than what makes it hard.
+
+Two autotetraploid parents are crossed. Each parent carries four homologous
+copies of one linkage group, and every marker is biallelic, so a parent's state
+at a marker is which of its four homologs carry the alternate allele. The
+progeny were sequenced at low depth, so the input gives, for every progeny and
+every marker, five log likelihoods over the possible alternate allele dosages
+zero to four rather than a called genotype. The task is to recover both parents'
+four haplotypes and every progeny's inheritance path at the global maximum of the
+supplied scorer.
+
+The environment is a Rust crate with one solver entry file and an optional
+`src/solver/` helper-module directory. The scorer, the reader,
+the writer, the digest and the domain types are frozen and the verifier keeps its
+own copies of them, so the objective cannot be argued with — only maximised.
+`src/solver.rs` holds a placeholder that fixes each parent's alleles marker by
+marker and then runs an exact Viterbi pass per progeny. It compiles, it produces
+a structurally valid document, and it is wrong for a reason the task is built
+around.
+
+Six traps sit in the way, and they interact.
+
+1. An inheritance state is an unordered pair `(a, b)` with `0 <= a <= b < 4`.
+   Ten states, not sixteen. A solver that treats `(1, 2)` and `(2, 1)` as two
+   states double counts the state space, and one that writes a pair out of order
+   produces output that is rejected without being scored.
+
+2. Double reduction — a progeny receiving two copies of the same parental
+   homolog, so `a == b` — is legal per parent and per marker, and the input says
+   where. Allowing it everywhere is wrong: the optimum then contains states the
+   result format rejects. Forbidding it everywhere is also wrong: several
+   fixtures have double reduction in their optimum, and a solver that never emits
+   one cannot reach it. Both failures are graded separately.
+
+3. Homolog labels are arbitrary. Twenty-four relabellings of each parent describe
+   the same biology at the same score, and exactly one is accepted. Sorting the
+   rows is not enough to determine it, because when two homolog rows are
+   identical — which the fixtures arrange — sorting leaves several permutations
+   admissible and they differ in the paths. The specification resolves this with
+   a path signature and then an image tuple, and canonicalisation must remap
+   every inheritance state along with the rows and be idempotent.
+
+4. The global optimum conflicts with the marker-at-a-time optimum. Choosing each
+   marker's parental allele columns to maximise that marker's own contribution is
+   the obvious decomposition and it is wrong, because the recombination terms
+   couple adjacent markers. The verifier does not assume this: it runs a
+   marker-at-a-time solver — one that recovers each progeny's path exactly, so it
+   is not a strawman — and requires its score to fall short of the optimum before
+   grading the candidate.
+
+5. Distinct reconstructions can tie at the optimum. The specification names which
+   one is required, by a row-major order over parent A's haplotype matrix, then
+   parent B's, then the full path signature. A branch-and-bound search that
+   prunes anything not strictly better than the incumbent silently lets the order
+   of discovery pick the answer, and that is the single easiest way to produce a
+   solver that is right on most inputs and unreproducible on the rest.
+
+6. Recombination contributes across intervals. A solver that scores markers in
+   isolation, or that holds each progeny's state constant along the chromosome,
+   misses it.
+
+The load-bearing derived value is `canonical_digest`: a 64 bit FNV-1a hash over a
+fixed serialisation of the canonical reconstruction. Its algorithm and byte
+sequence are fully specified and a helper that computes it ships with the crate,
+so the digest is not a puzzle in itself. What it cannot be is guessed, recalled
+or pattern matched: it is a function of the exact optimum in the exact canonical
+form for the exact cross supplied, and it appears in no document the agent can
+read. An answer that is optimal but not canonical, or canonical but not optimal,
+produces a digest that does not match.
+
+The search space is the reason this takes hours rather than minutes. Dosage
+constrains a parent to `C(4, dosage)` allele columns per marker — at most six —
+so enumerating column assignments is up to `6^M` per parent, about `2.2e9` at the
+twelve marker floor and around `4.7e18` for the two parents together. Brute force
+is unavailable at every size in the declared range. What makes an exact answer
+reachable is that only one term of the objective depends on the parental alleles,
+that the progeny factorise into small Viterbi problems given those alleles, that
+the per-parent transition structure factorises a hundred-state product into two
+ten-state passes, that two independent admissible bounds can be computed and
+minimised, and that homolog symmetry can be quotiented during the search rather
+than after it. Finding that structure is the work.
+
+An agent that reaches for a heuristic gets a plausible answer and zero. There is
+no partial credit: the required score is the global maximum to within `1e-8`, the
+required form is canonical, and the required digest is exact.
+
+A strong engineer comfortable with dynamic programming over hidden state and with
+branch and bound: roughly four hours. One who tries to hard call dosages first,
+or who optimises markers independently, can spend considerably longer, because
+both approaches produce a confident wrong answer that passes their own sanity
+checks.
+"""
+
+solution_explanation = """
+The reference solution is ordinary Rust source, laid out under `solution/fixed/`
+in the same relative structure as the crate:
+
+```
+solution/solve.sh
+solution/reference_plan.md
+solution/fixed/src/solver.rs
+solution/fixed/src/solver/columns.rs
+solution/fixed/src/solver/progeny_dp.rs
+solution/fixed/src/solver/bounds.rs
+solution/fixed/src/solver/search.rs
+solution/fixed/src/solver/path.rs
+solution/fixed/src/solver/canonical.rs
+```
+
+`solution/solve.sh` is a thin launcher. It sets strict shell mode, resolves its
+own directory so it works from any working directory, installs `solver.rs` and
+the `solver/` module directory over the placeholder, builds offline in release
+and runs the `phase` binary. It installs nothing and fetches nothing. No frozen
+module is touched.
+
+The design rests on five decisions.
+
+The search branches on the shared quantity. Progeny are conditionally independent
+given the parental haplotypes but they all share those haplotypes, so the columns
+cannot be chosen one progeny at a time. The search descends marker by marker over
+the admissible column pairs — at most six per parent, so at most thirty-six pairs
+— carrying every progeny's dynamic programme forward together. At each node the
+score of the decided prefix is exact.
+
+Advancing a progeny is factorised. A joint state is a pair of per-parent states
+and the transition term factorises across parents, so one marker's advance is two
+ten-by-ten passes over an intermediate rather than a hundred-by-hundred product.
+It is done once per node, before the node's children are generated, because it
+does not depend on which columns those children pick.
+
+Two admissible bounds are computed and minimised. `RemainingBound` frees the
+columns: for each progeny and each joint state, the best score reachable to the
+end of the chromosome if the parental alleles were chosen freely at every
+remaining marker, with the path still required to be continuous; a backward pass
+computes it once per cross. `MarkerBound` keeps the columns shared and frees the
+path instead, charging each remaining interval the largest transition
+contribution any path can collect there, which is valid because `r <= 0.5` on
+every interval forces `ln(r) <= ln(1 - r)`. Neither dominates the other and the
+minimum of two upper bounds is an upper bound.
+
+Homolog symmetry is quotiented during the search. A `RowOrder` bitmask records
+which of the twenty-four row orderings are still consistent with the columns
+chosen so far, and a column that would make the assignment non-minimal within its
+relabelling class prunes the branch. Applying this after the search would be a
+cosmetic step; applying it during the search is what stops the tree carrying
+twenty-four copies of every subtree.
+
+Ties are preserved, not pruned. A node is discarded only when its optimistic
+total falls strictly below `incumbent - 1e-9`, so a branch that can still tie
+survives to be compared. When a complete assignment ties, the incumbent is
+replaced only if the new assignment is row-major smaller, which is the order the
+result format defines; distinct column assignments always give distinct haplotype
+matrices, so this is a total order. Each progeny's path is then recovered
+forward, greedily and lexicographically among states attaining the optimum, and
+the result is canonicalised with the rows and every inheritance state remapped
+together.
+
+The exact search was cross-checked against exhaustive enumeration on every cross
+small enough to enumerate; the two agreed on the optimum in every case that
+completed. That is the evidence the bounds are admissible.
+
+The public contract is unchanged: `solve` keeps its signature, the frozen modules
+are untouched, and the `phase` binary still reads `/app/cross.json` and writes
+`/app/result.json`.
+"""
+
+verification_explanation = """
+Verification runs in a separate verifier image built from `tests/Dockerfile`. The
+verifier owns its build configuration, its fixtures and its tests; none of the
+three is taken from the candidate. The agent image contains no test, no fixture,
+no expected answer and no reference solution, and its Dockerfile copies path by
+path rather than with a blanket `COPY .`, so neither can arrive by accident.
+
+The verifier keeps its own copies of the frozen modules — the scorer, the reader,
+the writer, the digest, the domain types and the JSON codec — and rebuilds
+everything from source. Exactly two candidate paths are allow-listed into that
+build: `src/solver.rs` and anything under `src/solver/`. Both are rejected if
+they are a symlink, and non-Rust files under `src/solver/` are rejected outright.
+Replacing the scorer, the reader, the writer, the digest, `Cargo.toml`,
+`Cargo.lock`, `build.rs`, `.cargo/config.toml` or a toolchain file therefore
+achieves nothing: none of them is read. There is no network access at any point,
+in either image, at build time or at test time. Both base images are pinned by
+digest rather than by tag.
+
+Grading is outcome based. Nothing greps the candidate's source. Nothing requires
+a particular function name, data structure or internal layout. The solver is
+driven only through `solve`, so any correct design passes.
+
+Grading runs in two phases, and the split is what bounds the verifier's cost.
+The candidate's `solve` is compiled into one binary, `probe`, and into nothing
+else. The runner drives a fixed plan of thirteen probe jobs; each job is its own
+process, solves exactly one cross, writes exactly one reconstruction artifact and
+exits. The second binary, `judge`, links no candidate code at all — it holds the
+graded checks and receives the certified answers and the captured artifacts, so a
+check that wants an answer reads a cached artifact and cannot cause an execution
+however many properties it inspects. Thirteen distinct inputs are solved once
+each: the seven fixtures as supplied, three of them a second time because group K
+asks whether repeated runs agree and that question is unanswerable from a single
+run, and three likelihood-shifted crosses that are different inputs rather than
+repeats of the same one. The plan is fixed in the verifier's own source and the
+runner cross-checks the built binary against the `job!` lines that define it, so
+the number of candidate executions is a property of verifier source and not an
+emergent consequence of how many assertions were written.
+
+The suite holds thirteen graded checks in groups A to M, each naming one
+behaviour the instruction or the three specification documents state publicly:
+the required output document holds the optimum and its own digest; haplotypes
+respect `parent_dosage`; inheritance states are ordered pairs naming existing
+homologs; double reduction never appears where it is forbidden; double reduction
+is used where it is optimal; answers are in canonical form, checked by
+enumerating all twenty-four relabellings of each parent and applying the
+specification's selection rules independently of how the candidate produced its
+answer; canonicalisation remaps paths with the rows and is idempotent, checked by
+relabelling the answer under two four-cycles and canonicalising back; every
+fixture reaches the global optimum; a marker-at-a-time reconstruction falls
+short; recombination between markers is accounted for; ties resolve to the
+documented representative; the compound case is solved; and answers follow the
+supplied cross.
+
+Several groups assert a property of the fixture they were handed before grading
+the candidate on that property. Group I runs a marker-at-a-time solver and
+requires its score to be strictly below the optimum. Group J counts the intervals
+at which some progeny changes inheritance state and requires at least one. Group
+L requires the compound fixture to still use double reduction, still forbid it
+somewhere, still carry two identical homolog rows, still contain a recombination
+event and still defeat a marker-at-a-time reconstruction. A fixture that quietly
+stopped separating the two solvers would fail the suite rather than pass it
+vacuously.
+
+Group M is the load-bearing one. Adding the same constant to every genotype
+likelihood shifts every reconstruction's total by the same amount, so the
+maximiser, the canonical form and the tie ordering are all unchanged. The shifted
+cross is not any document that ships with the task, so an answer recalled by
+recognising its input does not survive the substitution. The same group confirms
+the grading can say no: a reconstruction with one inheritance state altered must
+be rejected, and the check fails if grading accepts it.
+
+Group K checks determinism by solving twice and requiring agreement, then scores
+every single-state variation of the answer and requires that no equally scoring,
+structurally admissible, canonical variant sorts before it under the documented
+order. The ties this reaches are ties among optimal paths, and the fixtures carry
+them in quantity: at three to seven markers each, more than one inheritance state
+can still reach the optimum, so which one is emitted is decided by the recovery
+rule rather than by the score. A solver that attains the exact optimum and then
+resolves those the other way fails this group with a correct total.
+
+Each probe job and each check runs in its own process under its own timeout, so
+a panic or a hang costs one job or one check rather than the run. A probe job
+that crashes or exceeds its budget writes no artifact, and the checks that wanted
+it fail with that reason: a candidate failure, reported, not a verifier fault.
+Alongside the thirteen checks there is one intentional negative control which
+must fail; the runner requires it to fail, excludes it from the `--list` output
+and from the graded total, and scores zero regardless of everything else if it
+ever reports a pass. Both counts — the jobs in the probe plan and the graded
+checks in the judge's registry — are read from the verifier's own source rather
+than from the binaries built out of it, so a candidate that shrinks either
+registry does not shrink the run, and a count that fails to parse aborts rather
+than grading against no expectations. A check counts only when the private
+candidate-free judge exits successfully and emits the exact verifier-owned
+marker for that named check.
+
+Nothing the candidate's code runs inside decides anything. The candidate-linked
+runner is compiled and executed as an unprivileged account in a workspace that
+contains only public frozen model code, cross inputs and the allow-listed solver
+source. Judge code and certified answers are absent and the private judge tree is
+not traversable by that account. A probe's standard output is captured to a log
+and grades nothing; its only useful product is a bounded reconstruction artifact.
+The parent captures those artifacts and ends every candidate-linked process
+before loading certified answers. A separate root-only judge, built from a
+manifest with no probe target and containing no candidate source, then receives
+the captured artifacts and certified answers. A check whose certified answer is
+missing panics rather than skipping, and a check whose artifact is missing fails
+with a reason. There is no candidate-visible authentication value and no
+candidate-controlled process participates in reward or report generation.
+
+The runner scrubs the compiler, linker, cargo, rustup and preload environment,
+resolves its tools by absolute path under a sanitised `PATH`, writes 0 to
+`/logs/verifier/reward.txt` before doing anything, writes a CTRF report to
+`/logs/verifier/report.json`, and overwrites the reward with 1 only when all
+thirteen graded checks pass and the control is intact.
+
+The hidden fixture corpus was built by generation and rejection. Candidate
+crosses were simulated inside the accepted proposal and the accepted size ranges,
+handed to the exact oracle in a child process, and kept only when the oracle
+finished proving the global optimum inside a fixed budget. A candidate that
+missed the budget was discarded whole and another was generated. Nothing was
+approximated and no optimum was recorded that the oracle did not finish proving:
+a killed process produces no answer at all, so there is no path by which an
+uncertified instance becomes a fixture.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

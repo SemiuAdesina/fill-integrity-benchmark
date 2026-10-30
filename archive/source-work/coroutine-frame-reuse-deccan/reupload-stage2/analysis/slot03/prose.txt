@@ -1,0 +1,47 @@
+[step 2] I'll start by exploring the project structure and reading thecontract.
+
+[step 8] Now I have the full picture. Let me write the corrected header first.
+
+[step 19] ASAN works outside the tool sandbox. Now let me write a thorough test suite against the spec (in `/tmp`, not in the deliverable).
+
+[step 22] Now the main test file with scenarios:
+
+[step 29] Three test-expectation bugs (my runtime is behaving correctly). Let me verify each and fix the tests:
+
+[step 35] Let me add more edge-case tests plus a randomized fuzz under sanitizers:
+
+[step 39] Let me harden `pending_release_` against overwrite and add testsfor scheduling from inside a job:
+
+[step 42] Now let me add tests for scheduling from inside a running job (launch/cancel/step nesting):
+
+[step 58] The intermittent ASAN crash is environmental (a binary that only *links* the runtime and does nothing crashes pre-main). Let me confirm no real findings across many runs:
+
+[step 59] Let me strengthen the journal audit with the remaining ordering rules:
+
+[step 64] All green. Let me review the final deliverable files end-to-end:
+
+[step 66] clang is available (and the stale build cache had a clang flag) — let me verify with clang too:
+
+[step 83] Everything is green. Here's what I changed and why.
+
+## The two root causes
+
+**Tickets named frames by address.** `Pending` stored a raw `std::coroutine_handle<>` captured at queue time. Once the frame died and the arena handed the same block out again, that handle pointed at *another job's live frame*, so a late ticket resumed the wrong coroutine — use-after-free under ASAN. A ticket now carries `SlotId{index, epoch}` captured from the park (`FrameArena::slot_of`, while the frame is alive) plus a `bound` flag, and delivery compares **both** numbers against the frame the job is parked in *now*. A ticket queued while the job wasn't parked is bound to no frame and can never be accepted. Neither number alone is identity: `parent_two` gets index-equal/epoch-different, `parent_then_park` gets epoch-equal/index-different.
+
+**Frames outlived their jobs.** `settle()` only set `pending_release_`, which `step()` didn't always drain, and cancellation resumed the parked frame instead of destroying it. Now `settle()` is guarded (one `JobSettled`, one `FaultReported`, and only when the outcome is Faulted) and releases storage at once — directly when settling from outside a frame (cancellation), or right after the resume returns for a root that reached `final_suspend`.
+
+## The rest
+
+- **Cancellation**: `CancelRequested` is recorded on every call, including unknown and already-settled ids. A parked job is *destroyed, never resumed* (destroying the root cascades through the `ChildAwaiter`s, so inner frames go first and cleanup runs). A cancel asked for a *running* job waits until control returns to the conductor, then applies at its next park; a job asked to stop never delivers a value. Repeats do nothing further.
+- **Child before parent**: `ChildAwaiter::await_resume` copies the result out, destroys the child frame, *then* records `ChildDestroyed` and `ParentContinued` (with `live_slots()` at that instant), then rethrows if it faulted.
+- **Parked state** is cleared on delivery, when a child starts, and when a child is destroyed — never left dangling at a dead frame.
+- **Ordering/clock**: `step` picks `min(ready, job, seq)`; the clock moves to that ticket's ready time at the start of the delivery (accept or reject) and nowhere else, never backwards; delays run from the clock at queue time.
+
+## Verification (all in `/tmp`, nothing added to `/app`)
+
+- 574k assertions over 24 spec scenarios plus a 60-round randomized schedule (nesting, faults, cancels, late/unbound tickets, capacity exhaustion, shutdown) — pass under g++ **and** clang++, `-Wall -Wextra -Wpedantic -Werror`, Debug and Release.
+- Journal invariants audited after every scenario: one settle/release/fault-report per job, `JobStarted` first, `JobParked` before each acceptance, `ChildDestroyed` before `ParentContinued`, `JobSettled` before `FrameReleased`, `double_reclaims() == 0`.
+- Clean under ASAN+UBSAN+LSan (g++ and clang). Note: this container's ASAN intermittently crashes *before `main`* on any binary that links the runtime — including one that does nothing at all — so I confirmed 0 real `AddressSanitizer:` findings across ~50 runs rather than trusting single runs.
+- `examples/demo.cpp` now reports correctly (slot released at cancel and reused, late ticket rejected, `C1` before `P1:1`, faults reported once); I rebuilt `/app/build` and `/app/build-asan`, whose cached flags were stale and failing to compile.
+
+One judgement call worth flagging: I read rule 2 ("a job that fails records `FaultReported` exactly once") as tying the report to the outcome, so it is emitted only from `settle()` when the outcome is Faulted — a job that catches a posted fault or a child's exception carries on with no fault report. That's the only reading consistent with "exactly once" for faults raised in a job body.

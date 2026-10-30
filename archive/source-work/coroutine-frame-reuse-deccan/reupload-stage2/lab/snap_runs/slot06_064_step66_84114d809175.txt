@@ -1,0 +1,4 @@
+/b/runtime.cpp:28:26: error: unused function 'arena_frames' [-Werror,-Wunused-function]
+   28 | std::vector<OwnerEntry>& arena_frames() {
+      |                          ^~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,59 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.1s :: find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[8] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug 2>&1 | tail -2 && cmake --build build -j 4 2>&1 | tail  :: 
+[9] BASH rc=0 0.0s :: grep -i "color-diag\|CXX_FLAGS" /app/build/CMakeCache.txt | head ::  //ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1 //ADVANCED property for variable: CMAKE_CXX_FLAGS_MINSIZEREL 
+[10] BASH rc=2 0.0s :: env | grep -i "cxx\|cc\|flags" ; echo "---"; cat ~/.bashrc 2>/dev/null | grep -i "fno-color" ; echo  :: --- --- /usr/bin/aarch64-linux-gnu-c++filt /usr/bin/c++ /usr/bin/c++filt 
+[11] BASH rc=0 0.0s :: grep -rn "fno-color-diagnostics" /app/build/CMakeFiles/roundel.dir/flags.make /app/build/CMakeFiles/ :: 3.25  # compile CXX with /usr/bin/c++ CXX_DEFINES =   CXX_INCLUDES = -I/app/include  CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20  
+[12] BASH rc=0 0.0s :: rm -rf /app/build && cmake -S /app -B /app/build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake  :: 
+[13] BASH rc=0 0.0s :: ./build/roundel_demo 2>&1 | head -100 :: bash: line 1: ./build/roundel_demo: No such file or directory 
+[14] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 018 step14 c2f8ba906e42
+[15] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 019 step15 fb96601d7205
+[16] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 020 step16 a0c088911176
+[17] BASH rc=0 0.0s :: cmake --build build -j 4 2>&1 | tail -20 :: 
+[18] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 022 step18 62e51bdd7952
+[19] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 023 step19 f59263474732
+[20] BASH rc=127 0.0s :: cmake --build build -j 4 2>&1 | tail -20 && ./build/roundel_demo 2>&1 :: bash: line 1: ./build/roundel_demo: No such file or directory 
+[21] BASH rc=0 0.0s :: cmake -S /app -B /tmp/build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 &&  :: bash: line 1: /tmp/build-asan/roundel_demo: No such file or directory 
+[22] BASH rc=0 0.0s :: /tmp/build-asan/roundel_demo 2>&1 | head -60 :: bash: line 1: /tmp/build-asan/roundel_demo: No such file or directory 
+[23] BASH rc=0 0.0s :: /tmp/build-asan/roundel_demo > /tmp/out.txt 2> /tmp/err.txt; echo "exit=$?"; echo "--- stderr:"; hea :: exit=127 --- stderr: bash: line 1: /tmp/build-asan/roundel_demo: No such file or directory --- tail stdout: 
+[24] BASH rc=0 0.0s :: cd /tmp && ./build-asan/roundel_demo 2>&1 | tail -5; echo "=== rerun piped to head:"; ./build-asan/r :: bash: line 1: ./build-asan/roundel_demo: No such file or directory === rerun plain: exit=127 bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[25] WRITE /tmp/t.cpp -> W ok
+[26] BASH rc=127 0.0s :: g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /a :: bash: line 1: /tmp/t: No such file or directory 
+[27] EDIT /tmp/t.cpp -> E ok
+[28] EDIT /tmp/t.cpp -> E ok
+[29] BASH rc=127 0.0s :: g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /a :: bash: line 1: /tmp/t: No such file or directory 
+[30] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 034 step30 d176a640ea9d
+[31] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 035 step31 15da676ba422
+[32] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 036 step32 254dcf68a17f
+[33] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 037 step33 2e4dc91977f3
+[34] EDIT /tmp/t.cpp -> E ok
+[35] EDIT /tmp/t.cpp -> E ok
+[36] BASH rc=0 0.0s :: g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /a :: timeout: failed to run command '/tmp/t': No such file or directory 
+[37] EDIT /tmp/t.cpp -> E ok
+[38] EDIT /tmp/t.cpp -> E ok
+[39] BASH rc=0 0.0s :: g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /a :: timeout: failed to run command '/tmp/t': No such file or directory 
+[40] BASH rc=0 0.0s :: cd /tmp && timeout 60 ./t > /tmp/o.txt 2>/tmp/e.txt; echo "exit=$?"; tail -20 /tmp/o.txt; echo "===  :: exit=127 === stderr === timeout: failed to run command './t': No such file or directory 
+[41] EDIT /tmp/t.cpp -> E ok
+[42] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/run :: eout: failed to run command './t': No such file or directory === O2 build === o2 exit=127 0 timeout: failed to run command '/tmp/t2': No such file or directory 
+[43] EDIT /tmp/t.cpp -> E ok
+[44] EDIT /tmp/t.cpp -> E ok
+[45] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/run :: exit=127 timeout: failed to run command './t': No such file or directory 
+[49] EDIT /tmp/t.cpp -> E ok
+[50] BASH rc=0 0.1s :: cd /tmp && python3 - <<'EOF' import re p='/tmp/t.cpp' s=open(p).read() s=s.replace(" t_cancel_during :: exit=127 timeout: failed to run command './t': No such file or directory 
+[51] BASH rc=0 0.0s :: rm -rf build build-asan && cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake -- :: debug build clean demo exit=127 
+[52] BASH rc=0 0.0s :: cmake -S /app -B /app/build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 &&  :: asan build clean exit=127 stderr bytes: 70 
+[54] WRITE /tmp/fuzz.cpp -> W ok
+[55] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/fuzz.cpp /app/src/ :: exit=127 timeout: failed to run command './fz': No such file or directory 
+[56] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace("switch (kind % 9) {","s :: exit=127 timeout: failed to run command './fz': No such file or directory 
+[57] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace(""" g_self = static_cast :: exit=127 timeout: failed to run command './fz': No such file or directory 
+[58] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/fuzz.cpp' s=open(p).read() s=s.replace(""" // Journal invariant :: exit=127 timeout: failed to run command './fz': No such file or directory 
+[59] BASH rc=0 0.0s :: rm -rf /app/build-asan && cmake --build /app/build -j 4 2>&1 | tail -3 && /app/build/roundel_demo >  :: 127 CMakeLists.txt README.md examples include spec src --- /app/include/roundel: arena.hpp journal.hpp runtime.hpp  /app/src: arena.cpp journal.cpp runtime.cpp 

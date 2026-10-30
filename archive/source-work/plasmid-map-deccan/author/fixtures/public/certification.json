@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.06,
+  "internal": 4,
+  "deviation": 13589,
+  "c": 657,
+  "L": 3510
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 46.12
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 1.7,
+  "nodes": 6982,
+  "ties_at_count_and_deviation": 2
+ },
+ "held_out": [
+  "SspI+XhoI",
+  "ApaI+XhoI"
+ ],
+ "truth": {
+  "internal": 4,
+  "deviation": 18839,
+  "optimum_equals_truth": false
+ },
+ "fixture": "public",
+ "seed": 107,
+ "description": "the public problem",
+ "vector": "pBluescriptIISK",
+ "vector_header": "X52328.1 pBluescript II SK(+) vector DNA, phagemid excised from lambda ZAPII",
+ "source": "T7",
+ "source_header": "V01146.1 Genome of bacteriophage T7",
+ "fragment": {
+  "left_enzyme": "FspI",
+  "left_cut": 35315,
+  "right_enzyme": "ScaI",
+  "right_cut": 38852
+ },
+ "cloning_site": [
+  "KpnI",
+  657
+ ],
+ "insert_length": 3537,
+ "enzymes": [
+  "ApaI",
+  "ClaI",
+  "SspI",
+  "XhoI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 8
+}

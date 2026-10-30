@@ -1,0 +1,782 @@
+[30] CMD: cargo build --release --offline 2>&1 | tail -30
+--- obs tail ---
+e: `#[warn(dead_code)]` on by default
+
+warning: method `total` is never used
+   --> src/solver/tables.rs:314:12
+    |
+41  | impl Ctx {
+    | -------- method in this implementation
+...
+314 |     pub fn total(&self, ca: &[u8], cb: &[u8]) -> f64 {
+    |            ^^^^^
+
+warning: function `chosen_perm` is never used
+   --> src/solver/tiebreak.rs:318:8
+    |
+318 | pub fn chosen_perm(hap: &Haplotypes, states: &[Vec<State>]) -> [u8; 4] {
+    |        ^^^^^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 4 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.99s
+
+[stdout]
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: field `value` is never read
+   --> src/solver/search.rs:231:9
+    |
+230 | pub struct Outcome {
+    |            ------- field in this struct
+231 |     pub value: f64,
+    |         ^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: method `total` is never used
+   --> src/solver/tables.rs:314:12
+    |
+41  | impl Ctx {
+    | -------- method in this implementation
+...
+314 |     pub fn total(&self, ca: &[u8], cb: &[u8]) -> f64 {
+    |            ^^^^^
+
+warning: function `chosen_perm` is never used
+   --> src/solver/tiebreak.rs:318:8
+    |
+318 | pub fn chosen_perm(hap: &Haplotypes, states: &[Vec<State>]) -> [u8; 4] {
+    |        ^^^^^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 4 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.99s
+[metadata] {"noOutputExpected": false}
+
+[31] CMD: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -40
+--- obs tail ---
+4 warnings
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.35s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... FAILED
+test answers_are_in_canonical_form ... ok
+test search_reaches_the_enumerated_optimum ... FAILED
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+
+failures:
+
+---- equally_scoring_answers_resolve_to_the_documented_representative stdout ----
+thread 'equally_scoring_answers_resolve_to_the_documented_representative' panicked at tests/solver_checks.rs:650:5:
+symmetric: the search reports -49.6869015116 where enumeration finds -37.0869015116
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- search_reaches_the_enumerated_optimum stdout ----
+thread 'search_reaches_the_enumerated_optimum' panicked at tests/solver_checks.rs:600:9:
+coupled: the search reports -66.3403263465 where enumeration finds -31.2003263465
+
+
+failures:
+    equally_scoring_answers_resolve_to_the_documented_representative
+    search_reaches_the_enumerated_optimum
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.29s
+
+error: test failed, to rerun pass `--test solver_checks`
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+--- obs tail ---
+orts)]` on by default
+
+warning: unused variable: `sa`
+   --> src/solver/tables.rs:347:17
+    |
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+For more information about this error, try `rustc --explain E0255`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+
+[stdout]
+   = note: `canon` must be defined only once in the type namespace of this module
+help: you can use `as` to change the binding name of the import
+   |
+27 | use crate::solver::canon::{self as other_canon, canonicalise};
+   |                            ~~~~~~~~~~~~~~~~~~~
+
+warning: unused import: `self`
+  --> src/solver.rs:27:28
+   |
+27 | use crate::solver::canon::{self, canonicalise};
+   |                            ^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `sa`
+   --> src/solver/tables.rs:347:17
+    |
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+For more information about this error, try `rustc --explain E0255`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[36] CMD: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+--- obs tail ---
+^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `sa`
+   --> src/solver/tables.rs:347:17
+    |
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+For more information about this error, try `rustc --explain E0255`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+
+[stdout]
+   = note: `canon` must be defined only once in the type namespace of this module
+help: you can use `as` to change the binding name of the import
+   |
+28 | use crate::solver::canon as other_canon;
+   |                          ++++++++++++++
+
+warning: unused import: `crate::solver::canon`
+  --> src/solver.rs:28:5
+   |
+28 | use crate::solver::canon;
+   |     ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `sa`
+   --> src/solver/tables.rs:347:17
+    |
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+For more information about this error, try `rustc --explain E0255`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+--- obs tail ---
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.22s
+
+[stdout]
+    | -------- method in this implementation
+...
+314 |     pub fn total(&self, ca: &[u8], cb: &[u8]) -> f64 {
+    |            ^^^^^
+
+warning: function `chosen_perm` is never used
+   --> src/solver/tiebreak.rs:318:8
+    |
+318 | pub fn chosen_perm(hap: &Haplotypes, states: &[Vec<State>]) -> [u8; 4] {
+    |        ^^^^^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 4 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.16s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.22s
+[metadata] {"noOutputExpected": false}
+
+[42] CMD: cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" | head; time ./target/release/scratch /app/cross.json best 400 40; echo ---; ./target/release/scratch /app/cross.json bound
+--- obs tail ---
+warning: unused variable: `sa`
+heavy best = -705.1404562027
+ca = [0, 2, 3, 0, 3, 0, 0, 0, 1, 0, 2, 1]
+cb = [0, 4, 0, 3, 0, 0, 0, 0, 0, 0, 5, 5]
+
+real	0m42.354s
+user	0m40.560s
+sys	0m1.788s
+---
+transitions at best: -82.71180425566487
+unconstrained upper bound: -682.968937
+per marker free maxima: [-16.5507809793337, -56.946988027038785, -49.11315862440009, -22.596847000000004, -58.84295968668173, -74.69910634134504, -35.463549235104104, -68.37708116928901, -40.62330716965813, -58.23264250509194, -60.883019825782014, -57.92769197932345]
+
+[stdout]
+warning: unused variable: `sa`
+heavy best = -705.1404562027
+ca = [0, 2, 3, 0, 3, 0, 0, 0, 1, 0, 2, 1]
+cb = [0, 4, 0, 3, 0, 0, 0, 0, 0, 0, 5, 5]
+
+real	0m42.354s
+user	0m40.560s
+sys	0m1.788s
+---
+transitions at best: -82.71180425566487
+unconstrained upper bound: -682.968937
+per marker free maxima: [-16.5507809793337, -56.946988027038785, -49.11315862440009, -22.596847000000004, -58.84295968668173, -74.69910634134504, -35.463549235104104, -68.37708116928901, -40.62330716965813, -58.23264250509194, -60.883019825782014, -57.92769197932345]
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: python3 - <<'EOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" best: f64, ca: Vec<u8>, cb: Vec<u8>, nodes: u64, limit: u64, }""",""" best: f64, ca: Vec<u8>, cb: Vec<u8>, best_ca: Vec<u8>, best_cb: Vec<u8>, nod
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: bsoi4vl2m). Output is being written to: /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/bsoi4vl2m.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bsoi4vl2m", "timedOutAfterMs": 120000}
+
+[47] CMD: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() # add symmetry breaking state s = s.replace(""" nodes: u64, limit: u64, }""",""" nodes: u64, limit: u64, /// Order state of every pair of homolog rows, per pare
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"noOutputExpected": false}
+
+[55] CMD: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" let mut children: Vec<(usize, usize, f64, Vec<[f64; NJ]>, [u8; 6], [u8; 6])> = Vec::with_capacity(na * nb);""",""" let mut children: Vec<(usize,
+--- obs tail ---
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: field `relax` is never read
+  --> src/bin/scratch.rs:16:5
+   |
+14 | struct Bnb<'a> {
+   |        --- field in this struct
+15 |     ctx: &'a Ctx,
+16 |     relax: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.84s
+
+[stdout]
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: field `relax` is never read
+  --> src/bin/scratch.rs:16:5
+   |
+14 | struct Bnb<'a> {
+   |        --- field in this struct
+15 |     ctx: &'a Ctx,
+16 |     relax: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.84s
+[metadata] {"noOutputExpected": false}
+
+[58] CMD: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace("""use polyploid_phase::solver::search::{local_search, Rng};""","""use polyploid_phase::solver::search::{local_search, Rng}; use polyploid_phase::so
+--- obs tail ---
+warning: unused variable: `sa`
+built
+
+[stdout]
+warning: unused variable: `sa`
+built
+[metadata] {"noOutputExpected": false}
+
+[70] CMD: cargo build --release 2>&1 | grep -E "^(error|warning: unused)" -A5 | head -30; echo "=== build done ==="; cargo test --offline --locked --test diagnostics 2>&1 | tail -5
+--- obs tail ---
+ an underscore: `_sa`
+    |
+--
+error[E0382]: borrow of moved value: `exact`
+   --> src/solver.rs:116:24
+    |
+105 |     let mut exact = Exact::new(ctx, limit);
+    |         --------- move occurs because `exact` has type `Exact<'_>`, which does not implement the `Copy` trait
+...
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+=== build done ===
+    |                 ^^^^
+
+For more information about this error, try `rustc --explain E0382`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+
+[stdout]
+warning: unused variable: `sa`
+   --> src/solver/tables.rs:347:17
+    |
+347 |             let sa = j / NS;
+    |                 ^^ help: if this is intentional, prefix it with an underscore: `_sa`
+    |
+--
+error[E0382]: borrow of moved value: `exact`
+   --> src/solver.rs:116:24
+    |
+105 |     let mut exact = Exact::new(ctx, limit);
+    |         --------- move occurs because `exact` has type `Exact<'_>`, which does not implement the `Copy` trait
+...
+--
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+=== build done ===
+    |                 ^^^^
+
+For more information about this error, try `rustc --explain E0382`.
+warning: `polyploid-phase` (lib) generated 2 warnings
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[72] CMD: python3 - <<'PYEOF' p='src/solver/tables.rs' s=open(p).read() s=s.replace(""" let _sa = j / NS; let sb = j % NS;""",""" let sb = j % NS;""") open(p,'w').write(s) PYEOF cargo build --release 2>&1 | grep -E "^(error|warnin
+--- obs tail ---
+warning: variable does not need to be mutable
+   --> src/solver.rs:100:21
+    |
+100 | fn close(ctx: &Ctx, mut outcome: search::Outcome) -> search::Outcome {
+    |                     ----^^^^^^^
+--
+warning: field `free_max` is never read
+  --> src/solver/exact.rs:48:5
+   |
+40 | pub struct Exact<'a> {
+   |            ----- field in this struct
+--
+warning: `polyploid-phase` (lib) generated 2 warnings (run `cargo fix --lib -p polyploid-phase` to apply 1 suggestion)
+warning: field `relax` is never read
+  --> src/bin/scratch.rs:17:5
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+--
+warning: `polyploid-phase` (bin "scratch") generated 1 warning
+=== ok ===
+
+[stdout]
+warning: variable does not need to be mutable
+   --> src/solver.rs:100:21
+    |
+100 | fn close(ctx: &Ctx, mut outcome: search::Outcome) -> search::Outcome {
+    |                     ----^^^^^^^
+--
+warning: field `free_max` is never read
+  --> src/solver/exact.rs:48:5
+   |
+40 | pub struct Exact<'a> {
+   |            ----- field in this struct
+--
+warning: `polyploid-phase` (lib) generated 2 warnings (run `cargo fix --lib -p polyploid-phase` to apply 1 suggestion)
+warning: field `relax` is never read
+  --> src/bin/scratch.rs:17:5
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+--
+warning: `polyploid-phase` (bin "scratch") generated 1 warning
+=== ok ===
+[metadata] {"noOutputExpected": false}
+
+[73] CMD: python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("fn close(ctx: &Ctx, mut outcome: search::Outcome) -> search::Outcome {","fn close(ctx: &Ctx, outcome: search::Outcome) -> search::Outcome {") open(p,'w'
+--- obs tail ---
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+=== ok ===
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+=== ok ===
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[74] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+--- obs tail ---
+Running tests/solver_checks.rs (target/release/deps/solver_checks-43a3098dc2d1518c)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.11s
+
+[stdout]
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-43a3098dc2d1518c)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.11s
+[metadata] {"noOutputExpected": false}
+
+[78] CMD: python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace(""" min_signature_with(ctx, &ctx.viterbi(c, ca, cb), perm_a, perm_b) }""",""" min_signature_with(ctx, c, ca, cb, &ctx.viterbi(c, ca, cb), perm_a
+--- obs tail ---
+=== ok ===
+
+[stdout]
+=== ok ===
+[metadata] {"noOutputExpected": false}
+
+[79] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -4; echo "=== big ==="; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt
+--- obs tail ---
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.20s
+
+=== big ===
+=== heavy ===
+
+[stdout]
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.20s
+
+=== big ===
+=== heavy ===
+[metadata] {"noOutputExpected": false}
+
+[93] CMD: python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("""pub mod canon; pub mod exact;""","""pub mod beam; pub mod canon; pub mod exact; pub mod relaxed;""") open(p,'w').write(s) PYEOF cargo build --release 
+--- obs tail ---
+                                    ^^
+    |
+   ::: src/solver/tables.rs:21:1
+--
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/exact.rs:205:49
+    |
+205 | ...                   + ctx.drv[0][k][j / NS]
+    |                                           ^^
+    |
+   ::: src/solver/tables.rs:21:1
+--
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/exact.rs:206:49
+    |
+206 | ...                   + ctx.drv[1][k][j % NS];
+    |                                           ^^
+    |
+=== done ===
+
+[stdout]
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/beam.rs:138:53
+    |
+138 | ...                   + ctx.drv[0][k][j / NS]
+    |                                           ^^
+    |
+   ::: src/solver/tables.rs:21:1
+--
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/beam.rs:139:53
+    |
+139 | ...                   + ctx.drv[1][k][j % NS];
+    |                                           ^^
+    |
+   ::: src/solver/tables.rs:21:1
+--
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/exact.rs:205:49
+    |
+205 | ...                   + ctx.drv[0][k][j / NS]
+    |                                           ^^
+    |
+   ::: src/solver/tables.rs:21:1
+--
+error[E0425]: cannot find value `NS` in this scope
+   --> src/solver/exact.rs:206:49
+    |
+206 | ...                   + ctx.drv[1][k][j % NS];
+    |                                           ^^
+    |
+=== done ===
+[metadata] {"noOutputExpected": false}
+
+[94] CMD: python3 - <<'PYEOF' for p in ['src/solver/beam.rs','src/solver/exact.rs']: s=open(p).read() s=s.replace("use crate::solver::tables::{Ctx, NJ};","use crate::solver::tables::{Ctx, NJ, NS};") open(p,'w').write(s) PYEOF carg
+--- obs tail ---
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+16 |     ctx: &'a Ctx,
+17 |     relax: Vec<Vec<[f64; NJ]>>,
+=== done ===
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.81s
+
+[stdout]
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+16 |     ctx: &'a Ctx,
+17 |     relax: Vec<Vec<[f64; NJ]>>,
+=== done ===
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.81s
+[metadata] {"noOutputExpected": false}
+
+[96] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::tables::{Ctx, Prog, NJ, NS};""","""use crate::solver::beam; use crate::solver::relaxed::Relaxed; use crate::solver::tables::
+--- obs tail ---
+=== built ===
+
+[stdout]
+=== built ===
+[metadata] {"noOutputExpected": false}
+
+[97] CMD: cat > /tmp/beamtest.sh <<'EOF' #!/bin/bash for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json /tmp/gen13_28_32_1.5.json; do [ -f $f ] || python3 /app/make_cross.p
+--- obs tail ---
+Exit code 1
+/bin/bash: line 73: /tmp/beamtest.sh: Permission denied
+cat: /tmp/beam_results.txt: No such file or directory
+
+[error] tool reported failure
+
+[100] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("fn stochastic(\n ctx: &Ctx,","pub fn stochastic(\n ctx: &Ctx,") open(p,'w').write(s) p='src/bin/scratch.rs' s=open(p).read() s=s.replace(''' othe
+--- obs tail ---
+built
+started
+
+[stdout]
+built
+started
+[metadata] {"noOutputExpected": false}
+
+[102] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::beam; use crate::solver::relaxed::Relaxed;""","""use crate::solver::beam; use crate::solver::exact::Exact; use crate::solver
+--- obs tail ---
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+16 |     ctx: &'a Ctx,
+17 |     relax: Vec<Vec<[f64; NJ]>>,
+--
+    Finished `release` profile [optimized + debuginfo] target(s) in 10.50s
+=== built ===
+
+[stdout]
+warning: field `relax` is never read
+   |
+15 | struct Bnb<'a> {
+   |        --- field in this struct
+16 |     ctx: &'a Ctx,
+17 |     relax: Vec<Vec<[f64; NJ]>>,
+--
+    Finished `release` profile [optimized + debuginfo] target(s) in 10.50s
+=== built ===
+[metadata] {"noOutputExpected": false}
+
+[103] CMD: time ./target/release/phase 2>&1 | tail -2; echo; cargo test --offline --locked --release --test solver_checks 2>&1 | tail -3
+--- obs tail ---
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.301s
+user	0m0.647s
+sys	0m0.008s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.41s
+
+[stdout]
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.301s
+user	0m0.647s
+sys	0m0.008s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.41s
+[metadata] {"noOutputExpected": false}
+
+[113] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(""" let restarts = 24 + 4096 / (ctx.m * ctx.n).max(1); stochastic(ctx, &starts, restarts, KICKS)""",""" stochastic(ctx, &starts, RESTARTS, KICKS)"
+--- obs tail ---
+built
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m13.295s
+user	0m1.164s
+sys	0m0.009s
+
+[stdout]
+built
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m13.295s
+user	0m1.164s
+sys	0m0.009s
+[metadata] {"noOutputExpected": false}
+
+[117] CMD: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(''' other => panic!("unknown mode {other}"),''',''' "check" => { use polyploid_phase::cross_model::Parent; use polyploid_phase::scoring::score; let 
+--- obs tail ---
+^^^
+    |
+help: there is a method `set` with a similar name, but with different arguments
+--
+error[E0599]: no method named `get` found for reference `&Haplotypes` in the current scope
+   --> src/bin/scratch.rs:525:67
+    |
+525 |                 let mask_b = (0..4).fold(0u8, |acc, h| acc | ((hb.get(h, mm) as u8) << h));
+    |                                                                   ^^^
+    |
+help: there is a method `set` with a similar name, but with different arguments
+--
+error: could not compile `polyploid-phase` (bin "scratch") due to 2 previous errors
+built
+
+[stdout]
+error[E0599]: no method named `get` found for reference `&Haplotypes` in the current scope
+   --> src/bin/scratch.rs:524:67
+    |
+524 |                 let mask_a = (0..4).fold(0u8, |acc, h| acc | ((ha.get(h, mm) as u8) << h));
+    |                                                                   ^^^
+    |
+help: there is a method `set` with a similar name, but with different arguments
+--
+error[E0599]: no method named `get` found for reference `&Haplotypes` in the current scope
+   --> src/bin/scratch.rs:525:67
+    |
+525 |                 let mask_b = (0..4).fold(0u8, |acc, h| acc | ((hb.get(h, mm) as u8) << h));
+    |                                                                   ^^^
+    |
+help: there is a method `set` with a similar name, but with different arguments
+--
+error: could not compile `polyploid-phase` (bin "scratch") due to 2 previous errors
+built
+[metadata] {"noOutputExpected": false}
+
+[119] CMD: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace('ha.get(h, mm) as u8','ha.rows()[h][mm] as u8') s=s.replace('hb.get(h, mm) as u8','hb.rows()[h][mm] as u8') open(p,'w').write(s) PYEOF cargo build -
+--- obs tail ---
+built
+check value=-705.1404562027 viterbi sum=-705.1404562027 diff=1.137e-13
+check value=-1460.1819413877 viterbi sum=-1460.1819413877 diff=1.955e-11
+
+[stdout]
+built
+check value=-705.1404562027 viterbi sum=-705.1404562027 diff=1.137e-13
+check value=-1460.1819413877 viterbi sum=-1460.1819413877 diff=1.955e-11
+[metadata] {"noOutputExpected": false}
+
+[121] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// Perturbations tried around every starting assignment. const KICKS: usize = 40;""","""/// Perturbations tried around every starting assignme
+--- obs tail ---
+== /tmp/gen7_28_32_1.5.json
+total_log_likelihood=-1457.4648441448
+real	0m34.353s
+== /tmp/gen9_28_32_1.5.json
+total_log_likelihood=-1390.8481648982
+real	0m23.225s
+
+[stdout]
+== /tmp/gen7_28_32_1.5.json
+total_log_likelihood=-1457.4648441448
+real	0m34.353s
+== /tmp/gen9_28_32_1.5.json
+total_log_likelihood=-1390.8481648982
+real	0m23.225s
+[metadata] {"noOutputExpected": false}
+
+[126] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.below(3);"," let width = 1 + rng.below(4);") open(p,'w').write(s) PYEOF cargo build --release --bin scratch 2>&1 | grep -E "
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: bjyauk8tv). Output is being written to: /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/bjyauk8tv.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bjyauk8tv", "timedOutAfterMs": 120000}
+
+[129] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.below(4);"," let width = 1 + rng.below(3);") open(p,'w').write(s) PYEOF cargo build --release 2>&1 | grep -E "^error" -A5|he
+--- obs tail ---
+ok
+
+[stdout]
+ok
+[metadata] {"noOutputExpected": false}
+
+[138] CMD: cat > /tmp/nodes.sh <<'EOF' #!/bin/bash : > /tmp/nodes.txt for spec in "61 12 8 1.5" "62 12 16 1.5" "63 14 16 1.5" "64 16 8 1.5" "65 16 16 1.5" "66 16 32 1.5" "67 12 32 1.5" "68 18 8 1.5"; do set -- $spec f=/tmp/gen$1_$2
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: b542vd48a). Output is being written to: /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/b542vd48a.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b542vd48a", "timedOutAfterMs": 120000}
+
+[141] CMD: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// How much work the exact search may do, counted in forward passes over all /// progeny and scaled so the wall time it buys is much the same 
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+warning: unused variable: `worst`
+    |
+539 |             let mut worst = 0.0f64;
+    |                     ^^^^^ help: if this is intentional, prefix it with an underscore: `_worst`
+    |
+--
+warning: variable does not need to be mutable
+    |
+539 |             let mut worst = 0.0f64;
+    |                 ----^^^^^
+built
+== /app/cross.json
+total_log_likelihood=-705.1404562027
+real	0m4.193s
+== /tmp/gen7_28_32_1.5.json
+
+[error] tool reported failure
+
+[148] CMD: python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace("""/// Largest number of joint states tolerated at one marker before the exact /// lexicographic pass is abandoned for the plain Viterbi path. c
+--- obs tail ---
+built
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 42.49s
+
+[stdout]
+built
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 42.49s
+[metadata] {"noOutputExpected": false}

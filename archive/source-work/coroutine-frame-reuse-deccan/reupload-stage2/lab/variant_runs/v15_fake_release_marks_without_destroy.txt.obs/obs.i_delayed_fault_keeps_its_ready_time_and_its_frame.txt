@@ -1,0 +1,21 @@
+  FAIL /h/harness.hpp:102: unexpected exception escaped: std::bad_alloc
+
+=================================================================
+==853==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 1056 byte(s) in 2 object(s) allocated from:
+    #0 0xaaaae3084a7c in operator new(unsigned long) (/b/cand+0x154a7c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xaaaae3160ab0 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaae3176ec8 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:141:46
+    #3 0xaaaae30ab7f0 in i_delayed_fault_keeps_its_ready_time_and_its_frame() /s/scenario.cpp:1620:15
+    #4 0xaaaae312b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaae30c3490 in main /s/scenario.cpp:2423:42
+    #6 0xffffbd167740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffbd167814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaae2faa12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x516000000080 (528 bytes)
+0x516000000380 (528 bytes)
+
+SUMMARY: AddressSanitizer: 1056 byte(s) leaked in 2 allocation(s).

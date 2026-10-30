@@ -1,0 +1,3 @@
+b07_key_by_link_id_only
+objective
+plan_key compares link ids without the from-node

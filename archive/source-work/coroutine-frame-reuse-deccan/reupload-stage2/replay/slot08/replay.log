@@ -1,0 +1,61 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path "*/.git/*" | head -100 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[7] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tai ::  live=2 job-settled job=1 outcome=delivered frame-released job=1 slot=0/1 [arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0  demo finished 
+[8] BASH rc=0 0.0s :: grep -E "CMAKE_CXX_COMPILER:|CMAKE_CXX_FLAGS" build/CMakeCache.txt; which c++ g++ clang++; c++ --ver :: ADVANCED property for variable: CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1 /opt/shim/c++ /opt/shim/g++ /opt/shim/clang++ 
+[9] BASH rc=0 0.0s :: env | grep -i -E "cxx|flag|clang" ; echo "---"; grep -rn "color-diagnostics" build/CMakeFiles/rounde :: --- 9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20 
+[10] BASH rc=2 0.0s :: rm -rf /tmp/b && cmake -S /app -B /tmp/b -DCMAKE_BUILD_TYPE=Debug > /tmp/cfg.log 2>&1; tail -3 /tmp/ :: grep: /tmp/b/CMakeFiles/roundel.dir/flags.make: No such file or directory 
+[11] WRITE /app/include/roundel/runtime.hpp -> W ok
+    SNAPSHOT 015 step11 74bd52d1e866
+[12] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 016 step12 5b93f8429db9
+[13] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 017 step13 489abd58bc25
+[13] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 018 step13 7e617ff26114
+[13] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 019 step13 3fc4bede062f
+[14] BASH rc=0 0.0s :: cmake --build /tmp/b -j 4 2>&1 | tail -20 && echo "=== RUN ===" && /tmp/b/roundel_demo 2>&1 | head - :: === RUN === bash: line 1: /tmp/b/roundel_demo: No such file or directory 
+[15] WRITE /tmp/t.cpp -> W ok
+[16] WRITE /tmp/t.cpp -> W ok
+[17] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /app/src/arena.cpp /app/src/jou :: BUILD_OK bash: line 1: /tmp/t: No such file or directory 
+[18] EDIT /tmp/t.cpp -> E ok
+[18] EDIT /tmp/t.cpp -> E ok
+[18] EDIT /tmp/t.cpp -> E ok
+[19] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /app/src/arena.cpp /app/src/jou :: bash: line 1: /tmp/t: No such file or directory 
+[20] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: BUILD_OK bash: line 1: /tmp/ta: No such file or directory 
+[21] WRITE /tmp/t2.cpp -> W ok
+[22] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: BUILD_OK bash: line 1: /tmp/t2a: No such file or directory 
+[23] BASH rc=0 0.0s :: cd /tmp && sed -i 's|^static std::size_t count(const Journal& j, Mark m) { return j.count(m); }$|__a :: BUILD_OK bash: line 1: /tmp/t2a: No such file or directory 
+[24] EDIT /tmp/t2.cpp -> E ok
+[24] EDIT /tmp/t2.cpp -> E ok
+[25] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: bash: line 1: /tmp/t2a: No such file or directory 
+[26] BASH rc=0 0.0s :: cd /tmp && clang++ --version | head -1 && clang++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/ :: CLANG_OK 
+[26] BASH rc=0 0.0s :: rm -rf /tmp/bs && cmake -S /app -B /tmp/bs -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/nul :: build done bash: line 1: /tmp/bs/roundel_demo: No such file or directory 
+[27] BASH rc=0 0.0s :: /tmp/bs/roundel_demo 2>&1 | head -60 :: bash: line 1: /tmp/bs/roundel_demo: No such file or directory 
+[28] BASH rc=0 0.0s :: /tmp/bs/roundel_demo > /tmp/demo_asan.log 2>&1; echo "exit=$?"; wc -l /tmp/demo_asan.log; grep -n "D :: exit=127 1 /tmp/demo_asan.log bash: line 1: /tmp/bs/roundel_demo: No such file or directory 
+[29] BASH rc=0 0.0s :: for i in 1 2 3 4 5; do /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1; echo "run$i exit=$? lines=$(wc -l < :: run1 exit=127 lines=1 deadly=0 run2 exit=127 lines=1 deadly=0 run3 exit=127 lines=1 deadly=0 run4 exit=127 lines=1 deadly=0 run5 exit=127 lines=1 deadly=0 
+[30] BASH rc=0 0.0s :: cat /tmp/d1.log :: bash: line 1: /tmp/bs/roundel_demo: No such file or directory 
+[31] BASH rc=0 0.0s :: cd /tmp && cnt=0; for i in $(seq 1 20); do /tmp/bs/roundel_demo >/dev/null 2>&1 || cnt=$((cnt+1)); d :: asan demo failures: 20/20 plain demo failures: 20/20 asan t1 failures: 10/10 asan t2 failures: 10/10 
+[32] BASH rc=0 0.0s :: which gdb; echo "---"; cd /tmp && ASAN_OPTIONS=detect_stack_use_after_return=0 cnt=0; for i in $(seq :: --- with use_after_return=0: 20/20 failures 
+[33] BASH rc=0 0.0s :: cd /tmp && for i in $(seq 1 10); do stdbuf -o0 -e0 /tmp/bs/roundel_demo > /tmp/dd$i.log 2>&1; if [ $ :: CRASH on run 1 stdbuf: failed to run command '/tmp/bs/roundel_demo': No such file or directory 
+[34] BASH rc=2 0.0s :: cd /tmp && rm -f /tmp/asan.log* && for i in $(seq 1 10); do ASAN_OPTIONS=log_path=/tmp/asan.log /tmp :: crash run 1 
+[35] BASH rc=0 0.0s :: cd /tmp && sed -i 's|^int main() {$|int main() {\n setvbuf(stdout, nullptr, _IONBF, 0);|' /tmp/t.cpp :: #include <vector>  using namespace roundel;  CRASH run 1: bash: line 1: /tmp/ta: No such file or directory 
+[36] BASH rc=0 0.0s :: cat /tmp/ta2.log | head -40; echo "=== size:"; wc -l /tmp/ta2.log; grep -c setvbuf /tmp/t.cpp :: === size: 1 cat: /tmp/ta2.log: No such file or directory wc: /tmp/ta2.log: No such file or directory 
+[37] BASH rc=0 0.0s :: cd /tmp && printf '#include <cstdio>\nint main(){ std::printf("hello\\n"); return 0; }\n' > /tmp/hw. :: hello-world asan failures: 20/20 plain coro asan failures: 20/20 
+[38] BASH rc=0 0.0s :: cd /tmp && for opt in "detect_leaks=0" "" "detect_leaks=0:abort_on_error=0"; do cnt=0; for i in $(se :: hw opt='detect_leaks=0' failures: 20/20 hw opt='' failures: 20/20 hw opt='detect_leaks=0:abort_on_error=0' failures: 20/20 
+[39] BASH rc=0 0.0s :: cd /tmp && for p in /tmp/hw /tmp/bs/roundel_demo /tmp/ta /tmp/t2a; do cnt=0; for i in $(seq 1 40); d :: /tmp/hw : 40/40 crashes /tmp/bs/roundel_demo : 40/40 crashes /tmp/ta : 40/40 crashes /tmp/t2a : 40/40 crashes 
+[40] BASH rc=0 0.0s :: cd /tmp && rm -f /tmp/clean.log; for i in $(seq 1 40); do /tmp/ta > /tmp/r1.log 2>&1; [ $? -eq 0 ] & :: === findings: === last lines: grep: /tmp/clean.log: No such file or directory grep: /tmp/clean.log: No such file or directory 
+[41] WRITE /tmp/t3.cpp -> W ok
+[42] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: directory bash: line 1: /tmp/t3a: No such file or directory bash: line 1: /tmp/t3a: No such file or directory bash: line 1: /tmp/t3a: No such file or directory 
+[44] WRITE /tmp/stress.cpp -> W ok
+[45] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory 
+[46] BASH rc=127 0.0s :: cd /tmp && sed -i 's| const Duty d = pick(static_cast<int>(rng() % 6));| Duty d = pick(static_cast<i :: directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory 
+[47] EDIT /tmp/stress.cpp -> E ok
+[48] BASH rc=0 0.0s :: cd /tmp && sed -i 's| std::printf("seed %u: cap=%zu| if (s %% 50 == 0) std::printf("seed %u: cap=%zu :: directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory 
+[49] EDIT /tmp/stress.cpp -> E ok
+[50] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra  :: directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory bash: line 1: /tmp/sta: No such file or directory 
+[53] BASH rc=0 0.0s :: rm -rf /tmp/f1 /tmp/f2 && cmake -S /app -B /tmp/f1 -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmak :: --- /tmp/f1 --- /tmp/f2 === -Werror check === gcc -Werror: clean clang -Werror: clean 
+[54] BASH rc=0 0.0s :: cd /tmp && for t in /tmp/t.cpp /tmp/t2.cpp /tmp/t3.cpp; do g++ -std=c++20 -g -O1 -fsanitize=address, :: -rw-r--r-- 1 root root  4764 Sep  5 18:51 arena.cpp -rw-r--r-- 1 root root  3005 Sep  5 18:51 journal.cpp -rw-r--r-- 1 root root 16052 Sep  8 23:30 runtime.cpp 
+[55] BASH rc=1 0.0s :: cd /tmp && printf '#include <cstdlib>\nint main(){ (void)malloc(1234); return 0; }\n' > /tmp/leak.cp :: exit=127 0 exit=127 0 exit=127 0 
+[56] BASH rc=0 0.0s :: sed -n '40,60p;115,140p' /app/include/roundel/runtime.hpp :: ChildAwaiter(const ChildAwaiter&) = delete;     ChildAwaiter& operator=(const ChildAwaiter&) = delete;      bool await_ready() const noexcept { return false; } 
+[57] BASH rc=127 0.0s :: cd /tmp && cat >> /tmp/t4.cpp << 'EOF' #include "roundel/runtime.hpp" #include <cstdio> using namesp :: ectory bash: line 52: /tmp/t4a: No such file or directory bash: line 52: /tmp/t4a: No such file or directory bash: line 52: /tmp/t4a: No such file or directory 

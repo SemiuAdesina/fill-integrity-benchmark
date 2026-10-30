@@ -1,0 +1,192 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 250,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "AatII",
+   "enzymes": [
+    "AatII"
+   ],
+   "bands": [
+    {
+     "length": 3075,
+     "multiplicity": 1
+    },
+    {
+     "length": 6116,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ApaI",
+   "enzymes": [
+    "ApaI"
+   ],
+   "bands": [
+    {
+     "length": 4261,
+     "multiplicity": 1
+    },
+    {
+     "length": 5377,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BsrGI",
+   "enzymes": [
+    "BsrGI"
+   ],
+   "bands": [
+    {
+     "length": 9641,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 547,
+     "multiplicity": 1
+    },
+    {
+     "length": 3487,
+     "multiplicity": 1
+    },
+    {
+     "length": 5427,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ApaI+SspI",
+   "enzymes": [
+    "ApaI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 562,
+     "multiplicity": 1
+    },
+    {
+     "length": 1658,
+     "multiplicity": 1
+    },
+    {
+     "length": 1920,
+     "multiplicity": 1
+    },
+    {
+     "length": 2327,
+     "multiplicity": 1
+    },
+    {
+     "length": 3147,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+SspI",
+   "enzymes": [
+    "AatII",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 547,
+     "multiplicity": 1
+    },
+    {
+     "length": 613,
+     "multiplicity": 1
+    },
+    {
+     "length": 2485,
+     "multiplicity": 1
+    },
+    {
+     "length": 2639,
+     "multiplicity": 1
+    },
+    {
+     "length": 2932,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ApaI+BsrGI",
+   "enzymes": [
+    "ApaI",
+    "BsrGI"
+   ],
+   "bands": [
+    {
+     "length": 1359,
+     "multiplicity": 1
+    },
+    {
+     "length": 4066,
+     "multiplicity": 1
+    },
+    {
+     "length": 4135,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+ApaI",
+   "enzymes": [
+    "AatII",
+    "ApaI"
+   ],
+   "bands": [
+    {
+     "length": 1300,
+     "multiplicity": 1
+    },
+    {
+     "length": 2871,
+     "multiplicity": 1
+    },
+    {
+     "length": 4917,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "BsrGI+SspI",
+   "enzymes": [
+    "BsrGI",
+    "SspI"
+   ]
+  },
+  {
+   "id": "AatII+BsrGI",
+   "enzymes": [
+    "AatII",
+    "BsrGI"
+   ]
+  }
+ ]
+}

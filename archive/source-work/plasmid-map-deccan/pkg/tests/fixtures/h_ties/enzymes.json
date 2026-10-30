@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "BamHI",
+   "site": "GGATCC",
+   "cut_offset": 1
+  },
+  {
+   "name": "DraI",
+   "site": "TTTAAA",
+   "cut_offset": 3
+  },
+  {
+   "name": "EcoRI",
+   "site": "GAATTC",
+   "cut_offset": 1
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "NdeI",
+   "position": 184
+  },
+  {
+   "enzyme": "XbaI",
+   "position": 423
+  },
+  {
+   "enzyme": "AatII",
+   "position": 2621
+  }
+ ]
+}

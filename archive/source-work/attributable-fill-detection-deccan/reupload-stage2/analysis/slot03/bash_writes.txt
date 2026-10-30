@@ -1,0 +1,50 @@
+[37]
+python3 - <<'EOF'
+import re
+p='tests/harness/mod.rs'
+s=open(p).read()
+s=s.replace("use std::cell::{Cell, RefCell};","use std::cell::{Cell, RefCell};\nuse std::collections::HashMap;",1)
+open(p,'w').write(s)
+EOF
+head -14 tests/harness/mod.rs
+
+[50]
+cat >> /app/tests/interactions.rs <<'EOF'
+
+/// A restart in the middle of a closure must not lose the sequence: the resting
+/// order is still cancelled before the corrective goes out, and the mandate is
+/// not left to start marking itself all over again on the far side.
+#[test]
+fn a_restart_in_the_middle_of_a_closure_keeps_the_sequence() {
+    let rig = Rig::new(vec![
+        lead_in(),
+        batch(vec![event("V-101", "pex-1", 10, at(OPEN))], vec![], "k1"),
+        batch(vec![], vec![], "k2"),
+    ]);
+    {
+        let mut engine = rig.engine();
+        rig.gateway
+            .set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+        rig.cycle(&mut engine, OPEN);
+        rig.cycle(&mut engine, OPEN + 60);
+    }
+
+    // Restart with the south leg still resting at the venue.
+    let mut engine = rig.engine();
+    rig.cycle(&mut engine, OPEN + 120);
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: work in progress survives a restart - a leg already moved into \
+         closure is cancelled and covered rather than marked again from scratch"
+    );
+    assert_eq!(
+        rig.gateway.cancelled.borrow().len(),
+        1,
+        "FAILED: the resting order is cancelled at the venue before the \
+         corrective is issued, across a restart as within one run"
+    );
+}
+EOF
+cargo test --offline --test interactions 2>&1 | tail -18

@@ -1,0 +1,1 @@
+ties on count and deviation broken by cloning site and insert length before positions

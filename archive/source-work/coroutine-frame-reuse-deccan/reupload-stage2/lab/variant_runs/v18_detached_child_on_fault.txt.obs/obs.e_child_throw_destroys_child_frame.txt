@@ -1,0 +1,60 @@
+OBS 0 E 1:1
+OBS 1 E 1:0
+OBS 2 E 1:2
+OBS 3 E 1:2
+OBS 4 E 1:1
+OBS 5 E 1:1
+OBS 6 E 1:3
+END 7 0
+
+=================================================================
+==441==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 528 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaabcc24abc in operator new(unsigned long) (/b/cand+0x154abc) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+    #1 0xaaaabcd00af0 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaabcd16f1c in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:143:46
+    #3 0xaaaabcc38f34 in e_child_throw_destroys_child_frame() /s/scenario.cpp:1016:15
+    #4 0xaaaabcccb108 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaabcc634d0 in main /s/scenario.cpp:2423:42
+    #6 0xffffaedb7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffaedb7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaabcb4a16c in _start (/b/cand+0x7a16c) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+
+Objects leaked above:
+0x516000000380 (528 bytes)
+
+Indirect leak of 144 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaabcbea5dc in malloc (/b/cand+0x11a5dc) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+    #1 0xffffaf101154 in __cxa_allocate_exception (/lib/aarch64-linux-gnu/libstdc++.so.6+0xa1154) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #2 0xaaaabcc98454 in (anonymous namespace)::child_throws(int) (.resume) /s/scenario.cpp:204:9
+    #3 0xaaaabcd20c98 in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #4 0xaaaabcd1920c in roundel::Conductor::launch(roundel::Duty) /b/runtime.cpp:200:7
+    #5 0xaaaabcc38f54 in e_child_throw_destroys_child_frame() /s/scenario.cpp:1017:25
+    #6 0xaaaabcccb108 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #7 0xaaaabcc634d0 in main /s/scenario.cpp:2423:42
+    #8 0xffffaedb7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #9 0xffffaedb7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #10 0xaaaabcb4a16c in _start (/b/cand+0x7a16c) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+
+Objects leaked above:
+0x50d000000040 (144 bytes)
+
+Indirect leak of 37 byte(s) in 1 object(s) allocated from:
+    #0 0xaaaabcc24abc in operator new(unsigned long) (/b/cand+0x154abc) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+    #1 0xffffaf147788 in std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) (/lib/aarch64-linux-gnu/libstdc++.so.6+0xe7788) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #2 0xffffaf1285f4 in std::runtime_error::runtime_error(char const*) (/lib/aarch64-linux-gnu/libstdc++.so.6+0xc85f4) (BuildId: 82e1681dd0b9091f0abe0f54e61dc58fef262eb1)
+    #3 0xaaaabcc9848c in (anonymous namespace)::child_throws(int) (.resume) /s/scenario.cpp:204:15
+    #4 0xaaaabcd20c98 in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #5 0xaaaabcd1920c in roundel::Conductor::launch(roundel::Duty) /b/runtime.cpp:200:7
+    #6 0xaaaabcc38f54 in e_child_throw_destroys_child_frame() /s/scenario.cpp:1017:25
+    #7 0xaaaabcccb108 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #8 0xaaaabcc634d0 in main /s/scenario.cpp:2423:42
+    #9 0xffffaedb7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #10 0xffffaedb7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #11 0xaaaabcb4a16c in _start (/b/cand+0x7a16c) (BuildId: adf31ba87d86e706165468ae27ec2d9df15a62fe)
+
+Objects leaked above:
+0x504000000b10 (37 bytes)
+
+SUMMARY: AddressSanitizer: 709 byte(s) leaked in 3 allocation(s).

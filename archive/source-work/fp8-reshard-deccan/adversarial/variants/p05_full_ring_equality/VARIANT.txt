@@ -1,0 +1,3 @@
+p05_full_ring_equality
+05 consistency
+requires records of a block to have identical histories, not identical newest suffixes

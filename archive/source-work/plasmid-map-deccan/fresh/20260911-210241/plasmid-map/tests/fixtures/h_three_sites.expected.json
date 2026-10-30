@@ -1,0 +1,103 @@
+{
+ "fixture": "h_three_sites",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 930,
+  "insert_length": 4157,
+  "cuts": {
+   "AatII": [
+    5381
+   ],
+   "BstBI": [
+    655,
+    2202
+   ],
+   "MscI": [
+    465
+   ],
+   "PvuI": [
+    3957,
+    4404,
+    4879,
+    5931,
+    8796
+   ],
+   "SspI": [
+    166,
+    4500,
+    5495
+   ]
+  },
+  "held_out": {
+   "AatII+MscI": [
+    {
+     "length": 4189,
+     "multiplicity": 1
+    },
+    {
+     "length": 4916,
+     "multiplicity": 1
+    }
+   ],
+   "BstBI+SspI": [
+    {
+     "length": 489,
+     "multiplicity": 1
+    },
+    {
+     "length": 995,
+     "multiplicity": 1
+    },
+    {
+     "length": 1547,
+     "multiplicity": 1
+    },
+    {
+     "length": 2298,
+     "multiplicity": 1
+    },
+    {
+     "length": 3776,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 5,
+ "deviation": 46648,
+ "held_out_truth": {
+  "AatII+MscI": [
+   {
+    "length": 4230,
+    "multiplicity": 1
+   },
+   {
+    "length": 4993,
+    "multiplicity": 1
+   }
+  ],
+  "BstBI+SspI": [
+   {
+    "length": 493,
+    "multiplicity": 1
+   },
+   {
+    "length": 994,
+    "multiplicity": 1
+   },
+   {
+    "length": 1531,
+    "multiplicity": 1
+   },
+   {
+    "length": 2266,
+    "multiplicity": 1
+   },
+   {
+    "length": 3714,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 12
+}

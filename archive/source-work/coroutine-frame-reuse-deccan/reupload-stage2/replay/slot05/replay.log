@@ -1,0 +1,60 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path "*/.git/*" | head -50; echo "---"; ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[7] BASH rc=0 0.0s :: ls -la /; ls -la /opt /tmp /root 2>/dev/null | head -60; find / -maxdepth 3 -iname "*roundel*" -not  ::  1 root root 162 Jul 15 14:09 .wget-hsts  /tmp: total 0 drwxrwxrwt 1 root root  0 Sep  5 19:25 . drwxr-xr-x 1 root root 18 Sep  8 23:30 .. /app/include/roundel 
+[7] BASH rc=0 0.0s :: g++ --version; cmake --version; ls /app/build :: CMakeCache.txt CMakeFiles Makefile cmake_install.cmake libroundel.a roundel_demo 
+[8] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tai ::  live=2 job-settled job=1 outcome=delivered frame-released job=1 slot=0/1 [arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0  demo finished 
+[9] BASH rc=0 0.0s :: cmake --build build -j 1 2>&1 | head -40 :: 
+[10] BASH rc=0 0.0s :: rm -rf /tmp/bd && cmake -S /app -B /tmp/bd -DCMAKE_BUILD_TYPE=Debug > /dev/null && cmake --build /tm :: bash: line 1: /tmp/bd/roundel_demo: No such file or directory 
+[11] WRITE /app/include/roundel/runtime.hpp -> W ok
+    SNAPSHOT 017 step11 d23e96444def
+[12] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 018 step12 02eeae7b36f9
+[13] BASH rc=0 0.0s :: cmake --build /tmp/bd -j 4 2>&1 | grep -E "error|warning|Built target" | head -30 :: 
+[14] BASH rc=127 0.0s :: /tmp/bd/roundel_demo 2>&1 :: bash: line 1: /tmp/bd/roundel_demo: No such file or directory 
+[15] BASH rc=0 0.0s :: rm -rf /tmp/bds && cmake -S /app -B /tmp/bds -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/n :: asan-exit:0 
+[16] WRITE /tmp/spec_test.cpp -> W ok
+[17] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' import re p='/tmp/spec_test.cpp' s=open(p).read() s = s.replace(""" CHE :: 
+[18] BASH rc=127 0.0s :: cd /tmp && sed -i 's/ const JobId b = c.launch(leaf());/ c.launch(leaf());/' /tmp/spec_test.cpp && g :: bash: line 1: /tmp/spec_test: No such file or directory 
+[19] BASH rc=0 0.0s :: sed -n '395,470p' /tmp/spec_test.cpp ::  CHECK_EQ(g_log.size(), 3u);     if (g_log.size() == 3) {         CHECK_EQ(g_log[0], 3);         CHECK_EQ(g_log[1], 2);         CHECK_EQ(g_log[2], 1);     } }  
+[20] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 026 step20 b7841b71da6a
+[21] BASH rc=127 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/spec_test.cpp' s=open(p).read() s = s.replace(" CHECK_EQ(c.aren :: bash: line 9: /tmp/spec_test: No such file or directory 
+[22] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -fno-omit-frame-p :: bash: line 1: /tmp/spec_test_asan: No such file or directory 
+[23] WRITE /tmp/spec_test2.cpp -> W ok
+[24] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test2.cpp /app/src/ru :: bash: line 1: /tmp/spec_test2: No such file or directory 
+[25] BASH rc=127 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/spec_test2.cpp' s=open(p).read() s = s.replace("""void t_cancel :: bash: line 22: /tmp/spec_test2: No such file or directory 
+[26] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -fno-omit-frame-p :: bash: line 1: /tmp/spec_test2_asan: No such file or directory 
+[27] BASH rc=0 0.0s :: cd /tmp && ASAN_OPTIONS=detect_leaks=1 /tmp/spec_test2_asan 2>&1 | head -40 :: bash: line 1: /tmp/spec_test2_asan: No such file or directory 
+[28] BASH rc=0 0.0s :: cd /tmp && ASAN_OPTIONS=detect_leaks=1:abort_on_error=0 /tmp/spec_test2_asan > /tmp/out.txt 2>/tmp/e :: exit=127  0 /tmp/out.txt  1 /tmp/err.txt  1 total bash: line 1: /tmp/spec_test2_asan: No such file or directory 
+[29] BASH rc=0 0.0s :: cd /tmp && for i in 1 2 3; do ASAN_OPTIONS=detect_leaks=1 /tmp/spec_test2_asan > /tmp/o$i.txt 2>&1;  :: run1 exit=127 run2 exit=127 run3 exit=127 /tmp/o1.txt:0 /tmp/o2.txt:0 /tmp/o3.txt:0 bash: line 1: /tmp/spec_test2_asan: No such file or directory 
+[30] BASH rc=0 0.0s :: cd /tmp && cat /tmp/o3.txt | head -40 :: bash: line 1: /tmp/spec_test2_asan: No such file or directory 
+[31] BASH rc=0 0.0s :: which gdb; cd /tmp && ASAN_OPTIONS=detect_leaks=1:handle_segv=0:handle_abort=0 stdbuf -o0 -e0 /tmp/s :: stdbuf: failed to run command '/tmp/spec_test2_asan': No such file or directory 
+[32] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/spec_test2.cpp' s=open(p).read() s=s.replace("""int main() { t_ :: le or directory ----- bash: line 17: /tmp/spec_test2_asan: No such file or directory ----- bash: line 17: /tmp/spec_test2_asan: No such file or directory ----- 
+[33] BASH rc=0 0.0s :: cd /tmp && head -c 300 /tmp/f3.txt | od -c | head -20; echo "=== size:"; wc -c /tmp/f3.txt ::  a   n   :       N   o       s   u   c   h       f   i   l 0000060   e       o   r       d   i   r   e   c   t   o   r   y  \n 0000077 === size: 63 /tmp/f3.txt 
+[34] BASH rc=0 0.0s :: cd /tmp && printf '#include <cstdio>\nint main(){printf("hi\\n");return 0;}\n' > /tmp/hi.cpp && g++  :: 127 127 127 127 127 127 127 127 127 127  127 127 127 127 127 127 127 127 127 127  bash: line 1: /tmp/spec_test_asan: No such file or directory 
+[35] BASH rc=0 0.0s :: cd /tmp && cat /tmp/s1.txt; echo "=== count:"; grep -c DEADLY /tmp/s1.txt; echo "=== try options"; f :: _test_asan: No such file or directory === count: 0 === try options --- detect_leaks=0 fails=6 --- detect_leaks=1 fails=6 --- detect_leaks=1:verbosity=1 fails=6 
+[36] BASH rc=0 0.0s :: cd /tmp && cat > /tmp/mini.cpp <<'EOF' #include "roundel/runtime.hpp" #include <cstdio> using namesp :: mini fails=20 bash: line 16: /tmp/mini_asan: No such file or directory === hi x20 hi fails=20 
+[37] BASH rc=0 0.0s :: cd /tmp && cat /tmp/h.txt; echo "---"; cat /tmp/m_crash.txt 2>/dev/null | head; echo "=== try workar :: try workarounds start_deactivated=1 fails=10 detect_odr_violation=0:check_initialization_order=0 fails=10 no_huge_pages_for_shadow=1 fails=10 atexit=0 fails=10 
+[38] BASH rc=1 0.0s :: cd /tmp && cat > /tmp/runsan.sh <<'EOF' #!/bin/bash # $1 = binary, $2 = expected marker, $3 = wanted :: REAL FAILURE rc=127 /tmp/runsan.sh: line 7: /tmp/spec_test: No such file or directory 
+[39] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 045 step39 577f5646a09c
+[40] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 046 step40 352a68564b69
+[41] BASH rc=0 0.0s :: sed -n '18,50p' /app/src/runtime.cpp :: * owner = FrameArena::owner_of(p);     if (owner == nullptr) {         ::operator delete(static_cast<unsigned char*>(p) - header_span());         return;     } 
+[42] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -c /app/src/runtime.cpp :: compiles clean bash: line 1: /tmp/bd/roundel_demo: No such file or directory 
+[43] WRITE /tmp/spec_test3.cpp -> W ok
+[44] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test3.cpp /app/src/ru :: bash: line 1: /tmp/spec_test3: No such file or directory 
+[45] BASH rc=1 0.0s :: which clang++ g++-12 2>/dev/null; cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsa :: /opt/shim/clang++ REAL FAILURE rc=127 /tmp/runsan.sh: line 7: /tmp/spec_test3: No such file or directory 
+[46] BASH rc=0 0.0s :: cd /tmp && for CC in g++ clang++; do for OPT in "-O0" "-O2"; do echo "=== $CC $OPT"; $CC -std=c++20  :: === g++ -O0 === g++ -O2 === clang++ -O0 === clang++ -O2 
+[47] BASH rc=0 0.0s :: cd /tmp && for CC in g++ clang++; do for OPT in "-O0" "-O2"; do echo "=== $CC $OPT"; rm -f /tmp/l/*. ::  such file or directory RUN FAIL bash: line 1: /tmp/l/spec_test2: No such file or directory RUN FAIL bash: line 1: /tmp/l/spec_test3: No such file or directory 
+[48] BASH rc=0 0.0s :: cd /tmp && cat /tmp/l/spec_test.out | tail -8; echo "=== test3 g++-O2:"; tail -5 /tmp/l/spec_test3.o :: d_settled() {     Conductor c{4};     const JobId a = c.launch(leaf());     const JobId b = c.launch(leaf());     CHECK_EQ(c.live_jobs(), 2u);     c.cancel(a); 
+[49] BASH rc=127 0.0s :: clang++ --version; cd /tmp && cat > /tmp/chk.cpp <<'EOF' #include "roundel/runtime.hpp" #include <cs :: ectory bash: line 16: /tmp/chk: No such file or directory bash: line 16: /tmp/chk: No such file or directory bash: line 16: /tmp/chk: No such file or directory 
+[50] BASH rc=127 0.0s :: cd /tmp && cat > /tmp/chk2.cpp <<'EOF' #include "roundel/runtime.hpp" #include <cstdio> using namesp :: ory bash: line 16: /tmp/chk2: No such file or directory bash: line 16: /tmp/chk2: No such file or directory bash: line 16: /tmp/chk2: No such file or directory 
+[51] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' p='/tmp/spec_test3.cpp' s=open(p).read() s=s.replace("""void t_no_progr :: AIL === g++ -O2 RUNFAIL RUNFAIL RUNFAIL === clang++ -O0 RUNFAIL RUNFAIL RUNFAIL === clang++ -O1 RUNFAIL RUNFAIL RUNFAIL === clang++ -O2 RUNFAIL RUNFAIL RUNFAIL 
+[53] BASH rc=127 0.0s :: cd /tmp && cat > /tmp/trace.cpp <<'EOF' #include "roundel/runtime.hpp" #include <cstdio> #include <s :: bash: line 55: /tmp/trace: No such file or directory 
+[54] BASH rc=0 0.0s :: cd /tmp && rm -rf /tmp/bdg /tmp/bdc && cmake -S /app -B /tmp/bdg -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CX :: gcc cmake build: 1 clang cmake build done bash: line 1: /tmp/bdc/roundel_demo: No such file or directory 
+[55] WRITE /tmp/spec_test4.cpp -> W ok
+[56] BASH rc=127 0.0s :: cd /tmp && sed -i '/Duty parent_of(Duty (\*)()) = delete;/d' /tmp/spec_test4.cpp && g++ -std=c++20 - :: bash: line 1: /tmp/spec_test4: No such file or directory 
+[57] BASH rc=1 0.0s :: cd /tmp && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -I/app/in :: REAL FAILURE rc=127 /tmp/runsan.sh: line 7: /tmp/spec_test4: No such file or directory 
+[59] BASH rc=0 0.0s :: cd /tmp && echo "=== files changed in /app:"; find /app -type f -not -path "/app/build/*" -newer /ap :: p/l/spec_test2: No such file or directory bash: line 1: /tmp/l/spec_test3: No such file or directory bash: line 1: /tmp/l/spec_test4: No such file or directory 
+[60] BASH rc=1 0.0s :: cd /tmp && rm -rf /tmp/fg /tmp/fc && cmake -S /app -B /tmp/fg -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_F :: --- both builds clean with -Werror --- 0 bash: line 1: /tmp/fg/roundel_demo: No such file or directory 

@@ -1,0 +1,8 @@
+{
+ "fixture": "h_topology",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 50,
+ "retained": true
+}

@@ -1,0 +1,3 @@
+p06_combine_everywhere
+06 reduction choice
+selects every reduction-capable switch on the tree instead of searching subsets

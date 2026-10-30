@@ -1,0 +1,41 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "proj.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "stage": 3,
+   "shard": 0,
+   "logical_begin": 100,
+   "logical_end": 700,
+   "history_length": 6,
+   "active": true
+  },
+  {
+   "tensor": "proj.weight",
+   "tie_group": "tie_e",
+   "role": "backward",
+   "block_size": 512,
+   "stage": 3,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 700,
+   "history_length": 1,
+   "active": true
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "stage": 2,
+   "shard": 1,
+   "logical_begin": 0,
+   "logical_end": 700,
+   "history_length": 3,
+   "active": false
+  }
+ ]
+}

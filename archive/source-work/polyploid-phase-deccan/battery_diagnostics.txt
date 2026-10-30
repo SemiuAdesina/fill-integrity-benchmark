@@ -1,0 +1,17 @@
+variant                        pass/fail public_diagnostics_failing
+v01_marker_wise                6p/0f    (all public diagnostics pass)
+v02_fixed_guess                6p/0f    (all public diagnostics pass)
+v03_set_intersection           5p/1f    optimum test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s 
+v04_omit_non_dr                5p/1f    optimum test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s 
+v05_penalised_forbidden_dr     6p/0f    (all public diagnostics pass)
+v06_backward_traceback         6p/0f    (all public diagnostics pass)
+v07_rows_only_canonical        6p/0f    (all public diagnostics pass)
+v08_joint_canonical            6p/0f    (all public diagnostics pass)
+v09_wrong_perm_direction       6p/0f    (all public diagnostics pass)
+v10_interleaved_path_order     6p/0f    (all public diagnostics pass)
+v11_no_canonical               6p/0f    (all public diagnostics pass)
+v15_non_admissible_bound       6p/0f    (all public diagnostics pass)
+v16_prune_ties                 6p/0f    (all public diagnostics pass)
+v17_float_equality             3p/3f    optimum canonical determinism test result: FAILED. 3 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s 
+v18_first_found_tie            6p/0f    (all public diagnostics pass)
+v20_hardcoded_visible_cross    1p/5f    dr canonical optimum ties determinism test result: FAILED. 1 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s 

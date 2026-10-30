@@ -1,0 +1,31 @@
+runtime_smoke: 17 of 17 checks passed exit=0
+lifecycle: 12 of 21 checks passed exit=1
+      FAIL  a job cancelled while parked settles as cancelled -- unsettled
+      FAIL  a cancelled job's body does not run again -- body ran 1 more time(s)
+      FAIL  a cancelled job's storage is back in the pool at once -- live_slots 1
+      FAIL  the release is recorded once -- 0
+      FAIL  a job settles exactly once -- 2
+      FAIL  the first outcome stands -- none
+      FAIL  a cancel naming an unknown identifier is recorded too -- 0
+      FAIL  repeated cancellation settles once -- 2
+      FAIL  a cancellation after the failure changes nothing
+ticket_identity: 2 of 6 checks passed exit=1
+      FAIL  the scenario ran to its end -- it threw std::bad_alloc
+      FAIL  the scenario ran to its end -- it threw std::bad_alloc
+      FAIL  a ticket made for one of the job's frames is refused while the job waits in a different frame of its own -- rejected 0, accepted 2
+      FAIL  the waiting child frame is untouched -- delivered, probes alive 0
+nested_coroutines: 7 of 13 checks passed exit=1
+      FAIL  both slots are back and only two were ever live at once -- live_slots 1, peak 2
+      FAIL  every slot is back -- live_slots 1
+      FAIL  cancelling a job parked in a child settles it as cancelled -- faulted
+      FAIL  and both slots are back at once -- live_slots 2
+      FAIL  the failure is announced once and the job settles once -- announced 2, settled 1
+      FAIL  the failing child's frame is destroyed like a returning one -- probes alive 0, live_slots 2
+scheduler_clock: 1 of 8 checks passed exit=1
+      FAIL  the ticket with the lowest ready time is delivered first, whatever was queued first -- delivered 1
+      FAIL  delivering a ticket that is already ready leaves the clock where it is -- now 1
+      FAIL  delivering a delayed ticket moves the clock to its ready time -- now 2
+      FAIL  tickets sharing a ready time go by lowest job identifier -- delivered 3,2,1
+      FAIL  the clock reads the ready time of what was delivered -- now 1 then 2
+      FAIL  a ticket ready now, and a step with nothing to deliver, leave the clock where it is -- now 3
+      FAIL  a delay queued from inside a resumed job counts from the clock as it stood then -- now 2, other delivered

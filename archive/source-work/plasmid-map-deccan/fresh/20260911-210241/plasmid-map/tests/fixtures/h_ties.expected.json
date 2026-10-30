@@ -1,0 +1,70 @@
+{
+ "fixture": "h_ties",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 423,
+  "insert_length": 3260,
+  "cuts": {
+   "BamHI": [
+    417
+   ],
+   "DraI": [
+    2323,
+    4825,
+    4844,
+    5536
+   ],
+   "EcoRI": [
+    396
+   ],
+   "SspI": [
+    2655,
+    2854,
+    5763
+   ]
+  },
+  "held_out": {
+   "DraI+EcoRI": [
+    {
+     "length": 692,
+     "multiplicity": 1
+    },
+    {
+     "length": 806,
+     "multiplicity": 1
+    },
+    {
+     "length": 1927,
+     "multiplicity": 1
+    },
+    {
+     "length": 2502,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 3,
+ "deviation": 5306,
+ "held_out_truth": {
+  "DraI+EcoRI": [
+   {
+    "length": 698,
+    "multiplicity": 1
+   },
+   {
+    "length": 801,
+    "multiplicity": 1
+   },
+   {
+    "length": 1917,
+    "multiplicity": 1
+   },
+   {
+    "length": 2486,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 2
+}

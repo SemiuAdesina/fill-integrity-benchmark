@@ -1,0 +1,2 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 

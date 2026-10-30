@@ -1,0 +1,15 @@
+   Compiling reloc-recover v1.0.0 (/Users/macbok/benchmark-suite-work/relocation-infer-deccan/lab/cand/snap_S3_fields)
+warning: variant `Pair` is never constructed
+  --> src/recover/operands.rs:34:5
+   |
+32 | pub enum Unit {
+   |          ---- variant in this enum
+33 |     Single(usize),
+34 |     Pair(usize, usize),
+   |     ^^^^
+   |
+   = note: `Unit` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `reloc-recover` (lib) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.89s

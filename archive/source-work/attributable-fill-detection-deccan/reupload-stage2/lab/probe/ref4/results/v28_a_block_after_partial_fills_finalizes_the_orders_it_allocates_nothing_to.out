@@ -1,0 +1,6 @@
+
+running 1 test
+test v28_a_block_after_partial_fills_finalizes_the_orders_it_allocates_nothing_to ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 36 filtered out; finished in 0.00s
+

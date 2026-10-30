@@ -1,0 +1,31 @@
+#
+# Verifier-owned crate manifest.
+#
+# tests/test.sh assembles a fresh crate from this manifest plus the candidate's
+# src/ tree, so the manifest the candidate could edit at /app/Cargo.toml is never
+# used for grading. Keep this in sync with environment/Cargo.toml, except that no
+# [[bin]] targets are declared here: the reproducer under src/bin/ is a debugging
+# aid for the candidate and is deliberately excluded from the graded build.
+#
+# There are no dependencies, and the verifier runs cargo with --offline.
+[package]
+name = "pairing_engine"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "pairing_engine"
+path = "src/lib.rs"
+
+[dependencies]
+
+[[test]]
+name = "graded"
+path = "tests/graded.rs"
+
+[[test]]
+name = "frozen"
+path = "tests/frozen.rs"

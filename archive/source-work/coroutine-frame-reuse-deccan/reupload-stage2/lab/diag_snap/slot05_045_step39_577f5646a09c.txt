@@ -1,0 +1,10 @@
+runtime_smoke: 16 of 17 checks passed exit=1
+      FAIL  one parked root job holds exactly one slot -- live_slots 0
+lifecycle: 21 of 21 checks passed exit=0
+ticket_identity: 5 of 8 checks passed exit=1
+      FAIL  and is not destroyed by it either -- probes alive 1, live_slots 0
+      FAIL  a ticket made for one of the job's frames is refused while the job waits in a different frame of its own -- rejected 0, accepted 2
+      FAIL  the waiting child frame is untouched -- delivered, probes alive 0
+nested_coroutines: 12 of 13 checks passed exit=1
+      FAIL  both slots are back and only two were ever live at once -- live_slots 0, peak 0
+scheduler_clock: 8 of 8 checks passed exit=0

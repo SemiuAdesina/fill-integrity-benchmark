@@ -1,0 +1,10 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "states": [
+  {"tensor": "proj.weight", "role": "forward", "stage": 3, "shard": 0, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 0, 50, 900, 120, 3000], "cursor": 0},
+  {"tensor": "proj.weight", "role": "forward", "stage": 3, "shard": 0, "global_block": 1, "scale": 2097152, "inverse_scale": 8, "amax_history": [0, 0, 0, 7, 7, 8], "cursor": 0},
+  {"tensor": "proj.weight", "role": "backward", "stage": 3, "shard": 0, "global_block": 0, "scale": 8388608, "inverse_scale": 2, "amax_history": [2], "cursor": 0},
+  {"tensor": "proj.weight", "role": "backward", "stage": 3, "shard": 0, "global_block": 1, "scale": 1048576, "inverse_scale": 16, "amax_history": [9], "cursor": 0}
+ ]
+}

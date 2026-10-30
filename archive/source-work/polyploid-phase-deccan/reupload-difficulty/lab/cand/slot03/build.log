@@ -1,0 +1,14 @@
+   Compiling polyploid-phase v1.0.0 (/Users/macbok/benchmark-suite-work/polyploid-phase-deccan/reupload-difficulty/lab/cand/slot03)
+warning: field `marker_best` is never read
+   --> src/solver/search.rs:145:5
+    |
+128 | pub struct Searcher<'a> {
+    |            -------- field in this struct
+...
+145 |     marker_best: Vec<f64>,
+    |     ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.44s

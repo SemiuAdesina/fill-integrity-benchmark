@@ -1,0 +1,1209 @@
+{
+ "format_version": 1,
+ "machine": 22104,
+ "relocation_types": [
+  {
+   "type": 1,
+   "name": "R_VX_1",
+   "container_bits": 32,
+   "pair_group": null
+  },
+  {
+   "type": 2,
+   "name": "R_VX_2",
+   "container_bits": 32,
+   "pair_group": null
+  },
+  {
+   "type": 3,
+   "name": "R_VX_3",
+   "container_bits": 32,
+   "pair_group": null
+  },
+  {
+   "type": 4,
+   "name": "R_VX_4",
+   "container_bits": 32,
+   "pair_group": null
+  }
+ ],
+ "objects": [
+  {
+   "id": "obj01",
+   "file": "objects/obj01.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 116084928,
+      ".rodata": 116085248,
+      ".shared": 228757504,
+      ".text": 116084736
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 116085012
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 116084412
+      },
+      "ext_0_10": {
+       "section": ".rodata",
+       "value": 27413
+      },
+      "ext_0_11": {
+       "section": ".rodata",
+       "value": 2434
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 116560830
+      },
+      "ext_0_3": {
+       "section": ".shared",
+       "value": 11268449
+      },
+      "ext_0_4": {
+       "section": ".data",
+       "value": 1
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 116085808
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 116084802
+      },
+      "ext_0_7": {
+       "section": null,
+       "value": 692612
+      },
+      "ext_0_8": {
+       "section": ".shared",
+       "value": 115761488
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 116285347
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 116084944,
+      ".rodata": 116085264,
+      ".shared": 228757504,
+      ".text": 116084752
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 116085012
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 116084412
+      },
+      "ext_0_10": {
+       "section": ".rodata",
+       "value": 27413
+      },
+      "ext_0_11": {
+       "section": ".rodata",
+       "value": 2434
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 116560830
+      },
+      "ext_0_3": {
+       "section": ".shared",
+       "value": 11268449
+      },
+      "ext_0_4": {
+       "section": ".data",
+       "value": 1
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 116085808
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 116084802
+      },
+      "ext_0_7": {
+       "section": null,
+       "value": 692612
+      },
+      "ext_0_8": {
+       "section": ".shared",
+       "value": 115761488
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 116285347
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l02.out"
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 116084928,
+      ".rodata": 116085248,
+      ".shared": 175509504,
+      ".text": 116084736
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 116085012
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 116084412
+      },
+      "ext_0_10": {
+       "section": ".rodata",
+       "value": 27413
+      },
+      "ext_0_11": {
+       "section": ".rodata",
+       "value": 2434
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 116560830
+      },
+      "ext_0_3": {
+       "section": ".shared",
+       "value": 11268449
+      },
+      "ext_0_4": {
+       "section": ".data",
+       "value": 1
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 116085808
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 116084802
+      },
+      "ext_0_7": {
+       "section": null,
+       "value": 692612
+      },
+      "ext_0_8": {
+       "section": ".shared",
+       "value": 115761488
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 116285347
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 116084928,
+      ".rodata": 116085248,
+      ".shared": 228757504,
+      ".text": 116084736
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 116083974
+      },
+      "ext_0_1": {
+       "section": ".data",
+       "value": 116086796
+      },
+      "ext_0_10": {
+       "section": ".data",
+       "value": 11333
+      },
+      "ext_0_11": {
+       "section": null,
+       "value": 116094608
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 115674987
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 5253028
+      },
+      "ext_0_4": {
+       "section": ".data",
+       "value": 9960352
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 116082667
+      },
+      "ext_0_6": {
+       "section": ".rodata",
+       "value": 15917
+      },
+      "ext_0_7": {
+       "section": null,
+       "value": 5592405
+      },
+      "ext_0_8": {
+       "section": ".shared",
+       "value": 116088551
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 115614892
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 133804224,
+      ".rodata": 133804304,
+      ".shared": 377434112,
+      ".text": 133804032
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 133804039
+      },
+      "ext_0_1": {
+       "section": null,
+       "value": 133803446
+      },
+      "ext_0_10": {
+       "section": null,
+       "value": 133809331
+      },
+      "ext_0_11": {
+       "section": ".rodata",
+       "value": 20193
+      },
+      "ext_0_2": {
+       "section": null,
+       "value": 134241504
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 8558014
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 15088676
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 133804081
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 133804096
+      },
+      "ext_0_7": {
+       "section": ".data",
+       "value": 0
+      },
+      "ext_0_8": {
+       "section": null,
+       "value": 133667719
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 133279832
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj01.l05.out"
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 99823808,
+      ".rodata": 99823872,
+      ".shared": 159956992,
+      ".text": 99823616
+     },
+     "symbols": {
+      "ext_0_0": {
+       "section": null,
+       "value": 99821975
+      },
+      "ext_0_1": {
+       "section": ".data",
+       "value": 99823611
+      },
+      "ext_0_10": {
+       "section": ".data",
+       "value": 13157
+      },
+      "ext_0_11": {
+       "section": null,
+       "value": 99846052
+      },
+      "ext_0_2": {
+       "section": ".shared",
+       "value": 99550162
+      },
+      "ext_0_3": {
+       "section": null,
+       "value": 11659360
+      },
+      "ext_0_4": {
+       "section": null,
+       "value": 596194
+      },
+      "ext_0_5": {
+       "section": null,
+       "value": 99824022
+      },
+      "ext_0_6": {
+       "section": null,
+       "value": 99846810
+      },
+      "ext_0_7": {
+       "section": null,
+       "value": 3103302
+      },
+      "ext_0_8": {
+       "section": null,
+       "value": 99823701
+      },
+      "ext_0_9": {
+       "section": null,
+       "value": 99399466
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  },
+  {
+   "id": "obj02",
+   "file": "objects/obj02.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 129880192,
+      ".rodata": 129880496,
+      ".shared": 230453248,
+      ".text": 129880064
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 129879756
+      },
+      "ext_1_1": {
+       "section": ".data",
+       "value": 32634
+      },
+      "ext_1_10": {
+       "section": ".data",
+       "value": 130215730
+      },
+      "ext_1_11": {
+       "section": null,
+       "value": 129891437
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 129878302
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 129880098
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 0
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 130404366
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 4615177
+      },
+      "ext_1_7": {
+       "section": ".rodata",
+       "value": 129355832
+      },
+      "ext_1_8": {
+       "section": null,
+       "value": 129881533
+      },
+      "ext_1_9": {
+       "section": null,
+       "value": 8388607
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 129880320,
+      ".rodata": 129880624,
+      ".shared": 230453248,
+      ".text": 129880192
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 129879756
+      },
+      "ext_1_1": {
+       "section": ".data",
+       "value": 32634
+      },
+      "ext_1_10": {
+       "section": ".data",
+       "value": 130215730
+      },
+      "ext_1_11": {
+       "section": null,
+       "value": 129891437
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 129878302
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 129880098
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 0
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 130404366
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 4615177
+      },
+      "ext_1_7": {
+       "section": ".rodata",
+       "value": 129355832
+      },
+      "ext_1_8": {
+       "section": null,
+       "value": 129881533
+      },
+      "ext_1_9": {
+       "section": null,
+       "value": 8388607
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 56
+       }
+      ]
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 129880192,
+      ".rodata": 129880496,
+      ".shared": 254791680,
+      ".text": 129880064
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 129879756
+      },
+      "ext_1_1": {
+       "section": ".data",
+       "value": 32634
+      },
+      "ext_1_10": {
+       "section": ".data",
+       "value": 130215730
+      },
+      "ext_1_11": {
+       "section": null,
+       "value": 129891437
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 129878302
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 129880098
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 0
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 130404366
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 4615177
+      },
+      "ext_1_7": {
+       "section": ".rodata",
+       "value": 129355832
+      },
+      "ext_1_8": {
+       "section": null,
+       "value": 129881533
+      },
+      "ext_1_9": {
+       "section": null,
+       "value": 8388607
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 129880192,
+      ".rodata": 129880496,
+      ".shared": 230453248,
+      ".text": 129880064
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": ".shared",
+       "value": 129879056
+      },
+      "ext_1_1": {
+       "section": ".rodata",
+       "value": 31347
+      },
+      "ext_1_10": {
+       "section": ".rodata",
+       "value": 129587801
+      },
+      "ext_1_11": {
+       "section": ".rodata",
+       "value": 25028
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 129881111
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 129886041
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 11343115
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 129880080
+      },
+      "ext_1_6": {
+       "section": null,
+       "value": 7348435
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 129493998
+      },
+      "ext_1_8": {
+       "section": null,
+       "value": 129880147
+      },
+      "ext_1_9": {
+       "section": ".shared",
+       "value": 13065230
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj02.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 174842048,
+      ".rodata": 174842160,
+      ".shared": 422400000,
+      ".text": 174841856
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": null,
+       "value": 174843919
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 174841853
+      },
+      "ext_1_10": {
+       "section": ".rodata",
+       "value": 174475120
+      },
+      "ext_1_11": {
+       "section": ".rodata",
+       "value": 27478
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 174840337
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 174869246
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 16777217
+      },
+      "ext_1_5": {
+       "section": ".data",
+       "value": 174994832
+      },
+      "ext_1_6": {
+       "section": ".data",
+       "value": 2407418
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 174815244
+      },
+      "ext_1_8": {
+       "section": null,
+       "value": 174844222
+      },
+      "ext_1_9": {
+       "section": ".shared",
+       "value": 15578792
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 36
+       }
+      ]
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 75047296,
+      ".rodata": 75047344,
+      ".shared": 516083712,
+      ".text": 75046912
+     },
+     "symbols": {
+      "ext_1_0": {
+       "section": ".data",
+       "value": 75044880
+      },
+      "ext_1_1": {
+       "section": null,
+       "value": 75049879
+      },
+      "ext_1_10": {
+       "section": null,
+       "value": 74585549
+      },
+      "ext_1_11": {
+       "section": null,
+       "value": 75079097
+      },
+      "ext_1_2": {
+       "section": null,
+       "value": 75046661
+      },
+      "ext_1_3": {
+       "section": null,
+       "value": 75075943
+      },
+      "ext_1_4": {
+       "section": null,
+       "value": 15113969
+      },
+      "ext_1_5": {
+       "section": null,
+       "value": 74985896
+      },
+      "ext_1_6": {
+       "section": ".data",
+       "value": 11907209
+      },
+      "ext_1_7": {
+       "section": null,
+       "value": 74954560
+      },
+      "ext_1_8": {
+       "section": ".data",
+       "value": 75048660
+      },
+      "ext_1_9": {
+       "section": null,
+       "value": 15685489
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  },
+  {
+   "id": "obj03",
+   "file": "objects/obj03.o",
+   "links": [
+    {
+     "id": "l01",
+     "bases": {
+      ".data": 212824224,
+      ".rodata": 212824368,
+      ".shared": 164335616,
+      ".text": 212824064
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".rodata",
+       "value": 19499
+      },
+      "ext_2_1": {
+       "section": null,
+       "value": 212299777
+      },
+      "ext_2_10": {
+       "section": null,
+       "value": 8935082
+      },
+      "ext_2_11": {
+       "section": ".data",
+       "value": 14085174
+      },
+      "ext_2_2": {
+       "section": ".data",
+       "value": 20881
+      },
+      "ext_2_3": {
+       "section": ".rodata",
+       "value": 212822032
+      },
+      "ext_2_4": {
+       "section": ".shared",
+       "value": 213279488
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 212822061
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 212826149
+      },
+      "ext_2_7": {
+       "section": ".rodata",
+       "value": 212448641
+      },
+      "ext_2_8": {
+       "section": ".rodata",
+       "value": 3358
+      },
+      "ext_2_9": {
+       "section": null,
+       "value": 4122042
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l01.out"
+     }
+    },
+    {
+     "id": "l02",
+     "bases": {
+      ".data": 212824256,
+      ".rodata": 212824400,
+      ".shared": 164335616,
+      ".text": 212824096
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".rodata",
+       "value": 19499
+      },
+      "ext_2_1": {
+       "section": null,
+       "value": 212299777
+      },
+      "ext_2_10": {
+       "section": null,
+       "value": 8935082
+      },
+      "ext_2_11": {
+       "section": ".data",
+       "value": 14085174
+      },
+      "ext_2_2": {
+       "section": ".data",
+       "value": 20881
+      },
+      "ext_2_3": {
+       "section": ".rodata",
+       "value": 212822032
+      },
+      "ext_2_4": {
+       "section": ".shared",
+       "value": 213279488
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 212822061
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 212826149
+      },
+      "ext_2_7": {
+       "section": ".rodata",
+       "value": 212448641
+      },
+      "ext_2_8": {
+       "section": ".rodata",
+       "value": 3358
+      },
+      "ext_2_9": {
+       "section": null,
+       "value": 4122042
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 8
+       }
+      ]
+     }
+    },
+    {
+     "id": "l03",
+     "bases": {
+      ".data": 212824224,
+      ".rodata": 212824368,
+      ".shared": 63819776,
+      ".text": 212824064
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".rodata",
+       "value": 19499
+      },
+      "ext_2_1": {
+       "section": null,
+       "value": 212299777
+      },
+      "ext_2_10": {
+       "section": null,
+       "value": 8935082
+      },
+      "ext_2_11": {
+       "section": ".data",
+       "value": 14085174
+      },
+      "ext_2_2": {
+       "section": ".data",
+       "value": 20881
+      },
+      "ext_2_3": {
+       "section": ".rodata",
+       "value": 212822032
+      },
+      "ext_2_4": {
+       "section": ".shared",
+       "value": 213279488
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 212822061
+      },
+      "ext_2_6": {
+       "section": null,
+       "value": 212826149
+      },
+      "ext_2_7": {
+       "section": ".rodata",
+       "value": 212448641
+      },
+      "ext_2_8": {
+       "section": ".rodata",
+       "value": 3358
+      },
+      "ext_2_9": {
+       "section": null,
+       "value": 4122042
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l03.out"
+     }
+    },
+    {
+     "id": "l04",
+     "bases": {
+      ".data": 212824224,
+      ".rodata": 212824368,
+      ".shared": 164335616,
+      ".text": 212824064
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".shared",
+       "value": 48493496
+      },
+      "ext_2_1": {
+       "section": ".data",
+       "value": 212914224
+      },
+      "ext_2_10": {
+       "section": ".data",
+       "value": 0
+      },
+      "ext_2_11": {
+       "section": null,
+       "value": 2673358
+      },
+      "ext_2_2": {
+       "section": ".rodata",
+       "value": 9112
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 212822033
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 212721972
+      },
+      "ext_2_5": {
+       "section": ".shared",
+       "value": 212822940
+      },
+      "ext_2_6": {
+       "section": ".data",
+       "value": 212822056
+      },
+      "ext_2_7": {
+       "section": null,
+       "value": 212504957
+      },
+      "ext_2_8": {
+       "section": ".data",
+       "value": 5367
+      },
+      "ext_2_9": {
+       "section": ".rodata",
+       "value": 14362333
+      }
+     },
+     "result": {
+      "status": "linked",
+      "file": "linked/obj03.l04.out"
+     }
+    },
+    {
+     "id": "l05",
+     "bases": {
+      ".data": 165810336,
+      ".rodata": 165810432,
+      ".shared": 157614080,
+      ".text": 165810176
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": ".shared",
+       "value": 8226376
+      },
+      "ext_2_1": {
+       "section": null,
+       "value": 165907744
+      },
+      "ext_2_10": {
+       "section": null,
+       "value": 16777341
+      },
+      "ext_2_11": {
+       "section": ".data",
+       "value": 16777438
+      },
+      "ext_2_2": {
+       "section": ".shared",
+       "value": 8207062
+      },
+      "ext_2_3": {
+       "section": ".shared",
+       "value": 165808564
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 166205956
+      },
+      "ext_2_5": {
+       "section": ".data",
+       "value": 165810220
+      },
+      "ext_2_6": {
+       "section": ".rodata",
+       "value": 165809191
+      },
+      "ext_2_7": {
+       "section": ".rodata",
+       "value": 165864168
+      },
+      "ext_2_8": {
+       "section": ".data",
+       "value": 27558
+      },
+      "ext_2_9": {
+       "section": ".shared",
+       "value": 16777217
+      }
+     },
+     "result": {
+      "status": "failed",
+      "overflow": [
+       {
+        "section": ".text",
+        "offset": 60
+       },
+       {
+        "section": ".text",
+        "offset": 64
+       },
+       {
+        "section": ".text",
+        "offset": 68
+       }
+      ]
+     }
+    },
+    {
+     "id": "r01",
+     "bases": {
+      ".data": 128221344,
+      ".rodata": 128221680,
+      ".shared": 178581504,
+      ".text": 128221184
+     },
+     "symbols": {
+      "ext_2_0": {
+       "section": null,
+       "value": 128221168
+      },
+      "ext_2_1": {
+       "section": ".data",
+       "value": 128252586
+      },
+      "ext_2_10": {
+       "section": null,
+       "value": 296339
+      },
+      "ext_2_11": {
+       "section": null,
+       "value": 0
+      },
+      "ext_2_2": {
+       "section": null,
+       "value": 128221198
+      },
+      "ext_2_3": {
+       "section": null,
+       "value": 128223501
+      },
+      "ext_2_4": {
+       "section": null,
+       "value": 128630439
+      },
+      "ext_2_5": {
+       "section": null,
+       "value": 128220276
+      },
+      "ext_2_6": {
+       "section": ".data",
+       "value": 128219173
+      },
+      "ext_2_7": {
+       "section": null,
+       "value": 128482345
+      },
+      "ext_2_8": {
+       "section": ".data",
+       "value": 31626
+      },
+      "ext_2_9": {
+       "section": ".rodata",
+       "value": 15914363
+      }
+     },
+     "result": {
+      "status": "replay"
+     }
+    }
+   ]
+  }
+ ]
+}

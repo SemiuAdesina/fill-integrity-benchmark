@@ -1,0 +1,15 @@
+REJECTED h_junction         attempt=7 held-out bands of the optimum do not match the true construct (10s) {"reference": {"status": "ok", "seconds": 0.03, "internal": 3, "deviation": 5457, "c": 1588, "L": 1885}, "enumeration_solver": {"status": "ok", "seconds": 9.75}
+REJECTED h_junction         attempt=22 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED h_junction         attempt=58 held-out bands of the optimum do not match the true construct (122s) {"reference": {"status": "ok", "seconds": 0.04, "internal": 3, "deviation": 34597, "c": 1401, "L": 3728}, "enumeration_solver": {"status": "timeout", "seconds":
+RETAINED h_junction         seed=569 pUC19 V=2686 L=1035 e=2 D=200 enzymes=4 internal=4 (truth 4) dev=2751 ref=0.02s enum=ok py=0.4s ties=2 (2s)
+REJECTED h_ties             attempt=24 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+RETAINED h_ties             seed=633 pUC19 V=2686 L=3260 e=2 D=200 enzymes=4 internal=3 (truth 3) dev=5306 ref=0.07s enum=ok py=1.2s ties=2 (23s)
+REJECTED h_cloning_sites    attempt=1 property 'sites' does not hold on the optimum (77s)
+REJECTED h_cloning_sites    attempt=3 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED h_cloning_sites    attempt=4 held-out bands of the optimum do not match the true construct (123s) {"reference": {"status": "ok", "seconds": 0.09, "internal": 4, "deviation": 29955, "c": 930, "L": 3562}, "enumeration_solver": {"status": "timeout", "seconds": 
+REJECTED h_cloning_sites    attempt=5 property 'sites' does not hold on the optimum (133s)
+RETAINED h_cloning_sites    seed=706 pUC18 V=2686 L=2208 e=2 D=200 enzymes=4 internal=4 (truth 4) dev=5926 ref=0.02s enum=ok py=1.1s ties=1 (9s)
+REJECTED h_three_sites      attempt=0 python certifier over budget (2544s) {"reference": {"status": "ok", "seconds": 23.64, "internal": 7, "deviation": 20789, "c": 2228, "L": 4872}, "enumeration_solver": {"status": "timeout", "seconds"
+REJECTED h_three_sites      attempt=5 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED h_three_sites      attempt=7 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+RETAINED h_three_sites      seed=808 pGEX-2T V=4948 L=4157 e=2 D=200 enzymes=5 internal=5 (truth 5) dev=46648 ref=0.37s enum=timeout py=23.4s ties=12 (143s)

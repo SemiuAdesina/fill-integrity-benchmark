@@ -1,0 +1,43 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "KpnI",
+   "site": "GGTACC",
+   "cut_offset": 5
+  },
+  {
+   "name": "NdeI",
+   "site": "CATATG",
+   "cut_offset": 2
+  },
+  {
+   "name": "PvuII",
+   "site": "CAGCTG",
+   "cut_offset": 3
+  },
+  {
+   "name": "XbaI",
+   "site": "TCTAGA",
+   "cut_offset": 1
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "SacI",
+   "position": 240
+  },
+  {
+   "enzyme": "BamHI",
+   "position": 251
+  },
+  {
+   "enzyme": "SalI",
+   "position": 263
+  },
+  {
+   "enzyme": "ScaI",
+   "position": 1191
+  }
+ ]
+}

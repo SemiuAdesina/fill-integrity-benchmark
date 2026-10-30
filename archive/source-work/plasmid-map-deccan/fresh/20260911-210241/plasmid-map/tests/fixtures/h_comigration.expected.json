@@ -1,0 +1,123 @@
+{
+ "fixture": "h_comigration",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 3320,
+  "insert_length": 1127,
+  "cuts": {
+   "BspHI": [
+    713,
+    1872,
+    3553,
+    4409,
+    4668,
+    4773
+   ],
+   "DraI": [
+    659,
+    678,
+    3480,
+    5035
+   ],
+   "FspI": [
+    322
+   ],
+   "SspI": [
+    2279,
+    4168,
+    4808
+   ]
+  },
+  "held_out": {
+   "BspHI+DraI": [
+    {
+     "length": 259,
+     "multiplicity": 1
+    },
+    {
+     "length": 262,
+     "multiplicity": 1
+    },
+    {
+     "length": 692,
+     "multiplicity": 1
+    },
+    {
+     "length": 856,
+     "multiplicity": 1
+    },
+    {
+     "length": 1159,
+     "multiplicity": 1
+    },
+    {
+     "length": 1608,
+     "multiplicity": 1
+    }
+   ],
+   "FspI+SspI": [
+    {
+     "length": 582,
+     "multiplicity": 1
+    },
+    {
+     "length": 640,
+     "multiplicity": 1
+    },
+    {
+     "length": 1889,
+     "multiplicity": 1
+    },
+    {
+     "length": 1957,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 4,
+ "deviation": 4453,
+ "held_out_truth": {
+  "FspI+SspI": [
+   {
+    "length": 587,
+    "multiplicity": 1
+   },
+   {
+    "length": 652,
+    "multiplicity": 1
+   },
+   {
+    "length": 1918,
+    "multiplicity": 1
+   },
+   {
+    "length": 1943,
+    "multiplicity": 1
+   }
+  ],
+  "BspHI+DraI": [
+   {
+    "length": 262,
+    "multiplicity": 2
+   },
+   {
+    "length": 700,
+    "multiplicity": 1
+   },
+   {
+    "length": 862,
+    "multiplicity": 1
+   },
+   {
+    "length": 1158,
+    "multiplicity": 1
+   },
+   {
+    "length": 1599,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 1
+}

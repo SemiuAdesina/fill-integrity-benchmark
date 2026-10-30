@@ -1,0 +1,7 @@
+slot01                               PASS                 20.53s 
+slot02                               PASS                 19.00s 
+slot03                               PASS                122.60s 
+slot04                               PASS                 14.71s 
+slot05                               TIMEOUT             300.00s 
+slot06                               PASS                 10.84s 
+slot07                               PASS                 30.30s 

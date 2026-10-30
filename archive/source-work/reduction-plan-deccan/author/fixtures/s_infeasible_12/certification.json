@@ -1,0 +1,66 @@
+{
+ "reference": {
+  "status": "infeasible",
+  "seconds": 0.005
+ },
+ "solver_d": {
+  "status": "infeasible",
+  "seconds": 0.006,
+  "build": "v2b (integer event engine, prefix-aware bound, cheapest-first links)",
+  "agrees": true
+ },
+ "oracle_c": {
+  "status": "infeasible",
+  "seconds": 0.002,
+  "nodes": 1,
+  "leaves": 0,
+  "matching": 0
+ },
+ "oracle_d": {
+  "status": "infeasible",
+  "seconds": 0.0,
+  "nodes": 1,
+  "leaves": 0,
+  "matching": 0
+ },
+ "reference_v1_path_product": {
+  "status": "timeout",
+  "seconds": 130.0
+ },
+ "solver_b_tree_enumeration": {
+  "status": "timeout",
+  "seconds": 130.0
+ },
+ "tree_enumeration": "unconstrained trees=106823680 (capped) seconds=60.0 rate=1779373/s top_branches_done=1/4",
+ "tree_enumeration_telemetry_aware": "telemetry-aware trees=80543744 (capped) seconds=60.0 rate=1341543/s top_branches_done=1/1",
+ "simple_paths_per_source": [
+  620,
+  894,
+  1224,
+  727,
+  881,
+  924,
+  505,
+  765,
+  958,
+  897,
+  1197,
+  693
+ ],
+ "path_product": "1.106e+35",
+ "fixture": "s_infeasible_12",
+ "seed": 6503,
+ "sources": 12,
+ "links": 102,
+ "switches": 14,
+ "listed_links": 16,
+ "completion_listed": true,
+ "latent_completion": 7,
+ "latent_combines": 1,
+ "optimum_completion": 7,
+ "agreement": "reference = solver_d = oracle C = oracle D",
+ "solver_d_first_build": {
+  "status": "infeasible",
+  "seconds": 0.005
+ }
+}

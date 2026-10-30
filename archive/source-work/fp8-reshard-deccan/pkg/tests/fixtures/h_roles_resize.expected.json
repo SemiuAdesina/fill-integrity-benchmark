@@ -1,0 +1,4740 @@
+{
+ "fixture": "h_roles_resize",
+ "outcome": "accept",
+ "result": [
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 0,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2041,
+    135876,
+    1025506,
+    88975,
+    810660,
+    719084
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 1,
+   "scale": 16384,
+   "inverse_scale": 1024,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    554,
+    0
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 2,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1519,
+    3843,
+    2737
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 3,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2404,
+    708,
+    1135,
+    0,
+    2475
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    77792,
+    430,
+    713444,
+    1544,
+    597907
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 5,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    957591,
+    331,
+    124,
+    700
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 6,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    59,
+    2485
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 7,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    478595,
+    551201,
+    939379,
+    2268,
+    3339
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 7,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    478595,
+    551201,
+    939379,
+    2268,
+    3339
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 0,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    0
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 1,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    340285
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 2,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    3634
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 3,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    514810
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 3,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    4091,
+    514810
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    1756,
+    1032982
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 5,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    867637,
+    460910
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 6,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    500169,
+    3091
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 7,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    890042,
+    787319
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 0,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    2334,
+    3528
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 1,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    52,
+    1875
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 2,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    618,
+    912547
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 3,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    579682
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    947618,
+    0
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    654256,
+    2681,
+    245,
+    947618,
+    0
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "forward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 5,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    406446,
+    2271,
+    3952,
+    179467,
+    2776
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 0,
+   "scale": 128,
+   "inverse_scale": 131072,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1243,
+    241,
+    83793,
+    0,
+    3234
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 1,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3230,
+    691945,
+    2620,
+    2963,
+    179,
+    2524
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 2,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    687767,
+    216,
+    1007197,
+    0,
+    130455,
+    0
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 3,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2819,
+    0,
+    3938,
+    221508,
+    241166
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 0,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    862235,
+    475,
+    0,
+    656,
+    668037,
+    3835
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 4,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    862235,
+    475,
+    0,
+    656,
+    668037,
+    3835
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "role": "backward",
+   "stage": 0,
+   "shard": 1,
+   "global_block": 5,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    344196,
+    1808,
+    539252,
+    2991,
+    0,
+    3645
+   ],
+   "cursor": 0
+  }
+ ],
+ "replay": [
+  {
+   "state_index": 0,
+   "pairs": [
+    [
+     437503,
+     0
+    ],
+    [
+     1976,
+     0
+    ],
+    [
+     350155,
+     0
+    ],
+    [
+     892,
+     -3527
+    ],
+    [
+     0,
+     -4649
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      437503,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      437503,
+      1976,
+      0,
+      0,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      437503,
+      1976,
+      350155,
+      0,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      437503,
+      1976,
+      350155,
+      892,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      437503,
+      1976,
+      350155,
+      892,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      437503,
+      1976,
+      350155,
+      892,
+      0,
+      0,
+      2041,
+      135876,
+      1025506,
+      88975,
+      810660,
+      719084
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 1,
+   "pairs": [
+    [
+     699,
+     1949
+    ],
+    [
+     0,
+     -3157
+    ],
+    [
+     835505,
+     1667715755
+    ],
+    [
+     0,
+     -1454
+    ],
+    [
+     630371,
+     0
+    ],
+    [
+     0,
+     -1366992424
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      699,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": 1
+    },
+    {
+     "amax_history": [
+      699,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 2,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": -3
+    },
+    {
+     "amax_history": [
+      699,
+      0,
+      835505,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      699,
+      0,
+      835505,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      699,
+      0,
+      835505,
+      0,
+      630371,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      699,
+      0,
+      835505,
+      0,
+      630371,
+      0,
+      0,
+      0,
+      0,
+      0,
+      554,
+      0
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    }
+   ]
+  },
+  {
+   "state_index": 2,
+   "pairs": [
+    [
+     242269,
+     4639
+    ],
+    [
+     0,
+     -1309243573
+    ],
+    [
+     238,
+     -3967
+    ],
+    [
+     61276,
+     -1559216013
+    ],
+    [
+     1008570,
+     0
+    ],
+    [
+     0,
+     -623
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      242269,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 1,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      242269,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 2,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      242269,
+      0,
+      238,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 3,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      242269,
+      0,
+      238,
+      61276,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 4,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      242269,
+      0,
+      238,
+      61276,
+      1008570,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      242269,
+      0,
+      238,
+      61276,
+      1008570,
+      0,
+      0,
+      0,
+      0,
+      1519,
+      3843,
+      2737
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 3,
+   "pairs": [
+    [
+     0,
+     2201
+    ],
+    [
+     0,
+     541735641
+    ],
+    [
+     241380,
+     -730881950
+    ],
+    [
+     586197,
+     1340951125
+    ],
+    [
+     0,
+     -801037343
+    ],
+    [
+     0,
+     1131
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 2,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      241380,
+      0,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 3,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      241380,
+      586197,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      241380,
+      586197,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      241380,
+      586197,
+      0,
+      0,
+      0,
+      2404,
+      708,
+      1135,
+      0,
+      2475
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 4,
+   "pairs": [
+    [
+     711030,
+     1344816731
+    ],
+    [
+     1065,
+     3924
+    ],
+    [
+     2231,
+     -1368
+    ],
+    [
+     0,
+     -2093258969
+    ],
+    [
+     0,
+     1473402174
+    ],
+    [
+     2817,
+     -737166413
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      711030,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      711030,
+      1065,
+      0,
+      0,
+      0,
+      0,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      711030,
+      1065,
+      2231,
+      0,
+      0,
+      0,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      711030,
+      1065,
+      2231,
+      0,
+      0,
+      0,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      711030,
+      1065,
+      2231,
+      0,
+      0,
+      0,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      711030,
+      1065,
+      2231,
+      0,
+      0,
+      2817,
+      0,
+      77792,
+      430,
+      713444,
+      1544,
+      597907
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    }
+   ]
+  },
+  {
+   "state_index": 5,
+   "pairs": [
+    [
+     991146,
+     42
+    ],
+    [
+     0,
+     1604193163
+    ],
+    [
+     232116,
+     -4736
+    ],
+    [
+     1545,
+     0
+    ],
+    [
+     159488,
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      991146,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      991146,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      991146,
+      0,
+      232116,
+      0,
+      0,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      991146,
+      0,
+      232116,
+      1545,
+      0,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      991146,
+      0,
+      232116,
+      1545,
+      159488,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      991146,
+      0,
+      232116,
+      1545,
+      159488,
+      0,
+      0,
+      0,
+      957591,
+      331,
+      124,
+      700
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 6,
+   "pairs": [
+    [
+     0,
+     -385
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     778127,
+     -739796534
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     906055,
+     1970660824
+    ],
+    [
+     452709,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 2,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      778127,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      778127,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      778127,
+      0,
+      906055,
+      0,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      778127,
+      0,
+      906055,
+      452709,
+      0,
+      0,
+      0,
+      0,
+      59,
+      2485
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 7,
+   "pairs": [
+    [
+     245891,
+     3708
+    ],
+    [
+     2143,
+     0
+    ],
+    [
+     900435,
+     -4277
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     3637,
+     0
+    ],
+    [
+     2742,
+     -157097639
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      245891,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      245891,
+      2143,
+      0,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      245891,
+      2143,
+      900435,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      245891,
+      2143,
+      900435,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      245891,
+      2143,
+      900435,
+      0,
+      3637,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      245891,
+      2143,
+      900435,
+      0,
+      3637,
+      2742,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -149
+    }
+   ]
+  },
+  {
+   "state_index": 8,
+   "pairs": [
+    [
+     0,
+     -902806222
+    ],
+    [
+     944263,
+     1756428688
+    ],
+    [
+     0,
+     1571145108
+    ],
+    [
+     540,
+     -1621922836
+    ],
+    [
+     1653,
+     1997921411
+    ],
+    [
+     746226,
+     188993838
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      944263,
+      0,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      944263,
+      0,
+      0,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      944263,
+      0,
+      540,
+      0,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      944263,
+      0,
+      540,
+      1653,
+      0,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      944263,
+      0,
+      540,
+      1653,
+      746226,
+      0,
+      478595,
+      551201,
+      939379,
+      2268,
+      3339
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 180
+    }
+   ]
+  },
+  {
+   "state_index": 9,
+   "pairs": [
+    [
+     0,
+     -4210
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     -2394
+    ],
+    [
+     0,
+     -1296
+    ],
+    [
+     2182,
+     -3250
+    ],
+    [
+     201599,
+     3067
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      2182
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      201599
+     ],
+     "cursor": 0,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 10,
+   "pairs": [
+    [
+     0,
+     1392
+    ],
+    [
+     750215,
+     -265
+    ],
+    [
+     1228,
+     -1522317388
+    ],
+    [
+     706,
+     0
+    ],
+    [
+     171693,
+     -60390410
+    ],
+    [
+     0,
+     -692
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      750215
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1228
+     ],
+     "cursor": 0,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      706
+     ],
+     "cursor": 0,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      171693
+     ],
+     "cursor": 0,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": -230
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    }
+   ]
+  },
+  {
+   "state_index": 11,
+   "pairs": [
+    [
+     1133,
+     -2988
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     942060,
+     1595
+    ],
+    [
+     2165,
+     1005
+    ],
+    [
+     544,
+     -3604
+    ],
+    [
+     0,
+     -2802
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      1133
+     ],
+     "cursor": 0,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": -1
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      942060
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2165
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      544
+     ],
+     "cursor": 0,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": -3
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    }
+   ]
+  },
+  {
+   "state_index": 12,
+   "pairs": [
+    [
+     326203,
+     0
+    ],
+    [
+     464920,
+     -764307194
+    ],
+    [
+     787013,
+     0
+    ],
+    [
+     0,
+     436418048
+    ],
+    [
+     0,
+     867
+    ],
+    [
+     3279,
+     4250
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      326203
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      464920
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      787013
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      3279
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 1
+    }
+   ]
+  },
+  {
+   "state_index": 13,
+   "pairs": [
+    [
+     2358,
+     0
+    ],
+    [
+     0,
+     327002327
+    ],
+    [
+     976842,
+     0
+    ],
+    [
+     1997,
+     3208
+    ],
+    [
+     1484,
+     -3415
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      2358,
+      514810
+     ],
+     "cursor": 1,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2358,
+      0
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      976842,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      976842,
+      1997
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1484,
+      1997
+     ],
+     "cursor": 1,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": -1
+    },
+    {
+     "amax_history": [
+      1484,
+      0
+     ],
+     "cursor": 0,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 14,
+   "pairs": [
+    [
+     0,
+     -3730
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     1145,
+     1620
+    ],
+    [
+     0,
+     1302
+    ],
+    [
+     696,
+     -342382271
+    ],
+    [
+     0,
+     1145172888
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      1032982
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1145,
+      0
+     ],
+     "cursor": 1,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1145,
+      0
+     ],
+     "cursor": 0,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      696,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      696,
+      0
+     ],
+     "cursor": 0,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": 448
+    }
+   ]
+  },
+  {
+   "state_index": 15,
+   "pairs": [
+    [
+     561130,
+     0
+    ],
+    [
+     661,
+     -1204867600
+    ],
+    [
+     821,
+     -1330305390
+    ],
+    [
+     3343,
+     -683949153
+    ],
+    [
+     459838,
+     -2317
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      561130,
+      460910
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      561130,
+      661
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      821,
+      661
+     ],
+     "cursor": 1,
+     "scale": 16384,
+     "inverse_scale": 1024,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      821,
+      3343
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      459838,
+      3343
+     ],
+     "cursor": 1,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      459838,
+      0
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 16,
+   "pairs": [
+    [
+     2308,
+     -1828977230
+    ],
+    [
+     1812,
+     -1045216761
+    ],
+    [
+     2655,
+     91612481
+    ],
+    [
+     2620,
+     -62
+    ],
+    [
+     1032968,
+     0
+    ],
+    [
+     667089,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      2308,
+      3091
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      2308,
+      1812
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      2655,
+      1812
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      2655,
+      2620
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1032968,
+      2620
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1032968,
+      667089
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 17,
+   "pairs": [
+    [
+     3246,
+     -292624785
+    ],
+    [
+     0,
+     -3562
+    ],
+    [
+     247326,
+     0
+    ],
+    [
+     3683,
+     -1304651764
+    ],
+    [
+     463634,
+     4289
+    ],
+    [
+     370903,
+     -1799000080
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      3246,
+      787319
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -279
+    },
+    {
+     "amax_history": [
+      3246,
+      0
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      247326,
+      0
+     ],
+     "cursor": 1,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      247326,
+      3683
+     ],
+     "cursor": 0,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      463634,
+      3683
+     ],
+     "cursor": 1,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      463634,
+      370903
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": -448
+    }
+   ]
+  },
+  {
+   "state_index": 18,
+   "pairs": [
+    [
+     3314,
+     -1353444512
+    ],
+    [
+     0,
+     -65651153
+    ],
+    [
+     1024312,
+     1096824939
+    ],
+    [
+     903,
+     3217
+    ],
+    [
+     1511,
+     -4215
+    ],
+    [
+     333006,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      3314,
+      3528
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      3314,
+      0
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      1024312,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      1024312,
+      903
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1511,
+      903
+     ],
+     "cursor": 1,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": -2
+    },
+    {
+     "amax_history": [
+      1511,
+      333006
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 19,
+   "pairs": [
+    [
+     0,
+     3434
+    ],
+    [
+     497472,
+     0
+    ],
+    [
+     0,
+     4827
+    ],
+    [
+     0,
+     -1012485199
+    ],
+    [
+     1481,
+     4243
+    ],
+    [
+     0,
+     455071108
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      1875
+     ],
+     "cursor": 1,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 1
+    },
+    {
+     "amax_history": [
+      0,
+      497472
+     ],
+     "cursor": 0,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      497472
+     ],
+     "cursor": 1,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      1481,
+      0
+     ],
+     "cursor": 1,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 2
+    },
+    {
+     "amax_history": [
+      1481,
+      0
+     ],
+     "cursor": 0,
+     "scale": 8192,
+     "inverse_scale": 2048,
+     "quantized": 448
+    }
+   ]
+  },
+  {
+   "state_index": 20,
+   "pairs": [
+    [
+     0,
+     121755038
+    ],
+    [
+     670858,
+     4100
+    ],
+    [
+     217407,
+     1000825436
+    ],
+    [
+     3080,
+     2855
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     950341,
+     1519796638
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      912547
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 116
+    },
+    {
+     "amax_history": [
+      0,
+      670858
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      217407,
+      670858
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      217407,
+      3080
+     ],
+     "cursor": 0,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      3080
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      950341
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    }
+   ]
+  },
+  {
+   "state_index": 21,
+   "pairs": [
+    [
+     0,
+     -1848
+    ],
+    [
+     0,
+     119
+    ],
+    [
+     0,
+     995
+    ],
+    [
+     1011993,
+     1043782753
+    ],
+    [
+     2129,
+     -899755840
+    ],
+    [
+     3478,
+     1686
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      579682
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 119
+    },
+    {
+     "amax_history": [
+      0,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      1011993
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      2129,
+      1011993
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      2129,
+      3478
+     ],
+     "cursor": 0,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 22,
+   "pairs": [
+    [
+     661651,
+     3833
+    ],
+    [
+     1270,
+     0
+    ],
+    [
+     812283,
+     0
+    ],
+    [
+     2282,
+     709
+    ],
+    [
+     0,
+     1322281782
+    ],
+    [
+     0,
+     572495402
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      661651,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      661651,
+      1270
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      812283,
+      1270
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      812283,
+      2282
+     ],
+     "cursor": 0,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      2282
+     ],
+     "cursor": 1,
+     "scale": 4096,
+     "inverse_scale": 4096,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      0
+     ],
+     "cursor": 0,
+     "scale": 16777216,
+     "inverse_scale": 1,
+     "quantized": 448
+    }
+   ]
+  },
+  {
+   "state_index": 23,
+   "pairs": [
+    [
+     0,
+     0
+    ],
+    [
+     3461,
+     -564966735
+    ],
+    [
+     269677,
+     2283
+    ],
+    [
+     0,
+     98950242
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     2972,
+     -2669
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      3461,
+      0,
+      0,
+      0,
+      0,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      3461,
+      269677,
+      0,
+      0,
+      0,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      3461,
+      269677,
+      0,
+      0,
+      0,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 94
+    },
+    {
+     "amax_history": [
+      0,
+      3461,
+      269677,
+      0,
+      0,
+      0,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      3461,
+      269677,
+      0,
+      0,
+      2972,
+      0,
+      654256,
+      2681,
+      245,
+      947618,
+      0
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 24,
+   "pairs": [
+    [
+     371,
+     4002
+    ],
+    [
+     0,
+     -1382376334
+    ],
+    [
+     959268,
+     3835
+    ],
+    [
+     934828,
+     -4698
+    ],
+    [
+     533907,
+     0
+    ],
+    [
+     0,
+     1221261675
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      371,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 1,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      371,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 2,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      371,
+      0,
+      959268,
+      0,
+      0,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      371,
+      0,
+      959268,
+      934828,
+      0,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      371,
+      0,
+      959268,
+      934828,
+      533907,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      371,
+      0,
+      959268,
+      934828,
+      533907,
+      0,
+      0,
+      406446,
+      2271,
+      3952,
+      179467,
+      2776
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    }
+   ]
+  },
+  {
+   "state_index": 25,
+   "pairs": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1862098745
+    ],
+    [
+     486686,
+     -4035
+    ],
+    [
+     2645,
+     -1795
+    ],
+    [
+     3415,
+     0
+    ],
+    [
+     3773,
+     -3024
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 1,
+     "scale": 128,
+     "inverse_scale": 131072,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 2,
+     "scale": 128,
+     "inverse_scale": 131072,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      486686,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 3,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      486686,
+      2645,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 4,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      486686,
+      2645,
+      3415,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 5,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      486686,
+      2645,
+      3415,
+      3773,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1243,
+      241,
+      83793,
+      0,
+      3234
+     ],
+     "cursor": 6,
+     "scale": 32,
+     "inverse_scale": 524288,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 26,
+   "pairs": [
+    [
+     0,
+     4078
+    ],
+    [
+     699,
+     -914829616
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     415461,
+     839555082
+    ],
+    [
+     672803,
+     -2987
+    ],
+    [
+     2544,
+     4224
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      699,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      0,
+      699,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      699,
+      0,
+      415461,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      0,
+      699,
+      0,
+      415461,
+      672803,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      699,
+      0,
+      415461,
+      672803,
+      2544,
+      0,
+      0,
+      0,
+      0,
+      3230,
+      691945,
+      2620,
+      2963,
+      179,
+      2524
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 27,
+   "pairs": [
+    [
+     1347,
+     0
+    ],
+    [
+     852,
+     0
+    ],
+    [
+     2049,
+     0
+    ],
+    [
+     705,
+     0
+    ],
+    [
+     1712,
+     2028
+    ],
+    [
+     56466,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      1347,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1347,
+      852,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1347,
+      852,
+      2049,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1347,
+      852,
+      2049,
+      705,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1347,
+      852,
+      2049,
+      705,
+      1712,
+      0,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      1347,
+      852,
+      2049,
+      705,
+      1712,
+      56466,
+      0,
+      0,
+      0,
+      0,
+      687767,
+      216,
+      1007197,
+      0,
+      130455,
+      0
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 28,
+   "pairs": [
+    [
+     0,
+     321
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     2693,
+     0
+    ],
+    [
+     637016,
+     0
+    ],
+    [
+     441302,
+     -750
+    ],
+    [
+     420617,
+     -3855
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 1,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 2,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      2693,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 3,
+     "scale": 64,
+     "inverse_scale": 262144,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      2693,
+      637016,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      2693,
+      637016,
+      441302,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      2693,
+      637016,
+      441302,
+      420617,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2819,
+      0,
+      3938,
+      221508,
+      241166
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 29,
+   "pairs": [
+    [
+     2016,
+     -1332
+    ],
+    [
+     696143,
+     -3734
+    ],
+    [
+     1533,
+     -788
+    ],
+    [
+     2569,
+     0
+    ],
+    [
+     0,
+     4047
+    ],
+    [
+     307723,
+     2312
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      2016,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2016,
+      696143,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2016,
+      696143,
+      1533,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2016,
+      696143,
+      1533,
+      2569,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2016,
+      696143,
+      1533,
+      2569,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2016,
+      696143,
+      1533,
+      2569,
+      0,
+      307723,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 30,
+   "pairs": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     4835
+    ],
+    [
+     0,
+     1150
+    ],
+    [
+     608,
+     0
+    ],
+    [
+     272029,
+     2695
+    ],
+    [
+     1026372,
+     -2861
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      608,
+      0,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      608,
+      272029,
+      0,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      0,
+      0,
+      0,
+      608,
+      272029,
+      1026372,
+      862235,
+      475,
+      0,
+      656,
+      668037,
+      3835
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  },
+  {
+   "state_index": 31,
+   "pairs": [
+    [
+     2998,
+     632219094
+    ],
+    [
+     520988,
+     -534065340
+    ],
+    [
+     0,
+     -1011
+    ],
+    [
+     267981,
+     0
+    ],
+    [
+     0,
+     1636042017
+    ],
+    [
+     697618,
+     0
+    ]
+   ],
+   "trace": [
+    {
+     "amax_history": [
+      2998,
+      0,
+      0,
+      0,
+      0,
+      0,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 1,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      2998,
+      520988,
+      0,
+      0,
+      0,
+      0,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 2,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": -448
+    },
+    {
+     "amax_history": [
+      2998,
+      520988,
+      0,
+      0,
+      0,
+      0,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 3,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2998,
+      520988,
+      0,
+      267981,
+      0,
+      0,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 4,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    },
+    {
+     "amax_history": [
+      2998,
+      520988,
+      0,
+      267981,
+      0,
+      0,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 5,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 448
+    },
+    {
+     "amax_history": [
+      2998,
+      520988,
+      0,
+      267981,
+      0,
+      697618,
+      344196,
+      1808,
+      539252,
+      2991,
+      0,
+      3645
+     ],
+     "cursor": 6,
+     "scale": 16,
+     "inverse_scale": 1048576,
+     "quantized": 0
+    }
+   ]
+  }
+ ]
+}

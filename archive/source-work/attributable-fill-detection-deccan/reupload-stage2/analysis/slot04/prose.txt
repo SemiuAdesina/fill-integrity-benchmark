@@ -1,0 +1,60 @@
+[step 2] I'll start by reading the specification documents and understanding the current state of the code.
+
+[step 14] Now I have the full picture. Let me enumerate the defects against the spec, then fix them.
+
+**`fill_classifier.rs`**: (1) `in_window` treats the end as inclusive; (2) `absorb_event` adds cumulative quantities instead of taking a high-water mark; (3) `absorb_block` orders by `order_id` only, gives the whole remainder to the largest order, and lets finalized orders into the basis; (4) `locate` resolves `order_id` before `client_ref` (the recyclable key).
+
+**`cycle.rs`**: (5) `close_gap` omits the "still working in committed neutralizations" term; (6) `Unconfirmed` legs fall through to neutralization; (7) a lost acknowledgement drops the record and would retry under a fresh `client_ref`.
+
+[step 16] Now the block division — the ordering, the basis, and the remainder:
+
+[step 18] Now the neutralization record needs to remember when the order was first committed, so an acknowledgement-lost retry keeps the original attribution window:
+
+[step 19] Now `reconcile_neutralizations` — identity recovery and the retry-under-the-same-reference rule:
+
+[step 25] Now the `has` helper on the ledger and the `SubmitError` import:
+
+[step 29] The diagnostics pass except one — and it's a genuine conflict between the aid and the spec. Let me check it carefully.
+
+The failing test `a_later_block_divides_over_the_residuals_of_the_earlier_one` expects a **second** block to re-allocate to orders the **first** block already covered (8→9, 22→26). But the spec is explicit on exactly this point:
+
+> A finalized order will never acquire another base unit... **It therefore contributes no outstanding quantity to a later block's basis** (`reconciliation-contract.md`, *Block finality*)
+
+Under the spec, block `bA` finalizes both `o1` and `o2`, so `bB`'s eligible set is empty and nothing further is allocated (8/22). The test's own assertion message says it's checking the *basis* rule; the finality interaction looks like an oversight in the aid. The spec is the stated authority, so I'll fix the aid to check both rules separately:
+
+[step 33] Both aids pass. Now let me review the whole cycle for the interaction cases the graded suite combines.
+
+[step 34] Let me add diagnostics for the interaction cases the graded suite combines — progress after a correction, rejection retry, and a restart mid-closure:
+
+[step 36] Let me add one more probe: the window must be tested against the venue's match timestamp, not the cycle that reads it — a late arrival, and a stale one.
+
+[step 40] One more hardening pass: the venue recycles identifiers, so with two of the engine's own records sharing an id, the match time must decide which one a block names.
+
+[step 56] Only the intended files changed (`src/lib.rs` was just touched to force a rebuild). Let me do a final read of the core block-division logic:
+
+[step 57] Final verification across all three aids:
+
+[step 58] The tree builds clean, 23/23 diagnostics pass, and 14/14 reproducer checks pass.
+
+## What was wrong and what I changed
+
+**`src/engine/fill_classifier.rs`** — how observations are read:
+
+- **Window end** was `at <= start + ATTRIBUTION_WINDOW`, making the interval closed. The half-open rule means an observation exactly at the end names an identifier the venue has already recycled. Now `at < start + window` (start stays inclusive).
+- **Fill events** did `direct_filled += cumulative_filled_qty`. That figure is the order's running total, not an increment, and the feed delivers at-least-once — so replays inflated the order and the two sources double-counted the same base units. Now a high-water mark, which is also what makes the feed and the open-order list describe one quantity rather than two.
+- **Block division** had three faults: the eligible set was ordered by `order_id` alone (spec: window start, then `venue_seq`, then `order_id`); the truncated remainder went entire to the largest order (spec: one unit each to the first `r` orders in that ordering); and finalized orders still contributed outstanding quantity to the basis.
+- **Identity resolution** preferred `order_id` over `client_ref`. The venue recycles ids, so the engine's own reference is now primary, with the id as a fallback resolved *through the match time* (`index_of_order_at`). Blocks resolve each covered id the same way, so a recycled id can't silently pick the older record.
+
+**`src/engine/cycle.rs`** — derived quantities:
+
+- **`close_gap`** computed `gap = size - acquired`, omitting the third term of the residual. Consecutive cycles therefore sent the same exposure twice. Now `residual = size − attributed − working`, where an acknowledged corrective contributes its outstanding quantity, an unacknowledged one its full size, and a finalized one nothing.
+- An **unconfirmed leg** fell through to neutralization alongside `Withdrawn`. It now returns early — neutralizing quantity the desk already owns doubles the exposure.
+- A **lost acknowledgement** dropped the record, so the next cycle minted a fresh `client_ref` and placed the same economic exposure twice. The record now survives, is retried under the same reference, and counts its full size as working meanwhile. A rejection still voids it, leaving the exposure open to a later attempt.
+
+**`src/types/snapshot.rs`** — `NeutralizationRecord` gained `submitted_at`, so a retried order keeps the window that opened at the first attempt, not the retry.
+
+## One conflict between the aids and the spec
+
+`a_later_block_divides_over_the_residuals_of_the_earlier_one` expected a second block to re-allocate to orders the first had already covered (8→9, 22→26). That contradicts *Block finality*: "It therefore **contributes no outstanding quantity to a later block's basis**." I followed the spec (8/22) and split the aid into two checks — one for the basis rule using a fill event to reduce outstanding, one asserting finality directly — with a comment recording why. The original expectation matches neither the old code nor either reading, so it looks like an oversight in the aid rather than a third position.
+
+Two caveats worth stating: I left mandate *entry* latching alone — a rejected leg submission still isn't retried. The contract's "not latched shut" language sits in the submission-outcomes section whose terms ("the exposure that attempt was meant to cover", "recompute the residual") are neutralization-specific, and `enter_new_strategies` isn't among the eleven readings `source-map.md` flags. Also, a block that finalizes a *resting* leg leaves it unconfirmed rather than withdrawn, so that residual goes uncovered — that follows the unconditional "an unconfirmed leg is never neutralized against", though it does trade progress for safety.

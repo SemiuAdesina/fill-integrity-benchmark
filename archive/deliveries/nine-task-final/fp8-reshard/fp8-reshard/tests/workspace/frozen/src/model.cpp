@@ -1,0 +1,7 @@
+#include "fp8/state.hpp"
+#include <algorithm>
+#include <cstdlib>
+#include <limits>
+#include <sstream>
+#include <stdexcept>
+namespace fp8 {std::vector<int64_t> chronological(const SourceState&s){if(s.history.empty()||s.cursor>=s.history.size())throw std::invalid_argument("cursor");std::vector<int64_t>o;for(size_t i=0;i<s.history.size();++i)o.push_back(s.history[(s.cursor+i)%s.history.size()]);return o;}Step cpu_step(const Restored&in,int64_t amax,int64_t value_q){if(in.history.empty()||in.cursor>=in.history.size()||amax<0||std::llabs(value_q)>1000000000LL)throw std::invalid_argument("step");Step o;o.state=in;o.state.history[in.cursor]=amax;o.state.cursor=(in.cursor+1)%in.history.size();int64_t peak=1;for(auto x:o.state.history){if(x==std::numeric_limits<int64_t>::min())throw std::overflow_error("magnitude");int64_t magnitude=x<0?-x:x;peak=std::max(peak,magnitude);}int64_t p=1;while(p<peak){if(p>(1LL<<60))throw std::overflow_error("peak");p*=2;}o.state.inverse_scale_q=p;o.state.scale_q=1024/p;int64_t raw=value_q*o.state.scale_q/1024;if(raw>127)raw=127;if(raw<-127)raw=-127;o.quantized=raw;return o;}std::string bytes(const std::vector<Restored>&v){std::ostringstream o;for(auto&s:v){o<<s.target.tensor<<'|'<<s.target.tie<<'|'<<(int)s.target.role<<'|'<<s.target.stage<<'|'<<s.target.shard<<'|'<<s.scale_q<<'|'<<s.inverse_scale_q<<'|'<<s.cursor<<'|';for(auto x:s.history)o<<x<<',';o<<';';}return o.str();}}

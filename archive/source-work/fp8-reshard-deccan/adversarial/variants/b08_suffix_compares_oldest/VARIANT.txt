@@ -1,0 +1,3 @@
+b08_suffix_compares_oldest
+consistency
+compares the oldest samples instead of the newest

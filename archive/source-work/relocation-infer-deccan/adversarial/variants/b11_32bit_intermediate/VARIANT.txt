@@ -1,0 +1,3 @@
+b11_32bit_intermediate
+arithmetic
+the expression is evaluated in 32-bit two's-complement arithmetic

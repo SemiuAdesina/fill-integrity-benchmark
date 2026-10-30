@@ -1,0 +1,10 @@
+OUTCOME
+attempt|ref=0|strategy=m8|instrument=tM|venue=North|kind=RestingLimit|price=0.100000000000|size=50|result=accepted
+attempt|ref=1|strategy=m8|instrument=tN|venue=South|kind=RestingLimit|price=0.870000000000|size=6|result=accepted
+venue-order|ref=0|strategy=m8|instrument=tM|venue=North|kind=RestingLimit|price=0.100000000000|size=50|filled=50|live=false|cancelled=false
+venue-order|ref=1|strategy=m8|instrument=tN|venue=South|kind=RestingLimit|price=0.870000000000|size=6|filled=6|live=false|cancelled=false
+cancelled-count=0
+position|strategy=m8|north=50|south=6|north-price=0.100000000000|south-price=0.870000000000|pair-cost=0.970000000000|notional=10.220000000000|expiry=1086400000|created=1000020000
+inventory|instrument=tM|qty=50
+inventory|instrument=tN|qty=6
+END

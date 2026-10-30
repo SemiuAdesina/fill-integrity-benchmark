@@ -1,0 +1,9 @@
+[package]
+name="convex_model"
+version="0.1.0"
+edition="2021"
+publish=false
+[lib]
+name="convex_model"
+path="src/lib.rs"
+[dependencies]

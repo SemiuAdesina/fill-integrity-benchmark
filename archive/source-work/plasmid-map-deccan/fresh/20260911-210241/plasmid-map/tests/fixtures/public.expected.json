@@ -1,0 +1,90 @@
+{
+ "fixture": "public",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 657,
+  "insert_length": 3510,
+  "cuts": {
+   "ApaI": [
+    4173
+   ],
+   "ClaI": [
+    2419,
+    4194
+   ],
+   "SspI": [
+    19,
+    828,
+    1109,
+    1575,
+    6360
+   ],
+   "XhoI": [
+    4178
+   ]
+  },
+  "held_out": {
+   "ApaI+XhoI": [
+    {
+     "length": 6466,
+     "multiplicity": 1
+    }
+   ],
+   "SspI+XhoI": [
+    {
+     "length": 281,
+     "multiplicity": 1
+    },
+    {
+     "length": 466,
+     "multiplicity": 1
+    },
+    {
+     "length": 809,
+     "multiplicity": 1
+    },
+    {
+     "length": 2182,
+     "multiplicity": 1
+    },
+    {
+     "length": 2603,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 4,
+ "deviation": 13589,
+ "held_out_truth": {
+  "SspI+XhoI": [
+   {
+    "length": 278,
+    "multiplicity": 1
+   },
+   {
+    "length": 458,
+    "multiplicity": 1
+   },
+   {
+    "length": 810,
+    "multiplicity": 1
+   },
+   {
+    "length": 2157,
+    "multiplicity": 1
+   },
+   {
+    "length": 2613,
+    "multiplicity": 1
+   }
+  ],
+  "ApaI+XhoI": [
+   {
+    "length": 6474,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 2
+}

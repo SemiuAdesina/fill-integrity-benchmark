@@ -1,0 +1,11 @@
+slot01                               PASS                 22.92s 
+slot02                               PASS                 18.76s 
+slot03                               PASS                 29.56s 
+slot04                               PASS                 18.78s 
+slot05                               PASS                 94.57s 
+slot06                               PASS                 12.46s 
+slot07                               PASS                 15.36s 
+slot08                               PASS                 30.22s 
+ref_v5                               PASS                 75.77s 
+v16_prune_ties                       PASS                 76.45s 
+v18_first_found_tie                  PASS                 76.07s 

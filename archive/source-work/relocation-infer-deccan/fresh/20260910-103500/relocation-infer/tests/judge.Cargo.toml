@@ -1,0 +1,24 @@
+# Verifier-private judge build. Contains no probe target or candidate source.
+[package]
+name = "reloc-verifier"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "verifier_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "judge"
+path = "src/bin/judge/main.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

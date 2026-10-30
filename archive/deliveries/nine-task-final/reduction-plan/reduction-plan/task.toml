@@ -1,0 +1,44 @@
+schema_version = "1.3"
+artifacts = ["/app"]
+
+[task]
+name = "reduction-plan"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["cpp", "accelerator-fabric", "in-network-reduction", "discrete-event", "global-search"]
+expert_time_estimate_hours = 3.0
+difficulty_explanation = """
+Recovery couples route selection, combine placement, exact link serialization,
+accumulator lifetime, saturating reduction order, and canonical symmetry. Local
+shortest routes and locally legal combines can contradict observed bytes or the
+globally minimum completion time. The compound case uses an accumulator exactly
+at capacity, symmetric children, an equal-cost route, and replay-only traffic.
+This resembles the work of an accelerator-fabric or distributed-collective
+communications engineer diagnosing why an apparently valid routing plan fails
+under exact capacity, traffic-accounting and completion-order constraints.
+"""
+solution_explanation = """
+The reference enumerates bounded simple source-to-sink paths, rejects route sets
+that do not induce one legal reduction tree, enumerates combine placements, and
+replays each plan with the public deterministic event model. It filters all
+observations and applies the exact objective and canonical tie.
+"""
+verification_explanation = """
+A separate verifier compiles the one allow-listed candidate source against a
+pristine public header and verifier-owned semantic tests. Tests document link
+accounting, capacity equality, saturation order, event ordering, symmetry,
+global recovery, derived values and the compound case. Reward is fail-closed.
+"""
+[verifier]
+environment_mode = "separate"
+timeout_sec = 900
+[agent]
+timeout_sec = 7000
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

@@ -1,0 +1,6 @@
+path:    /Users/macbok/Downloads/polyploid-phase-deccan-stage1-final.zip
+bytes:   179326
+sha256:  79fad00686f70c7085b37f9108101db0f43237b6b66c01053d9d3c7da153cb35
+members: 108
+roots:   polyploid-phase 
+symlinks in archive: 0

@@ -1,0 +1,81 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[8] WRITE /app/include/roundel/runtime.hpp -> W ok
+    SNAPSHOT 012 step8 762b8d14c26c
+[9] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 013 step9 11bd4f7ac3de
+[10] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tai :: 
+[11] BASH rc=0 0.0s :: grep -E "CXX_COMPILER:|CXX_FLAGS" /app/build/CMakeCache.txt | head -5; c++ --version | head -2 :: /usr/bin/c++ CMAKE_CXX_FLAGS:STRING= CMAKE_CXX_FLAGS_DEBUG:STRING=-g CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG 
+[12] BASH rc=0 0.0s :: env | grep -i -E "cxx|cc=|flags" ; echo "---"; cd /tmp && rm -rf b1 && cmake -S /app -B /tmp/b1 -DCM :: --- 
+[13] BASH rc=0 0.0s :: /tmp/b1/roundel_demo 2>&1 | head -80 :: bash: line 1: /tmp/b1/roundel_demo: No such file or directory 
+[14] BASH rc=0 0.0s :: cd /tmp && rm -rf basan && cmake -S /app -B /tmp/basan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=O :: exit=127 bash: line 1: /tmp/basan/roundel_demo: No such file or directory 
+[15] BASH rc=0 0.0s :: head -60 /tmp/asan_demo.txt :: bash: line 1: /tmp/basan/roundel_demo: No such file or directory 
+[16] BASH rc=0 0.0s :: cd /tmp && printf '#include <cstdio>\nint main(){int* p=new int[10]; p[0]=1; std::printf("ok %%d\\n" :: exit=127 bash: line 1: ./hello: No such file or directory 
+[17] BASH rc=0 0.0s :: cd /tmp && ./hello 2>&1 | head -3; echo "exit=${PIPESTATUS[0]}"; ASAN_OPTIONS=detect_leaks=0 ./hello :: bash: line 1: ./hello: No such file or directory exit=127 bash: line 1: ./hello: No such file or directory 
+[18] BASH rc=0 0.0s :: cd /tmp && /tmp/basan/roundel_demo > /tmp/asan_demo.txt 2>&1; echo "exit=$?"; cat /tmp/asan_demo.txt :: exit=127 bash: line 1: /tmp/basan/roundel_demo: No such file or directory 
+[19] WRITE /tmp/t/trace.hpp -> W ok
+[20] WRITE /tmp/t/trace.hpp -> W ok
+[21] EDIT /tmp/t/trace.hpp -> E ok
+[22] WRITE /tmp/t/main.cpp -> W ok
+[23] EDIT /tmp/t/main.cpp -> E ok
+[23] EDIT /tmp/t/main.cpp -> E ok
+[24] EDIT /tmp/t/main.cpp -> E ok
+[25] EDIT /tmp/t/main.cpp -> E ok
+[26] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o plain main.cpp /ap :: 
+[27] BASH rc=0 0.0s :: cd /tmp/t && sed -i 's/launch(two_parks)/launch(two_parks())/g; s/launch(parent_two)/launch(parent_t :: 292:    me = c.launch(early_poster(&c, &me)); 456:        me = c.launch(self_canceller(&c, &me)); 471:        me = c.launch(self_canceller_then_park(&c, &me)); 
+[28] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o plain main.cpp /ap :: bash: line 1: ./plain: No such file or directory 
+[29] EDIT /tmp/t/main.cpp -> E ok
+[30] EDIT /tmp/t/main.cpp -> E ok
+[31] EDIT /tmp/t/main.cpp -> E ok
+[32] EDIT /tmp/t/main.cpp -> E ok
+[33] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o plain main.cpp /ap :: bash: line 1: ./plain: No such file or directory 
+[34] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -fno-om :: exit=127 bash: line 1: ./san: No such file or directory 
+[35] WRITE /tmp/t/edge.cpp -> W ok
+[36] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o edge edge.cpp /app :: bash: line 1: ./edge: No such file or directory 
+[37] BASH rc=127 0.0s :: cd /tmp/t && python3 - <<'EOF' import re s = open('edge.cpp').read() # move child() above parent_one :: bash: line 20: ./edge: No such file or directory 
+[38] BASH rc=0 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -fno-om :: exit=127 bash: line 1: ./edgesan: No such file or directory 
+[39] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 044 step39 131809a5be6e
+[40] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 045 step40 2de6c991dc39
+[41] BASH rc=127 0.0s :: cd /tmp/t && for f in main edge; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/includ :: bash: line 1: ./main: No such file or directory bash: line 1: ./edge: No such file or directory 
+[42] WRITE /tmp/t/nested.cpp -> W ok
+[43] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o nested nested.cpp  :: bash: line 1: ./nested: No such file or directory 
+[44] EDIT /tmp/t/nested.cpp -> E ok
+[45] BASH rc=127 0.0s :: cd /tmp/t && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o nested nested.cpp  :: bash: line 1: ./nested: No such file or directory 
+[46] BASH rc=0 0.0s :: cd /tmp/t && for f in main edge nested; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsani :: 7 bash: line 1: ./main_san: No such file or directory bash: line 1: ./edge_san: No such file or directory bash: line 1: ./nested_san: No such file or directory 
+[47] BASH rc=127 0.0s :: cd /tmp/t && which gdb; ASAN_OPTIONS=fast_unwind_on_fatal=1 ./nested_san 2>&1 | tail -5; echo "---pl :: bash: line 1: ./nested_san: No such file or directory ---plain again--- bash: line 1: ./nested: No such file or directory 
+[48] BASH rc=0 0.0s :: cd /tmp/t && for i in 1 2 3 4 5; do ./nested_san > /dev/null 2>&1; echo "run $i exit=$?"; done :: run 1 exit=127 run 2 exit=127 run 3 exit=127 run 4 exit=127 run 5 exit=127 
+[49] BASH rc=0 0.0s :: cd /tmp/t && for i in $(seq 1 15); do ./nested_san > /tmp/t/out.$i.txt 2>&1 || { echo "failed on run :: failed on run 1 --- 54 /tmp/t/fail.txt bash: line 1: ./nested_san: No such file or directory 
+[50] BASH rc=0 0.0s :: cd /tmp/t && for f in main_san edge_san nested_san; do fails=0; for i in $(seq 1 15); do ./$f > /dev :: main_san: 15/15 failed edge_san: 15/15 failed nested_san: 15/15 failed 
+[51] BASH rc=0 0.0s :: cd /tmp/t && fails=0; for i in $(seq 1 30); do ./hello > /dev/null 2>&1 || fails=$((fails+1)); done; :: hello(as control): 30/30 main_san no-leak-check: 20/20 
+[52] BASH rc=0 0.0s :: cd /tmp && printf '#include <cstdio>\n#include <cstdlib>\nint main(){int* p=new int[4]; delete[] p;  :: bash: line 1: ./uaf: No such file or directory exit=0 
+[53] BASH rc=0 0.0s :: cd /tmp && for opt in "fast_unwind_on_fatal=1" "symbolize=0" "symbolize=0:fast_unwind_on_fatal=1" "u :: ast_unwind_on_fatal=1 bash: line 1: ./uaf: No such file or directory (exit 127) === use_sigaltstack=0 bash: line 1: ./uaf: No such file or directory (exit 127) 
+[54] BASH rc=0 0.0s :: cd /tmp/t && export ASAN_OPTIONS="fast_unwind_on_fatal=1"; for f in main_san edge_san nested_san; do :: _main_san.txt <== bash: line 1: ./main_san: No such file or directory  ==> /tmp/t/fail_nested_san.txt <== bash: line 1: ./nested_san: No such file or directory 
+[55] BASH rc=0 0.0s :: cd /tmp/t && export ASAN_OPTIONS="symbolize=0:fast_unwind_on_fatal=1"; fails=0; for i in $(seq 1 12) :: main_san: 12/12 bash: line 1: ./main_san: No such file or directory 
+[56] BASH rc=0 0.0s :: cd /tmp/t && cat > min.cpp <<'EOF' #include "trace.hpp" Duty simple() { co_return co_await park(); } :: min: 20/20 bash: line 19: ./min: No such file or directory 
+[57] BASH rc=0 0.0s :: cd /tmp/t && cat > noop.cpp <<'EOF' #include <cstdio> #include "roundel/runtime.hpp" int main() { st :: noop(linked, no work): 20/20 bash: line 6: ./noop: No such file or directory 
+[58] BASH rc=2 0.1s :: cd /tmp/t && export ASAN_OPTIONS="symbolize=0:fast_unwind_on_fatal=1"; for f in main_san edge_san ne :: main_san: 0/25 clean runs, 0 real ASAN findings edge_san: 0/25 clean runs, 0 real ASAN findings nested_san: 0/25 clean runs, 0 real ASAN findings 
+[59] EDIT /tmp/t/trace.hpp -> E ok
+[60] BASH rc=127 0.0s :: cd /tmp/t && for f in main edge nested; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app :: bash: line 1: ./main: No such file or directory bash: line 1: ./edge: No such file or directory bash: line 1: ./nested: No such file or directory 
+[61] BASH rc=127 0.0s :: cd /tmp/t && python3 - <<'EOF' s = open('trace.hpp').read() s = s.replace(""" for (const auto& e : j :: bash: line 24: ./main: No such file or directory bash: line 24: ./edge: No such file or directory bash: line 24: ./nested: No such file or directory 
+[62] BASH rc=0 0.0s :: cd /tmp/t && python3 - <<'EOF' s = open('trace.hpp').read() s = s.replace(""" check(e.mark == Mark:: ::       1 bash: line 11: ./main: No such file or directory 
+[63] BASH rc=0 0.0s :: cd /tmp/t && for f in edge nested; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/incl ::       1 bash: line 1: ./edge: No such file or directory       1 bash: line 1: ./nested: No such file or directory 
+[65] BASH rc=0 0.0s :: which clang++ g++-12 2>/dev/null; ls /usr/bin | grep -iE "^clang" | head; cd /tmp && rm -rf b2 && cm :: g-17 clang-apply-replacements clang-apply-replacements-17 clang-change-namespace clang-change-namespace-17 clang-check clang-check-17 release build ok O2 clean 
+[66] BASH rc=0 0.0s :: cd /tmp/t && clang++ --version | head -2; for f in main edge nested; do clang++ -std=c++20 -Wall -We :: bash: line 1: ./c_main: No such file or directory bash: line 1: ./c_edge: No such file or directory bash: line 1: ./c_nested: No such file or directory 
+[67] BASH rc=2 0.0s :: cd /tmp/t && for f in main edge nested; do clang++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -f :: clang main: 0/10 clean, 0 findings clang edge: 0/10 clean, 0 findings clang nested: 0/10 clean, 0 findings 
+[68] BASH rc=0 0.0s :: cd /tmp/t && python3 - <<'EOF' s = open('edge.cpp').read() s = s.replace("""void t_fault_later() {"" :: bash: line 28: ./edge: No such file or directory 
+[70] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 075 step70 eaad27017006
+[71] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 076 step71 49c7672696f2
+[72] BASH rc=0 0.0s :: cd /tmp/t && for f in main edge nested; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app :: rectory bash: line 1: ./c_edge: No such file or directory bash: line 1: ./nested: No such file or directory bash: line 1: ./c_nested: No such file or directory 
+[73] BASH rc=0 0.0s :: cd /tmp/t && for f in main edge nested; do clang++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -f ::  exit 127 for nested nonzero exit 127 for nested nonzero exit 127 for nested nonzero exit 127 for nested nonzero exit 127 for nested clang sanitizer sweep done 
+[74] BASH rc=0 0.0s :: grep -rn "fno-color-diagnostics" /app/build/ 2>/dev/null | head -5; echo "---env---"; env | grep -i  :: /build/CMakeFiles/roundel_demo.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20 ---env--- CMAKE_COLOR_DIAGNOSTICS=OFF 
+[75] BASH rc=2 0.0s :: grep -h "^CXX_FLAGS" /tmp/b1/CMakeFiles/roundel.dir/flags.make /tmp/b2/CMakeFiles/roundel.dir/flags. :: grep: /tmp/b1/CMakeFiles/roundel.dir/flags.make: No such file or directory grep: /tmp/b2/CMakeFiles/roundel.dir/flags.make: No such file or directory 
+[76] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tai :: cket-rejected job=1 frame-released job=1 slot=0/1 [arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0  === child fails === [outcome] faulted 
+[77] BASH rc=0 0.0s :: rm -rf /app/build && cmake -S /app -B /app/build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake  :: bash: line 1: /app/build/roundel_demo: No such file or directory 
+[78] BASH rc=0 0.0s :: cmake -S /app -B /app/build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 &&  :: exit=127 0 bash: line 1: /app/build-asan/roundel_demo: No such file or directory 
+[80] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 085 step80 18970f44e785
+[81] BASH rc=0 0.0s :: cd /tmp/t && ok=1; for cc in g++ clang++; do for f in main edge nested; do $cc -std=c++20 -Wall -Wex :: o such file or directory bash: line 1: ./z: No such file or directory bash: line 1: ./z: No such file or directory bash: line 1: ./z: No such file or directory 

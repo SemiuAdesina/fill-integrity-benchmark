@@ -1,0 +1,3 @@
+b04_rel_style_addend_ignored
+ELF/addressing
+REL-style processing: r_addend ignored (assumed to be in the field)

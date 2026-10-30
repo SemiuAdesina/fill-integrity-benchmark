@@ -1,0 +1,92 @@
+180	
+181	    /// Resolve an observation to one of our submissions.
+182	    ///
+183	    /// The `client_ref` the engine chose is the primary key: it is the key the
+184	    /// engine always knows, and it is the only key that stays unambiguous when
+185	    /// the venue recycles an `order_id`. The venue's label is the fallback, and
+186	    /// it is how an observation reaches a submission the venue never
+187	    /// acknowledged — learning the id this way is what resolves a lost
+188	    /// acknowledgement later.
+189	    ///
+190	    /// A timestamped observation only resolves by `order_id` to a submission
+191	    /// whose own attribution window contains it. Outside that window the label
+192	    /// names some other order, and counting the observation is a
+193	    /// misattribution rather than a rounding matter.
+194	    fn resolve(
+195	        &mut self,
+196	        client_ref: &ClientRef,
+197	        order_id: &OrderId,
+198	        at: Option<Timestamp>,
+199	    ) -> Option<usize> {
+200	        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {
+201	            if self.submissions[index].order_id.is_none() {
+202	                self.submissions[index].order_id = Some(order_id.clone());
+203	            }
+204	            return Some(index);
+205	        }
+206	        self.locate_by_order(order_id, at)
+207	    }
+208	
+209	    /// The submission a venue label most plausibly names right now.
+210	    fn locate_by_order(&self, order_id: &OrderId, at: Option<Timestamp>) -> Option<usize> {
+211	        let mut candidates = self.indices_of_order(order_id);
+212	        if let Some(at) = at {
+213	            candidates.retain(|index| Self::in_window(&self.submissions[*index], at));
+214	        }
+215	        candidates.into_iter().max_by_key(|index| {
+216	            let record = &self.submissions[*index];
+217	            (record.window_start, *index)
+218	        })
+219	    }
+220	
+221	    /// Whether a venue match timestamp falls in this record's attribution window.
+222	    ///
+223	    /// The window is half-open, `[start, start + ATTRIBUTION_WINDOW)`: an
+224	    /// observation exactly at the start belongs to the order, one exactly at the
+225	    /// end does not. It is the venue's own match timestamp that is tested, never
+226	    /// the cycle in which the engine happened to read the observation.
+227	    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {
+228	        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW
+229	    }
+230	
+231	    /// Fold one polled batch into the ledger and advance the cursor.
+232	    ///
+233	    /// Returns the number of per-order events in the batch, which the engine
+234	    /// reports through `Engine::observed_fill_events`.
+235	    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {
+236	        let count = batch.events.len();
+237	        for event in batch.events {
+238	            self.absorb_event(event);
+239	        }
+240	        for block in batch.blocks {
+241	            self.absorb_block(block);
+242	        }
+243	        self.cursor = batch.next_cursor;
+244	        count
+245	    }
+246	
+247	    /// Fold one per-order fill event in.
+248	    ///
+249	    /// `cumulative_filled_qty` is the total that order has filled so far, not
+250	    /// the size of this particular match, and the feed may redeliver it, replay
+251	    /// it long afterwards or deliver it out of order. It is therefore a
+252	    /// high-water mark: repeated, replayed or stale readings move the mark and
+253	    /// never add quantity.
+254	    fn absorb_event(&mut self, event: FillEvent) {
+255	        let Some(index) = self.resolve(&event.client_ref, &event.order_id, Some(event.at)) else {
+256	            return;
+257	        };
+258	        if !Self::in_window(&self.submissions[index], event.at) {
+259	            return;
+260	        }
+261	        let record = &mut self.submissions[index];
+262	        if event.cumulative_filled_qty > record.direct_filled {
+263	            record.direct_filled = event.cumulative_filled_qty;
+264	        }
+265	    }
+266	
+267	    /// Divide one block match across the orders it covers.
+268	    ///
+269	    /// The venue reports only a total and names the orders it was matched
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/fill_classifier.rs", "content": "\n    /// Resolve an observation to one of our submissions.\n    ///\n    /// The `client_ref` the engine chose is the primary key: it is the key the\n    /// engine always knows, and it is the only key that stays unambiguous when\n    /// the venue recycles an `order_id`. The venue's label is the fallback, and\n    /// it is how an observation reaches a submission the venue never\n    /// acknowledged — learning the id this way is what resolves a lost\n    /// acknowledgement later.\n    ///\n    /// A timestamped observation only resolves by `order_id` to a submission\n    /// whose own attribution window contains it. Outside that window the label\n    /// names some other order, and counting the observation is a\n    /// misattribution rather than a rounding matter.\n    fn resolve(\n        &mut self,\n        client_ref: &ClientRef,\n        order_id: &OrderId,\n        at: Option<Timestamp>,\n    ) -> Option<usize> {\n        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {\n            if self.submissions[index].order_id.is_none() {\n                self.submissions[index].order_id = Some(order_id.clone());\n            }\n            return Some(index);\n        }\n        self.locate_by_order(order_id, at)\n    }\n\n    /// The submission a venue label most plausibly names right now.\n    fn locate_by_order(&self, order_id: &OrderId, at: Option<Timestamp>) -> Option<usize> {\n        let mut candidates = self.indices_of_order(order_id);\n        if let Some(at) = at {\n            candidates.retain(|index| Self::in_window(&self.submissions[*index], at));\n        }\n        candidates.into_iter().max_by_key(|index| {\n            let record = &self.submissions[*index];\n            (record.window_start, *index)\n        })\n    }\n\n    /// Whether a venue match timestamp falls in this record's attribution window.\n    ///\n    /// The window is half-open, `[start, start + ATTRIBUTION_WINDOW)`: an\n    /// observation exactly at the start belongs to the order, one exactly at the\n    /// end does not. It is the venue's own match timestamp that is tested, never\n    /// the cycle in which the engine happened to read the observation.\n    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {\n        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW\n    }\n\n    /// Fold one polled batch into the ledger and advance the cursor.\n    ///\n    /// Returns the number of per-order events in the batch, which the engine\n    /// reports through `Engine::observed_fill_events`.\n    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {\n        let count = batch.events.len();\n        for event in batch.events {\n            self.absorb_event(event);\n        }\n        for block in batch.blocks {\n            self.absorb_block(block);\n        }\n        self.cursor = batch.next_cursor;\n        count\n    }\n\n    /// Fold one per-order fill event in.\n    ///\n    /// `cumulative_filled_qty` is the total that order has filled so far, not\n    /// the size of this particular match, and the feed may redeliver it, replay\n    /// it long afterwards or deliver it out of order. It is therefore a\n    /// high-water mark: repeated, replayed or stale readings move the mark and\n    /// never add quantity.\n    fn absorb_event(&mut self, event: FillEvent) {\n        let Some(index) = self.resolve(&event.client_ref, &event.order_id, Some(event.at)) else {\n            return;\n        };\n        if !Self::in_window(&self.submissions[index], event.at) {\n            return;\n        }\n        let record = &mut self.submissions[index];\n        if event.cumulative_filled_qty > record.direct_filled {\n            record.direct_filled = event.cumulative_filled_qty;\n        }\n    }\n\n    /// Divide one block match across the orders it covers.\n    ///\n    /// The venue reports only a total and names the orders it was matched", "numLines": 90, "startLine": 180, "totalLines": 411}}

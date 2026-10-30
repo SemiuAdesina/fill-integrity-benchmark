@@ -1,0 +1,21 @@
+probe baseline exit=124 budget=300s (diagnostic only)
+probe baseline exceeded its budget; failing closed, no further candidate code is run
+probe artifacts=0/19
+reward reset to 0 after the probe phase
+FAIL a_required_output_document_holds_the_optimum
+FAIL b_haplotypes_respect_parent_dosage
+FAIL c_inheritance_states_are_ordered_pairs
+FAIL d_double_reduction_never_appears_where_forbidden
+FAIL e_double_reduction_is_used_where_it_is_optimal
+FAIL f_answers_are_in_canonical_form
+FAIL g_canonicalisation_remaps_paths_and_is_idempotent
+FAIL h_every_fixture_reaches_the_global_optimum
+FAIL i_marker_at_a_time_reconstruction_falls_short
+FAIL j_recombination_between_markers_is_accounted_for
+FAIL k_ties_resolve_to_the_documented_representative
+FAIL l_the_compound_case_is_solved
+FAIL m_answers_follow_the_supplied_cross
+CONTROL ok
+timing judge_build=2 runner_build=1 runner_execution=302 judge=0
+verdict passed=0/13 control=1 probe_failed_closed=1 reward=0
+final reward=0

@@ -1,0 +1,8 @@
+p6_M26N8_d3.5_r0.08_s1023                M=26 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M26N8_d2.5_r0.15_s1022                M=26 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M18N8_d2.5_r0.08_s1005                M=18 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M16N8_d3.5_r0.15_s1004                M=16 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M22N8_d3.5_r0.15_s1016                M=22 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M16N8_d2.5_r0.15_s1002                M=16 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M16N8_d2.5_r0.08_s1001                M=16 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-
+p6_M20N8_d3.5_r0.15_s1012                M=20 N=8   ref=timeout: 120.00s exp=- gap=nan warmgap=nan ties=- rr=- dr=- sw=-

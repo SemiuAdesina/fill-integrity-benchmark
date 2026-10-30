@@ -1,0 +1,124 @@
+
+//! The search.
+//!
+//! `solve` returns the reconstruction that maximises the total log likelihood
+//! over every parental haplotype assignment consistent with `parent_dosage` and
+//! every legal inheritance state path, in canonical form.
+//!
+//! The shape of the problem is what makes an exact answer reachable. Progeny are
+//! conditionally independent given the parental haplotypes, so if the haplotypes
+//! were known each progeny would be a plain Viterbi pass. They are not known,
+//! and all progeny share them, so the search branches on the parental allele
+//! columns and carries every progeny's dynamic programming forward together.
+//!
+//! Four things keep that affordable:
+//!
+//! - `parent_dosage` fixes each column's popcount, so a marker offers at most
+//!   six columns per parent rather than sixteen.
+//! - Only the emission term depends on the parental alleles. Transitions and
+//!   double reduction can be precomputed once and reused at every node.
+//! - Two admissible bounds on the remaining markers, one freeing the columns and
+//!   one freeing the path, prune any branch that cannot reach the incumbent.
+//! - Siblings are expanded best first, so a strong incumbent arrives early and
+//!   the bounds have something to prune against.
+//!
+//! Path recovery and canonical form are applied last, once, to the finished
+//! assignment.
+
+mod bounds;
+mod canonical;
+mod columns;
+mod pair_bound;
+mod path;
+mod progeny_dp;
+mod search;
+mod warm_start;
+
+use crate::cross_input::Cross;
+use crate::cross_model::{Haplotypes, Reconstruction, HOMOLOGS};
+
+use bounds::{MarkerBound, RemainingBound};
+use pair_bound::PairBound;
+use columns::Column;
+use progeny_dp::StaticTerms;
+use search::{admissible_pairs, Search};
+
+pub use canonical::canonicalise;
+pub use search::SearchStats;
+
+/// What one solve cost, for the tractability record in the build tooling.
+#[derive(Clone, Copy)]
+pub struct SolveStats {
+    pub search: SearchStats,
+    /// Exact score of the assignment the local search handed to the tree.
+    pub warm_total: f64,
+    pub warm_moves: u64,
+    pub warm_secs: f64,
+    pub search_secs: f64,
+}
+
+/// Finds the highest scoring reconstruction for a cross.
+pub fn solve(cross: &Cross) -> Reconstruction {
+    solve_counted(cross).0
+}
+
+/// As `solve`, and also reports what the search cost.
+///
+/// Kept beside `solve` rather than behind a feature or a debug flag, so the
+/// counts describe the same code path that produces shipped answers. Nothing in
+/// the objective depends on them.
+pub fn solve_counted(cross: &Cross) -> (Reconstruction, SolveStats) {
+    let terms = StaticTerms::build(cross);
+    let pairs = admissible_pairs(cross);
+
+    // A feasible assignment first. The bounds can only prune against an
+    // incumbent, so the tree is entered with one already in hand.
+    let t0 = std::time::Instant::now();
+    let warm = warm_start::warm_start(cross, &terms, &pairs);
+    let warm_secs = t0.elapsed().as_secs_f64();
+
+    let bounds: Vec<RemainingBound> = (0..cross.offspring)
+        .map(|c| RemainingBound::build(cross, &terms, c, &pairs))
+        .collect();
+    let marker_bound = MarkerBound::build(cross, &terms, &pairs);
+    let pair_bound = PairBound::build(cross, &terms, &pairs);
+
+    let t1 = std::time::Instant::now();
+    let best = Search::new(cross, &terms, &bounds, &marker_bound, &pair_bound, &pairs, &warm).run();
+    let search_secs = t1.elapsed().as_secs_f64();
+
+    let mut answer = Reconstruction {
+        haplotypes_a: haplotypes_from_columns(&best.columns_a),
+        haplotypes_b: haplotypes_from_columns(&best.columns_b),
+        paths: Vec::with_capacity(cross.offspring),
+    };
+
+    for c in 0..cross.offspring {
+        answer
+            .paths
+            .push(path::required_path(cross, c, &best.columns_a, &best.columns_b));
+    }
+
+    canonicalise(&mut answer);
+    (
+        answer,
+        SolveStats {
+            search: best.stats,
+            warm_total: warm.total,
+            warm_moves: warm.moves,
+            warm_secs,
+            search_secs,
+        },
+    )
+}
+
+/// Assembles one parent's haplotype rows from its per marker columns.
+fn haplotypes_from_columns(columns: &[Column]) -> Haplotypes {
+    let mut haps = Haplotypes::zeros(columns.len());
+    for (m, column) in columns.iter().enumerate() {
+        for h in 0..HOMOLOGS {
+            haps.set(h, m, column[h]);
+        }
+    }
+    haps
+}

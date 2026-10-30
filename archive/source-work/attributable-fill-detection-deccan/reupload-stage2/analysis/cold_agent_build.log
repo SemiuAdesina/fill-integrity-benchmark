@@ -1,0 +1,70 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 707B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#4 DONE 0.0s
+
+#5 [2/7] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 162.15kB 0.0s done
+#6 DONE 0.0s
+
+#7 [3/7] COPY Cargo.toml Cargo.lock ./
+#7 DONE 0.1s
+
+#8 [4/7] COPY src ./src
+#8 DONE 0.1s
+
+#9 [5/7] COPY spec ./spec
+#9 DONE 0.0s
+
+#10 [6/7] COPY tests ./tests
+#10 DONE 0.0s
+
+#11 [7/7] RUN cargo build --offline --all-targets
+#11 0.752    Compiling pairing_engine v0.1.0 (/app)
+#11 1.697 warning: unused imports: `ATTRIBUTION_WINDOW` and `QTY_UNIT`
+#11 1.697   --> tests/harness/mod.rs:59:64
+#11 1.697    |
+#11 1.697 59 |     Snapshot, StrategyCandidate, StrategyId, Timestamp, Venue, ATTRIBUTION_WINDOW, QTY_UNIT,
+#11 1.697    |                                                                ^^^^^^^^^^^^^^^^^^  ^^^^^^^^
+#11 1.697    |
+#11 1.697    = note: `#[warn(unused_imports)]` on by default
+#11 1.697 
+#11 1.700 warning: unused import: `QTY_UNIT`
+#11 1.700   --> tests/harness/mod.rs:59:84
+#11 1.700    |
+#11 1.700 59 |     Snapshot, StrategyCandidate, StrategyId, Timestamp, Venue, ATTRIBUTION_WINDOW, QTY_UNIT,
+#11 1.700    |                                                                                    ^^^^^^^^
+#11 1.700    |
+#11 1.700    = note: `#[warn(unused_imports)]` on by default
+#11 1.700 
+#11 2.649 warning: `pairing_engine` (test "direct_progress") generated 1 warning (run `cargo fix --test "direct_progress"` to apply 1 suggestion)
+#11 2.679 warning: `pairing_engine` (test "block_reconciliation") generated 1 warning (1 duplicate)
+#11 2.692 warning: `pairing_engine` (test "cross_mandate_isolation") generated 1 warning (run `cargo fix --test "cross_mandate_isolation"` to apply 1 suggestion)
+#11 2.705 warning: `pairing_engine` (test "restart_recovery") generated 1 warning (1 duplicate)
+#11 2.711 warning: `pairing_engine` (test "observation_identity") generated 1 warning (1 duplicate)
+#11 2.723 warning: `pairing_engine` (test "neutralization_lifecycle") generated 1 warning (1 duplicate)
+#11 2.723     Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.47s
+#11 DONE 3.2s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 0.2s done
+#12 writing image sha256:fecab34084e260ce37fd1b45b1e16646ff9c445586823bdfcb7b1bd172e4d4fd done
+#12 naming to docker.io/library/afd-agent:cold done
+#12 DONE 0.2s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/jz4tk4dlxa250a19mtw1na0ks

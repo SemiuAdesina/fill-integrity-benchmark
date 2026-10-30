@@ -1,0 +1,3 @@
+cfr2 oracle: reward=1 mode-of-reward=-rw-r--r-- 
+cfr2 nop: reward=0 mode-of-reward=-rw-r--r-- 
+DONE

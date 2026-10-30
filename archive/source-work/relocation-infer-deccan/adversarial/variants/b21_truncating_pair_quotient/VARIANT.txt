@@ -1,0 +1,3 @@
+b21_truncating_pair_quotient
+pairs
+the high half is the truncating quotient, the low half the signed rest

@@ -1,0 +1,9 @@
+OBS 0 B 4:true
+OBS 1 E 1:1
+OBS 2 B 4:true
+OBS 3 E 1:2
+OBS 4 B 4:true
+OBS 5 E 1:3
+OBS 6 B 4:true
+OBS 7 E 1:3
+END 8 0

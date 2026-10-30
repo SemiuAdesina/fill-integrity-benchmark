@@ -1,0 +1,821 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "s11",
+   "node": "E00",
+   "value": 4550
+  },
+  {
+   "id": "s04",
+   "node": "E01",
+   "value": -631
+  },
+  {
+   "id": "s01",
+   "node": "E02",
+   "value": 4510
+  },
+  {
+   "id": "s00",
+   "node": "E03",
+   "value": 1952
+  },
+  {
+   "id": "s08",
+   "node": "E04",
+   "value": 1720
+  },
+  {
+   "id": "s10",
+   "node": "E05",
+   "value": 83
+  },
+  {
+   "id": "s05",
+   "node": "E06",
+   "value": -2136
+  },
+  {
+   "id": "s03",
+   "node": "E07",
+   "value": 273
+  },
+  {
+   "id": "s07",
+   "node": "E08",
+   "value": -3186
+  },
+  {
+   "id": "s02",
+   "node": "E09",
+   "value": -3898
+  },
+  {
+   "id": "s06",
+   "node": "E10",
+   "value": 4300
+  },
+  {
+   "id": "s09",
+   "node": "E11",
+   "value": -3738
+  }
+ ],
+ "switches": [
+  {
+   "id": "L00",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "L01",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "L02",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "L03",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "L04",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  },
+  {
+   "id": "L05",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  },
+  {
+   "id": "P00",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "P01",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  },
+  {
+   "id": "P02",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "P03",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "P04",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "C00",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "C01",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  }
+ ],
+ "links": [
+  {
+   "id": "k019",
+   "from": "E04",
+   "to": "L05",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k057",
+   "from": "L02",
+   "to": "P00",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "k032",
+   "from": "E08",
+   "to": "L05",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k006",
+   "from": "E01",
+   "to": "L00",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k017",
+   "from": "E04",
+   "to": "L01",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k051",
+   "from": "L01",
+   "to": "P00",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k042",
+   "from": "E10",
+   "to": "S",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k025",
+   "from": "E06",
+   "to": "L00",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k092",
+   "from": "C01",
+   "to": "S",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k024",
+   "from": "E05",
+   "to": "S",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k009",
+   "from": "E02",
+   "to": "L03",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k084",
+   "from": "P02",
+   "to": "S",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k045",
+   "from": "E11",
+   "to": "L01",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k049",
+   "from": "L00",
+   "to": "L01",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k004",
+   "from": "E01",
+   "to": "L03",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k026",
+   "from": "E06",
+   "to": "L02",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k007",
+   "from": "E01",
+   "to": "P01",
+   "rate": 8,
+   "latency": 4
+  },
+  {
+   "id": "k060",
+   "from": "L03",
+   "to": "P02",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k022",
+   "from": "E05",
+   "to": "L02",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k054",
+   "from": "L01",
+   "to": "L03",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k001",
+   "from": "E00",
+   "to": "L04",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k069",
+   "from": "L04",
+   "to": "S",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k087",
+   "from": "P04",
+   "to": "C01",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k052",
+   "from": "L01",
+   "to": "P04",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k031",
+   "from": "E08",
+   "to": "L00",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k063",
+   "from": "L03",
+   "to": "L02",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k079",
+   "from": "P01",
+   "to": "P03",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k010",
+   "from": "E02",
+   "to": "P03",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k044",
+   "from": "E11",
+   "to": "L00",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k068",
+   "from": "L04",
+   "to": "L05",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k035",
+   "from": "E09",
+   "to": "L00",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k080",
+   "from": "P01",
+   "to": "S",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k090",
+   "from": "C00",
+   "to": "S",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k021",
+   "from": "E05",
+   "to": "L02",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k066",
+   "from": "L04",
+   "to": "P01",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "k086",
+   "from": "P03",
+   "to": "P00",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k058",
+   "from": "L02",
+   "to": "P02",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k091",
+   "from": "C00",
+   "to": "C01",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k033",
+   "from": "E08",
+   "to": "P01",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k036",
+   "from": "E09",
+   "to": "L02",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k083",
+   "from": "P02",
+   "to": "P04",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k012",
+   "from": "E03",
+   "to": "L03",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k043",
+   "from": "E11",
+   "to": "L04",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k076",
+   "from": "P00",
+   "to": "S",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k020",
+   "from": "E04",
+   "to": "S",
+   "rate": 8,
+   "latency": 4
+  },
+  {
+   "id": "k030",
+   "from": "E07",
+   "to": "S",
+   "rate": 32,
+   "latency": 2
+  },
+  {
+   "id": "k064",
+   "from": "L03",
+   "to": "L04",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k075",
+   "from": "P00",
+   "to": "P01",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k041",
+   "from": "E10",
+   "to": "L00",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k002",
+   "from": "E00",
+   "to": "L03",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "k027",
+   "from": "E06",
+   "to": "L04",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k055",
+   "from": "L01",
+   "to": "L02",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "k008",
+   "from": "E02",
+   "to": "L05",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k062",
+   "from": "L03",
+   "to": "P03",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k085",
+   "from": "P03",
+   "to": "C00",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k003",
+   "from": "E00",
+   "to": "L03",
+   "rate": 8,
+   "latency": 2
+  },
+  {
+   "id": "k050",
+   "from": "L00",
+   "to": "S",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k005",
+   "from": "E01",
+   "to": "L03",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k082",
+   "from": "P02",
+   "to": "C00",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "k046",
+   "from": "L00",
+   "to": "P00",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k047",
+   "from": "L00",
+   "to": "P03",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k040",
+   "from": "E10",
+   "to": "L04",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k053",
+   "from": "L01",
+   "to": "P02",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k037",
+   "from": "E09",
+   "to": "P02",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k078",
+   "from": "P01",
+   "to": "C00",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k081",
+   "from": "P02",
+   "to": "C01",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k073",
+   "from": "P00",
+   "to": "C00",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k023",
+   "from": "E05",
+   "to": "L01",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k015",
+   "from": "E03",
+   "to": "L01",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k014",
+   "from": "E03",
+   "to": "L01",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k056",
+   "from": "L02",
+   "to": "P01",
+   "rate": 32,
+   "latency": 4
+  },
+  {
+   "id": "k028",
+   "from": "E07",
+   "to": "L01",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k016",
+   "from": "E03",
+   "to": "P04",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "k039",
+   "from": "E10",
+   "to": "L03",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "k011",
+   "from": "E02",
+   "to": "S",
+   "rate": 32,
+   "latency": 2
+  },
+  {
+   "id": "k065",
+   "from": "L04",
+   "to": "P04",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "k061",
+   "from": "L03",
+   "to": "P01",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "k018",
+   "from": "E04",
+   "to": "L01",
+   "rate": 32,
+   "latency": 2
+  },
+  {
+   "id": "k071",
+   "from": "L05",
+   "to": "P01",
+   "rate": 32,
+   "latency": 0
+  },
+  {
+   "id": "k089",
+   "from": "P04",
+   "to": "L02",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k029",
+   "from": "E07",
+   "to": "L05",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "k013",
+   "from": "E03",
+   "to": "L03",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "k088",
+   "from": "P04",
+   "to": "P03",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "k070",
+   "from": "L05",
+   "to": "P02",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k038",
+   "from": "E10",
+   "to": "L03",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k077",
+   "from": "P01",
+   "to": "C01",
+   "rate": 32,
+   "latency": 3
+  },
+  {
+   "id": "k048",
+   "from": "L00",
+   "to": "L03",
+   "rate": 32,
+   "latency": 1
+  },
+  {
+   "id": "k074",
+   "from": "P00",
+   "to": "C01",
+   "rate": 8,
+   "latency": 4
+  },
+  {
+   "id": "k059",
+   "from": "L02",
+   "to": "L05",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "k072",
+   "from": "L05",
+   "to": "L04",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "k093",
+   "from": "C01",
+   "to": "C00",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "k034",
+   "from": "E09",
+   "to": "L04",
+   "rate": 16,
+   "latency": 4
+  },
+  {
+   "id": "k067",
+   "from": "L04",
+   "to": "L03",
+   "rate": 16,
+   "latency": 4
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {
+   "k019": 0,
+   "k057": 0,
+   "k084": 0,
+   "k049": 0,
+   "k007": 0,
+   "k060": 0,
+   "k022": 0,
+   "k054": 0,
+   "k087": 0,
+   "k031": 8,
+   "k010": 0,
+   "k035": 8,
+   "k086": 0,
+   "k058": 0,
+   "k020": 8,
+   "k030": 8,
+   "k027": 0,
+   "k062": 0,
+   "k046": 0,
+   "k047": 0,
+   "k040": 0,
+   "k015": 0,
+   "k056": 0,
+   "k061": 0,
+   "k018": 0,
+   "k038": 8,
+   "k077": 0,
+   "k093": 0,
+   "k034": 0,
+   "k067": 0
+  }
+ }
+}

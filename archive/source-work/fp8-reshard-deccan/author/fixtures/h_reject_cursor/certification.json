@@ -1,0 +1,7 @@
+{
+ "fixture": "h_reject_cursor",
+ "expected_outcome": "reject",
+ "oracle_a": "reject:record",
+ "oracle_b": "reject:record",
+ "retained": true
+}

@@ -1,0 +1,3 @@
+b32_rejection_as_zero
+serialization
+a rejected relocation is predicted as the word 0 instead of null

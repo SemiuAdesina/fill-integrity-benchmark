@@ -1,0 +1,334 @@
+[10] CMD: cat Cargo.toml && cargo build --offline 2>&1 | tail -20
+--- obs tail ---
+[package]
+name = "pairing_engine"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "pairing_engine"
+path = "src/lib.rs"
+
+[dependencies]
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+
+[stdout]
+[package]
+name = "pairing_engine"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "pairing_engine"
+path = "src/lib.rs"
+
+[dependencies]
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+[metadata] {"noOutputExpected": false}
+
+[11] CMD: cargo test --offline --test diagnostics 2>&1 | tail -60
+--- obs tail ---
+t be neutralized a second time
+  left: [10, 10]
+ right: [10]
+
+---- the_lower_venue_sequence_breaks_a_shared_window_start stdout ----
+thread 'the_lower_venue_sequence_breaks_a_shared_window_start' panicked at tests/diagnostics.rs:219:5:
+assertion `left == right` failed: FAILED: with an equal window start the lower venue_seq sorts first, ahead of the order_id comparison
+  left: 9
+ right: 10
+
+---- window_end_is_exclusive stdout ----
+thread 'window_end_is_exclusive' panicked at tests/diagnostics.rs:63:5:
+assertion `left == right` failed: FAILED: the attribution window end is exclusive - a fill at exactly window_start + ATTRIBUTION_WINDOW is outside the window
+  left: 4
+ right: 0
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+    a_lost_acknowledgement_is_retried_under_the_same_client_ref
+    an_absent_order_this_engine_did_not_cancel_is_not_withdrawn
+    attribution_state_survives_a_restart_without_double_counting
+    block_remainder_units_go_to_the_first_orders_in_the_ordering
+    block_shares_are_truncated_never_rounded_up
+    cumulative_fill_quantities_are_a_high_water_mark
+    quantity_already_working_is_not_neutralized_twice
+    the_earlier_attribution_window_sorts_first
+    the_lower_venue_sequence_breaks_a_shared_window_start
+    window_end_is_exclusive
+
+test result: FAILED. 6 passed; 11 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[21] CMD: cargo build --offline 2>&1 | tail -30
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.10s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.10s
+[metadata] {"noOutputExpected": false}
+
+[22] CMD: cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+ounted_once ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+failures:
+
+---- a_later_block_divides_over_the_residuals_of_the_earlier_one stdout ----
+thread 'a_later_block_divides_over_the_residuals_of_the_earlier_one' panicked at tests/diagnostics.rs:259:5:
+assertion `left == right` failed: FAILED: the eligible set's basis is current outstanding quantity, so a later block divides over what the earlier block left
+  left: 8
+ right: 9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[23] CMD: cargo run --offline --bin reproduce 2>&1 | tail -30
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[26] CMD: cargo test --offline --test diagnostics 2>&1 | tail -35
+--- obs tail ---
+bug/deps/diagnostics-692941566e5c440d)
+
+running 22 tests
+test a_block_finalizes_a_covered_order_the_division_skipped ... ok
+test a_block_finalizes_a_covered_order_with_nothing_outstanding ... ok
+test a_block_total_is_fully_allocated ... ok
+test a_block_finalizes_every_order_it_covers ... ok
+test a_later_block_divides_over_what_is_still_outstanding ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test a_redelivered_block_is_counted_once ... ok
+test an_observation_is_matched_by_client_ref_before_order_id ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_order_named_twice_in_one_block_is_allocated_once ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: cat >> /app/tests/diagnostics.rs <<'EOF' // --------------------------------------------------------------------------- // Interactions: two or three rules at once, driven through `run_cycle`. // ------------------------
+--- obs tail ---
+s_retried_under_the_same_client_ref ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_restart_does_not_reopen_an_attribution_window ... ok
+test a_rejected_corrective_does_not_latch_the_mandate ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_observation_is_matched_by_client_ref_before_order_id ... ok
+test an_order_named_twice_in_one_block_is_allocated_once ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test pre_existing_custody_inventory_is_not_a_fill ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test the_resting_leg_is_closed_before_the_corrective_is_sent ... ok
+test the_window_is_tested_against_the_match_time_not_the_cycle ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+test two_mandates_sharing_an_instrument_do_not_cross_attribute ... ok
+
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[39] CMD: cat >> /app/tests/diagnostics.rs <<'EOF' /// An unacknowledged corrective whose fill arrives before any retry: the fill /// event carries the client reference, so the engine recovers the order's /// identity, counts the 
+--- obs tail ---
+.. ok
+test two_mandates_sharing_an_instrument_do_not_cross_attribute ... ok
+
+failures:
+
+---- an_unavailable_open_order_list_concludes_nothing stdout ----
+thread 'an_unavailable_open_order_list_concludes_nothing' panicked at tests/diagnostics.rs:1110:5:
+FAILED: closure of the resting order comes before the corrective order
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    an_unavailable_open_order_list_concludes_nothing
+
+test result: FAILED. 32 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+
+[stdout]
+test the_resting_leg_is_closed_before_the_corrective_is_sent ... ok
+test the_window_is_tested_against_the_match_time_not_the_cycle ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+test two_mandates_sharing_an_instrument_do_not_cross_attribute ... ok
+
+failures:
+
+---- an_unavailable_open_order_list_concludes_nothing stdout ----
+thread 'an_unavailable_open_order_list_concludes_nothing' panicked at tests/diagnostics.rs:1110:5:
+FAILED: closure of the resting order comes before the corrective order
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    an_unavailable_open_order_list_concludes_nothing
+
+test result: FAILED. 32 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[41] CMD: cargo test --offline --test diagnostics 2>&1 | tail -8
+--- obs tail ---
+test the_window_is_tested_against_the_match_time_not_the_cycle ... ok
+test the_resting_leg_is_closed_before_the_corrective_is_sent ... ok
+test window_end_is_exclusive ... ok
+test two_mandates_sharing_an_instrument_do_not_cross_attribute ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+test the_window_is_tested_against_the_match_time_not_the_cycle ... ok
+test the_resting_leg_is_closed_before_the_corrective_is_sent ... ok
+test window_end_is_exclusive ... ok
+test two_mandates_sharing_an_instrument_do_not_cross_attribute ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[43] CMD: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning|error" -A5 | head -40; echo "=== clippy ==="; cargo clippy --offline 2>&1 | grep -E "^(warning|error)" | sort | uniq -c | head -20
+--- obs tail ---
+=== clippy ===
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+
+[stdout]
+=== clippy ===
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: ls -la --time-style=+%H:%M src/types/ src/ports/ src/engine/ && echo "=== final verification ===" && cargo build --offline 2>&1 | tail -2 && cargo test --offline --test diagnostics 2>&1 | tail -3 && cargo run --offline -
+--- obs tail ---
+ block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+
+[stdout]
+src/engine/:
+total 72
+drwxr-xr-x 1 root root  4096 05:46 .
+drwxr-xr-x 1 root root  4096 00:00 ..
+-rw-r--r-- 1 root root   590 00:00 config.rs
+-rw-r--r-- 1 root root 22444 05:46 cycle.rs
+-rw-r--r-- 1 root root 15045 05:45 fill_classifier.rs
+-rw-r--r-- 1 root root  3077 00:00 managers.rs
+-rw-r--r-- 1 root root   443 00:00 mod.rs
+-rw-r--r-- 1 root root  1474 00:00 neutralization.rs
+-rw-r--r-- 1 root root   773 00:00 sizing.rs
+
+src/ports/:
+total 20
+drwxr-xr-x 2 root root 4096 00:00 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 4724 00:00 mod.rs
+
+src/types/:
+total 40
+drwxr-xr-x 2 root root 4096 00:00 .
+drwxr-xr-x 1 root root 4096 00:00 ..
+-rw-r--r-- 1 root root 3207 00:00 ids.rs
+-rw-r--r-- 1 root root  461 00:00 mod.rs
+-rw-r--r-- 1 root root 2558 00:00 pending_order.rs
+-rw-r--r-- 1 root root 1913 00:00 position.rs
+-rw-r--r-- 1 root root 3257 00:00 snapshot.rs
+-rw-r--r-- 1 root root 1737 00:00 strategy.rs
+-rw-r--r-- 1 root root 1827 00:00 time.rs
+=== final verification ===
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[46] CMD: cargo run --offline --bin reproduce 2>&1 | grep -E "===|FAIL"; echo "exit=$?"
+--- obs tail ---
+=== 14 passed, 0 failed, 14 checks ===
+exit=0
+
+[stdout]
+=== 14 passed, 0 failed, 14 checks ===
+exit=0
+[metadata] {"noOutputExpected": false}

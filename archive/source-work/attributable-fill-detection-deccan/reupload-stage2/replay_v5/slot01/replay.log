@@ -1,0 +1,58 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" | head -50; echo "---"; find /app -type f -name "*.rs" | head -100; e :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[3] BASH rc=0 0.0s :: cat /app/spec/venue-semantics.md :: emory state. The venue and the custody account keep theirs.  ## Clock  - `now` is monotonic and advances between cycles. - There is no real time. Do not sleep. 
+[4] BASH rc=0 0.0s :: cat /app/spec/reconciliation-contract.md :: ntainer holds the engine's orders must never decide an attribution outcome, and no quantity decision may depend on floating point or on a comparison tolerance. 
+[5] BASH rc=0 0.0s :: cat /app/spec/frozen-contract.md; echo "===="; cat /app/spec/source-map.md ::   Each suite runs on its own and reports the observable outcome it saw. The graded suite is not here; it is broader and holds the engine to the whole contract. 
+[6] BASH rc=0 0.0s :: for f in src/lib.rs src/ports/mod.rs src/types/mod.rs src/types/ids.rs src/types/time.rs src/types/p ::     105	    pub closing_orders: Vec<OrderId>,    106	    pub replaced_orders: Vec<OrderId>,    107	    pub neutralizations: Vec<NeutralizationRecord>,    108	} 
+[7] BASH rc=0 0.0s :: for f in src/engine/mod.rs src/engine/config.rs src/engine/cycle.rs src/engine/fill_classifier.rs sr ::  > MAX_TAKER_PRICE {     24	        MAX_TAKER_PRICE     25	    } else {     26	        raw     27	    };     28	    (capped * 1000.0).round() / 1000.0     29	} 
+[11] BASH rc=0 0.0s :: cat -n /app/src/engine/managers.rs /app/src/engine/sizing.rs ::  > MAX_TAKER_PRICE {    147	        MAX_TAKER_PRICE    148	    } else {    149	        raw    150	    };    151	    (capped * 1000.0).round() / 1000.0    152	} 
+[13] BASH rc=0 0.0s :: wc -l /app/tests/*.rs :: tests/direct_progress.rs   200 /app/tests/neutralization_lifecycle.rs   124 /app/tests/observation_identity.rs   136 /app/tests/restart_recovery.rs   836 total 
+[20] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -5 && for t in observation_identity direct_progress block_reconcil :: === observation_identity === direct_progress === block_reconciliation === neutralization_lifecycle === restart_recovery === cross_mandate_isolation 
+[21] BASH rc=0 0.0s :: cargo test --offline --test direct_progress 2>&1 | sed -n '/failures:/,/^test result/p' | head -60 :: 
+[22] BASH rc=0 0.0s :: cat > /app/tests/zz_debug.rs <<'EOF' mod harness; use harness::*; #[test] fn debug_dump() { let outc :: 
+[23] BASH rc=0 0.0s :: cat > /app/tests/zz_debug.rs <<'EOF' mod harness; use harness::*; #[test] fn debug_dump() { let outc :: 
+[24] WRITE /app/src/types/snapshot.rs -> W ok
+    SNAPSHOT 023 step24 43f762940c87
+[25] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 024 step25 f36ae09ed8af
+[26] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 025 step26 1cee9c752905
+[27] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/engine/cycle.rs' s=open(p).read() s = s.replace("""use crate::typ :: 23:use crate::types::strategy::StrategyCandidate; 
+    SNAPSHOT 026 step27 9df216b4e54f
+[28] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/engine/managers.rs' s=open(p).read() start = s.index('#[derive(Debug, Clone :: 
+    SNAPSHOT 027 step28 40dbd1243534
+[30] EDIT /app/src/engine/managers.rs -> E ok
+    SNAPSHOT 029 step30 6551153bd2f2
+[31] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -30 :: 
+[32] BASH rc=1 0.0s :: rm -f /app/tests/zz_debug.rs; for t in observation_identity direct_progress block_reconciliation neu :: === observation_identity === direct_progress === block_reconciliation === neutralization_lifecycle === restart_recovery === cross_mandate_isolation 
+[33] WRITE /app/tests/extra_contract.rs -> W ok
+[34] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | sed -n '/running/,$p' | head -60 :: 
+[35] BASH rc=0 0.0s :: python3 - <<'EOF' p='tests/extra_contract.rs' s=open(p).read() old_start = s.index("/// The South le :: 
+[36] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 035 step36 0e4d4111cd94
+[37] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 036 step37 6dcb86130802
+[38] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 037 step38 718ff4567351
+[39] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -5 && for t in observation_identity direct_progress block_reconcil :: rogress             block_reconciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              
+[40] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 039 step40 6a8a9a9c9a11
+[41] BASH rc=1 0.0s :: python3 - <<'EOF' p='src/engine/fill_classifier.rs' s=open(p).read() s = s.replace(""" let Some(inde :: rogress             block_reconciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              
+    SNAPSHOT 040 step41 82d0281d7c3b
+[45] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 044 step45 d50b78117c8a
+[46] WRITE /app/tests/fuzz_invariants.rs -> W ok
+[47] BASH rc=0 0.0s :: cargo test --offline --test fuzz_invariants 2>&1 | sed -n '/running/,$p' | head -30 :: 
+[48] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 047 step48 99b489636b1f
+[49] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "warning|error" -A4 | head -20; for t in observation_identity d :: conciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              fuzz_invariants             
+[50] WRITE /app/src/engine/neutralization.rs -> W ok
+    SNAPSHOT 049 step50 bd40adf5eeb8
+[51] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 050 step51 2d71b9fd1937
+[52] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A6 | head -30; for t in observation_identit :: conciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              fuzz_invariants             
+[53] BASH rc=0 0.0s :: python3 - <<'EOF' p='tests/extra_contract.rs' s=open(p).read() extra = ''' /// A block bigger than e :: 
+[54] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -3; echo "--- clippy"; cargo clippy --offline 2>&1 | grep -E "^(wa :: --- clippy 
+[59] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -5 && for t in observation_identity direct_progress block_reconcil :: conciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              fuzz_invariants             
+[60] BASH rc=0 0.0s :: ls -la /app/src/engine/ /app/src/types/ /app/tests/ && wc -l /app/src/engine/*.rs /app/src/types/*.r :: es/pending_order.rs    64 /app/src/types/position.rs   142 /app/src/types/snapshot.rs    65 /app/src/types/strategy.rs    87 /app/src/types/time.rs  1762 total 
+[61] BASH rc=0 0.0s :: ls -la /app/src/ /app/src/ports/ :: /app/src/ports/: total 8 drwxr-xr-x 1 root root   12 Sep  9 01:57 . drwxr-xr-x 1 root root   22 Sep  9 01:57 .. -rw-r--r-- 1 root root 4728 Sep  9 01:57 mod.rs 

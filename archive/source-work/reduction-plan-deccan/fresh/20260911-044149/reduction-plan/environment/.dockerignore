@@ -1,0 +1,3 @@
+# Build artifacts never enter the agent image.
+build/
+**/build/

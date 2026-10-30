@@ -1,0 +1,6 @@
+#
+# Build artifacts never enter the verifier image. A warm target directory from
+# the assembly machine would make the image larger, non-reproducible, and would
+# let a stale object file decide the graded build.
+target/
+**/target/

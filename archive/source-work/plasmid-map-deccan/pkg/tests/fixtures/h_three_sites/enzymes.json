@@ -1,0 +1,44 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "AatII",
+   "site": "GACGTC",
+   "cut_offset": 5
+  },
+  {
+   "name": "BstBI",
+   "site": "TTCGAA",
+   "cut_offset": 2
+  },
+  {
+   "name": "MscI",
+   "site": "TGGCCA",
+   "cut_offset": 3
+  },
+  {
+   "name": "PvuI",
+   "site": "CGATCG",
+   "cut_offset": 4
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "BamHI",
+   "position": 930
+  },
+  {
+   "enzyme": "SmaI",
+   "position": 937
+  },
+  {
+   "enzyme": "EcoRI",
+   "position": 940
+  }
+ ]
+}

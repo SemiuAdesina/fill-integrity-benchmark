@@ -1,0 +1,267 @@
+[64]
+pkill -f zz_scratch; pkill -f "cargo test"; sleep 1; cat > /tmp/gen.py <<'PY'
+import json, random, sys
+
+def gen(markers, offspring, free, slope, planted, seed):
+    rnd = random.Random(seed)
+    def cols(d):
+        return [b for b in range(16) if bin(b).count('1')==d]
+    def peaked(truth):
+        return [-slope*abs(d-truth) - 0.01*d for d in range(5)]
+    dosage_a=[0]*markers; dosage_b=[0]*markers
+    for i in rnd.sample(range(markers), free): dosage_a[i]=rnd.randint(1,3)
+    for i in rnd.sample(range(markers), free): dosage_b[i]=rnd.randint(1,3)
+    cola=[rnd.choice(cols(d)) for d in dosage_a]
+    colb=[rnd.choice(cols(d)) for d in dosage_b]
+    states=[(a,b) for a in range(4) for b in range(4) if a<=b]
+    gl=[]
+    for c in range(offspring):
+        rows=[]
+        for m in range(markers):
+            sa=rnd.choice([s for s in states if s[0]!=s[1]])
+            sb=rnd.choice(states)
+            g=((cola[m]>>sa[0])&1)+((cola[m]>>sa[1])&1)+((colb[m]>>sb[0])&1)+((colb[m]>>sb[1])&1)
+            row = peaked(g) if planted else [-3.0*rnd.random() for _ in range(5)]
+            rows.append([round(x,6) for x in row])
+        gl.append(rows)
+    rec_a=[round(0.05+0.2*rnd.random(),6) for _ in range(markers-1)]
+    rec_b=[round(0.05+0.2*rnd.random(),6) for _ in range(markers-1)]
+    al_a=[rnd.random()<0.5 for _ in range(markers)]
+    al_b=[rnd.random()<0.5 for _ in range(markers)]
+    ra=[round(0.1+0.3*rnd.random(),6) if a else 0.0 for a in al_a]
+    rb=[round(0.1+0.3*rnd.random(),6) if a else 0.0 for a in al_b]
+    return {"format_version":1,"markers":markers,"offspring":offspring,
+            "parent_dosage":{"A":dosage_a,"B":dosage_b},"child_gl":gl,
+            "recombination":{"A":rec_a,"B":rec_b},
+            "double_reduction":{"A":{"allowed":al_a,"rate":ra},"B":{"allowed":al_b,"rate":rb}}}
+
+markers=int(sys.argv[1]); offspring=int(sys.argv[2]); free=int(sys.argv[3])
+planted = sys.argv[4]=="1"; out=sys.argv[5]; seed=int(sys.argv[6])
+json.dump(gen(markers,offspring,free,1.5,planted,seed), open(out,'w'))
+PY
+python3 /tmp/gen.py 28 32 8 1 /tmp/large_planted.json 1
+python3 /tmp/gen.py 28 32 8 0 /tmp/large_flat.json 2
+python3 /tmp/gen.py 12 10 8 1 /tmp/small.json 3
+ls -la /tmp/*.json
+
+[66]
+cat > /tmp/gen.py <<'PY'
+import json, random, sys
+
+def gen(markers, offspring, free, slope, planted, seed):
+    rnd = random.Random(seed)
+    def cols(d):
+        return [b for b in range(16) if bin(b).count('1')==d]
+    def peaked(truth):
+        return [-slope*abs(d-truth) - 0.01*d for d in range(5)]
+    dosage_a=[0]*markers; dosage_b=[0]*markers
+    for i in rnd.sample(range(markers), free): dosage_a[i]=rnd.randint(1,3)
+    for i in rnd.sample(range(markers), free): dosage_b[i]=rnd.randint(1,3)
+    cola=[rnd.choice(cols(d)) for d in dosage_a]
+    colb=[rnd.choice(cols(d)) for d in dosage_b]
+    states=[(a,b) for a in range(4) for b in range(4) if a<=b]
+    gl=[]
+    for c in range(offspring):
+        rows=[]
+        for m in range(markers):
+            sa=rnd.choice([s for s in states if s[0]!=s[1]])
+            sb=rnd.choice(states)
+            g=((cola[m]>>sa[0])&1)+((cola[m]>>sa[1])&1)+((colb[m]>>sb[0])&1)+((colb[m]>>sb[1])&1)
+            row = peaked(g) if planted else [-3.0*rnd.random() for _ in range(5)]
+            rows.append([round(x,6) for x in row])
+        gl.append(rows)
+    rec_a=[round(0.05+0.2*rnd.random(),6) for _ in range(markers-1)]
+    rec_b=[round(0.05+0.2*rnd.random(),6) for _ in range(markers-1)]
+    al_a=[rnd.random()<0.5 for _ in range(markers)]
+    al_b=[rnd.random()<0.5 for _ in range(markers)]
+    ra=[round(0.1+0.3*rnd.random(),6) if a else 0.0 for a in al_a]
+    rb=[round(0.1+0.3*rnd.random(),6) if a else 0.0 for a in al_b]
+    return {"format_version":1,"markers":markers,"offspring":offspring,
+            "parent_dosage":{"A":dosage_a,"B":dosage_b},"child_gl":gl,
+            "recombination":{"A":rec_a,"B":rec_b},
+            "double_reduction":{"A":{"allowed":al_a,"rate":ra},"B":{"allowed":al_b,"rate":rb}}}
+
+markers=int(sys.argv[1]); offspring=int(sys.argv[2]); free=int(sys.argv[3])
+planted = sys.argv[4]=="1"; out=sys.argv[5]; seed=int(sys.argv[6])
+json.dump(gen(markers,offspring,free,1.5,planted,seed), open(out,'w'))
+PY
+python3 /tmp/gen.py 28 32 8 1 /tmp/large_planted.json 1
+python3 /tmp/gen.py 28 32 8 0 /tmp/large_flat.json 2
+python3 /tmp/gen.py 12 10 8 1 /tmp/small.json 3
+ls -la /tmp/*.json
+
+[87]
+cp src/solver/search.rs /tmp/search_new.rs
+python3 - <<'PY'
+p='src/solver/search.rs'
+s=open(p).read()
+start = s.index("    fn descend(&mut self, marker: usize, cut_a: u8, cut_b: u8) {")
+end = s.index("    /// Bounded value of letting every progeny pick its own columns throughout.")
+old = '''    fn descend(&mut self, marker: usize, cut_a: u8, cut_b: u8) {
+        self.nodes += 1;
+        let bound = self.bound(marker);
+
+        if marker + 1 == self.core.markers {
+            self.leaves += 1;
+            if bound >= self.floor {
+                self.found.push(Candidate {
+                    score: bound,
+                    columns_a: self.chosen_a.clone(),
+                    columns_b: self.chosen_b.clone(),
+                });
+            }
+            if bound > self.best {
+                self.best = bound;
+                self.best_a = self.chosen_a.clone();
+                self.best_b = self.chosen_b.clone();
+            }
+            return;
+        }
+
+        if !self.collecting && bound + EPS < self.best {
+            return;
+        }
+        if bound + EPS < self.floor {
+            return;
+        }
+
+        let next = marker + 1;
+        let mut children: Vec<(f64, u8, u8, u8, u8)> = Vec::new();
+        for &(va, next_a) in &self.options[0][next][usize::from(cut_a)] {
+            for &(vb, next_b) in &self.options[1][next][usize::from(cut_b)] {
+                for c in 0..self.core.offspring {
+                    self.core.advance(
+                        c,
+                        next,
+                        va,
+                        vb,
+                        &self.stack[marker][c],
+                        &mut self.probe[c],
+                        &mut self.scratch,
+                    );
+                }
+                let mut total = 0.0;
+                for c in 0..self.core.offspring {
+                    let rest = &self.core.back[c][next];
+                    let mut best = NEG;
+                    for s in 0..NJ {
+                        let value = self.probe[c][s] + rest[s];
+                        if value > best {
+                            best = value;
+                        }
+                    }
+                    total += best;
+                }
+                children.push((total, va, vb, next_a, next_b));
+            }
+        }
+        children.sort_by(|x, y| y.0.partial_cmp(&x.0).unwrap());
+
+        let core = self.core;
+        for &(child_bound, va, vb, next_a, next_b) in &children {
+            if !self.collecting && child_bound + EPS < self.best {
+                continue;
+            }
+            if child_bound + EPS < self.floor {
+                continue;
+            }
+            self.chosen_a[next] = va;
+            self.chosen_b[next] = vb;
+            let (before, from_next) = self.stack.split_at_mut(next);
+            for c in 0..core.offspring {
+                core.advance(
+                    c,
+                    next,
+                    va,
+                    vb,
+            
+
+[88]
+cp /tmp/search_new.rs src/solver/search.rs
+python3 - <<'PY'
+p='src/solver/search.rs'
+s=open(p).read()
+s=s.replace("""        children.sort_by(|x, y| y.0.partial_cmp(&x.0).unwrap());
+
+        for &(child_bound, va, vb, next_a, next_b) in &children {""",
+"""        if self.nodes < 3 && std::env::var("PHASE_DEBUG").is_ok() {
+            // Reference: the same child bounds the long way round.
+            let mut probe2 = vec![[NEG; NJ]; core.offspring];
+            let mut reference = Vec::new();
+            for &(va, _a) in &self.options[0][next][usize::from(cut_a)] {
+                for &(vb, _b) in &self.options[1][next][usize::from(cut_b)] {
+                    for c in 0..core.offspring {
+                        core.advance(c, next, va, vb, &self.stack[marker][c], &mut probe2[c], &mut self.scratch);
+                    }
+                    let mut total = 0.0;
+                    for c in 0..core.offspring {
+                        let mut best = NEG;
+                        for s in 0..NJ {
+                            let value = probe2[c][s] + core.back[c][next][s];
+                            if value > best { best = value; }
+                        }
+                        total += best;
+                    }
+                    reference.push(total);
+                }
+            }
+            eprintln!("marker={marker} new={:?}", children.iter().map(|c| c.0).collect::<Vec<_>>());
+            eprintln!("marker={marker} ref={reference:?}");
+        }
+        children.sort_by(|x, y| y.0.partial_cmp(&x.0).unwrap());
+
+        for &(child_bound, va, vb, next_a, next_b) in &children {""")
+open(p,'w').write(s)
+PY
+cargo build --offline --locked --release 2>&1 | grep -E "^error" -A10 | head -20
+PHASE_DEBUG=1 ./target/release/phase /app/cross.json /tmp/fix_out3.json 2>&1 | head -12
+
+[90]
+cp /tmp/search_new.rs src/solver/search.rs
+python3 - <<'PY'
+p='src/solver/search.rs'
+s=open(p).read()
+s = s.replace("""    scratch: [f64; NJ],
+    probe: Vec<[f64; NJ]>,""",
+"""    scratch: [f64; NJ],
+    /// Reaching the next marker before its columns are chosen, `[marker][progeny]`.
+    /// One buffer per marker, because a deeper level must not overwrite the one
+    /// the level above is still working through.
+    probe: Vec<Vec<[f64; NJ]>>,""")
+s = s.replace("""            probe: vec![[NEG; NJ]; core.offspring],""",
+"""            probe: vec![vec![[NEG; NJ]; core.offspring]; core.markers],""")
+s = s.replace("""            core.shift(marker, &self.stack[marker][c], &mut self.probe[c], &mut self.scratch);""",
+"""            core.shift(
+                marker,
+                &self.stack[marker][c],
+                &mut self.probe[marker][c],
+                &mut self.scratch,
+            );""")
+s = s.replace("""                    self.probe[c][target] = if legal_a[sa]
+                        && legal_b[sb]
+                        && self.probe[c][target] != NEG
+                    {
+                        self.probe[c][target]""",
+"""                    self.probe[marker][c][target] = if legal_a[sa]
+                        && legal_b[sb]
+                        && self.probe[marker][c][target] != NEG
+                    {
+                        self.probe[marker][c][target]""")
+s = s.replace("""                    let row = &self.probe[c];""",
+"""                    let row = &self.probe[marker][c];""")
+open(p,'w').write(s)
+PY
+grep -c "self.probe\[marker\]" src/solver/search.rs
+cargo build --offline --locked --release 2>&1 | grep -E "^(error|warning)" -A10 | head -20
+PHASE_DEBUG=1 ./target/release/phase /app/cross.json /tmp/fix_out.json 2>&1 | head -4
+echo "==="
+PHASE_DEBUG=1 ./target/release/phase /tmp/small.json /tmp/small_out.json 2>&1 | head -4
+
+[113]
+sed -i 's|/// Steps without a lower bound before the step size is halved.\nconst PATIENCE: usize = 12;||' src/solver/price.rs; python3 - <<'EOF'
+p='src/solver/price.rs'
+s=open(p).read()
+s=s.replace("/// Steps without a lower bound before the step size is halved.\nconst PATIENCE: usize = 12;\n","")
+open(p,'w').write(s)
+EOF
+cargo build --release 2>&1 | tail -5 && PHASE_DEBUG=1 ./target/release/phase /app/cross.json /tmp/fix_out.json 2>&1 | grep -E "^  it=|^priced:|^optimum|^root|^heuristic|^nodes"

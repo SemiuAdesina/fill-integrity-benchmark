@@ -1,0 +1,3 @@
+p04_contiguous_field_only
+04 field-naive
+assumes every relocation field is one contiguous run of bits

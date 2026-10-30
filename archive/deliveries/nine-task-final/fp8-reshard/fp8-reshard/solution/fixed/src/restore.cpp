@@ -1,0 +1,10 @@
+#include "fp8/state.hpp"
+#include <algorithm>
+#include <map>
+#include <set>
+#include <stdexcept>
+#include <tuple>
+namespace fp8 {
+namespace { using Key=std::pair<std::string,Role>;Key key(const std::string&t,const std::string&tie,Role r){return {tie.empty()?t:tie,r};} }
+std::vector<Restored> restore(const std::vector<SourceState>&sources,const std::vector<Target>&targets){std::map<Key,std::vector<const SourceState*>> groups;for(auto&s:sources){(void)chronological(s);groups[key(s.tensor,s.tie,s.role)].push_back(&s);}std::vector<Restored> out;std::set<std::tuple<std::string,Role,unsigned,unsigned>> seen;for(auto&t:targets){if(!t.active)continue;if(t.history_length==0)throw std::invalid_argument("target history");auto place=std::tuple(t.tensor,t.role,t.stage,t.shard);if(!seen.insert(place).second)throw std::invalid_argument("duplicate target");auto it=groups.find(key(t.tensor,t.tie,t.role));if(it==groups.end())throw std::runtime_error("missing state");auto candidates=it->second;std::sort(candidates.begin(),candidates.end(),[](auto*a,auto*b){if(a->history.size()!=b->history.size())return a->history.size()>b->history.size();return std::tie(a->replica,a->stage,a->shard,a->tensor)<std::tie(b->replica,b->stage,b->shard,b->tensor);});auto*base=candidates.front();auto longest=chronological(*base);for(auto*s:candidates){if(s->scale_q!=base->scale_q||s->inverse_scale_q!=base->inverse_scale_q)throw std::runtime_error("replica scale mismatch");auto h=chronological(*s);size_t n=std::min(h.size(),longest.size());if(!std::equal(h.end()-n,h.end(),longest.end()-n))throw std::runtime_error("replica history mismatch");}std::vector<int64_t> h;if(t.history_length>=longest.size()){h.assign(t.history_length-longest.size(),0);h.insert(h.end(),longest.begin(),longest.end());}else h.assign(longest.end()-t.history_length,longest.end());out.push_back({t,base->scale_q,base->inverse_scale_q,std::move(h),0});}std::sort(out.begin(),out.end(),[](auto&a,auto&b){return std::tuple(a.target.tensor,a.target.role,a.target.stage,a.target.shard)<std::tuple(b.target.tensor,b.target.role,b.target.stage,b.target.shard);});return out;}
+}

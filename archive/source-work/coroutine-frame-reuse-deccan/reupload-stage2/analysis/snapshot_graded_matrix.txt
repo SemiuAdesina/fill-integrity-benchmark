@@ -1,0 +1,59 @@
+slot   #    step    passed   failing families                         first failing cases
+slot01 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot01 018  14      no build                                          
+slot01 019  15      no build                                          
+slot01 020  16      no build                                          
+slot01 022  18      no build                                          
+slot01 023  19      69/70    b:1                                      b_cancelled_job_never_resumes
+slot01 034  30      69/70    b:1                                      b_cancelled_job_never_resumes
+slot01 035  31      69/70    b:1                                      b_cancelled_job_never_resumes
+slot01 036  32      69/70    b:1                                      b_cancelled_job_never_resumes
+slot01 037  33      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot02 017  19      no build                                          
+slot02 018  20      no build                                          
+slot02 019  21      no build                                          
+slot02 020  22      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 021  23      no build                                          
+slot02 022  24      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 068  70      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 069  71      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 070  72      69/70    b:1                                      b_cancelled_job_never_resumes
+slot02 090  92      69/70    b:1                                      b_cancelled_job_never_resumes
+slot03 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot03 012  8       no build                                          
+slot03 013  9       70/70                                             
+slot03 044  39      no build                                          
+slot03 045  40      70/70                                             
+slot03 075  70      68/70    h:1 m:1                                  h_self_cancel_from_inside_job m_self_cancel_then_slot_reuse_rejects_stale_trace
+slot03 076  71      70/70                                             
+slot03 085  80      70/70                                             
+slot05 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot05 017  11      no build                                          
+slot05 018  12      70/70                                             
+slot05 026  20      70/70                                             
+slot05 045  39      43/70    a:2 b:1 c:3 d:5 e:1 f:1 g:3 h:3 i:1 j:3 l:2 m:2 a_launch_parks_and_reports_unsettled a_no_progress_without_stepping b_cancel_unknown_job_is_harmless c_released_slot_is_handed_out_again c_slot_epoch_advances_per_reuse c_stale_ticket_does_not_destroy_new_occupant
+slot05 046  40      70/70                                             
+slot06 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot06 016  18      no build                                          
+slot06 017  19      69/70    b:1                                      b_cancelled_job_never_resumes
+slot06 029  31      69/70    b:1                                      b_cancelled_job_never_resumes
+slot06 030  32      69/70    b:1                                      b_cancelled_job_never_resumes
+slot06 064  66      no build                                          
+slot06 065  67      69/70    b:1                                      b_cancelled_job_never_resumes
+slot06 070  72      69/70    b:1                                      b_cancelled_job_never_resumes
+slot07 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot07 016  21      no build                                          
+slot07 017  22      no build                                          
+slot07 018  23      no build                                          
+slot07 019  24      69/70    b:1                                      b_cancelled_job_never_resumes
+slot07 038  43      no build                                          
+slot07 040  45      69/70    b:1                                      b_cancelled_job_never_resumes
+slot07 064  69      0/70     a:7 b:8 c:6 d:6 e:7 f:4 g:5 h:7 i:6 j:5 k:2 l:2 m:5 a_delivered_value_and_outcome a_job_ids_are_unique_and_increasing a_journal_orders_start_park_accept_settle_release a_launch_parks_and_reports_unsettled a_no_progress_without_stepping a_settle_releases_storage_immediately
+slot07 066  71      69/70    b:1                                      b_cancelled_job_never_resumes
+slot08 000  start   23/70    b:7 c:4 d:6 e:3 f:2 g:1 h:6 i:5 j:4 k:2 l:2 m:5 b_cancel_after_settle_is_harmless b_cancel_releases_storage_and_runs_cleanup b_cancel_then_ticket_is_rejected b_cancel_while_parked_settles_cancelled b_cancelled_job_never_resumes b_complete_then_cancel_then_complete
+slot08 015  11      no build                                          
+slot08 016  12      70/70                                             
+slot08 017  13      no build                                          
+slot08 018  13      no build                                          
+slot08 019  13      70/70                                             

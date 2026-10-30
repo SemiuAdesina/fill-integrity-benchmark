@@ -1,0 +1,9 @@
+[package]
+name="c2pa_model"
+version="0.1.0"
+edition="2021"
+publish=false
+[lib]
+name="c2pa_model"
+path="src/lib.rs"
+[dependencies]

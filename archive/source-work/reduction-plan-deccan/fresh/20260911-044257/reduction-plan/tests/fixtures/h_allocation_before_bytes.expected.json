@@ -1,0 +1,36 @@
+{
+ "fixture": "h_allocation_before_bytes",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l03",
+    "l10",
+    "l12"
+   ],
+   [
+    "l06",
+    "l15"
+   ],
+   [
+    "l02",
+    "l15"
+   ]
+  ],
+  "combine": [],
+  "sink_value": -1738
+ },
+ "observables": {
+  "completion": 6,
+  "allocation": 0,
+  "total_bytes": 56,
+  "link_bytes": {
+   "l03": 8,
+   "l10": 8,
+   "l12": 8,
+   "l06": 8,
+   "l02": 8,
+   "l15": 16
+  }
+ }
+}

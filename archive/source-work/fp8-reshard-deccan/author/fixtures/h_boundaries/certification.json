@@ -1,0 +1,8 @@
+{
+ "fixture": "h_boundaries",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 20,
+ "retained": true
+}

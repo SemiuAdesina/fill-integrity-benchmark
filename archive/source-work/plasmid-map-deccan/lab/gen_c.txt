@@ -1,0 +1,22 @@
+REJECTED s_large_a          attempt=1 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_a          attempt=3 held-out bands of the optimum do not match the true construct (273s) {"reference": {"status": "ok", "seconds": 13.66, "internal": 8, "deviation": 11554, "c": 396, "L": 4537}, "enumeration_solver": {"status": "timeout", "seconds":
+REJECTED s_large_a          attempt=8 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+RETAINED s_large_a          seed=909 pBluescriptIISK V=2961 L=3617 e=2 D=200 enzymes=5 internal=7 (truth 7) dev=7050 ref=19.42s enum=timeout py=801.8s ties=2 (941s)
+REJECTED s_large_b          attempt=4 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=14 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=19 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=20 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=22 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=23 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=26 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=30 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=35 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=36 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=38 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=40 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=46 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED s_large_b          attempt=48 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+RETAINED s_large_b          seed=1051 pUC19 V=2686 L=3643 e=3 D=250 enzymes=5 internal=7 (truth 7) dev=39257 ref=3.03s enum=timeout py=97.5s ties=3 (220s)
+RETAINED s_large_c          seed=1101 pGEX-2T V=4948 L=4043 e=2 D=150 enzymes=5 internal=7 (truth 7) dev=18537 ref=14.80s enum=timeout py=524.1s ties=4 (658s)
+REJECTED h_low_error        attempt=0 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.02, "internal": 3, "deviation": 2301, "c": 248, "L": 2035}, "enumeration_solver": {"status": "ok", "seconds": 0.05},
+RETAINED h_low_error        seed=1201 pBluescriptIISK V=2961 L=2238 e=1 D=100 enzymes=4 internal=4 (truth 4) dev=3022 ref=0.02s enum=ok py=0.7s ties=2 (3s)

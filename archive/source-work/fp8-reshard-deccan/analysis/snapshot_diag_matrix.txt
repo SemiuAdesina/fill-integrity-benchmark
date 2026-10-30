@@ -1,0 +1,8 @@
+S0_starter                         PASS       PASS       FAIL       PASS       PASS       PASS       PASS       
+S1_parse_and_emit                  PASS       PASS       PASS       PASS       FAIL       FAIL       PASS       
+S2_rotation                        PASS       PASS       PASS       PASS       FAIL       FAIL       PASS       
+S3_consistency_and_selection       PASS       PASS       PASS       PASS       FAIL       FAIL       PASS       
+S4_record_and_target_validation    PASS       PASS       PASS       PASS       FAIL       FAIL       PASS       
+S5_index_coverage                  PASS       PASS       PASS       PASS       FAIL       FAIL       PASS       
+S6_resizing                        PASS       PASS       PASS       PASS       PASS       FAIL       PASS       
+S7_final                           PASS       PASS       PASS       PASS       PASS       PASS       PASS       

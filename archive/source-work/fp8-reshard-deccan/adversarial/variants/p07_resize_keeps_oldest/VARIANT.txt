@@ -1,0 +1,3 @@
+p07_resize_keeps_oldest
+07 resizing
+a shorter target keeps the oldest samples and a longer one pads zeros on the new side

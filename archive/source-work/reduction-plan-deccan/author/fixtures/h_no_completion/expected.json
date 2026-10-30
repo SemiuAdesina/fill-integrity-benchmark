@@ -1,0 +1,35 @@
+{
+ "fixture": "h_no_completion",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l04",
+    "l10"
+   ],
+   [
+    "l01",
+    "l09",
+    "l10"
+   ],
+   [
+    "l06",
+    "l10"
+   ]
+  ],
+  "combine": [],
+  "sink_value": -5935
+ },
+ "observables": {
+  "completion": 10,
+  "allocation": 0,
+  "total_bytes": 56,
+  "link_bytes": {
+   "l04": 8,
+   "l01": 8,
+   "l09": 8,
+   "l06": 8,
+   "l10": 24
+  }
+ }
+}

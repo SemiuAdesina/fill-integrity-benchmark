@@ -1,0 +1,3 @@
+BUILD FAILED
+/app2/src/runtime.cpp:91:35: error: assigning to 'bool' from incompatible type 'void'
+1 error generated.

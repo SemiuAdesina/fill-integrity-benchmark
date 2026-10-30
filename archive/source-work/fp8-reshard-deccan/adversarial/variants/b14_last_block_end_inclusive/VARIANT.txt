@@ -1,0 +1,3 @@
+b14_last_block_end_inclusive
+blocks
+computes the last block from logical_end instead of logical_end - 1

@@ -1,0 +1,37 @@
+[step 2] I'll start by reading the specification and the existing code.
+
+[step 10] The instance is M=12, N=10 — small, but the joint space (A: 98 304 haplotype assignments × B: 331 776) is far too large to enumerate naively. Let me set up the core machinery first.
+
+[step 11] Now let me write the core computation module.
+
+[step 25] Canonicalization is the only gap so far, plus the tie-break machinery. Let me add the lexicographically-minimal path search first.
+
+[step 29] All solver checks pass. Now let me stress-test correctness against independent exhaustive enumeration and check scaling.
+
+[step 71] Now let me implement two improvements: a tighter Lagrangian-priced bound, and a cheaper per-node child evaluation.
+
+[step 75] Now the pricing module:
+
+[step 79] Now wire the pricing into `solve`:
+
+[step 84] Found a bug in my rewrite — the child bound dropped the suffix term. Fixing:
+
+[step 89] Found it — `probe` was clobbered by the deeper recursion. Making it per-depth:
+
+[step 100] The subgradient stalls because manycolumn pairs tie exactly; spreading over the tied set gives a true descent direction:
+
+[step 101] Now rewrite the update step in `refine`:
+
+[step 105] The direction is provably an ascent direction even at step 1e-3, which means my averaged subgradient isn't the min-norm one — and only the min-norm element guarantees descent. Let me compute it properly with a projected-gradient inner solve.
+
+[step 111] D now explodes upward — the min-normsolve shrank `norm` so much that the Polyak step became enormous. Let me switch to a normalized trust-region step that halves on failure.
+
+[step 114] Even the min-norm direction makes D worse, which shouldn't be possible for a convex D. Let me probe the directional derivative numerically.
+
+[step 115] The slope is exactly linear at +6.51 where I predict −3.15 — so my subgradient isn't in the true subdifferential. Let me check whether the backtraced path is actually optimal.
+
+[step 116] The path is optimal, so the subdifferential is genuinely wide (many co-optimal paths) and only a mixture over them is min-norm — too costly to compute. Let me replace the subgradient with a direct search over a price family built from the consensus, which is cheap and always valid.
+
+[step 123] The consensus family goes the wrong way because the reference state is wrong. Let me try a state-independent version — average each pair's score over all states.
+
+[step 127] The state-averaged version has no effect at all, and the state-dependent one moves the bound the wrong way. The prices can't depend on the inheritance state while the emission does, so this dual is not reachable cheaply. Dropping the pricing and keeping the proven 2.6× win.

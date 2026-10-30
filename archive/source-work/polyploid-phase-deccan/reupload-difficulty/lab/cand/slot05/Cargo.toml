@@ -1,0 +1,26 @@
+
+[package]
+name = "polyploid-phase"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "polyploid_phase"
+path = "src/lib.rs"
+
+[[bin]]
+name = "phase"
+path = "src/bin/phase.rs"
+
+# No third party crates. The project builds and tests with no network access,
+# and adding a dependency would break that.
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

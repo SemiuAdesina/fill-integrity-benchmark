@@ -1,0 +1,125 @@
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.rs" -o -name "*.toml" -o -name "*.json" | head -50; echo  :: 6 Sep  7 17:46 spec drwxr-xr-x 1 root root  176 Sep  7 17:46 src drwxr-xr-x 1 root root   80 Sep  7 17:46 target drwxr-xr-x 1 root root   60 Sep  7 17:46 tests 
+[9] BASH rc=0 0.0s :: python3 -c " import json d=json.load(open('cross.json')) print(list(d.keys())) print('markers',d['ma ::  True, True, False] dr B [False, True, False, False, False, True, True, True, True, False, True, True] rec A [0.262022, 0.195683, 0.029096, 0.283482, 0.147239] 
+[11] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -3 && ./target/release/phase 2>&1 | tail -3 :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[11] BASH rc=0 0.0s :: python3 -c " import json from math import comb d=json.load(open('cross.json')) M=d['markers']; N=d[' :: 48533000000001 21.295812 30.801694999999995 54.485484 mean spread 23.776155133333315 markers with unique best dosage: 120 of 120 ties at max: Counter({1: 120}) 
+[12] WRITE /app/src/solver/model.rs -> W ok
+[13] WRITE /app/src/solver/viterbi.rs -> W ok
+[14] WRITE /app/src/solver/viterbi.rs -> W ok
+[15] WRITE /app/src/solver/bound.rs -> W ok
+[16] EDIT /app/src/solver/bound.rs -> E ok
+[17] EDIT /app/src/solver/bound.rs -> E ok
+[18] EDIT /app/src/solver/bound.rs -> E ok
+[19] WRITE /app/src/solver/search.rs -> W ok
+[20] WRITE /app/src/solver/canon.rs -> W ok
+[21] WRITE /app/src/solver.rs -> W ok
+[23] EDIT /app/src/solver/search.rs -> E ok
+[24] EDIT /app/src/solver/search.rs -> E ok
+[25] EDIT /app/src/solver/search.rs -> E ok
+[26] EDIT /app/src/solver/search.rs -> E ok
+[27] BASH rc=0 0.0s :: cargo build --release 2>&1 | grep -E "^(error|warning: unused|warning: unre)" -A 6 | head -80 :: 
+[28] BASH rc=0 0.0s :: sed -i 's/^use solver::/use crate::solver::/; s/if solver::debug()/if crate::solver::debug()/' src/s :: 
+[29] BASH rc=0 0.1s :: PHASE_DEBUG=1 timeout 300 ./target/release/phase 2>&1 | tail -10 :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[30] BASH rc=0 0.0s :: cargo test --offline --locked --test diagnostics 2>&1 | tail -5; cargo test --offline --locked --rel :: 
+[31] WRITE /app/tools/gen.py -> W ok
+[32] BASH rc=0 0.1s :: for cfg in "1 12 10 2.0" "2 16 16 2.0" "3 20 20 2.0" "4 28 32 2.0"; do set -- $cfg python3 tools/gen :: ry  M=20 N=20 slope=2.0 : bash: line 4: /usr/bin/time: No such file or directory  M=28 N=32 slope=2.0 : bash: line 4: /usr/bin/time: No such file or directory  
+[33] BASH rc=0 0.2s :: for cfg in "1 12 10 2.0" "2 16 16 2.0" "3 20 20 2.0" "4 28 32 2.0"; do set -- $cfg python3 tools/gen :: 3160979587  | s bash: line 7: bc: command not found bash: line 7: bc: command not found bash: line 7: bc: command not found bash: line 7: bc: command not found 
+[34] BASH rc=0 0.1s :: for cfg in "4 28 32 2.0"; do set -- $cfg; start=$(date +%s%N); PHASE_DEBUG=1 ./target/release/phase  :: M=28 N=32 elapsed: 64ms 
+[35] BASH rc=0 0.2s :: python3 - <<'EOF' import json, random, sys sys.path.insert(0,'tools') from gen import gen # hard ins ::  8 0.3 12 14 10 0.5 13 16 12 1.0 14 20 16 1.0 15 28 32 1.0 16 28 32 0.4 seed=11: 6ms  seed=12: 6ms  seed=13: 13ms  seed=14: 18ms  seed=15: 48ms  seed=16: 44ms  
+[36] WRITE /app/tests/brute_check.rs -> W ok
+[37] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='tests/brute_check.rs' s=open(p).read() # drop the broken/unused helpe :: 
+[38] BASH rc=0 0.1s :: python3 - <<'EOF' import json, random def flat(seed, M, N, spread): rng=random.Random(seed) dos_a=[2 :: written markers=12 offspring=8 total_log_likelihood=-128.7268633639 wrote /tmp/flat12r.json elapsed 10ms 
+[39] BASH rc=0 0.0s :: PHASE_DEBUG=1 ./target/release/phase /tmp/flat12.json /tmp/flat12r.json 2>&1 | head -4 python3 - <<' ::  1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] score -128.72686336388333 
+[40] EDIT /app/src/solver/search.rs -> E ok
+[41] BASH rc=1 0.0s :: cat >> src/solver.rs <<'EOF' /// Whether the search should trace its branch and bound walk. pub fn t :: markers=12 offspring=8 total_log_likelihood=-128.7268633639 wrote /tmp/x.json ---- total trace lines: 0 
+[42] BASH rc=0 0.0s :: PHASE_TRACE=1 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>&1 | grep depth | nl | head -70 :: 
+[44] BASH rc=0 0.0s :: cd /tmp && python3 -c " import json d=json.load(open('flat12.json')) print('M',d['markers'],'N',d['o ::  2] flat gls: True first row [-0.1344, -0.1344, -0.1344, -0.1344, -0.1344] drA allowed [True, True, True, True, True, True, True, True, True, True, True, True] 
+[45] BASH rc=0 0.0s :: grep -n "dr\b\|double_reduction\|illegal\|NEG_INFINITY" src/solver/model.rs | head -40; echo ---; gr ::  &cross.params(parent).dr_allowed; 129:                if state.is_double_reduction() && !allowed[m] { 193:    let rate = cross.params(parent).dr_rate[marker]; 
+[46] BASH rc=0 0.0s :: sed -n 78,100p src/solver/model.rs; echo ===; sed -n 180,205p src/scoring.rs ::    } }  /// Transition contribution for one parent across the interval starting at /// `marker`. pub fn transition_term(     cross: &Cross,     parent: Parent, 
+[47] EDIT /app/src/solver/search.rs -> E ok
+[48] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | tail -3 && PHASE_TRACE=1 ./target/release/phase /tmp/flat12.j :: 
+[49] BASH rc=0 0.0s :: grep -n "gl" src/solver/model.rs | head -20 :: :        Model { m, n, cols, kcol, gl, dr, trans, trans_t, drj, pairs, dose } 169:        self.gl[progeny][marker][usize::from(self.dose[marker][pair][joint])] 
+[50] WRITE /app/tests/probe.rs -> W ok
+[51] BASH rc=0 0.0s :: cargo test --offline --locked --release --test probe -- --nocapture 2>&1 | tail -20 :: 
+[53] BASH rc=0 0.0s :: grep -n -i "range\|at most\|1..=\|maximum\|<= *[0-9]\|between" /app/spec/cross-format-v1.md | head - :: ination[P][m]` is the recombination fraction for the interval between 87:entries. Each value satisfies `0.0 < r <= 0.5`. 128:   entry outside `0.0 < r <= 0.5`. 
+[54] EDIT /app/src/solver/search.rs -> E ok
+[55] EDIT /app/src/solver/search.rs -> E ok
+[56] EDIT /app/src/solver/search.rs -> E ok
+[57] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" -A 5 | head -30; echo "bui :: build done 
+[58] BASH rc=0 0.0s :: PHASE_DEBUG=1 timeout 60 ./target/release/phase /tmp/flat12.json /tmp/x.json; echo "exit $?" :: markers=12 offspring=8 total_log_likelihood=-128.7268633639 wrote /tmp/x.json exit 0 
+[59] EDIT /app/src/solver/search.rs -> E ok
+[60] EDIT /app/src/solver/search.rs -> E ok
+[61] EDIT /app/src/solver/search.rs -> E ok
+[62] EDIT /app/src/solver/search.rs -> E ok
+[63] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | grep -E "^(error|warning)" -A 8 | head -40; echo "=== build f :: === build finished 
+[64] BASH rc=0 0.0s :: PHASE_DEBUG=1 timeout 120 ./target/release/phase /tmp/flat12.json /tmp/x.json; echo "exit $?"; pytho ::  0]] B [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] 
+[65] BASH rc=0 0.1s :: PHASE_TRACE=1 timeout 10 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>&1 | grep -c depth; P :: 0 
+[66] BASH rc=0 0.0s :: PHASE_TRACE=1 timeout 10 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>/tmp/tr.txt; wc -l /t :: markers=12 offspring=8 total_log_likelihood=-128.7268633639 wrote /tmp/x.json 0 /tmp/tr.txt ... 
+[67] EDIT /app/src/solver/search.rs -> E ok
+[68] EDIT /app/src/solver/search.rs -> E ok
+[69] EDIT /app/src/solver/search.rs -> E ok
+[70] EDIT /app/src/solver/search.rs -> E ok
+[71] BASH rc=0 0.1s :: python3 - <<'EOF' import re p='src/solver/search.rs' s=open(p).read() s=s.replace(""" if self.sorts_ :: u16, best: &[u8]) -> bool { 253:                if self.sorts_after(d, dec_a, dec_b, key) { 314:                    if self.sorts_after(d + 1, nda, ndb, key) { 
+[72] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | grep -E "^(error|warning)" -A 8 | head -40; echo "=== done" :: === done 
+[73] BASH rc=0 0.0s :: PHASE_DEBUG=1 timeout 120 ./target/release/phase /tmp/flat12.json /tmp/x.json; echo "exit $?"; pytho ::  0]] B [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] 
+[74] BASH rc=0 0.0s :: PHASE_DEBUG=1 timeout 300 ./target/release/phase cross.json result.json; echo "exit $?"; python3 -c  :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote result.json exit 0 total -725.2001583337342 
+[75] BASH rc=0 0.0s :: cargo test --offline --locked --test diagnostics 2>&1 | tail -8; echo ===; cargo test --offline --lo :: === 
+[76] BASH rc=0 0.0s :: cargo test --offline --locked --release --test brute_check 2>&1 | tail -8 :: 
+[77] BASH rc=0 0.1s :: s=$(date +%s%N); ./target/release/phase cross.json /tmp/r1.json >/dev/null; e=$(date +%s%N); echo "f :: fixture: 8 ms markers=28 offspring=32 total_log_likelihood=-1477.6160711013 wrote /tmp/r2.json M=28 N=32: 45 ms 
+[78] BASH rc=0 0.1s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace(""" let (lower, start) = local_sear :: restarts=24: markers=28 offspring=32 total_log_likelihood=-1477.6160711013 restarts=200: markers=28 offspring=32 total_log_likelihood=-1477.6160711013 
+[79] WRITE /app/tests/dual.rs -> W ok
+[80] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --release --test dual -- --nocapture 2>&1 | tail -12 :: 
+[81] WRITE /app/tests/dual.rs -> W ok
+[82] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --release --test dual -- --nocapture 2>&1 | tail -14 :: 
+[83] BASH rc=0 0.0s :: cat >> /app/tests/dual.rs <<'EOF' #[test] fn consensus_at_zero_prices() { let path = std::env::var(" :: 
+[84] BASH rc=0 0.0s :: cat >> /app/tests/dual.rs <<'EOF' #[test] fn line_search() { let path = std::env::var("PHASE_INSTANC :: 
+[85] BASH rc=0 0.0s :: cat >> /app/tests/dual.rs <<'EOF' #[test] fn gradient_sign() { let path = std::env::var("PHASE_INSTA :: 
+[86] BASH rc=0 0.0s :: ls tests/; echo ===; grep -n "fn \|markers\|offspring\|M =\|N =\|const" tests/solver_checks.rs | hea :: ; 590:        assert_eq!(cross.offspring, N, "{name}"); 595:fn search_reaches_the_enumerated_optimum() { 608:fn double_reduction_appears_only_where_allowed() { 
+[87] BASH rc=0 0.0s :: cat >> /app/tests/dual.rs <<'EOF' /// Bound that keeps the columns shared but lets each progeny jump :: 
+[88] BASH rc=0 0.0s :: python3 - <<'EOF' import random, json, sys sys.path.insert(0,'tools') from gen import gen # regenera :: planted A [5, 4, 3, 7, 0, 0, 15, 12] planted B [14, 11, 6, 0, 9, 9, 3, 0] 
+[89] BASH rc=0 0.1s :: python3 - <<'EOF' p='/app/tests/dual.rs' s=open(p).read() i=s.index('#[test]\nfn planted_truth_value :: 
+[90] BASH rc=0 0.0s :: sed -n 110,130p tests/solver_checks.rs; echo ===; sed -n 360,400p tests/solver_checks.rs; echo === R :: .12', '-35.21'] ['-27.38', '-9.43', '-4.85', '-2.11', '-0.14'] ['-39.20', '-14.68', '-9.70', '-8.40', '-15.85'] ['-54.77', '-18.86', '-9.70', '-4.22', '-0.28'] 
+[92] BASH rc=0 0.1s :: python3 - <<'PY' p='/app/src/solver/viterbi.rs' s=open(p).read() add = ''' /// `propagate` recording :: 247:pub fn propagate_arg( 289:pub fn best_path(model: &Model, progeny: usize, cols: &[(usize, usize)]) -> Vec<usize> { 
+[94] EDIT /app/src/solver.rs -> E ok
+[95] EDIT /app/src/solver.rs -> E ok
+[96] BASH rc=0 0.1s :: python3 - <<'PY' p='/app/src/solver.rs' s=open(p).read() s=s.replace("use crate::solver::bound::{opt :: === built 
+[97] BASH rc=0 0.1s :: for f in cross.json /tmp/big28.json; do echo "== $f"; s=$(date +%s%N); PHASE_DEBUG=1 timeout 110 ./t :: likelihood=-725.2001583337 wrote /tmp/o.json   13 ms == /tmp/big28.json markers=28 offspring=32 total_log_likelihood=-1477.6160711013 wrote /tmp/o.json   46 ms 
+[98] BASH rc=0 0.4s :: for M in 12 16 20 24; do for N in 8 16 32; do python3 tools/gen.py $((M*N)) $M $N 2.0 0.0 /tmp/b_${M :: =8 8ms |   M=16 N=16 13ms |   M=16 N=32 21ms |   M=20 N=8 8ms |   M=20 N=16 18ms |   M=20 N=32 31ms |   M=24 N=8 11ms |   M=24 N=16 18ms |   M=24 N=32 32ms |   
+[99] BASH rc=0 0.0s :: python3 - <<'PY' p='/app/src/solver/search.rs' s=open(p).read() # 1. fields s = s.replace(""" /// `[ :: === built 
+[101] BASH rc=0 0.0s :: for f in /app/cross.json /tmp/b_12_8.json; do echo "== $f"; /usr/bin/time -f "%es" ./target/release/ :: == /app/cross.json bash: line 1: /usr/bin/time: No such file or directory == /tmp/b_12_8.json bash: line 1: /usr/bin/time: No such file or directory 
+[102] BASH rc=0 0.1s :: cd /app; for f in /app/cross.json /tmp/b_12_8.json; do echo "== $f"; s=$(date +%s%N); PHASE_DEBUG=1  :: otal_log_likelihood=-725.2001583337 wrote /tmp/o.json 9ms == /tmp/b_12_8.json markers=12 offspring=8 total_log_likelihood=-141.9110891405 wrote /tmp/o.json 6ms 
+[103] BASH rc=0 0.0s :: cd /app; s=$(date +%s%N); PHASE_DEBUG=1 timeout 120 ./target/release/phase /tmp/b_12_16.json /tmp/o. :: markers=12 offspring=16 total_log_likelihood=-289.4694904311 wrote /tmp/o.json 7ms 
+[104] BASH rc=0 0.0s :: cd /app; sed -n '1,80p' src/solver/bound.rs ::        }         total += best;          if trace {             let mut state = arg;             for mm in (1..m).rev() {                 picks[c][mm] = state; 
+[105] BASH rc=0 0.0s :: cd /app; sed -n '80,220p' src/solver/bound.rs :: 1], &model.trans_t[0][mm], &model.trans_t[1][mm], &mut w);                 pull[c][mm] = w;                 priced_row(model, c, mm, &prices[mm][c], &mut row); 
+[106] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(""" if norm <= 1e-12  :: markers=12 offspring=16 total_log_likelihood=-289.4694904311 wrote /tmp/o.json 
+[107] BASH rc=0 0.0s :: cd /app; python3 -c " import json;d=json.load(open('cross.json')) print('markers',d['markers'],'offs ::  True, True, True, True, False, True, True, False] dr A rate [0.243796, 0.298073, 0.235085, 0, 0.182435, 0.19889, 0.233714, 0.266947, 0, 0.296118, 0.176549, 0] 
+[108] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() old = """ if norm <= 1e-12 { brea :: built 
+[109] BASH rc=0 0.1s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace("if let Some(rule) =  :: built == fixed == half == small == tiny == decay 
+[110] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace("if let Some(rule) =  :: built 
+[111] BASH rc=0 0.1s :: cd /app; for r in fixed half small tiny decay; do echo "== $r"; PHASE_DUAL=$r PHASE_DEBUG=1 timeout  :: == fixed == half == small == tiny == decay 
+[112] WRITE /app/tests/dual2.rs -> W ok
+[113] BASH rc=1 0.0s :: cd /app; cargo build --release --offline --tests 2>&1 | grep -E "^error" -A6 | head -20 for r in fix :: == fixed == half == small == tiny == decay 
+[114] BASH rc=0 0.0s :: cd /app; cat tools/gen.py :: ) > 5 else 0.0     path = sys.argv[6] if len(sys.argv) > 6 else "/tmp/cross.json"     json.dump(gen(seed, M, N, slope, noise), open(path, "w"))     print(path) 
+[115] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() s=s.replace(""" states = [(0,0),(0,1),(0 :: l[0]); sb = rng.choice(pool[0]) 37:            if rng.random() < 0.08: sa = rng.choice(pool[m]) 38:            if rng.random() < 0.08: sb = rng.choice(pool[m]) 
+[116] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() # move rec/dr definitions above the gl l :: M):             if rng.random() < 0.08: sa = rng.choice(pool[m])             if rng.random() < 0.08: sb = rng.choice(pool[m])             d = dosage(sa, sb, m) 
+[117] BASH rc=0 0.1s :: cd /app; for spec in "12 8" "12 16" "16 16"; do set -- $spec; M=$1;N=$2; python3 tools/gen.py $((M*N :: c_12_16 markers=12 offspring=16 total_log_likelihood=-369.8598779187 exit=0 == /tmp/c_16_16 markers=16 offspring=16 total_log_likelihood=-561.0961252976 exit=0 
+[118] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' import json,sys sys.path.insert(0,'tools') import gen import random # repl :: 12 8 12 16 16 16 --- need ca/cb; patch gen to record 
+[119] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() s=s.replace(''' return { "format_version :: 15, 4, 5, 4, 11, 8, 6, 12, 1, 15] 16 16 truth A [12, 9, 5, 12, 10, 15, 0, 12, 15, 3, 2, 5, 8, 6, 13, 9] B [6, 9, 3, 5, 0, 15, 12, 9, 10, 2, 7, 10, 0, 12, 3, 0] 
+[120] BASH rc=1 0.0s :: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s=s.replace('''#[test] fn dual_traject :: 
+[121] BASH rc=1 0.1s :: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() old_pool = """ non_dr = [s for s in stat :: ok == M=12 N=8 == M=12 N=16 == M=16 N=16 == M=20 N=24 
+[122] BASH rc=0 0.0s :: cd /app; head -c 300 /tmp/d_12_8.json; echo; PHASE_INSTANCE=/tmp/d_12_8.json PHASE_TRUTH=/tmp/dtruth :: null 
+[123] BASH rc=0 0.0s :: cd /app; tail -25 tools/gen.py :: ) > 5 else 0.0     path = sys.argv[6] if len(sys.argv) > 6 else "/tmp/cross.json"     json.dump(gen(seed, M, N, slope, noise), open(path, "w"))     print(path) 
+[124] BASH rc=0 0.1s :: cd /app; python3 - <<'PY' p='tools/gen.py' s=open(p).read() s=s.replace(''' "B": {"allowed": allowed :: ok == M=12 N=8 markers=12 offspring=8 == M=12 N=16 markers=12 offspring=16 == M=16 N=16 markers=16 offspring=16 
+[126] EDIT /app/src/solver.rs -> E ok
+[127] BASH rc=0 0.1s :: cd /app; cargo build --release --offline 2>&1 | grep -E "^error" -A6 | head; for r in 24 100 400; do :: 4  real	0m0.013s user	0m0.013s sys	0m0.001s == restarts 100  real	0m0.011s user	0m0.011s sys	0m0.000s == restarts 400  real	0m0.011s user	0m0.011s sys	0m0.000s 
+[128] BASH rc=0 0.0s :: cd /app; PHASE_RESTARTS=400 PHASE_PRIMAL_ONLY=1 PHASE_DEBUG=1 ./target/release/phase /tmp/d_12_16.js :: markers=12 offspring=16 total_log_likelihood=-321.8794843609 wrote /tmp/o.json 
+[129] BASH rc=0 0.1s :: cd /app; for r in 24 100 400; do echo -n "restarts $r: "; PHASE_RESTARTS=$r PHASE_PRIMAL_ONLY=1 PHAS :: restarts 24: restarts 100: restarts 400: (planted -251.655) 
+[131] EDIT /app/src/solver/bound.rs -> E ok
+[132] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s=s.replace("use polyploid_phase::solv :: built 
+[133] BASH rc=1 0.0s :: cd /app; for mu in 1.0 0.5 0.2; do for a in 0.5 2.0; do echo -n "mu=$mu alpha=$a : "; PHASE_INSTANCE :: mu=1.0 alpha=0.5 : mu=1.0 alpha=2.0 : mu=0.5 alpha=0.5 : mu=0.5 alpha=2.0 : mu=0.2 alpha=0.5 : mu=0.2 alpha=2.0 : 
+[134] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(""" if crate::solver: :: == alpha=0.02 == alpha=0.1 == alpha=0.5 
+[135] BASH rc=0 0.0s :: cd /app; python3 - <<'PY' p='src/solver/bound.rs' s=open(p).read() s=s.replace(''' eprintln!("smooth :: == alpha=0.02 == alpha=0.1 == alpha=0.5 
+[136] BASH rc=1 0.0s :: cd /app; for mu in 0.3 0.1 0.03; do for a in 0.02 0.1; do echo -n "mu=$mu a=$a: "; PHASE_INSTANCE=/t :: mu=0.3 a=0.02: mu=0.3 a=0.1: mu=0.1 a=0.02: mu=0.1 a=0.1: mu=0.03 a=0.02: mu=0.03 a=0.1: 
+[137] BASH rc=0 0.0s :: cd /app; cat > /tmp/battery.sh <<'EOF' #!/bin/bash cd /app for spec in "12 8" "12 12" "12 16" "16 8" :: started 
+[138] BASH rc=0 0.0s :: cd /app; python3 -c " import json d=json.load(open('cross.json')) gl=d['child_gl'] import statistics :: 0.0, -0.79, -7.64] [-5.73, 0.0, -0.78, -4.18, -21.3] [0.0, -2.25, -5.38, -10.61, -31.13] [-10.18, -1.05, 0.0, -1.05, -10.18] [-4.01, 0.0, -0.26, -2.09, -11.79] 
+[139] BASH rc=0 0.0s :: sleep 0; cat /tmp/battery.log ::  N=12 7ms | markers=12 offspring=12  M=12 N=16 12ms | markers=12 offspring=16  M=16 N=8 6ms | markers=16 offspring=8  M=16 N=16 15ms | markers=16 offspring=16  
+[140] BASH rc=1 0.0s :: cd /app; python3 - <<'PY' p='tests/dual2.rs' s=open(p).read() s+=''' /// Is the negative projected s :: 

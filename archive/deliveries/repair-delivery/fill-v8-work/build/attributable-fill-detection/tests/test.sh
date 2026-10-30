@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+# Class C verifier entry point.
+#
+# Candidate source is built into observation executables only. Those executables
+# run as an unprivileged account and emit bounded raw functional artifacts. A
+# different verifier-owned process, judge.sh, owns private expectations and the
+# final comparison. Candidate stdout, stderr, exit status and test status lines
+# are diagnostic only and never grant reward.
+set -uo pipefail
+
+LOCAL_RUSTUP_HOME="${RUSTUP_HOME:-${HOME:-/nonexistent}/.rustup}"
+export PATH=/usr/local/cargo/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+unset RUSTC RUSTDOC RUSTFLAGS RUSTDOCFLAGS RUSTC_WRAPPER RUSTC_WORKSPACE_WRAPPER
+unset CARGO_BUILD_RUSTC_WRAPPER CARGO_BUILD_RUSTC CARGO_BUILD_RUSTFLAGS
+unset CARGO_TARGET_DIR CARGO_BUILD_TARGET CARGO_BUILD_TARGET_DIR
+unset CARGO_ENCODED_RUSTFLAGS CARGO_MANIFEST_DIR CARGO_MANIFEST_PATH
+unset RUSTUP_TOOLCHAIN RUSTUP_DIST_SERVER RUSTUP_UPDATE_ROOT
+unset LD_PRELOAD LD_LIBRARY_PATH DYLD_INSERT_LIBRARIES DYLD_LIBRARY_PATH
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY BASH_ENV ENV CDPATH
+for variable in $(/usr/bin/env | /usr/bin/grep -oE '^CARGO_TARGET_[A-Z0-9_]+_(RUNNER|LINKER)' || true); do
+    unset "$variable"
+done
+
+APP_DIR="${APP_DIR:-/app}"
+TESTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOGS="${REWARD_DIR:-/logs/verifier}"
+REWARD="$LOGS/reward.txt"
+REPORT="${CTRF_FILE:-$LOGS/report.json}"
+mkdir -p "$LOGS"
+printf '0\n' > "$REWARD"
+: > "$LOGS/run.log"
+log() { printf '%s\n' "$*" >> "$LOGS/run.log"; }
+
+fail() {
+    log "FATAL $1"
+    printf '{"reportFormat":"CTRF","results":{"tool":{"name":"fill-verifier-owned"},"summary":{"tests":0,"passed":0,"failed":0},"tests":[]}}\n' > "$REPORT"
+    exit 2
+}
+
+[ -d "$APP_DIR/src" ] || fail 'candidate source tree missing'
+[ -f "$TESTS_DIR/Cargo.toml" ] || fail 'verifier manifest missing'
+[ -f "$TESTS_DIR/Cargo.lock" ] || fail 'verifier lockfile missing'
+[ -f "$TESTS_DIR/graded.rs" ] || fail 'graded scenarios missing'
+[ -f "$TESTS_DIR/frozen_probe.rs" ] || fail 'frozen probe missing'
+[ -f "$TESTS_DIR/cases.txt" ] || fail 'case manifest missing'
+[ -x "$TESTS_DIR/judge.sh" ] || fail 'judge missing'
+[ -d "$TESTS_DIR/expected" ] || fail 'private expectations missing'
+
+# The candidate source contract allows Rust modules under src, but never
+# symlinks, manifests, build scripts, cargo configuration or prebuilt objects.
+if find "$APP_DIR" -type l -print -quit | /usr/bin/grep -q .; then
+    fail 'symlink present under candidate app'
+fi
+
+CARGO_BIN=/usr/local/cargo/bin/cargo
+RUSTC_BIN=/usr/local/cargo/bin/rustc
+RUNUSER=/usr/sbin/runuser
+GRADED_USER=nobody
+
+# Native developer validation uses an explicitly supplied trusted cargo path;
+# the final Linux image always takes the fixed paths above.
+if [ ! -x "$CARGO_BIN" ] && [ -n "${VERIFIER_CARGO:-}" ] && [ -x "$VERIFIER_CARGO" ]; then
+    CARGO_BIN="$VERIFIER_CARGO"
+    RUSTC_BIN="$(dirname "$VERIFIER_CARGO")/rustc"
+fi
+[ -x "$CARGO_BIN" ] && [ -x "$RUSTC_BIN" ] || fail 'trusted Rust toolchain missing'
+
+VERIFY="$(mktemp -d /tmp/fill-verify.XXXXXXXX)" || fail 'cannot create private workspace'
+SANDBOX="$(mktemp -d /tmp/fill-runner.XXXXXXXX)" || fail 'cannot create runner workspace'
+trap 'rm -rf "$VERIFY" "$SANDBOX"' EXIT
+chmod 700 "$VERIFY"
+chmod 755 "$SANDBOX"
+
+export HOME="$VERIFY/home"
+export CARGO_HOME="$(cd "$(dirname "$CARGO_BIN")/.." && pwd)"
+export CARGO_NET_OFFLINE=true
+export CARGO_TERM_COLOR=never
+export RUSTC="$RUSTC_BIN"
+mkdir -p "$HOME"
+
+# Assemble the candidate-linked runner from an allowlisted source shape and
+# verifier-owned manifest/scenarios. Only regular Rust source files are copied.
+RUNNER="$SANDBOX/runner"
+mkdir -p "$RUNNER/src" "$RUNNER/src/bin" "$RUNNER/tests/common" "$RUNNER/.cargo"
+(cd "$APP_DIR/src" && find . -type f -name '*.rs' -print0 | while IFS= read -r -d '' file; do
+    case "$file" in ./bin/*) continue ;; esac
+    mkdir -p "$RUNNER/src/$(dirname "$file")"
+    cp "$APP_DIR/src/$file" "$RUNNER/src/$file"
+done)
+[ -f "$RUNNER/src/lib.rs" ] || fail 'candidate library entry point missing'
+cp "$TESTS_DIR/Cargo.toml" "$RUNNER/Cargo.toml"
+cp "$TESTS_DIR/Cargo.lock" "$RUNNER/Cargo.lock"
+cp "$TESTS_DIR/graded.rs" "$RUNNER/tests/graded.rs"
+cp "$TESTS_DIR/common/mod.rs" "$RUNNER/tests/common/mod.rs"
+cp "$TESTS_DIR/frozen_probe.rs" "$RUNNER/src/bin/frozen_probe.rs"
+printf '[build]\nrustc-wrapper = ""\n' > "$RUNNER/.cargo/config.toml"
+
+# In the Linux verifier image the graded account must not be able to read the
+# private expectations or judge. Native developer validation has no account
+# boundary and must not mutate the checked-in source tree's file modes.
+if [ -x "$RUNUSER" ] && id "$GRADED_USER" >/dev/null 2>&1; then
+    chmod -R go-rwx "$TESTS_DIR" 2>/dev/null || true
+fi
+
+TARGET="$SANDBOX/target"
+mkdir -p "$TARGET" "$SANDBOX/results"
+if [ -x "$RUNUSER" ] && id "$GRADED_USER" >/dev/null 2>&1; then
+    chown -R "$GRADED_USER" "$RUNNER" "$TARGET" "$SANDBOX/results"
+    GRADED_UID="$(/usr/bin/env -i "$RUNUSER" -u "$GRADED_USER" -- /usr/bin/id -u 2>/dev/null)"
+    [ -n "$GRADED_UID" ] && [ "$GRADED_UID" != 0 ] || fail 'graded account isolation failed'
+    BUILD=(/usr/bin/env -i PATH="$PATH" HOME="$RUNNER/home" CARGO_HOME="$CARGO_HOME" RUSTUP_HOME=/usr/local/rustup CARGO_NET_OFFLINE=true CARGO_TARGET_DIR="$TARGET" RUSTC="$RUSTC_BIN" "$RUNUSER" -u "$GRADED_USER" -- "$CARGO_BIN")
+    RUN_PREFIX=(/usr/bin/env -i PATH=/usr/bin:/bin HOME=/nonexistent "$RUNUSER" -u "$GRADED_USER" --)
+else
+    # Local macOS developer path. Container validation below is authoritative
+    # for the privilege boundary.
+    mkdir -p "$RUNNER/home"
+    BUILD=(/usr/bin/env -i PATH="$PATH" HOME="$RUNNER/home" CARGO_HOME="$CARGO_HOME" RUSTUP_HOME="$LOCAL_RUSTUP_HOME" CARGO_NET_OFFLINE=true CARGO_TARGET_DIR="$TARGET" RUSTC="$RUSTC_BIN" "$CARGO_BIN")
+    RUN_PREFIX=(/usr/bin/env -i PATH=/usr/bin:/bin HOME=/nonexistent)
+fi
+
+build_start="$(date +%s)"
+if ! "${BUILD[@]}" test --offline --locked --manifest-path "$RUNNER/Cargo.toml" --test graded --no-run > "$LOGS/build.log" 2>&1; then
+    fail 'candidate-linked graded runner did not build'
+fi
+if ! "${BUILD[@]}" build --offline --locked --manifest-path "$RUNNER/Cargo.toml" --bin frozen_probe >> "$LOGS/build.log" 2>&1; then
+    fail 'candidate-linked frozen runner did not build'
+fi
+build_end="$(date +%s)"
+
+GRADED_BIN="$(find "$TARGET/debug/deps" -maxdepth 1 -type f -name 'graded-*' -perm -111 -print -quit)"
+FROZEN_BIN="$TARGET/debug/frozen_probe"
+[ -x "$GRADED_BIN" ] && [ -x "$FROZEN_BIN" ] || fail 'candidate-linked runner artifacts missing'
+
+run_start="$(date +%s)"
+while read -r kind name extra; do
+    case "$kind" in ''|'#'*) continue ;; esac
+    [ -z "${extra:-}" ] || fail 'malformed case manifest'
+    artifact="$SANDBOX/results/$name"
+    stdout="$LOGS/candidate.$name.out"
+    rc=0
+    if [ "$kind" = graded ]; then
+        "${RUN_PREFIX[@]}" /usr/bin/env FILL_OBSERVATION_FILE="$artifact" "$GRADED_BIN" --exact "$name" --test-threads=1 > "$stdout" 2>&1 || rc=$?
+    elif [ "$kind" = frozen ]; then
+        "${RUN_PREFIX[@]}" "$FROZEN_BIN" "$name" "$artifact" > "$stdout" 2>&1 || rc=$?
+    else
+        fail 'unknown case kind'
+    fi
+    log "runner $name exit=$rc (diagnostic only)"
+done < "$TESTS_DIR/cases.txt"
+run_end="$(date +%s)"
+
+# Mandatory verifier-owned expected-failure control. It must observe exactly
+# one rejected raw record. Candidate code and output do not participate.
+control_ok=0
+if "$TESTS_DIR/judge.sh" --selftest "$TESTS_DIR/cases.txt" "$TESTS_DIR/expected" "$TESTS_DIR/expected" "$VERIFY/control-verdict.txt"; then
+    control_ok=1
+    log 'CONTROL ok'
+else
+    log 'CONTROL failed'
+fi
+
+judge_start="$(date +%s)"
+grade_rc=0
+"$TESTS_DIR/judge.sh" --grade "$TESTS_DIR/cases.txt" "$TESTS_DIR/expected" "$SANDBOX/results" "$VERIFY/verdict.txt" || grade_rc=$?
+judge_end="$(date +%s)"
+cp "$VERIFY/verdict.txt" "$LOGS/verdict.txt"
+
+total=0
+failed=0
+if [ -f "$VERIFY/verdict.txt" ]; then
+    read -r total failed < <(awk '/^TOTAL / { print $2, $4 }' "$VERIFY/verdict.txt")
+fi
+: "${total:=0}"
+: "${failed:=0}"
+passed=$((total - failed))
+
+printf '{"reportFormat":"CTRF","results":{"tool":{"name":"fill-verifier-owned"},"summary":{"tests":%s,"passed":%s,"failed":%s},"tests":[]}}\n' "$total" "$passed" "$failed" > "$REPORT"
+log "timing runner_build=$((build_end-build_start)) runner_execution=$((run_end-run_start)) judge=$((judge_end-judge_start))"
+log "verdict total=$total failed=$failed control=$control_ok reward=0"
+
+if [ "$grade_rc" -eq 0 ] && [ "$total" -eq 48 ] && [ "$failed" -eq 0 ] && [ "$control_ok" -eq 1 ]; then
+    printf '1\n' > "$REWARD"
+fi
+log "final reward=$(cat "$REWARD")"
+[ "$(cat "$REWARD")" = 1 ]

@@ -1,0 +1,1 @@
+- [ASAN + coroutine flaky DEADLYSIGNAL](asan-coroutine-flaky-signal.md) — GCC 12 sanitized coroutine binaries here crash before main ~30-50% of runs; it's the toolchain, not your code.

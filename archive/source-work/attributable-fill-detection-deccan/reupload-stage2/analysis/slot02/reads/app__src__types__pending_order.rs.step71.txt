@@ -1,0 +1,78 @@
+2	use crate::types::ids::{ClientRef, InstrumentId, OrderId, Price, Qty, StrategyId, Venue};
+3	use crate::types::time::{Duration, Timestamp};
+4	
+5	pub const CANCEL_LEAD: Duration = Duration::from_seconds(300);
+6	
+7	/// How long an order's attribution window stays open.
+8	///
+9	/// The window opens at the instant the engine begins tracking the order and
+10	/// runs for this duration. See `PendingOrder` for the half-open rule and
+11	/// `/app/spec/venue-semantics.md` for why the venue guarantees it.
+12	pub const ATTRIBUTION_WINDOW: Duration = Duration::from_seconds(900);
+13	
+14	#[derive(Debug, Clone, PartialEq)]
+15	pub struct PendingOrder {
+16	    pub strategy_id: StrategyId,
+17	    pub instrument_id: InstrumentId,
+18	    pub venue: Venue,
+19	    pub order_id: OrderId,
+20	    pub client_ref: ClientRef,
+21	    /// The sequence number the venue assigned when it accepted this order.
+22	    /// Orders accepted in the same venue tick share one sequence number, so it
+23	    /// orders arrivals but does not uniquely identify an order.
+24	    pub venue_seq: u64,
+25	    pub limit_price: Price,
+26	    pub size: Qty,
+27	    pub expiry_time: Timestamp,
+28	    pub created_at: Timestamp,
+29	}
+30	
+31	impl PendingOrder {
+32	    #[allow(clippy::too_many_arguments)]
+33	    pub fn new(
+34	        strategy_id: StrategyId,
+35	        instrument_id: InstrumentId,
+36	        venue: Venue,
+37	        order_id: OrderId,
+38	        client_ref: ClientRef,
+39	        venue_seq: u64,
+40	        limit_price: Price,
+41	        size: Qty,
+42	        expiry_time: Timestamp,
+43	        created_at: Timestamp,
+44	    ) -> Self {
+45	        Self {
+46	            strategy_id,
+47	            instrument_id,
+48	            venue,
+49	            order_id,
+50	            client_ref,
+51	            venue_seq,
+52	            limit_price,
+53	            size,
+54	            expiry_time,
+55	            created_at,
+56	        }
+57	    }
+58	
+59	    /// First instant at which an observation can be attributed to this order.
+60	    pub fn attribution_start(&self) -> Timestamp {
+61	        self.created_at
+62	    }
+63	
+64	    /// First instant at which an observation can no longer be attributed to
+65	    /// this order. The window is half-open, so this instant is *excluded*.
+66	    pub fn attribution_end(&self) -> Timestamp {
+67	        self.created_at + ATTRIBUTION_WINDOW
+68	    }
+69	
+70	    pub fn should_cancel(&self, now: Timestamp) -> bool {
+71	        let time_until_expiry = self.expiry_time - now;
+72	        time_until_expiry.as_seconds() < CANCEL_LEAD.as_seconds() || now >= self.expiry_time
+73	    }
+74	
+75	    pub fn seconds_until_expiry(&self, now: Timestamp) -> i64 {
+76	        (self.expiry_time - now).as_seconds()
+77	    }
+78	}
+79

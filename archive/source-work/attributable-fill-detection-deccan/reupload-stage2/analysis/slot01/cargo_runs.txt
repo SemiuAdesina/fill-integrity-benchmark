@@ -1,0 +1,293 @@
+[13] CMD: cargo build --offline 2>&1 | tail -30
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.14s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.14s
+[metadata] {"noOutputExpected": false}
+
+[14] CMD: cargo test --offline --test diagnostics 2>&1 | tail -40
+--- obs tail ---
+sive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.50s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-692941566e5c440d)
+
+running 17 tests
+test a_block_total_is_fully_allocated ... ok
+test a_later_block_divides_over_the_residuals_of_the_earlier_one ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[14] CMD: cargo run --offline --bin reproduce 2>&1 | tail -60
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[16] CMD: cargo test --offline --test scratch 2>&1 | tail -60
+--- obs tail ---
+ndates stdout ----
+thread 'a_block_does_not_cross_mandates' panicked at tests/scratch.rs:304:5:
+assertion `left == right` failed: m1's north leg takes the block
+  left: 0
+ right: 5
+
+---- a_corrective_fill_counts_once_toward_its_own_leg stdout ----
+thread 'a_corrective_fill_counts_once_toward_its_own_leg' panicked at tests/scratch.rs:381:5:
+once the corrective order fills, the leg it was sent for is complete and the pairing is recorded
+
+---- a_finalized_corrective_order_leaves_the_gap_open stdout ----
+thread 'a_finalized_corrective_order_leaves_the_gap_open' panicked at tests/scratch.rs:141:5:
+assertion `left == right` failed: the first corrective is sized to the residual the block left
+  left: [7, 5]
+ right: [7]
+
+---- an_observation_outside_the_window_names_another_order stdout ----
+thread 'an_observation_outside_the_window_names_another_order' panicked at tests/scratch.rs:213:5:
+assertion `left == right` failed: the event four windows later names a recycled identifier and is not attributed to this order
+  left: 0
+ right: 10
+
+
+failures:
+    a_block_does_not_cross_mandates
+    a_block_finalized_leg_is_neutralized_for_its_residual
+    a_corrective_fill_counts_once_toward_its_own_leg
+    a_finalized_corrective_order_leaves_the_gap_open
+    an_observation_outside_the_window_names_another_order
+
+test result: FAILED. 4 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test scratch`
+[metadata] {"noOutputExpected": false}
+
+[19] CMD: cargo test --offline --test scratch 2>&1 | tail -50
+--- obs tail ---
+overs_identity_from_a_later_observation ... ok
+test a_rejected_corrective_order_is_retried_on_a_later_cycle ... ok
+test a_partial_fill_reduces_the_corrective_order ... ok
+test a_restart_does_not_reopen_an_attribution_window ... ok
+test an_observation_outside_the_window_names_another_order ... ok
+test the_live_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.43s
+     Running tests/scratch.rs (target/debug/deps/scratch-8e17c47652548018)
+
+running 11 tests
+test a_block_does_not_cross_mandates ... ok
+test a_block_finalized_leg_is_neutralized_for_its_residual ... ok
+test a_block_outside_every_window_allocates_nothing_but_finalizes ... ok
+test a_corrective_fill_counts_once_toward_its_own_leg ... ok
+test a_finalized_corrective_order_leaves_the_gap_open ... ok
+test a_lost_acknowledgement_recovers_identity_from_a_later_observation ... ok
+test a_rejected_corrective_order_is_retried_on_a_later_cycle ... ok
+test a_partial_fill_reduces_the_corrective_order ... ok
+test a_restart_does_not_reopen_an_attribution_window ... ok
+test an_observation_outside_the_window_names_another_order ... ok
+test the_live_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[20] CMD: cat >> /app/tests/scratch.rs <<'EOF' /// The venue recycles an identifier once the first order's window has closed. /// An observation naming the recycled identifier belongs to the later order, /// and the client referen
+--- obs tail ---
+; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test scratch`
+
+[stdout]
+test a_partial_fill_reduces_the_corrective_order ... ok
+test a_recycled_identifier_belongs_to_the_later_order ... FAILED
+test a_restart_does_not_reopen_an_attribution_window ... ok
+test a_rejected_corrective_order_is_retried_on_a_later_cycle ... ok
+test an_observation_outside_the_window_names_another_order ... ok
+test the_live_list_and_the_feed_describe_one_quantity ... ok
+
+failures:
+
+---- a_late_event_timestamped_inside_the_window_is_attributed stdout ----
+thread 'a_late_event_timestamped_inside_the_window_is_attributed' panicked at tests/scratch.rs:560:5:
+assertion `left == right` failed: the window is tested against the venue's match timestamp, so a late event about an in-window match is still attributed
+  left: 0
+ right: 8
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_recycled_identifier_belongs_to_the_later_order stdout ----
+thread 'a_recycled_identifier_belongs_to_the_later_order' panicked at tests/scratch.rs:523:5:
+assertion `left == right` failed
+  left: Some("V-103")
+ right: Some("V-101")
+
+
+failures:
+    a_late_event_timestamped_inside_the_window_is_attributed
+    a_recycled_identifier_belongs_to_the_later_order
+
+test result: FAILED. 12 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test scratch`
+[metadata] {"noOutputExpected": false}
+
+[21] CMD: python3 - <<'PY' import re p='tests/scratch.rs' s=open(p).read() # 1) Fix the late-event test: it needs a third cycle to reach the event batch. s = s.replace(''' engine.run_cycle().expect("cycle 1"); // Several cycles la
+--- obs tail ---
+s_not_reopen_an_attribution_window ... ok
+test an_observation_outside_the_window_names_another_order ... ok
+test the_live_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+     Running tests/scratch.rs (target/debug/deps/scratch-8e17c47652548018)
+
+running 14 tests
+test a_block_does_not_cross_mandates ... ok
+test a_block_finalized_leg_is_neutralized_for_its_residual ... ok
+test a_block_larger_than_the_basis_drops_the_excess ... ok
+test a_block_outside_every_window_allocates_nothing_but_finalizes ... ok
+test a_corrective_fill_counts_once_toward_its_own_leg ... ok
+test a_finalized_corrective_order_leaves_the_gap_open ... ok
+test a_late_event_timestamped_inside_the_window_is_attributed ... ok
+test a_partial_fill_reduces_the_corrective_order ... ok
+test a_lost_acknowledgement_recovers_identity_from_a_later_observation ... ok
+test a_recycled_identifier_belongs_to_the_later_order ... ok
+test a_rejected_corrective_order_is_retried_on_a_later_cycle ... ok
+test a_restart_does_not_reopen_an_attribution_window ... ok
+test an_observation_outside_the_window_names_another_order ... ok
+test the_live_list_and_the_feed_describe_one_quantity ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[22] CMD: cp src/engine/fill_classifier.rs /tmp/fc.bak && python3 - <<'PY' p='src/engine/fill_classifier.rs' s=open(p).read() s=s.replace(''' if let Some(index) = self.index_by_client_ref.get(client_ref).copied() { return Some(ind
+--- obs tail ---
+assertion `left == right` failed: an observation naming a recycled identifier is attributed to the order whose client reference it carries
+  left: 0
+ right: 6
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_recycled_identifier_belongs_to_the_later_order
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test scratch`
+
+[stdout]
+assertion `left == right` failed: an observation naming a recycled identifier is attributed to the order whose client reference it carries
+  left: 0
+ right: 6
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_recycled_identifier_belongs_to_the_later_order
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test scratch`
+[metadata] {"noOutputExpected": false}
+
+[23] CMD: cargo build --offline 2>&1 | tail -5 && cargo test --offline 2>&1 | grep -E "^(test result|running|error)" && cargo run --offline --bin reproduce 2>&1 | tail -4 && cargo clippy --offline --all-targets 2>&1 | grep -E "^(w
+--- obs tail ---
+nning 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.42s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 17 tests
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 14 tests
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+      1 error: 'cargo-clippy' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+[metadata] {"noOutputExpected": false}
+
+[25] CMD: cargo build --offline 2>&1 | tail -2 && echo "=== diagnostics ===" && cargo test --offline --test diagnostics 2>&1 | grep "test result" && echo "=== scratch (my own) ===" && cargo test --offline --test scratch 2>&1 | gre
+--- obs tail ---
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+=== diagnostics ===
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== scratch (my own) ===
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== reproduce ===
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+=== diagnostics ===
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== scratch (my own) ===
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+=== reproduce ===
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}

@@ -1,0 +1,122 @@
+[27]
+cd /tmp/t && sed -i 's/launch(two_parks)/launch(two_parks())/g; s/launch(parent_two)/launch(parent_two())/g; s/launch(parent_then_park)/launch(parent_then_park())/g' main.cpp && grep -n "c\.launch(\|c2\.launch(" main.cpp | grep -v "()" 
+
+[37]
+cd /tmp/t && python3 - <<'EOF'
+import re
+s = open('edge.cpp').read()
+# move child() above parent_one()
+s = s.replace("""Duty parent_one() {
+    const std::int64_t v = co_await child();
+    co_return v * 2;
+}
+
+Duty child() { co_return co_await park(); }
+""", """Duty child() { co_return co_await park(); }
+
+Duty parent_one() {
+    const std::int64_t v = co_await child();
+    co_return v * 2;
+}
+""")
+open('edge.cpp','w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o edge edge.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp 2>&1 | head -20 && ./edge
+
+[56]
+cd /tmp/t && cat > min.cpp <<'EOF'
+#include "trace.hpp"
+Duty simple() { co_return co_await park(); }
+int main() {
+    std::setvbuf(stdout, nullptr, _IONBF, 0);
+    std::printf("start\n");
+    {
+        Conductor c{4};
+        const JobId j = c.launch(simple());
+        std::printf("launched %llu\n", (unsigned long long)j);
+        c.post(j, 5);
+        c.step();
+        std::printf("value %lld live %zu\n", (long long)*c.value_of(j), c.arena().live_slots());
+    }
+    std::printf("done\n");
+    return 0;
+}
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I/app/include -o min min.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp && export ASAN_OPTIONS="symbolize=0:fast_unwind_on_fatal=1" && fails=0; for i in $(seq 1 20); do ./min > /tmp/t/m.txt 2>&1 || { fails=$((fails+1)); cp /tmp/t/m.txt /tmp/t/mfail.txt; }; done; echo "min: $fails/20"; cat /tmp/t/mfail.txt 2>/dev/null | head -20
+
+[57]
+cd /tmp/t && cat > noop.cpp <<'EOF'
+#include <cstdio>
+#include "roundel/runtime.hpp"
+int main() { std::setvbuf(stdout, nullptr, _IONBF, 0); std::printf("start\n"); std::printf("done\n"); return 0; }
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I/app/include -o noop noop.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp && export ASAN_OPTIONS="symbolize=0:fast_unwind_on_fatal=1"; f=0; for i in $(seq 1 20); do ./noop > /tmp/t/n.txt 2>&1 || { f=$((f+1)); cp /tmp/t/n.txt /tmp/t/nfail.txt; }; done; echo "noop(linked, no work): $f/20"; cat /tmp/t/nfail.txt 2>/dev/null | head -5
+
+[61]
+cd /tmp/t && python3 - <<'EOF'
+s = open('trace.hpp').read()
+s = s.replace("""        for (const auto& e : j.entries()) {
+            if (e.job == id) {
+                check(e.mark == Mark::JobStarted, "JobStarted comes first", what);
+                break;
+            }
+        }""",
+"""        if (j.has(Mark::JobStarted, id)) {
+            for (const auto& e : j.entries()) {
+                if (e.job == id) {
+                    check(e.mark == Mark::JobStarted, "JobStarted comes first", what);
+                    break;
+                }
+            }
+        }""")
+s = s.replace("""                check(e.mark == Mark::CancelRequested, "nothing after FrameReleased", what);""",
+"""                // A rejection touches nothing, and a cancellation request is
+                // counted once per call; neither is a step of the job's run.
+                check(e.mark == Mark::CancelRequested || e.mark == Mark::TicketRejected,
+                      "nothing after FrameReleased", what);""")
+open('trace.hpp','w').write(s)
+EOF
+for f in main edge nested; do g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o $f $f.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp 2>&1 | head -5; ./$f; done
+
+[62]
+cd /tmp/t && python3 - <<'EOF'
+s = open('trace.hpp').read()
+s = s.replace("""                check(e.mark == Mark::CancelRequested || e.mark == Mark::TicketRejected,
+                      "nothing after FrameReleased", what);""",
+"""                check(e.mark == Mark::CancelRequested || e.mark == Mark::TicketRejected ||
+                          e.mark == Mark::TicketQueued,
+                      "nothing after FrameReleased",
+                      std::string(mark_name(e.mark)) + " " + what);""")
+open('trace.hpp','w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o main main.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp && ./main 2>&1 | sort | uniq -c | head
+
+[68]
+cd /tmp/t && python3 - <<'EOF'
+s = open('edge.cpp').read()
+s = s.replace("""void t_fault_later() {""",
+"""Duty grandparent() {
+    const std::int64_t v = co_await parent_one();
+    co_return v + 1;
+}
+
+void t_cancel_three_levels() {
+    Conductor c{8};
+    const JobId j = c.launch(grandparent());
+    check_eq((long long)c.arena().live_slots(), 3, "three frames out");
+    c.cancel(j);
+    check_eq((long long)c.arena().live_slots(), 0, "all three back at once");
+    check(outcome_str(c.outcome_of(j)) == "X", "cancelled");
+    check_eq(c.journal().count_for(Mark::FrameReleased, j), 1, "released once");
+    const JobId k = c.launch(grandparent());
+    check_eq((long long)c.arena().peak_live(), 3, "peak is the nesting depth");
+    c.cancel(k);
+    audit_journal(c, "three level cancel");
+}
+
+void t_fault_later() {""")
+s = s.replace("""    t_immediate_child();""", """    t_immediate_child();
+    t_cancel_three_levels();""")
+open('edge.cpp','w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include -o edge edge.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp 2>&1|head -5; ./edge | tail -3

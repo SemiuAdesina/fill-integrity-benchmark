@@ -1,0 +1,66 @@
+2	use crate::types::ids::{StrategyId, Price, Qty, Venue, InstrumentId};
+3	use crate::types::time::Timestamp;
+4	
+5	#[derive(Debug, Clone, PartialEq)]
+6	pub struct StrategyCandidate {
+7	    pub strategy_id: StrategyId,
+8	    pub north_instrument: InstrumentId,
+9	    pub south_instrument: InstrumentId,
+10	    pub north_price: Price,
+11	    pub south_price: Price,
+12	    pub north_depth: Qty,
+13	    pub south_depth: Qty,
+14	    pub expiry_time: Timestamp,
+15	}
+16	
+17	impl StrategyCandidate {
+18	    #[allow(clippy::too_many_arguments)]
+19	    pub fn new(
+20	        strategy_id: StrategyId,
+21	        north_instrument: InstrumentId,
+22	        south_instrument: InstrumentId,
+23	        north_price: Price,
+24	        south_price: Price,
+25	        north_depth: Qty,
+26	        south_depth: Qty,
+27	        expiry_time: Timestamp,
+28	    ) -> Self {
+29	        Self {
+30	            strategy_id,
+31	            north_instrument,
+32	            south_instrument,
+33	            north_price,
+34	            south_price,
+35	            north_depth,
+36	            south_depth,
+37	            expiry_time,
+38	        }
+39	    }
+40	
+41	    pub fn pair_cost(&self) -> Price {
+42	        self.north_price + self.south_price
+43	    }
+44	
+45	    pub fn instrument_for(&self, venue: Venue) -> &InstrumentId {
+46	        match venue {
+47	            Venue::North => &self.north_instrument,
+48	            Venue::South => &self.south_instrument,
+49	        }
+50	    }
+51	
+52	    pub fn price_for(&self, venue: Venue) -> Price {
+53	        match venue {
+54	            Venue::North => self.north_price,
+55	            Venue::South => self.south_price,
+56	        }
+57	    }
+58	
+59	    pub fn depth_for(&self, venue: Venue) -> Qty {
+60	        match venue {
+61	            Venue::North => self.north_depth,
+62	            Venue::South => self.south_depth,
+63	        }
+64	    }
+65	}
+66
+

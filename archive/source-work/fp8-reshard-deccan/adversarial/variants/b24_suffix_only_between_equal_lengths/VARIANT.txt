@@ -1,0 +1,3 @@
+b24_suffix_only_between_equal_lengths
+consistency
+compares histories only when they have the same length

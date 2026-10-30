@@ -1,0 +1,35 @@
+{
+ "fixture": "h_shared_endpoint",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l01",
+    "l10"
+   ],
+   [
+    "l06",
+    "l13"
+   ],
+   [
+    "l01",
+    "l10"
+   ]
+  ],
+  "combine": [
+   "R1"
+  ],
+  "sink_value": -3615
+ },
+ "observables": {
+  "completion": 8,
+  "allocation": 8,
+  "total_bytes": 40,
+  "link_bytes": {
+   "l01": 16,
+   "l10": 8,
+   "l06": 8,
+   "l13": 8
+  }
+ }
+}

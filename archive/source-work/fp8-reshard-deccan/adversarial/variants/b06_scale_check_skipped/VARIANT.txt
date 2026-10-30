@@ -1,0 +1,3 @@
+b06_scale_check_skipped
+consistency
+never compares the scale pairs of a block's records

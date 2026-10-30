@@ -1,0 +1,109 @@
+2	use std::fmt;
+3	
+4	macro_rules! string_id {
+5	    ($name:ident) => {
+6	        #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+7	        pub struct $name(String);
+8	
+9	        impl $name {
+10	            pub fn new(value: impl Into<String>) -> Self {
+11	                Self(value.into())
+12	            }
+13	
+14	            pub fn as_str(&self) -> &str {
+15	                &self.0
+16	            }
+17	        }
+18	
+19	        impl From<&str> for $name {
+20	            fn from(value: &str) -> Self {
+21	                Self::new(value)
+22	            }
+23	        }
+24	
+25	        impl From<String> for $name {
+26	            fn from(value: String) -> Self {
+27	                Self::new(value)
+28	            }
+29	        }
+30	
+31	        impl fmt::Display for $name {
+32	            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+33	                write!(f, "{}", self.0)
+34	            }
+35	        }
+36	    };
+37	}
+38	
+39	string_id!(StrategyId);
+40	string_id!(InstrumentId);
+41	string_id!(OrderId);
+42	string_id!(ClientRef);
+43	string_id!(BlockRef);
+44	
+45	/// The two execution venues a paired mandate is worked across.
+46	///
+47	/// A mandate acquires the same economic exposure on both venues. `North` and
+48	/// `South` are the two halves of that pair, not a buy/sell direction: every leg
+49	/// is an acquisition on its own venue.
+50	#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+51	pub enum Venue {
+52	    North,
+53	    South,
+54	}
+55	
+56	impl Venue {
+57	    pub fn opposite(self) -> Self {
+58	        match self {
+59	            Venue::North => Venue::South,
+60	            Venue::South => Venue::North,
+61	        }
+62	    }
+63	}
+64	
+65	impl fmt::Display for Venue {
+66	    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+67	        match self {
+68	            Venue::North => write!(f, "NORTH"),
+69	            Venue::South => write!(f, "SOUTH"),
+70	        }
+71	    }
+72	}
+73	
+74	/// Quantity in whole base units.
+75	///
+76	/// Every quantity this venue pair reports or matches is an exact integer count
+77	/// of base units. There is no sub-unit quantity, no comparison tolerance and no
+78	/// rounding: two quantities are equal when they are the same integer. Prices
+79	/// stay real numbers, so notional cost is still floating point, but nothing
+80	/// that decides whether an order filled is.
+81	pub type Qty = i64;
+82	pub type Price = f64;
+83	
+84	/// The smallest quantity the venue will report or match: one base unit.
+85	pub const QTY_UNIT: Qty = 1;
+86	
+87	pub fn qty_eq(left: Qty, right: Qty) -> bool {
+88	    left == right
+89	}
+90	
+91	pub fn qty_at_least(value: Qty, threshold: Qty) -> bool {
+92	    value >= threshold
+93	}
+94	
+95	/// The venue's proportional allocation formula, in exact integer arithmetic.
+96	///
+97	/// When one matched quantity has to be divided across several orders, an
+98	/// order's share is `(total * weight) / basis` evaluated in integer arithmetic
+99	/// and truncated toward zero. Truncated base units are never rounded up and
+100	/// never invented: the caller places the leftover explicitly.
+101	///
+102	/// A non-positive `basis` allocates nothing. That is the fail-closed case: with
+103	/// no outstanding quantity to divide against there is no defensible share.
+104	pub fn proportional_share(total: Qty, weight: Qty, basis: Qty) -> Qty {
+105	    if basis <= 0 || total <= 0 || weight <= 0 {
+106	        return 0;
+107	    }
+108	    (total * weight) / basis
+109	}
+110

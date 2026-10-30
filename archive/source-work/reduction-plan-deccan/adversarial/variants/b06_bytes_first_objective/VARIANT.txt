@@ -1,0 +1,3 @@
+b06_bytes_first_objective
+objective
+minimises link bytes before completion

@@ -1,0 +1,8 @@
+{
+ "fixture": "h_roles_resize",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 32,
+ "retained": true
+}

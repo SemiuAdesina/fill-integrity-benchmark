@@ -1,0 +1,72 @@
+262	        if event.cumulative_filled_qty > record.direct_filled {
+263	            record.direct_filled = event.cumulative_filled_qty;
+264	        }
+265	    }
+266	
+267	    /// Divide one block match across the orders it covers.
+268	    ///
+269	    /// The venue reports only a total and names the orders it was matched
+270	    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step
+271	    /// is integer arithmetic truncated toward zero, the base units left by
+272	    /// truncation go one each to the first orders in the documented ordering,
+273	    /// and any part of the block that no tracked order can account for is
+274	    /// dropped rather than assigned.
+275	    fn absorb_block(&mut self, block: BlockFill) {
+276	        // The same match, redelivered, is the same match.
+277	        if !self.absorbed_blocks.insert(block.block_ref.clone()) {
+278	            return;
+279	        }
+280	
+281	        // One order is one order, however many times the venue names it.
+282	        let covers: Vec<OrderId> = {
+283	            let mut seen: BTreeSet<OrderId> = BTreeSet::new();
+284	            block
+285	                .covers
+286	                .into_iter()
+287	                .filter(|order_id| seen.insert(order_id.clone()))
+288	                .collect()
+289	        };
+290	
+291	        let mut eligible: Vec<(usize, Qty, BlockOrderKey)> = Vec::new();
+292	        for order_id in &covers {
+293	            let Some(index) = self.index_of_order(order_id) else {
+294	                continue;
+295	            };
+296	            let record = &self.submissions[index];
+297	            // A finalized order is closed by the venue: it contributes no
+298	            // outstanding quantity to this block's basis.
+299	            if record.finalized {
+300	                continue;
+301	            }
+302	            if !Self::in_window(record, block.at) {
+303	                continue;
+304	            }
+305	            let outstanding = record.outstanding();
+306	            if outstanding <= 0 {
+307	                continue;
+308	            }
+309	            let key = (
+310	                record.window_start,
+311	                record.venue_seq.unwrap_or(u64::MAX),
+312	                record.order_id.clone().unwrap_or_else(|| order_id.clone()),
+313	            );
+314	            eligible.push((index, outstanding, key));
+315	        }
+316	
+317	        // `covers` arrives in whatever order the venue happened to build it, and
+318	        // the outcome must not depend on that, so put the eligible set in the
+319	        // documented order before dividing anything.
+320	        eligible.sort_by(|left, right| left.2.cmp(&right.2));
+321	
+322	        let basis: Qty = eligible.iter().map(|(_, outstanding, _)| *outstanding).sum();
+323	        if basis <= 0 {
+324	            self.finalize(&covers);
+325	            return;
+326	        }
+327	
+328	        // Quantity above the basis belongs to orders this engine does not track.
+329	        let divisible = if block.block_qty < basis {
+330	            block.block_qty
+331	        } else {
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/fill_classifier.rs", "content": "        if event.cumulative_filled_qty > record.direct_filled {\n            record.direct_filled = event.cumulative_filled_qty;\n        }\n    }\n\n    /// Divide one block match across the orders it covers.\n    ///\n    /// The venue reports only a total and names the orders it was matched\n    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step\n    /// is integer arithmetic truncated toward zero, the base units left by\n    /// truncation go one each to the first orders in the documented ordering,\n    /// and any part of the block that no tracked order can account for is\n    /// dropped rather than assigned.\n    fn absorb_block(&mut self, block: BlockFill) {\n        // The same match, redelivered, is the same match.\n        if !self.absorbed_blocks.insert(block.block_ref.clone()) {\n            return;\n        }\n\n        // One order is one order, however many times the venue names it.\n        let covers: Vec<OrderId> = {\n            let mut seen: BTreeSet<OrderId> = BTreeSet::new();\n            block\n                .covers\n                .into_iter()\n                .filter(|order_id| seen.insert(order_id.clone()))\n                .collect()\n        };\n\n        let mut eligible: Vec<(usize, Qty, BlockOrderKey)> = Vec::new();\n        for order_id in &covers {\n            let Some(index) = self.index_of_order(order_id) else {\n                continue;\n            };\n            let record = &self.submissions[index];\n            // A finalized order is closed by the venue: it contributes no\n            // outstanding quantity to this block's basis.\n            if record.finalized {\n                continue;\n            }\n            if !Self::in_window(record, block.at) {\n                continue;\n            }\n            let outstanding = record.outstanding();\n            if outstanding <= 0 {\n                continue;\n            }\n            let key = (\n                record.window_start,\n                record.venue_seq.unwrap_or(u64::MAX),\n                record.order_id.clone().unwrap_or_else(|| order_id.clone()),\n            );\n            eligible.push((index, outstanding, key));\n        }\n\n        // `covers` arrives in whatever order the venue happened to build it, and\n        // the outcome must not depend on that, so put the eligible set in the\n        // documented order before dividing anything.\n        eligible.sort_by(|left, right| left.2.cmp(&right.2));\n\n        let basis: Qty = eligible.iter().map(|(_, outstanding, _)| *outstanding).sum();\n        if basis <= 0 {\n            self.finalize(&covers);\n            return;\n        }\n\n        // Quantity above the basis belongs to orders this engine does not track.\n        let divisible = if block.block_qty < basis {\n            block.block_qty\n        } else {", "numLines": 70, "startLine": 262, "totalLines": 395}}

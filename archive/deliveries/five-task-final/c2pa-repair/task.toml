@@ -1,0 +1,98 @@
+schema_version = "1.3"
+artifacts = ["/app"]
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["rust", "c2pa", "media-provenance", "manifest-repair", "global-optimization", "canonicalization"]
+expert_time_estimate_hours = 3.0
+
+difficulty_explanation = """
+The starting implementation exposes the tempting first-error strategy: try each
+edit alone, otherwise apply everything. The accepted problem instead requires a
+global minimum subset of a supplied legal universe, followed by a deterministic
+lexicographic tie. Local validator errors are not independent: a label change
+can invalidate a hashed-URI reference; a relationship replacement can create a
+second parent; and a deletion changes which earlier labels remain resolvable.
+
+Canonical operation ordering is semantic. Stable assertion IDs survive index
+movement, deletes preserve relative order, and an edit targeting an already
+deleted assertion fails. Validation occurs only after the complete ordered
+sequence. Every hashed-URI reference resolves in the post-edit manifest and only
+to an earlier uniquely labeled assertion. Parent references must resolve into
+the prior store for the same asset, while action, parent, and metadata
+cardinalities are exact.
+
+The compound cases combine a metadata-label replacement, a relationship change,
+a complete hashed-URI replacement, assertion ordering, and a destructive decoy;
+and separately a manifest carrying more than one hashed URI, where satisfying
+the backward-resolution rule for the later reference changes the size of the
+minimum edit set and the canonical key decides between two repairs of that size.
+The load-bearing reference graph is computed by actually applying the selected
+edits and running the validator. Greedy first-error repair, accepting any valid
+repair, wrong edit-key ordering, independent edit validation, delete/index
+confusion, checking only the first hashed URI, requiring every intermediate
+state to validate, and visible-manifest hardcoding all score zero. This mirrors the
+work of media-provenance and content-authenticity engineers who validate and
+repair malformed C2PA manifests, where a fix has to preserve reference
+integrity and canonical ordering and stay the smallest defensible change set
+rather than the first change that makes the validator quiet.
+"""
+
+solution_explanation = """
+The reference repair sorts and deduplicates the legal universe by `Edit::key`,
+enumerates its bounded subsets, applies each selected subset in canonical order,
+and runs the complete supplied validator. Successful candidates are ranked by
+cardinality and then their edit-key vector. Application targets stable assertion
+IDs, removes only an explicitly deleted assertion, and fails on missing or
+wrong-kind targets. The validator derives parent and hashed-reference edges from
+the final ordered manifest and returns them with the winning repair.
+
+The solution launcher copies only the corrected `src/lib.rs` into `/app` and
+builds offline. It installs nothing, fetches nothing, and performs no signing.
+"""
+
+verification_explanation = """
+The separate verifier owns the trusted Cargo manifest, lock file, tests, build
+command, reward, and report, and grades through a probe/judge split. A probe
+links the candidate, runs one named case, and serializes the raw repair
+operations and derived graph values it observed; it asserts nothing, and its
+stdout, stderr and exit status are recorded for diagnostics with no grading
+authority. The judge links no candidate code, owns every expected value, and
+performs the authoritative comparisons, so a static initializer that prints
+forged libtest output and calls `_exit(0)` changes nothing a judge reads. Reward
+and the report are verifier-owned and derived from judge counts alone. A
+verifier-owned negative control that corrupts exactly one expected value, and a
+verifier-owned probe wrong by construction that emits confident success in every
+plausible shape, together confirm the trust boundary holds. It accepts only a regular non-symlink
+`/app/src/lib.rs`, assembles a verifier-owned crate, scrubs compiler wrappers,
+target runners/linkers, encoded flags, all CARGO_BUILD indirection, preload
+variables, HOME and temporary-directory state, Cargo configuration and candidate PATH, and invokes
+trusted Cargo by absolute path offline. Candidate manifests, build scripts,
+tests, binaries, `.cargo` configuration, and prewritten reward files are ignored.
+
+The real suite covers one- and multi-edit repairs, global minimum cardinality,
+equal-size lexical ties, stable-ID deletes, exact operation ordering, parent
+store resolution, action/relationship/metadata cardinality, duplicate labels,
+backward hashed-URI ordering, manifests carrying more than one hashed URI,
+no-repair behavior, derived graph edges, edit universe bounds, the manifest's
+binding to the asset it is validated against, uniqueness and nonemptiness of
+stable assertion ids and labels, stable-id resolution across an earlier deletion
+in the same sequence, and the two
+compound cases. Reward begins at zero
+and changes to one only when the exact expected number of tests passes.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 900
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

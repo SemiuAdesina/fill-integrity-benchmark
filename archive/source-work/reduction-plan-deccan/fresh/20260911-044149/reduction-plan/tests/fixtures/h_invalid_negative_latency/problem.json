@@ -1,0 +1,163 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "c",
+   "node": "E0",
+   "value": 864
+  },
+  {
+   "id": "b",
+   "node": "E1",
+   "value": -1151
+  },
+  {
+   "id": "a",
+   "node": "E2",
+   "value": 4925
+  }
+ ],
+ "switches": [
+  {
+   "id": "R0",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "R1",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "P0",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  }
+ ],
+ "links": [
+  {
+   "id": "l01",
+   "from": "E0",
+   "to": "R1",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l02",
+   "from": "E0",
+   "to": "R0",
+   "rate": 8,
+   "latency": 2
+  },
+  {
+   "id": "l03",
+   "from": "E0",
+   "to": "S",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "l04",
+   "from": "E1",
+   "to": "R1",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l05",
+   "from": "E1",
+   "to": "R0",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "l06",
+   "from": "E1",
+   "to": "P0",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "l07",
+   "from": "E2",
+   "to": "R1",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l08",
+   "from": "E2",
+   "to": "P0",
+   "rate": 4,
+   "latency": 2
+  },
+  {
+   "id": "l09",
+   "from": "E2",
+   "to": "R0",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "l10",
+   "from": "R0",
+   "to": "S",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "l11",
+   "from": "R0",
+   "to": "P0",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l12",
+   "from": "R1",
+   "to": "S",
+   "rate": 16,
+   "latency": 2
+  },
+  {
+   "id": "l13",
+   "from": "R1",
+   "to": "P0",
+   "rate": 16,
+   "latency": -1
+  },
+  {
+   "id": "l14",
+   "from": "R1",
+   "to": "R0",
+   "rate": 16,
+   "latency": 1
+  },
+  {
+   "id": "l15",
+   "from": "P0",
+   "to": "S",
+   "rate": 16,
+   "latency": 3
+  },
+  {
+   "id": "l16",
+   "from": "P0",
+   "to": "R0",
+   "rate": 4,
+   "latency": 1
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {
+   "l03": 8,
+   "l05": 8,
+   "l10": 8,
+   "l12": 0,
+   "l15": 8
+  },
+  "completion": 8
+ }
+}

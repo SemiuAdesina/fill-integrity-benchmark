@@ -1,0 +1,1 @@
+RETAINED h_junction         seed=500 pACYC177 V=3941 L=3221 e=2 D=200 enzymes=4 internal=3 (truth 3) dev=7909 ref=0.02s enum=ok py=1.7s ties=2 (12s)

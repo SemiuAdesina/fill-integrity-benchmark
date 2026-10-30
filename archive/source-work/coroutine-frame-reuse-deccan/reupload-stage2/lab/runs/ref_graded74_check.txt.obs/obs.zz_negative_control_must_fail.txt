@@ -1,0 +1,2 @@
+  FAIL /s/scenario.cpp:2420: CHECK probe_alive() == 424242
+OBS 0 B 5:false

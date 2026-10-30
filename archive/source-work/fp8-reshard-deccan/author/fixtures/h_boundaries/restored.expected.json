@@ -1,0 +1,26 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "states": [
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "forward", "stage": 0, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 0, 0, 474063, 2653, 640392], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "forward", "stage": 0, "shard": 1, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [474063, 2653, 640392], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "forward", "stage": 0, "shard": 1, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [671574, 306458, 2408], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "forward", "stage": 0, "shard": 2, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 1976, 671574, 306458, 2408], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "forward", "stage": 0, "shard": 2, "global_block": 2, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 742933, 733, 100763, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "backward", "stage": 0, "shard": 0, "global_block": 0, "scale": 64, "inverse_scale": 262144, "amax_history": [649, 178726, 3529], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "backward", "stage": 0, "shard": 1, "global_block": 0, "scale": 64, "inverse_scale": 262144, "amax_history": [275, 3855, 649, 178726, 3529], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "backward", "stage": 0, "shard": 1, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 0, 3451, 1786, 2888], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "backward", "stage": 0, "shard": 1, "global_block": 2, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 2472, 4029, 1268, 3251], "cursor": 0},
+  {"tensor": "decoder.layers.7.attn.qkv.weight", "role": "backward", "stage": 0, "shard": 2, "global_block": 2, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 2472, 4029, 1268, 3251], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "forward", "stage": 0, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 0, 0, 3421, 868878, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "forward", "stage": 0, "shard": 1, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 3421, 868878, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "forward", "stage": 0, "shard": 1, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 0, 943820, 1597], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "forward", "stage": 0, "shard": 2, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 943820, 1597], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "forward", "stage": 0, "shard": 2, "global_block": 2, "scale": 16, "inverse_scale": 1048576, "amax_history": [800372, 2364, 1636], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 825388, 39, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 1, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 825388, 39, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 2, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 0, 825388, 39, 0], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 2, "global_block": 1, "scale": 32, "inverse_scale": 524288, "amax_history": [364, 569, 0, 346281, 2942], "cursor": 0},
+  {"tensor": "decoder.layers.7.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 2, "global_block": 2, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 142, 3387, 217, 2838], "cursor": 0}
+ ]
+}

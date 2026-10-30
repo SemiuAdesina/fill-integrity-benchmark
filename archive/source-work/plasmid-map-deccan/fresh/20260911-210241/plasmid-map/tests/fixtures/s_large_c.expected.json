@@ -1,0 +1,146 @@
+{
+ "fixture": "s_large_c",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 4097,
+  "insert_length": 4043,
+  "cuts": {
+   "BclI": [
+    692,
+    3661,
+    6500
+   ],
+   "EcoRI": [
+    940,
+    4830
+   ],
+   "FspI": [
+    1920,
+    4513,
+    7711,
+    8701
+   ],
+   "HpaI": [
+    6818,
+    7446,
+    8196
+   ],
+   "SspI": [
+    166,
+    1338,
+    6614
+   ]
+  },
+  "held_out": {
+   "BclI+SspI": [
+    {
+     "length": 526,
+     "multiplicity": 1
+    },
+    {
+     "length": 646,
+     "multiplicity": 1
+    },
+    {
+     "length": 2323,
+     "multiplicity": 1
+    },
+    {
+     "length": 2543,
+     "multiplicity": 1
+    },
+    {
+     "length": 2839,
+     "multiplicity": 1
+    }
+   ],
+   "FspI+SspI": [
+    {
+     "length": 456,
+     "multiplicity": 1
+    },
+    {
+     "length": 582,
+     "multiplicity": 1
+    },
+    {
+     "length": 990,
+     "multiplicity": 1
+    },
+    {
+     "length": 1097,
+     "multiplicity": 1
+    },
+    {
+     "length": 1172,
+     "multiplicity": 1
+    },
+    {
+     "length": 2101,
+     "multiplicity": 1
+    },
+    {
+     "length": 2593,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 7,
+ "deviation": 18537,
+ "held_out_truth": {
+  "FspI+SspI": [
+   {
+    "length": 458,
+    "multiplicity": 1
+   },
+   {
+    "length": 583,
+    "multiplicity": 1
+   },
+   {
+    "length": 971,
+    "multiplicity": 1
+   },
+   {
+    "length": 1095,
+    "multiplicity": 1
+   },
+   {
+    "length": 1185,
+    "multiplicity": 1
+   },
+   {
+    "length": 2133,
+    "multiplicity": 1
+   },
+   {
+    "length": 2584,
+    "multiplicity": 1
+   }
+  ],
+  "BclI+SspI": [
+   {
+    "length": 524,
+    "multiplicity": 1
+   },
+   {
+    "length": 641,
+    "multiplicity": 1
+   },
+   {
+    "length": 2330,
+    "multiplicity": 1
+   },
+   {
+    "length": 2520,
+    "multiplicity": 1
+   },
+   {
+    "length": 2862,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 4
+}

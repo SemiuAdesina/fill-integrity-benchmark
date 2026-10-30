@@ -1,0 +1,55 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.07,
+  "internal": 3,
+  "deviation": 5306,
+  "c": 423,
+  "L": 3260
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 22.26
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 1.2,
+  "nodes": 9082,
+  "ties_at_count_and_deviation": 2
+ },
+ "held_out": [
+  "DraI+EcoRI"
+ ],
+ "truth": {
+  "internal": 3,
+  "deviation": 7907,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_ties",
+ "seed": 633,
+ "description": "an enzyme's two insert-region cuts are ordered by no digest",
+ "vector": "pUC19",
+ "vector_header": "L09137.2 Cloning vector pUC19c, complete sequence",
+ "source": "M13mp18",
+ "source_header": "X02513.1 Cloning vector M13mp18",
+ "fragment": {
+  "left_enzyme": "PvuII",
+  "left_cut": 2723,
+  "right_enzyme": "NdeI",
+  "right_cut": 5961
+ },
+ "cloning_site": [
+  "XbaI",
+  423
+ ],
+ "insert_length": 3238,
+ "enzymes": [
+  "BamHI",
+  "DraI",
+  "EcoRI",
+  "SspI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 6
+}

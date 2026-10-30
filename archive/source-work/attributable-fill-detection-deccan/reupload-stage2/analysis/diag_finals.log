@@ -1,0 +1,10 @@
+nop: observation_identity:BUILD_FAILED direct_progress:BUILD_FAILED block_reconciliation:BUILD_FAILED neutralization_lifecycle:BUILD_FAILED restart_recovery:BUILD_FAILED cross_mandate_isolation:BUILD_FAILED
+slot01: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:6/6 restart_recovery:4/4 cross_mandate_isolation:3/3
+slot02: observation_identity:3/3 direct_progress:BUILD_FAILED block_reconciliation:3/3 neutralization_lifecycle:BUILD_FAILED restart_recovery:4/4 cross_mandate_isolation:3/3
+slot03: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:6/6 restart_recovery:4/4 cross_mandate_isolation:3/3
+slot04: observation_identity:BUILD_FAILED direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:BUILD_FAILED restart_recovery:4/4 cross_mandate_isolation:3/3
+slot05: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:6/6 restart_recovery:4/4 cross_mandate_isolation:3/3
+slot06: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:6/6 restart_recovery:4/4 cross_mandate_isolation:3/3
+slot07: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:BUILD_FAILED restart_recovery:4/4 cross_mandate_isolation:3/3
+slot08: observation_identity:3/3 direct_progress:5/5 block_reconciliation:3/3 neutralization_lifecycle:6/6 restart_recovery:4/4 cross_mandate_isolation:3/3
+DIAG ALL DONE

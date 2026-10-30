@@ -1,0 +1,6 @@
+=== hanging solver (never returns) ===
+elapsed 11692s
+probe artifacts=19/19
+timing judge_build=1 runner_build=1 runner_execution=254 judge=1
+=== hanging build (const-eval spin) ===
+verifier rc=137 elapsed=68s reward=0

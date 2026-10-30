@@ -1,0 +1,6 @@
+path:    /Users/macbok/Downloads/coroutine-frame-reuse-deccan-stage1-final.zip
+bytes:   98413
+sha256:  c282187f81d1c0d1b3bb9fbc5f350572b9391a66f5b9111ed5a08706099adec0
+members: 51
+roots:   coroutine-frame-reuse 
+symlinks in archive: 0

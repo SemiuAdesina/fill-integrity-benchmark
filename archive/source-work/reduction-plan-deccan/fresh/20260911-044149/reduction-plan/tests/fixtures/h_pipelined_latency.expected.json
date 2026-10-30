@@ -1,0 +1,35 @@
+{
+ "fixture": "h_pipelined_latency",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l01",
+    "l10",
+    "l07"
+   ],
+   [
+    "l04",
+    "l07"
+   ],
+   [
+    "l06",
+    "l07"
+   ]
+  ],
+  "combine": [],
+  "sink_value": -5552
+ },
+ "observables": {
+  "completion": 19,
+  "allocation": 0,
+  "total_bytes": 56,
+  "link_bytes": {
+   "l01": 8,
+   "l10": 8,
+   "l04": 8,
+   "l06": 8,
+   "l07": 24
+  }
+ }
+}

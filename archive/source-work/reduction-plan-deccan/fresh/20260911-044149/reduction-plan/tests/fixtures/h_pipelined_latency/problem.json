@@ -1,0 +1,114 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "a",
+   "node": "E0",
+   "value": -1034
+  },
+  {
+   "id": "b",
+   "node": "E1",
+   "value": -4656
+  },
+  {
+   "id": "c",
+   "node": "E2",
+   "value": 138
+  }
+ ],
+ "switches": [
+  {
+   "id": "R0",
+   "reduction_capable": true,
+   "accumulator_capacity": 16
+  },
+  {
+   "id": "P0",
+   "reduction_capable": false,
+   "accumulator_capacity": 0
+  }
+ ],
+ "links": [
+  {
+   "id": "l01",
+   "from": "E0",
+   "to": "P0",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "l02",
+   "from": "E0",
+   "to": "R0",
+   "rate": 4,
+   "latency": 5
+  },
+  {
+   "id": "l03",
+   "from": "E1",
+   "to": "P0",
+   "rate": 8,
+   "latency": 3
+  },
+  {
+   "id": "l04",
+   "from": "E1",
+   "to": "R0",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "l05",
+   "from": "E2",
+   "to": "P0",
+   "rate": 4,
+   "latency": 3
+  },
+  {
+   "id": "l06",
+   "from": "E2",
+   "to": "R0",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "l07",
+   "from": "R0",
+   "to": "S",
+   "rate": 4,
+   "latency": 5
+  },
+  {
+   "id": "l08",
+   "from": "R0",
+   "to": "P0",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "l09",
+   "from": "P0",
+   "to": "S",
+   "rate": 4,
+   "latency": 4
+  },
+  {
+   "id": "l10",
+   "from": "P0",
+   "to": "R0",
+   "rate": 8,
+   "latency": 5
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {
+   "l01": 8,
+   "l02": 0,
+   "l03": 0
+  },
+  "completion": 19
+ }
+}

@@ -1,0 +1,273 @@
+[27] CMD: cargo build --offline 2>&1 | tail -30
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.18s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.18s
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: cargo test --offline --test diagnostics 2>&1 | tail -30
+--- obs tail ---
+nostics`
+
+[stdout]
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_start_is_inclusive ... ok
+test window_end_is_exclusive ... ok
+
+failures:
+
+---- a_later_block_divides_over_the_residuals_of_the_earlier_one stdout ----
+thread 'a_later_block_divides_over_the_residuals_of_the_earlier_one' panicked at tests/diagnostics.rs:259:5:
+assertion `left == right` failed: FAILED: the eligible set's basis is current outstanding quantity, so a later block divides over what the earlier block left
+  left: 8
+ right: 9
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_later_block_divides_over_the_residuals_of_the_earlier_one
+
+test result: FAILED. 16 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test diagnostics`
+[metadata] {"noOutputExpected": false}
+
+[31] CMD: cargo test --offline --test diagnostics 2>&1 | tail -25
+--- obs tail ---
+w_start_is_inclusive ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-692941566e5c440d)
+
+running 18 tests
+test a_block_total_is_fully_allocated ... ok
+test a_finalized_order_contributes_no_basis_to_a_later_block ... ok
+test a_later_block_divides_over_current_outstanding_quantity ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: cargo run --offline --bin reproduce 2>&1 | tail -40
+--- obs tail ---
+ed at most 1 corrective order across 8 cycles, saw 0. The same observation arriving again is not new information.
+
+[4] A genuine one-legged fill is neutralized once
+    The North leg fills for its full 30 units. The South leg does not.
+  PASS  the open exposure draws exactly one corrective order
+          expected exactly 1 corrective order, saw 1. Progress matters as much as safety: a genuine one-legged fill must still be neutralized.
+  PASS  the corrective order is sized to the unresolved quantity
+          expected size 30, saw 30
+
+[5] A restart does not reinterpret old inventory
+    Two legs are tracked, custody holds 30 pre-existing units, the
+    process restarts and reloads from the store.
+  PASS  the restart records no pairing from pre-existing inventory
+          expected 0 positions after restart, saw 0. A restart clears process memory but not the custody account.
+  PASS  the restart sends no corrective order
+          expected 0 corrective orders, saw 0
+  PASS  unresolved orders survive the restart
+          expected 2 tracked orders after restart, saw 2. Live orders must remain recoverable.
+
+=== 14 passed, 0 failed, 14 checks ===
+
+These coarse checks pass. They do not cover the exact rules in
+/app/spec/venue-semantics.md: attribution window boundaries, integer
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: cargo test --offline --test diagnostics 2>&1 | tail -30
+--- obs tail ---
+s/diagnostics.rs (target/debug/deps/diagnostics-692941566e5c440d)
+
+running 21 tests
+test a_block_total_is_fully_allocated ... ok
+test a_finalized_order_contributes_no_basis_to_a_later_block ... ok
+test a_corrective_the_venue_closed_reopens_the_gap_it_left ... ok
+test a_later_block_divides_over_current_outstanding_quantity ... ok
+test a_redelivered_block_is_counted_once ... ok
+test a_lost_acknowledgement_is_retried_under_the_same_client_ref ... ok
+test a_restart_mid_closure_does_not_repeat_the_closure_or_the_correction ... ok
+test a_rejected_corrective_leaves_the_exposure_open_to_a_later_attempt ... ok
+test an_untracked_order_is_attributed_nothing ... ok
+test an_absent_order_this_engine_did_not_cancel_is_not_withdrawn ... ok
+test block_remainder_units_go_to_the_first_orders_in_the_ordering ... ok
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test block_shares_are_truncated_never_rounded_up ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: cargo test --offline --test diagnostics 2>&1 | tail -12
+--- obs tail ---
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+test attribution_state_survives_a_restart_without_double_counting ... ok
+test cumulative_fill_quantities_are_a_high_water_mark ... ok
+test last_instant_inside_the_window_is_attributed ... ok
+test the_earlier_attribution_window_sorts_first ... ok
+test quantity_already_working_is_not_neutralized_twice ... ok
+test the_lower_venue_sequence_breaks_a_shared_window_start ... ok
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning|error" -A 4 | head -40; echo "=== clean ==="
+--- obs tail ---
+=== clean ===
+
+[stdout]
+=== clean ===
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: cargo build --offline 2>&1 | tail -5 && cargo test --offline --test diagnostics 2>&1 | tail -6
+--- obs tail ---
+Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.56s
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+   Compiling pairing_engine v0.1.0 (/app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.56s
+test the_open_order_list_is_point_in_time_truth ... ok
+test window_end_is_exclusive ... ok
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[47] CMD: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head -20; cargo test --offline --test diagnostics 2>&1 | tail -4
+--- obs tail ---
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[50] CMD: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head -20; cargo test --offline --test diagnostics 2>&1 | tail -4; cargo run --offline --bin reproduce 2>&1 | tail -3
+--- obs tail ---
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+
+[stdout]
+test window_start_is_inclusive ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+division of a block fill, the remainder tie-break, or block idempotency.
+For those, run `cargo test --offline --test diagnostics`.
+Both are diagnostics, not the grader.
+[metadata] {"noOutputExpected": false}
+
+[51] CMD: cargo run --offline --bin reproduce 2>&1 | grep -cE "^ PASS"; cargo run --offline --bin reproduce 2>&1 | grep -E "^ FAIL" | head; echo "exit=$?"
+--- obs tail ---
+14
+exit=0
+
+[stdout]
+14
+exit=0
+[metadata] {"noOutputExpected": false}
+
+[54] CMD: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head; cargo test --offline --test diagnostics 2>&1 | tail -3; cargo run --offline --bin reproduce 2>&1 | grep -E "^=== "
+--- obs tail ---
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: cargo build --offline 2>&1 | tail -2 && echo "--- diagnostics ---" && cargo test --offline --test diagnostics 2>&1 | grep -E "^test result|running" && echo "--- reproduce ---" && cargo run --offline --bin reproduce 2>&1 
+--- obs tail ---
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+--- diagnostics ---
+running 23 tests
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- reproduce ---
+      1   PASS  all four legs are submitted and tracked
+      1   PASS  both legs are submitted and tracked
+      1   PASS  both live legs remain tracked
+=== 14 passed, 0 failed, 14 checks ===
+
+[stdout]
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+--- diagnostics ---
+running 23 tests
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+--- reproduce ---
+      1   PASS  all four legs are submitted and tracked
+      1   PASS  both legs are submitted and tracked
+      1   PASS  both live legs remain tracked
+=== 14 passed, 0 failed, 14 checks ===
+[metadata] {"noOutputExpected": false}

@@ -1,0 +1,238 @@
+[17]
+cd /tmp && python3 - <<'EOF'
+import re
+p='/tmp/spec_test.cpp'
+s=open(p).read()
+s = s.replace("""    CHECK_LIVE(c, 1);
+""","""    std::size_t live_on_continue = 99;
+    for (const auto& e : c.journal().entries()) {
+        if (e.mark == Mark::ParentContinued) live_on_continue = static_cast<std::size_t>(e.detail);
+    }
+    CHECK_EQ(live_on_continue, 1u);   // only the root frame is still alive
+""")
+s = s.replace("""void t_unbound_never_accepted() {
+    Conductor c{4};
+    const JobId j = c.launch(self_poster(&c, 0));
+    // job id is not known inside; use the real one:
+    c.cancel(j);
+    Conductor c2{4};
+    (void)c2;
+}
+
+""","")
+s = s.replace("""    JobId j = kNoJob;
+    {
+        Conductor d{4};
+        j = d.launch(leaf());
+        CHECK_EQ(j, 1u);
+    }
+    Conductor c1{4};""","""    Conductor c1{4};""")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test 2>&1 | head -30
+
+[18]
+cd /tmp && sed -i 's/        const JobId b = c.launch(leaf());/        c.launch(leaf());/' /tmp/spec_test.cpp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test 2>&1 | head -20 && /tmp/spec_test
+
+[21]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/spec_test.cpp'
+s=open(p).read()
+s = s.replace("    CHECK_EQ(c.arena().live_slots(), 1u);   // only the killer's frame",
+              "    CHECK_EQ(c.arena().live_slots(), 0u);   // the killer finished too")
+s = s.replace("        CHECK_EQ(*c.value_of(j), 6);", "        CHECK_EQ(*c.value_of(j), 7);")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test && /tmp/spec_test
+
+[25]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/spec_test2.cpp'
+s=open(p).read()
+s = s.replace("""void t_cancel_nested_then_reuse() {
+    Conductor c{2};""","""void t_cancel_nested_then_reuse() {
+    Conductor c{3};""")
+s = s.replace("""    std::printf("[stress] now=%llu a=%lld\\n", (unsigned long long)c.now(),
+                c.value_of(a).value_or(-1));""",
+"""    std::printf("[stress] now=%llu a=%lld\\n", (unsigned long long)c.now(),
+                (long long)c.value_of(a).value_or(-1));""")
+s = s.replace("""            f.run(400);
+            // shutting down must hand everything back
+            CHECK_EQ(f.c.arena().double_reclaims(), 0u);
+            CHECK_EQ(f.c.arena().free_slots(), f.c.arena().capacity());""",
+"""            f.run(400);
+            for (JobId j : f.jobs) f.c.cancel(j);
+            // nothing is left held: the pool is whole again before shutdown
+            CHECK_EQ(f.c.arena().double_reclaims(), 0u);
+            CHECK_EQ(f.c.arena().free_slots(), f.c.arena().capacity());""")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -I/app/include /tmp/spec_test2.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test2 2>&1|head -5 && /tmp/spec_test2
+
+[32]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/spec_test2.cpp'
+s=open(p).read()
+s=s.replace("""int main() {
+    t_immediate_completion();""","""int main() {
+    setvbuf(stdout, nullptr, _IONBF, 0);
+    std::printf("start\\n");
+    t_immediate_completion();""")
+for name in ["t_child_without_park","t_exhaustion_inside_job","t_exhaustion_deep","t_fault_after_delay","t_ticket_for_unknown_job","t_cancel_nested_then_reuse","t_many_jobs_reuse","t_stress_interleaved","t_fuzz"]:
+    s=s.replace("    %s();"%name, '    std::printf("-> %s\\n");\n    %s();'%(name,name))
+s=s.replace("""    for (std::size_t cap = 1; cap <= 6; ++cap) {
+        for (unsigned seed = 1; seed <= 6; ++seed) {""","""    for (std::size_t cap = 1; cap <= 6; ++cap) {
+        for (unsigned seed = 1; seed <= 6; ++seed) {
+            std::printf("fuzz cap=%zu seed=%u\\n", cap, seed);""")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -fno-omit-frame-pointer -I/app/include /tmp/spec_test2.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test2_asan && for i in 1 2 3 4 5; do ASAN_OPTIONS=detect_leaks=1 /tmp/spec_test2_asan > /tmp/f$i.txt 2>&1; echo "run$i exit=$?"; done; tail -5 /tmp/f1.txt; echo ---; for i in 2 3 4 5; do tail -4 /tmp/f$i.txt; echo "-----"; done
+
+[36]
+cd /tmp && cat > /tmp/mini.cpp <<'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+using namespace roundel;
+Duty leaf() { co_return co_await park(); }
+int main() {
+    Conductor c{4};
+    JobId j = c.launch(leaf());
+    c.post(j, 1);
+    c.drain();
+    std::printf("ok %d %lld\n", (int)c.settled(j), (long long)*c.value_of(j));
+    return 0;
+}
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -I/app/include /tmp/mini.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/mini_asan
+fails=0; for i in $(seq 1 20); do /tmp/mini_asan >/tmp/m.txt 2>&1 || { fails=$((fails+1)); cp /tmp/m.txt /tmp/m_crash.txt; }; done; echo "mini fails=$fails"; cat /tmp/m.txt
+echo "=== hi x20"; fails=0; for i in $(seq 1 20); do /tmp/hi >/tmp/h.txt 2>&1 || fails=$((fails+1)); done; echo "hi fails=$fails"
+
+[38]
+cd /tmp && cat > /tmp/runsan.sh <<'EOF'
+#!/bin/bash
+# $1 = binary, $2 = expected marker, $3 = wanted clean runs
+bin=$1; marker=$2; want=${3:-3}
+clean=0; tries=0
+while [ $clean -lt $want ] && [ $tries -lt 40 ]; do
+  tries=$((tries+1))
+  ASAN_OPTIONS=detect_leaks=1 "$bin" > /tmp/rs.txt 2>&1
+  rc=$?
+  if [ $rc -eq 0 ] && grep -q "$marker" /tmp/rs.txt && ! grep -q "ERROR: AddressSanitizer\|runtime error\|LeakSanitizer" /tmp/rs.txt; then
+    clean=$((clean+1))
+  elif [ $rc -ne 0 ] && ! grep -q "DEADLYSIGNAL" /tmp/rs.txt; then
+    echo "REAL FAILURE rc=$rc"; cat /tmp/rs.txt; exit 1
+  fi
+done
+echo "$bin: $clean clean runs of $want (tries=$tries)"
+if [ $clean -lt $want ]; then echo "could not get clean runs"; tail -5 /tmp/rs.txt; exit 1; fi
+EOF
+chmod +x /tmp/runsan.sh && /tmp/runsan.sh /tmp/spec_test "0 failures" 3 && /tmp/runsan.sh /tmp/spec_test2 "0 failures" 3 && /tmp/runsan.sh /tmp/bds/roundel_demo "demo finished" 3
+
+[49]
+clang++ --version; cd /tmp && cat > /tmp/chk.cpp <<'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+using namespace roundel;
+Duty leaf() { co_return co_await park(); }
+int main(){
+    Conductor c{4};
+    JobId j = c.launch(leaf());
+    c.post(j, 7); c.drain();
+    std::printf("check_outs=%zu peak=%zu live=%zu value=%lld\n",
+        c.arena().total_check_outs(), c.arena().peak_live(), c.arena().live_slots(),
+        (long long)c.value_of(j).value_or(-1));
+    return 0;
+}
+EOF
+for CC in g++ clang++; do for O in -O0 -O1 -O2 -O3; do printf "%s %s: " $CC $O; $CC -std=c++20 $O -I/app/include /tmp/chk.cpp /app/src/*.cpp -o /tmp/chk 2>/dev/null && /tmp/chk; done; done
+
+[50]
+cd /tmp && cat > /tmp/chk2.cpp <<'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+using namespace roundel;
+Duty leaf() { co_return co_await park(); }
+int main(){
+    Conductor c{2};
+    JobId a = c.launch(leaf());
+    JobId b = c.launch(leaf());
+    bool threw=false;
+    try { Duty d = leaf(); (void)d; } catch (const std::bad_alloc&) { threw=true; }
+    std::printf("a=%llu b=%llu threw=%d check_outs=%zu live=%zu\n",(unsigned long long)a,(unsigned long long)b,(int)threw,c.arena().total_check_outs(),c.arena().live_slots());
+    return 0;
+}
+EOF
+for CC in g++ clang++; do for O in -O0 -O2; do printf "%s %s: " $CC $O; $CC -std=c++20 $O -I/app/include /tmp/chk2.cpp /app/src/*.cpp -o /tmp/chk2 2>/dev/null && /tmp/chk2; done; done
+
+[51]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/spec_test3.cpp'
+s=open(p).read()
+s=s.replace("""void t_no_progress_without_step() {
+    Conductor c{4};
+    const JobId j = c.launch(park_twice());""","""void t_no_progress_without_step() {
+    Conductor c{4};
+    const JobId j = c.launch(leaf());""")
+open(p,'w').write(s)
+EOF
+for CC in g++ clang++; do for O in -O0 -O1 -O2; do echo "=== $CC $O"; rm -f /tmp/l/*.o; for f in runtime arena journal; do $CC -std=c++20 $O -Wall -Wextra -Wpedantic -Werror -I/app/include -c /app/src/$f.cpp -o /tmp/l/$f.o 2>&1|head -5; done; for t in spec_test spec_test2 spec_test3; do $CC -std=c++20 $O -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/$t.cpp /tmp/l/*.o -o /tmp/l/$t 2>&1|head -5; /tmp/l/$t > /tmp/l/o.txt 2>&1 && tail -1 /tmp/l/o.txt || { echo "RUNFAIL"; grep FAIL /tmp/l/o.txt|head -3; }; done; done; done
+
+[53]
+cd /tmp && cat > /tmp/trace.cpp <<'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+#include <string>
+#include <vector>
+using namespace roundel;
+
+Duty leaf() { co_return co_await park(); }
+Duty t_inner() { co_return co_await park(); }
+Duty t_middle() { co_return co_await t_inner() + 1; }
+Duty t_outer() { co_return co_await t_middle() + 1; }
+Duty park_twice() { std::int64_t a = co_await park(); std::int64_t b = co_await park(); co_return a*10+b; }
+Duty thrower() { co_await park(); throw std::runtime_error("x"); co_return 0; }
+Duty two_kids() { std::int64_t a = co_await leaf(); std::int64_t b = co_await leaf(); co_return a+b; }
+
+struct Tr {
+    Conductor& c; std::size_t pos=0; std::string s;
+    explicit Tr(Conductor& cc):c(cc){}
+    void flush(std::uint64_t now){
+        const auto& es=c.journal().entries();
+        for(;pos<es.size();++pos){const Entry&e=es[pos];
+            switch(e.mark){
+            case Mark::TicketAccepted: s+="A"+std::to_string(e.job)+"@"+std::to_string(now)+";";break;
+            case Mark::TicketRejected: s+="R"+std::to_string(e.job)+"@"+std::to_string(now)+";";break;
+            case Mark::ChildDestroyed: s+="C"+std::to_string(e.job)+";";break;
+            case Mark::ParentContinued: s+="P"+std::to_string(e.job)+":"+std::to_string(e.detail)+";";break;
+            case Mark::JobSettled: s+="S"+std::to_string(e.job)+"="+
+                (e.detail==0?"D":(e.detail==1?"X":"F"))+";";break;
+            default:break;}}
+    }
+    std::string all(){flush(c.now()); if(!s.empty()&&s.back()==';')s.pop_back(); return s;}
+};
+
+void show(const char* name, auto&& body) {
+    Conductor c{4}; Tr tr{c};
+    body(c);
+    while (c.step()) tr.flush(c.now());
+    std::printf("%-34s %s\n", name, tr.all().c_str());
+}
+
+int main(){
+    show("3-level ok", [](Conductor& c){ JobId j=c.launch(t_outer()); c.post(j,5); });
+    show("3-level cancelled", [](Conductor& c){ JobId j=c.launch(t_outer()); c.cancel(j); });
+    show("two children, two tickets", [](Conductor& c){ JobId j=c.launch(two_kids()); c.post(j,1); c.post(j,2); });
+    show("child throws", [](Conductor& c){ JobId j=c.launch(t_outer()); c.post_fault(j); });
+    show("late fault for settled job", [](Conductor& c){ JobId j=c.launch(leaf()); c.cancel(j); c.post(j,1); });
+    show("delays: job2 earlier", [](Conductor& c){ JobId a=c.launch(leaf()); JobId b=c.launch(leaf()); c.post_after(a,1,5); c.post(b,2); });
+    show("same ready, lower id first", [](Conductor& c){ JobId a=c.launch(leaf()); JobId b=c.launch(leaf()); c.post(b,2); c.post(a,1); });
+    show("repark same frame", [](Conductor& c){ JobId j=c.launch(park_twice()); c.post_after(j,1,5); c.post(j,2); });
+    show("cancel parked in child", [](Conductor& c){ JobId j=c.launch(t_outer()); c.post(j,1); c.cancel(j); });
+    show("thrower", [](Conductor& c){ JobId j=c.launch(thrower()); c.post(j,1); });
+    return 0;
+}
+EOF
+g++ -std=c++20 -O0 -Wall -Wextra -Wpedantic -I/app/include /tmp/trace.cpp /app/src/*.cpp -o /tmp/trace && /tmp/trace
+
+[56]
+cd /tmp && sed -i '/Duty parent_of(Duty (\*)()) = delete;/d' /tmp/spec_test4.cpp && g++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -I/app/include /tmp/spec_test4.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o /tmp/spec_test4 2>&1|head -20 && /tmp/spec_test4

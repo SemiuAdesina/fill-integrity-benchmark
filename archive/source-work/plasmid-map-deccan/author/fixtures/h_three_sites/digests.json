@@ -1,0 +1,249 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "AatII",
+   "enzymes": [
+    "AatII"
+   ],
+   "bands": [
+    {
+     "length": 9010,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BstBI",
+   "enzymes": [
+    "BstBI"
+   ],
+   "bands": [
+    {
+     "length": 1532,
+     "multiplicity": 1
+    },
+    {
+     "length": 7466,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "MscI",
+   "enzymes": [
+    "MscI"
+   ],
+   "bands": [
+    {
+     "length": 9222,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuI",
+   "enzymes": [
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 453,
+     "multiplicity": 1
+    },
+    {
+     "length": 481,
+     "multiplicity": 1
+    },
+    {
+     "length": 1063,
+     "multiplicity": 1
+    },
+    {
+     "length": 2896,
+     "multiplicity": 1
+    },
+    {
+     "length": 4261,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 1004,
+     "multiplicity": 1
+    },
+    {
+     "length": 3826,
+     "multiplicity": 1
+    },
+    {
+     "length": 4375,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BstBI+MscI",
+   "enzymes": [
+    "BstBI",
+    "MscI"
+   ],
+   "bands": [
+    {
+     "length": 1538,
+     "multiplicity": 1
+    },
+    {
+     "length": 7399,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "MscI+SspI",
+   "enzymes": [
+    "MscI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 295,
+     "multiplicity": 1
+    },
+    {
+     "length": 997,
+     "multiplicity": 1
+    },
+    {
+     "length": 3742,
+     "multiplicity": 1
+    },
+    {
+     "length": 3988,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+PvuI",
+   "enzymes": [
+    "AatII",
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 457,
+     "multiplicity": 1
+    },
+    {
+     "length": 481,
+     "multiplicity": 1
+    },
+    {
+     "length": 513,
+     "multiplicity": 1
+    },
+    {
+     "length": 547,
+     "multiplicity": 1
+    },
+    {
+     "length": 2839,
+     "multiplicity": 1
+    },
+    {
+     "length": 4296,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+SspI",
+   "enzymes": [
+    "AatII",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 891,
+     "multiplicity": 1
+    },
+    {
+     "length": 3796,
+     "multiplicity": 1
+    },
+    {
+     "length": 4363,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BstBI+PvuI",
+   "enzymes": [
+    "BstBI",
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 450,
+     "multiplicity": 1
+    },
+    {
+     "length": 480,
+     "multiplicity": 1
+    },
+    {
+     "length": 967,
+     "multiplicity": 1
+    },
+    {
+     "length": 1049,
+     "multiplicity": 1
+    },
+    {
+     "length": 1516,
+     "multiplicity": 1
+    },
+    {
+     "length": 1750,
+     "multiplicity": 1
+    },
+    {
+     "length": 2899,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "AatII+MscI",
+   "enzymes": [
+    "AatII",
+    "MscI"
+   ]
+  },
+  {
+   "id": "BstBI+SspI",
+   "enzymes": [
+    "BstBI",
+    "SspI"
+   ]
+  }
+ ]
+}

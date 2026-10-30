@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/src/runtime.cpp:321:22: error: no viable overloaded '='
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/move.h:160:13: error: no viable overloaded '='
+/app2/src/runtime.cpp:325:17: error: no viable conversion from 'std::vector<unsigned long>' to 'const JobId' (aka 'const unsigned long')

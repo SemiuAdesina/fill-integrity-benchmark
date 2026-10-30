@@ -1,0 +1,8 @@
+{
+ "fixture": "h_older_samples_differ",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 6,
+ "retained": true
+}

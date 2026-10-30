@@ -1,0 +1,146 @@
+{
+ "fixture": "case_a",
+ "seed": 2001,
+ "attempt": 1,
+ "retained": true,
+ "rows": [
+  {
+   "target": "type 1",
+   "visible_linked_obs": 33,
+   "visible_obs_total": 45,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 1,
+   "oracle_b_fits": 1,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 0,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  },
+  {
+   "target": "type 2",
+   "visible_linked_obs": 33,
+   "visible_obs_total": 45,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S+B+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 16,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 1,
+   "oracle_b_fits": 1,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S+B+A-P",
+     "scale": 1,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 16,
+       "width": 16
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  },
+  {
+   "target": "type 3",
+   "visible_linked_obs": 33,
+   "visible_obs_total": 45,
+   "latent": [
+    {
+     "type": 0,
+     "expression": "S-P",
+     "scale": 4,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 10,
+       "width": 22
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "oracle_a_fits": 1,
+   "oracle_b_fits": 1,
+   "fit_sets_equal": true,
+   "canonical_a": [
+    {
+     "type": 0,
+     "expression": "S-P",
+     "scale": 4,
+     "signedness": "signed",
+     "overflow": "reject",
+     "slices": [
+      {
+       "lsb": 10,
+       "width": 22
+      }
+     ],
+     "pair": null
+    }
+   ],
+   "canonical_equal": true,
+   "latent_in_fits": true,
+   "field_mask_equals_changed": true,
+   "held_out_disagreeing_fits": 0,
+   "retain": true,
+   "reason": "ok"
+  }
+ ]
+}

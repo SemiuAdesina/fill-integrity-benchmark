@@ -1,0 +1,3 @@
+b17_cursor_after_padding
+resizing
+sets the cursor to the first real sample after zero padding

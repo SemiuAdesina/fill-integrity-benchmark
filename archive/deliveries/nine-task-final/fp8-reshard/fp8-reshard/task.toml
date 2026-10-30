@@ -1,0 +1,38 @@
+schema_version = "1.3"
+artifacts = ["/app"]
+[task]
+name = "fp8-reshard"
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["cpp","fp8","checkpoint","resharding","distributed-ml"]
+expert_time_estimate_hours = 3.0
+difficulty_explanation = """
+Logical quantizer and role identity must survive TP/PP movement, tied tensors,
+replicas, skipped modules, ring wrap, and history resizing. Hidden CPU updates
+make rotation and exact fixed-point numerical semantics load-bearing together.
+This mirrors a GPU/ML systems or numerical-kernel engineer restoring distributed
+training checkpoints while preserving exact delayed-scaling state across mesh
+and pipeline changes.
+"""
+solution_explanation = """
+The reference groups by tie-or-tensor plus role, validates replica suffixes and
+scales, chooses the deterministic longest source, rotates from next-write once,
+resizes chronology, resets canonical cursor, omits inactive targets, and sorts.
+"""
+verification_explanation = """
+A separate verifier accepts only restore.cpp, uses a pristine model and build,
+and runs nine documented groups plus a mandatory negative control. The compound
+group derives a next-iteration quantized value with the supplied CPU reference.
+"""
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+[agent]
+timeout_sec = 7000
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

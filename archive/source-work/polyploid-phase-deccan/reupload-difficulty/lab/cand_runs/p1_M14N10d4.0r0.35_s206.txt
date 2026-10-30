@@ -1,0 +1,8 @@
+slot01               FINISHED total=-219.698719 digest=1e9b94e3e2fca07f   24.74s 
+slot02               FINISHED total=-219.698719 digest=aed4b24a4bec16d3    9.52s 
+slot03               TIMEOUT             300.00s 
+slot04               FINISHED total=-219.698719 digest=aed4b24a4bec16d3   19.91s 
+slot05               TIMEOUT             300.00s 
+slot06               FINISHED total=-219.698719 digest=aed4b24a4bec16d3   15.56s 
+slot07               FINISHED total=-219.698719 digest=aed4b24a4bec16d3   30.52s 
+slot08               TIMEOUT             300.00s 

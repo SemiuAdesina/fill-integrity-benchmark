@@ -1,0 +1,3 @@
+b02_object_base_for_b
+ELF/addressing
+B = base of the object's first content section for every symbol

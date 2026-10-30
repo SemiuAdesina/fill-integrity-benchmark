@@ -1,0 +1,6 @@
+path:    /Users/macbok/Downloads/relocation-infer-deccan-stage1-final.zip
+bytes:   216956
+sha256:  bded3b24092e1951815aa68bbe43df554de639c9e420ed74e093cbe7a1f11472
+members: 224
+roots:   relocation-infer 
+symlinks in archive: 0

@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/src/runtime.cpp:91:35: error: assigning to 'bool' from incompatible type 'void'
+/app2/src/runtime.cpp:224:17: error: return type of out-of-line definition of 'roundel::Conductor::push_frame' differs from that in the declaration
+2 errors generated.

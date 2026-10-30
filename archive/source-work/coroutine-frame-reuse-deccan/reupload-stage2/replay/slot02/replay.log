@@ -1,0 +1,83 @@
+    SNAPSHOT 000 stepstart 85e58780941e
+[2] BASH rc=0 0.0s :: find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   62 Sep  5 19:25 src 
+[14] BASH rc=0 0.0s :: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tai ::  live=2 job-settled job=1 outcome=delivered frame-released job=1 slot=0/1 [arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0  demo finished 
+[15] BASH rc=0 0.0s :: cmake --build build 2>&1 | grep -E "error|Error" | head -20; g++ --version :: 
+[16] BASH rc=0 0.0s :: grep -i "color-diagnostics\|CXX_COMPILER:" /app/build/CMakeCache.txt | head -5 :: CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++ 
+[17] BASH rc=0 0.0s :: grep -rn "color-diagnostics" /app/build/CMakeFiles/roundel.dir/flags.make /app/build/CMakeFiles/*/fl :: all -Wextra -Wpedantic -std=c++20 /app/build/CMakeFiles/roundel_demo.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20 
+[18] BASH rc=0 0.0s :: rm -rf build2 && cmake -S . -B build2 -DCMAKE_BUILD_TYPE=Debug > /dev/null && cmake --build build2 - :: bash: line 1: ./build2/roundel_demo: No such file or directory 
+[19] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 017 step19 3fd683561657
+[20] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 018 step20 3a6a5b861845
+[21] WRITE /app/src/runtime.cpp -> W ok
+    SNAPSHOT 019 step21 a0e44d9894d3
+[22] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 020 step22 cb1862f7da07
+[23] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 021 step23 598c51dbd8d8
+[24] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 022 step24 a3194949763c
+[25] BASH rc=0 0.0s :: cmake --build build2 -j 4 2>&1 | grep -E "error|warning" | head -20; echo "--- exit: $? ---"; ./buil :: --- exit: 0 --- bash: line 1: ./build2/roundel_demo: No such file or directory 
+[26] WRITE /tmp/t1.cpp -> W ok
+[27] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t1.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t1: No such file or directory 
+[28] EDIT /tmp/t1.cpp -> E ok
+[29] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t1.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t1: No such file or directory 
+[30] EDIT /tmp/t1.cpp -> E ok
+[31] BASH rc=0 0.0s :: cd /tmp && python3 - <<'EOF' import re s = open('/tmp/t1.cpp').read() # use observing drain everywhe :: 284:    observe_drain(c); 296:    observe_drain(c); 329:        observe_drain(c); 475:    observe_drain(c); 502:    observe_drain(c); 537:    observe_drain(c); 
+[33] EDIT /tmp/t1.cpp -> E ok
+[35] EDIT /tmp/t1.cpp -> E ok
+[36] EDIT /tmp/t1.cpp -> E ok
+[37] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t1.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t1: No such file or directory 
+[38] BASH rc=127 0.0s :: cd /tmp && python3 - <<'EOF' s = open('/tmp/t1.cpp').read() s = s.replace("trace(c.journal())", "tra :: bash: line 6: /tmp/t1: No such file or directory 
+[39] BASH rc=127 0.0s :: cd /tmp && cat > /tmp/dbg.cpp <<'EOF' #include <cstdio> #include "roundel/runtime.hpp" using namespa :: bash: line 18: /tmp/dbg: No such file or directory 
+[41] BASH rc=127 0.0s :: cd /tmp && python3 - <<'EOF' import re s = open('/tmp/t1.cpp').read() # every test starts with a pri :: bash: line 8: /tmp/t1: No such file or directory 
+[42] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wpe :: bash: line 1: /tmp/t1s: No such file or directory 
+[43] WRITE /tmp/t2.cpp -> W ok
+[44] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t2.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t2: No such file or directory 
+[45] BASH rc=127 0.0s :: cd /tmp && cat > /tmp/dbg2.cpp <<'EOF' #include <cstdio> #include <vector> #include "roundel/runtime :: bash: line 21: /tmp/dbg2: No such file or directory 
+[46] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -I/app/include /tmp/dbg2.cpp /app/src/arena.cpp /app/src/journal.cpp /a :: bash: line 1: /tmp/dbg2n: No such file or directory 
+[47] BASH rc=0 0.0s :: cd /tmp && ASAN_OPTIONS=detect_leaks=0 /tmp/dbg2 > /tmp/out.txt 2>&1; echo "exit=$?"; head -40 /tmp/ :: exit=127 bash: line 1: /tmp/dbg2: No such file or directory 
+[48] BASH rc=0 0.0s :: cd /tmp && ASAN_OPTIONS=detect_leaks=1 /tmp/dbg2 > /tmp/out2.txt 2>&1; echo "exit=$?"; wc -l /tmp/ou :: exit=127 1 /tmp/out2.txt bash: line 1: /tmp/dbg2: No such file or directory 
+[49] EDIT /tmp/t2.cpp -> E ok
+[50] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t2.cpp /app/src/arena.cpp  :: === ASAN === bash: line 1: /tmp/t2s: No such file or directory bash: line 1: /tmp/t2: No such file or directory 
+[51] BASH rc=0 0.0s :: cd /tmp && echo "--- t1s again ---"; /tmp/t1s > /tmp/o1.txt 2>&1; echo "exit=$?"; tail -3 /tmp/o1.tx :: y --- t2s leaks off --- exit=127 bash: line 1: /tmp/t2s: No such file or directory --- t2s again --- exit=127 bash: line 1: /tmp/t2s: No such file or directory 
+[52] BASH rc=0 0.0s :: cd /tmp && printf '#include <cstdio>\nint main(){int* p=new int[4];p[0]=1;std::printf("%%d\\n",p[0]) :: 32137 virtual memory              (kbytes, -v) unlimited file locks                          (-x) unlimited bash: line 1: /tmp/hello: No such file or directory 
+[53] BASH rc=0 0.0s :: cd /tmp && g++ -std=c++20 -g -fsanitize=address -I/app/include /tmp/t1.cpp /app/src/arena.cpp /app/s :: asan-only exit=127 bash: line 1: /tmp/t1a: No such file or directory ubsan-only exit=127 bash: line 1: /tmp/t1u: No such file or directory 
+[54] BASH rc=0 0.0s :: cd /tmp && g++ -fsanitize=address,undefined -g /tmp/hello.cpp -o /tmp/hello2 && /tmp/hello2; echo "c :: combo hello exit=127 bash: line 1: /tmp/hello2: No such file or directory 
+[55] BASH rc=0 0.0s :: cd /tmp && stdbuf -o0 -e0 /tmp/t1s 2>&1 | tail -30; echo "exit=${PIPESTATUS[0]}" :: stdbuf: failed to run command '/tmp/t1s': No such file or directory exit=127 
+[56] BASH rc=2 0.0s :: cd /tmp && ASAN_OPTIONS=log_path=/tmp/asan.log /tmp/t1s > /dev/null 2>&1; echo "exit=$?"; ls /tmp/as :: exit=127 
+[57] BASH rc=0 0.0s :: cd /tmp && (ulimit -s 65536; /tmp/t1s > /tmp/bigstack.txt 2>&1); echo "exit=$?"; tail -3 /tmp/bigsta :: exit=127 bash: line 1: /tmp/t1s: No such file or directory small exit=127 bash: line 1: /tmp/t1s: No such file or directory 
+[58] BASH rc=0 0.0s :: cd /tmp && for i in 1 2 3 4 5; do /tmp/t1s > /tmp/r$i.txt 2>&1; echo "run$i exit=$? $(tail -1 /tmp/r :: No such file or directory t2 run2 exit=127 bash: line 1: /tmp/t2s: No such file or directory t2 run3 exit=127 bash: line 1: /tmp/t2s: No such file or directory 
+[59] BASH rc=0 0.0s :: which gdb; cd /tmp && python3 - <<'EOF' s=open('/tmp/t2.cpp').read() s=s.replace('#include <cstdio>' :: uch file or directory run5 exit=127 last=bash: line 6: /tmp/t2s: No such file or directory run6 exit=127 last=bash: line 6: /tmp/t2s: No such file or directory 
+[60] BASH rc=0 0.0s :: cd /tmp && cat /tmp/u1.txt | head -30; echo "..."; grep -c "" /tmp/u1.txt :: bash: line 6: /tmp/t2s: No such file or directory ... 1 
+[61] WRITE /tmp/t3.cpp -> W ok
+[62] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t3.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t3: No such file or directory 
+[63] BASH rc=127 0.0s :: cd /tmp && python3 - <<'EOF' s=open('/tmp/t3.cpp').read() s=s.replace("Conductor c{3};","Conductor c :: bash: line 7: /tmp/t3: No such file or directory 
+[64] BASH rc=127 0.0s :: cd /tmp && python3 - <<'PY' s=open('/tmp/t3.cpp').read() s=s.replace(""" const JobId j = c.launch(fo :: bash: line 39: /tmp/t3: No such file or directory 
+[65] BASH rc=127 0.0s :: cd /tmp && python3 - <<'PY' s=open('/tmp/t3.cpp').read() s=s.replace(""" if (es[i].job == id && es[i :: bash: line 10: /tmp/t3: No such file or directory 
+[66] WRITE /tmp/t4.cpp -> W ok
+[67] BASH rc=127 0.0s :: cd /tmp && g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t4.cpp /app/src/arena.cpp  :: bash: line 1: /tmp/t4: No such file or directory 
+[70] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 068 step70 0c41e9dc1a6a
+[71] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 069 step71 7240ff426a8f
+[72] EDIT /app/src/runtime.cpp -> E ok
+    SNAPSHOT 070 step72 1dba02c2bfeb
+[73] BASH rc=0 0.0s :: cd /tmp && for f in t1 t2 t3 t4; do g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/includ :: : line 1: /tmp/t3: No such file or directory bash: line 1: /tmp/t4: No such file or directory bash: line 1: /app/build2/roundel_demo: No such file or directory 
+[76] BASH rc=0 0.0s :: rm -rf build-asan && cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/ :: build ok bash: line 1: ./build-asan/roundel_demo: No such file or directory 
+[77] BASH rc=0 0.0s :: cd /tmp && for f in t1 t2 t3 t4; do g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-p ::  /tmp/t2su: No such file or directory pass3 t3: bash: line 1: /tmp/t3su: No such file or directory pass3 t4: bash: line 1: /tmp/t4su: No such file or directory 
+[78] BASH rc=0 0.0s :: cd /tmp && cat > /tmp/ctrl.cpp <<'EOF' // Control: no roundel code at all, same allocation pattern.  :: directory ctrl run7 exit=127 out=bash: line 14: /tmp/ctrl: No such file or directory ctrl run8 exit=127 out=bash: line 14: /tmp/ctrl: No such file or directory 
+[79] BASH rc=143 0.0s :: pkill -f /tmp/ctrl 2>/dev/null; sed -n '355,470p' /app/src/runtime.cpp :: 
+[81] WRITE /tmp/t5.cpp -> W ok
+[82] BASH rc=0 0.0s :: cd /tmp && timeout 300 g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t5.cpp :: timeout: failed to run command '/tmp/t5': No such file or directory 
+[83] BASH rc=0 0.0s :: cd /tmp && timeout 400 g++ -std=c++20 -g -fsanitize=address -I/app/include /tmp/t5.cpp /app/src/aren :: timeout: failed to run command '/tmp/t5a': No such file or directory 
+[84] BASH rc=0 0.0s :: cd /tmp && for i in 1 2 3 4; do timeout 400 /tmp/t5a > /tmp/t5r$i.txt 2>&1; echo "run$i exit=$? -> $ :: 7 -> timeout: failed to run command '/tmp/t5a': No such file or directory run4 exit=127 -> timeout: failed to run command '/tmp/t5a': No such file or directory 
+[85] BASH rc=0 0.0s :: head -5 /tmp/t5r4.txt; wc -l /tmp/t5r4.txt :: timeout: failed to run command '/tmp/t5a': No such file or directory 1 /tmp/t5r4.txt 
+[86] BASH rc=0 0.0s :: ls /usr/bin/ | grep -iE "^clang|^(g\+\+|gcc)" | head; which clang clang++ 2>/dev/null :: ng-apply-replacements clang-apply-replacements-17 clang-change-namespace clang-change-namespace-17 clang-check clang-check-17 /opt/shim/clang /opt/shim/clang++ 
+[87] BASH rc=0 0.0s :: cd /tmp && for f in t1 t2 t3 t4 t5; do clang++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app :: ang t4: timeout: failed to run command '/tmp/cl_t4': No such file or directory clang t5: timeout: failed to run command '/tmp/cl_t5': No such file or directory 
+[88] BASH rc=0 0.0s :: cd /tmp && for f in t1 t2 t3 t5; do clang++ -std=c++20 -g -fsanitize=address -fno-omit-frame-pointer ::  timeout: failed to run command '/tmp/cla_t3': No such file or directory clang-asan t5: timeout: failed to run command '/tmp/cla_t5': No such file or directory 
+[89] BASH rc=0 0.0s :: rm -rf /app/build-clang /app/build-clang-asan && cmake -S . -B build-clang -DCMAKE_BUILD_TYPE=Debug  :: bash: line 1: ./build-clang/roundel_demo: No such file or directory bash: line 1: ./build-clang-asan/roundel_demo: No such file or directory 
+[90] BASH rc=0 0.0s :: rm -rf build2 build-asan build-clang build-clang-asan && ls -la /app && git -C /app status 2>/dev/nu :: p  5 19:25 examples drwxr-xr-x 1 root root   14 Aug 12 12:06 include drwxr-xr-x 1 root root   22 Sep  5 19:25 spec drwxr-xr-x 1 root root   22 Sep  5 19:25 src 
+[92] EDIT /app/include/roundel/runtime.hpp -> E ok
+    SNAPSHOT 090 step92 573952d73e26
+[93] BASH rc=0 0.0s :: cd /tmp && for f in t1 t2 t3 t4 t5; do g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -I/app/in :: ctory gcc-O2 t5: timeout: failed to run command '/tmp/f_t5': No such file or directory 0 bash: line 1: /app/build-final/roundel_demo: No such file or directory 

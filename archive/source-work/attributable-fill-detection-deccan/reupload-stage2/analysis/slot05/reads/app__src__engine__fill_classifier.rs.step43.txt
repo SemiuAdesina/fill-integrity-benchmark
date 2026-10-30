@@ -1,0 +1,122 @@
+185	                    inside = Some(index);
+186	                }
+187	            }
+188	        }
+189	        inside.or(fallback)
+190	    }
+191	
+192	    /// Resolve an observation to one of our submissions.
+193	    ///
+194	    /// `client_ref` is the engine's own key and is the only key it always knows,
+195	    /// so it is tried first: a submission whose acknowledgement was lost has no
+196	    /// venue id at all, and a recycled id belongs to a different order than the
+197	    /// one the engine tracked. The venue id is only consulted for an observation
+198	    /// whose client reference this ledger does not know.
+199	    fn locate(&mut self, order_id: &OrderId, client_ref: &ClientRef) -> Option<usize> {
+200	        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {
+201	            return Some(index);
+202	        }
+203	        self.resolve_by_order_id(order_id, None)
+204	    }
+205	
+206	    /// Whether a venue match timestamp falls in this record's attribution window.
+207	    ///
+208	    /// The window is half-open, `[start, start + ATTRIBUTION_WINDOW)`: an
+209	    /// observation at the start is inside it, one at the end is not.
+210	    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {
+211	        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW
+212	    }
+213	
+214	    /// Fold one polled batch into the ledger and advance the cursor.
+215	    ///
+216	    /// Returns the number of per-order events in the batch, which the engine
+217	    /// reports through `Engine::observed_fill_events`.
+218	    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {
+219	        let count = batch.events.len();
+220	        for event in batch.events {
+221	            self.absorb_event(event);
+222	        }
+223	        for block in batch.blocks {
+224	            self.absorb_block(block);
+225	        }
+226	        self.cursor = batch.next_cursor;
+227	        count
+228	    }
+229	
+230	    /// Fold one per-order fill event in.
+231	    ///
+232	    /// `cumulative_filled_qty` is that order's running total, not the size of
+233	    /// this particular match, and delivery is at least once. Folding it in as an
+234	    /// increment inflates the order whenever the feed replays or delivers out of
+235	    /// order, so direct progress is the **maximum** ever observed.
+236	    ///
+237	    /// The event is tested against the record's own window using the venue's
+238	    /// match timestamp, not the cycle that happened to read it.
+239	    fn absorb_event(&mut self, event: FillEvent) {
+240	        let Some(index) = self.locate(&event.order_id, &event.client_ref) else {
+241	            return;
+242	        };
+243	        if !Self::in_window(&self.submissions[index], event.at) {
+244	            return;
+245	        }
+246	        // An observation inside the window is unambiguous, so it can supply the
+247	        // venue id for a submission whose acknowledgement was lost.
+248	        let record = &mut self.submissions[index];
+249	        if record.order_id.is_none() {
+250	            record.order_id = Some(event.order_id);
+251	        }
+252	        // An order the venue has closed will never acquire another base unit, so
+253	        // later evidence about it is evidence about some other order.
+254	        if record.finalized {
+255	            return;
+256	        }
+257	        if event.cumulative_filled_qty > record.direct_filled {
+258	            record.direct_filled = event.cumulative_filled_qty;
+259	        }
+260	    }
+261	
+262	    /// Divide one block match across the orders it covers.
+263	    ///
+264	    /// The venue reports only a total and names the orders it was matched
+265	    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step
+266	    /// is integer arithmetic, and any part of the block that no tracked order can
+267	    /// account for is dropped rather than assigned.
+268	    fn absorb_block(&mut self, block: BlockFill) {
+269	        // The same match, redelivered, is the same match. `block_ref` is the
+270	        // idempotency key; there is no maximum to fall back on here, because a
+271	        // block share is additive rather than cumulative.
+272	        if !self.absorbed_blocks.insert(block.block_ref) {
+273	            return;
+274	        }
+275	
+276	        // Split the covered orders this engine tracks into the eligible set and
+277	        // the rest. `covers` arrives in whatever order the venue happened to
+278	        // build it, and it may repeat an id, so nothing here depends on that.
+279	        let mut covered: Vec<usize> = Vec::new();
+280	        let mut eligible: Vec<(BlockOrderKey, usize, Qty)> = Vec::new();
+281	        for order_id in &block.covers {
+282	            let Some(index) = self.resolve_by_order_id(order_id, Some(block.at)) else {
+283	                continue;
+284	            };
+285	            if covered.contains(&index) {
+286	                continue;
+287	            }
+288	            covered.push(index);
+289	
+290	            // Eligibility: tracked, in window, and with something left to fill.
+291	            // A finalized order has no outstanding quantity left, because the
+292	            // venue has already closed it and cancelled the remainder.
+293	            let outstanding = self.outstanding_of(index);
+294	            if outstanding <= 0 {
+295	                continue;
+296	            }
+297	            if !Self::in_window(&self.submissions[index], block.at) {
+298	                continue;
+299	            }
+300	            eligible.push((self.order_key(index), index, outstanding));
+301	        }
+302	
+303	        // Put the eligible set in the ordering step 2 prescribes before any
+304	        // quantity is divided, so that neither the order of `covers` nor the
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/fill_classifier.rs", "content": "                    inside = Some(index);\n                }\n            }\n        }\n        inside.or(fallback)\n    }\n\n    /// Resolve an observation to one of our submissions.\n    ///\n    /// `client_ref` is the engine's own key and is the only key it always knows,\n    /// so it is tried first: a submission whose acknowledgement was lost has no\n    /// venue id at all, and a recycled id belongs to a different order than the\n    /// one the engine tracked. The venue id is only consulted for an observation\n    /// whose client reference this ledger does not know.\n    fn locate(&mut self, order_id: &OrderId, client_ref: &ClientRef) -> Option<usize> {\n        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {\n            return Some(index);\n        }\n        self.resolve_by_order_id(order_id, None)\n    }\n\n    /// Whether a venue match timestamp falls in this record's attribution window.\n    ///\n    /// The window is half-open, `[start, start + ATTRIBUTION_WINDOW)`: an\n    /// observation at the start is inside it, one at the end is not.\n    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {\n        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW\n    }\n\n    /// Fold one polled batch into the ledger and advance the cursor.\n    ///\n    /// Returns the number of per-order events in the batch, which the engine\n    /// reports through `Engine::observed_fill_events`.\n    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {\n        let count = batch.events.len();\n        for event in batch.events {\n            self.absorb_event(event);\n        }\n        for block in batch.blocks {\n            self.absorb_block(block);\n        }\n        self.cursor = batch.next_cursor;\n        count\n    }\n\n    /// Fold one per-order fill event in.\n    ///\n    /// `cumulative_filled_qty` is that order's running total, not the size of\n    /// this particular match, and delivery is at least once. Folding it in as an\n    /// increment inflates the order whenever the feed replays or delivers out of\n    /// order, so direct progress is the **maximum** ever observed.\n    ///\n    /// The event is tested against the record's own window using the venue's\n    /// match timestamp, not the cycle that happened to read it.\n    fn absorb_event(&mut self, event: FillEvent) {\n        let Some(index) = self.locate(&event.order_id, &event.client_ref) else {\n            return;\n        };\n        if !Self::in_window(&self.submissions[index], event.at) {\n            return;\n        }\n        // An observation inside the window is unambiguous, so it can supply the\n        // venue id for a submission whose acknowledgement was lost.\n        let record = &mut self.submissions[index];\n        if record.order_id.is_none() {\n            record.order_id = Some(event.order_id);\n        }\n        // An order the venue has closed will never acquire another base unit, so\n        // later evidence about it is evidence about some other order.\n        if record.finalized {\n            return;\n        }\n        if event.cumulative_filled_qty > record.direct_filled {\n            record.direct_filled = event.cumulative_filled_qty;\n        }\n    }\n\n    /// Divide one block match across the orders it covers.\n    ///\n    /// The venue reports only a total and names the orders it was matched\n    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step\n    /// is integer arithmetic, and any part of the block that no tracked order can\n    /// account for is dropped rather than assigned.\n    fn absorb_block(&mut self, block: BlockFill) {\n        // The same match, redelivered, is the same match. `block_ref` is the\n        // idempotency key; there is no maximum to fall back on here, because a\n        // block share is additive rather than cumulative.\n        if !self.absorbed_blocks.insert(block.block_ref) {\n            return;\n        }\n\n        // Split the covered orders this engine tracks into the eligible set and\n        // the rest. `covers` arrives in whatever order the venue happened to\n        // build it, and it may repeat an id, so nothing here depends on that.\n        let mut covered: Vec<usize> = Vec::new();\n        let mut eligible: Vec<(BlockOrderKey, usize, Qty)> = Vec::new();\n        for order_id in &block.covers {\n            let Some(index) = self.resolve_by_order_id(order_id, Some(block.at)) else {\n                continue;\n            };\n            if covered.contains(&index) {\n                continue;\n            }\n            covered.push(index);\n\n            // Eligibility: tracked, in window, and with something left to fill.\n            // A finalized order has no outstanding quantity left, because the\n            // venue has already closed it and cancelled the remainder.\n            let outstanding = self.outstanding_of(index);\n            if outstanding <= 0 {\n                continue;\n            }\n            if !Self::in_window(&self.submissions[index], block.at) {\n                continue;\n            }\n            eligible.push((self.order_key(index), index, outstanding));\n        }\n\n        // Put the eligible set in the ordering step 2 prescribes before any\n        // quantity is divided, so that neither the order of `covers` nor the", "numLines": 120, "startLine": 185, "totalLines": 410}}

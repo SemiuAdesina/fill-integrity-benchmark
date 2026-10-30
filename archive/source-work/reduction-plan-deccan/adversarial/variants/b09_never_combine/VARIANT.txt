@@ -1,0 +1,3 @@
+b09_never_combine
+reduction
+only considers plans without switch reductions

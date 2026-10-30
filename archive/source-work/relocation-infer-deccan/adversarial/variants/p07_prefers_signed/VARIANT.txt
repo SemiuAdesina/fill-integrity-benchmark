@@ -1,0 +1,3 @@
+p07_prefers_signed
+07 canonicalisation-naive
+breaks ties by preferring signed programs, not by the published key

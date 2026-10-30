@@ -1,0 +1,392 @@
+[14] CMD: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tail -5 && ./build/roundel_demo 2>&1 | head -60
+--- obs tail ---
+** [Makefile:91: all] Error 2
+
+=== cancelled job, slot reused, old ticket delivered late ===
+[after cancel] settled=1 live_slots=1
+scenario 1 threw: std::bad_alloc
+
+=== cancel, then completion, then cancel again ===
+job-started job=1 slot=0/1
+job-parked job=1
+cancel-requested job=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+ticket-queued job=1
+cancel-requested job=1
+job-settled job=1 outcome=cancelled
+ticket-rejected job=1
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0
+
+=== child fails ===
+[outcome] faulted
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=0
+fault-reported job=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+frame-released job=1 slot=0/1
+[arena] live=1 free=3 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+=== child succeeds ===
+[value] 42
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=21
+parent-continued job=1 live=2
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[15] CMD: cmake --build build 2>&1 | grep -E "error|Error" | head -20; g++ --version
+--- obs tail ---
+c++: error: unrecognized command-line option '-fno-color-diagnostics'
+gmake[2]: *** [CMakeFiles/roundel.dir/build.make:76: CMakeFiles/roundel.dir/src/arena.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/roundel.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+g++ (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+[stdout]
+c++: error: unrecognized command-line option '-fno-color-diagnostics'
+gmake[2]: *** [CMakeFiles/roundel.dir/build.make:76: CMakeFiles/roundel.dir/src/arena.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/roundel.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+g++ (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+[metadata] {"noOutputExpected": false}
+
+[17] CMD: grep -rn "color-diagnostics" /app/build/CMakeFiles/roundel.dir/flags.make /app/build/CMakeFiles/*/flags.make 2>/dev/null | head -3
+--- obs tail ---
+/app/build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+/app/build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+/app/build/CMakeFiles/roundel_demo.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+
+[stdout]
+/app/build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+/app/build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+/app/build/CMakeFiles/roundel_demo.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+[metadata] {"noOutputExpected": false}
+
+[18] CMD: rm -rf build2 && cmake -S . -B build2 -DCMAKE_BUILD_TYPE=Debug > /dev/null && cmake --build build2 -j 4 2>&1 | tail -3 && ./build2/roundel_demo 2>&1 | tail -5
+--- obs tail ---
+[ 83%] Building CXX object CMakeFiles/roundel_demo.dir/examples/demo.cpp.o
+[100%] Linking CXX executable roundel_demo
+[100%] Built target roundel_demo
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+
+[stdout]
+[ 83%] Building CXX object CMakeFiles/roundel_demo.dir/examples/demo.cpp.o
+[100%] Linking CXX executable roundel_demo
+[100%] Built target roundel_demo
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[25] CMD: cmake --build build2 -j 4 2>&1 | grep -E "error|warning" | head -20; echo "--- exit: $? ---"; ./build2/roundel_demo 2>&1 | head -70
+--- obs tail ---
+ncelled
+frame-released job=1 slot=0/1
+slot-reused slot=0/2
+job-started job=2 slot=0/2
+job-parked job=2
+ticket-rejected job=1
+[arena] live=1 free=0 capacity=1 peak=1 check_outs=2 double_reclaims=0
+
+=== cancel, then completion, then cancel again ===
+job-started job=1 slot=0/1
+job-parked job=1
+cancel-requested job=1
+job-settled job=1 outcome=cancelled
+frame-released job=1 slot=0/1
+ticket-queued job=1
+cancel-requested job=1
+ticket-rejected job=1
+[arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0
+
+=== child fails ===
+[outcome] faulted
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=0
+child-destroyed job=1
+fault-reported job=1
+job-settled job=1 outcome=faulted
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+=== child succeeds ===
+[value] 42
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=21
+child-destroyed job=1
+parent-continued job=1 live=1
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[53] CMD: cd /tmp && g++ -std=c++20 -g -fsanitize=address -I/app/include /tmp/t1.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t1a 2>&1|head -3; /tmp/t1a > /tmp/oa.txt 2>&1; echo "asan-only exit=$?"; tai
+--- obs tail ---
+asan-only exit=0
+
+110 checks, 0 failures
+ubsan-only exit=0
+[jobs left parked at shutdown]
+
+110 checks, 0 failures
+Shell cwd was reset to /app
+
+[stdout]
+asan-only exit=0
+
+110 checks, 0 failures
+ubsan-only exit=0
+[jobs left parked at shutdown]
+
+110 checks, 0 failures
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[56] CMD: cd /tmp && ASAN_OPTIONS=log_path=/tmp/asan.log /tmp/t1s > /dev/null 2>&1; echo "exit=$?"; ls /tmp/asan.log* 2>/dev/null && head -40 /tmp/asan.log*
+--- obs tail ---
+Exit code 2
+/bin/bash: line 1:  7398 Segmentation fault      (core dumped) ASAN_OPTIONS=log_path=/tmp/asan.log /tmp/t1s > /dev/null 2>&1
+exit=139
+
+[error] tool reported failure
+
+[65] CMD: cd /tmp && python3 - <<'PY' s=open('/tmp/t3.cpp').read() s=s.replace(""" if (es[i].job == id && es[i].mark != Mark::CancelRequested) {""", """ // Requests recorded for a job name the request, not the job's // state: rule
+--- obs tail ---
+[peak live slots]
+[cancel one of two jobs, keep going]
+[park, child that fails, park again]
+[launch and post from inside a running job]
+[delayed fault into a nested job]
+[many rounds of everything]
+
+56 checks, 0 failures
+--- asan ---
+[many rounds of everything]
+
+56 checks, 0 failures
+Shell cwd was reset to /app
+
+[stdout]
+[peak live slots]
+[cancel one of two jobs, keep going]
+[park, child that fails, park again]
+[launch and post from inside a running job]
+[delayed fault into a nested job]
+[many rounds of everything]
+
+56 checks, 0 failures
+--- asan ---
+[many rounds of everything]
+
+56 checks, 0 failures
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[73] CMD: cd /tmp && for f in t1 t2 t3 t4; do g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/$f.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/$f 2>&1|head -5; /tmp/$f | tail -1; d
+--- obs tail ---
+110 checks, 0 failures
+42 checks, 0 failures
+56 checks, 0 failures
+15 checks, 0 failures
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+Shell cwd was reset to /app
+
+[stdout]
+110 checks, 0 failures
+42 checks, 0 failures
+56 checks, 0 failures
+15 checks, 0 failures
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[76] CMD: rm -rf build-asan && cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 && cmake --build build-asan -j 4 2>&1 | grep -E "warning|error|Error" | head -5; echo "build ok"; ./build-asan
+--- obs tail ---
+build ok
+parent-continued job=1 live=1
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+
+[stdout]
+build ok
+parent-continued job=1 live=1
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[86] CMD: ls /usr/bin/ | grep -iE "^clang|^(g\+\+|gcc)" | head; which clang clang++ 2>/dev/null
+--- obs tail ---
+clang
+clang++
+clang++-17
+clang-17
+clang-apply-replacements
+clang-apply-replacements-17
+clang-change-namespace
+clang-change-namespace-17
+clang-check
+clang-check-17
+/usr/bin/clang
+/usr/bin/clang++
+
+[stdout]
+clang
+clang++
+clang++-17
+clang-17
+clang-apply-replacements
+clang-apply-replacements-17
+clang-change-namespace
+clang-change-namespace-17
+clang-check
+clang-check-17
+/usr/bin/clang
+/usr/bin/clang++
+[metadata] {"noOutputExpected": false}
+
+[87] CMD: cd /tmp && for f in t1 t2 t3 t4 t5; do clang++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/$f.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/cl_$f 2>&1|head -8; done; echo
+--- obs tail ---
+--- compiled ---
+clang t1: 110 checks, 0 failures
+clang t2: 42 checks, 0 failures
+clang t3: 56 checks, 0 failures
+clang t4: 15 checks, 0 failures
+clang t5: 0 failures
+Shell cwd was reset to /app
+
+[stdout]
+--- compiled ---
+clang t1: 110 checks, 0 failures
+clang t2: 42 checks, 0 failures
+clang t3: 56 checks, 0 failures
+clang t4: 15 checks, 0 failures
+clang t5: 0 failures
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[88] CMD: cd /tmp && for f in t1 t2 t3 t5; do clang++ -std=c++20 -g -fsanitize=address -fno-omit-frame-pointer -I/app/include /tmp/$f.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/cla_$f 2>&1|head -3; do
+--- obs tail ---
+clang-asan t1: 110 checks, 0 failures
+clang-asan t2: 42 checks, 0 failures
+clang-asan t3: 56 checks, 0 failures
+clang-asan t5: 0 failures
+Shell cwd was reset to /app
+
+[stdout]
+clang-asan t1: 110 checks, 0 failures
+clang-asan t2: 42 checks, 0 failures
+clang-asan t3: 56 checks, 0 failures
+clang-asan t5: 0 failures
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[89] CMD: rm -rf /app/build-clang /app/build-clang-asan && cmake -S . -B build-clang -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ > /dev/null 2>&1 && cmake --build build-clang -j 4 2>&1 | grep -iE "warning|error" | head -
+--- obs tail ---
+demo finished
+
+demo finished
+
+[stdout]
+demo finished
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[90] CMD: rm -rf build2 build-asan build-clang build-clang-asan && ls -la /app && git -C /app status 2>/dev/null | head -3
+--- obs tail ---
+total 48
+drwxr-xr-x 1 root root 4096 Sep  5 20:26 .
+drwxr-xr-x 1 root root 4096 Sep  5 19:37 ..
+-rw-r--r-- 1 root root 1077 Sep  5 19:51 CMakeLists.txt
+-rw-r--r-- 1 root root 2645 Sep  5 19:51 README.md
+drwxr-xr-x 1 root root 4096 Sep  5 19:59 build
+drwxr-xr-x 2 root root 4096 Sep  5 19:51 examples
+drwxr-xr-x 1 root root 4096 Aug 12 13:06 include
+drwxr-xr-x 2 root root 4096 Sep  5 19:51 spec
+drwxr-xr-x 1 root root 4096 Sep  5 20:19 src
+
+[stdout]
+total 48
+drwxr-xr-x 1 root root 4096 Sep  5 20:26 .
+drwxr-xr-x 1 root root 4096 Sep  5 19:37 ..
+-rw-r--r-- 1 root root 1077 Sep  5 19:51 CMakeLists.txt
+-rw-r--r-- 1 root root 2645 Sep  5 19:51 README.md
+drwxr-xr-x 1 root root 4096 Sep  5 19:59 build
+drwxr-xr-x 2 root root 4096 Sep  5 19:51 examples
+drwxr-xr-x 1 root root 4096 Aug 12 13:06 include
+drwxr-xr-x 2 root root 4096 Sep  5 19:51 spec
+drwxr-xr-x 1 root root 4096 Sep  5 20:19 src
+[metadata] {"noOutputExpected": false}
+
+[93] CMD: cd /tmp && for f in t1 t2 t3 t4 t5; do g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/$f.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/f_$f 2>&1|head -3; echo -n "gcc-O
+--- obs tail ---
+gcc-O2 t1: 110 checks, 0 failures
+gcc-O2 t2: 42 checks, 0 failures
+gcc-O2 t3: 56 checks, 0 failures
+gcc-O2 t4: 15 checks, 0 failures
+gcc-O2 t5: 0 failures
+0
+demo finished
+Shell cwd was reset to /app
+
+[stdout]
+gcc-O2 t1: 110 checks, 0 failures
+gcc-O2 t2: 42 checks, 0 failures
+gcc-O2 t3: 56 checks, 0 failures
+gcc-O2 t4: 15 checks, 0 failures
+gcc-O2 t5: 0 failures
+0
+demo finished
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}

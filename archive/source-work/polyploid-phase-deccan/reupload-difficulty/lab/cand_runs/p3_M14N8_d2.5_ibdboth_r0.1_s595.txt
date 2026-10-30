@@ -1,0 +1,16 @@
+slot01                               PASS                 10.67s 
+slot02                               PASS                 18.33s 
+slot03                               PASS                 17.52s 
+slot04                               PASS                  9.44s 
+slot05                               PASS                173.25s 
+slot06                               PASS                 10.66s 
+slot07                               PASS                  6.88s 
+slot08                               PASS                 16.29s 
+ref_v5                               PASS                 37.57s 
+v16_prune_ties                       PASS                 37.52s 
+v18_first_found_tie                  PASS                 37.73s 
+v06_backward_traceback               PASS                 38.00s 
+famB_loose_noincumbent_nobestfirst   PASS                 32.16s 
+famC_perprogeny_bound_only           PASS                 26.48s 
+famD_twobounds_sym_warm              PASS                 24.71s 
+famF_ref_new_pairbound               PASS                 14.73s 

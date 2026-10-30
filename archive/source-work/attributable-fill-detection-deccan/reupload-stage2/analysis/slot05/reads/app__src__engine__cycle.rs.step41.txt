@@ -1,0 +1,132 @@
+160	    fn sync_observations(&mut self) {
+161	        match self.gateway.open_orders() {
+162	            Ok(open) => {
+163	                self.ledger.absorb_open_orders(&open);
+164	                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();
+165	            }
+166	            Err(_) => {
+167	                self.resting_at_venue.clear();
+168	            }
+169	        }
+170	        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {
+171	            self.observed_fill_events += self.ledger.absorb_batch(batch);
+172	        }
+173	    }
+174	
+175	    /// Match up corrective orders whose fate was unknown when they were sent.
+176	    ///
+177	    /// A record without an `order_id` is one the venue never acknowledged. The
+178	    /// client reference is the venue's idempotency key, so resubmitting under it
+179	    /// returns the original order rather than creating a second one.
+180	    fn reconcile_neutralizations(&mut self, now: Timestamp) {
+181	        // Identity is recovered when a later observation carries that
+182	        // `client_ref`: the ledger learns the venue id from the open-order list
+183	        // or from a fill event, and the record catches up with it here.
+184	        let recovered: Vec<(ClientRef, OrderId)> = self
+185	            .neutralizations
+186	            .iter()
+187	            .filter(|record| record.order_id.is_none())
+188	            .filter_map(|record| {
+189	                self.ledger
+190	                    .order_for(&record.client_ref)
+191	                    .map(|order_id| (record.client_ref.clone(), order_id))
+192	            })
+193	            .collect();
+194	        for (client_ref, order_id) in recovered {
+195	            if let Some(slot) = self
+196	                .neutralizations
+197	                .iter_mut()
+198	                .find(|slot| slot.client_ref == client_ref && slot.order_id.is_none())
+199	            {
+200	                slot.order_id = Some(order_id);
+201	            }
+202	        }
+203	
+204	        let unconfirmed: Vec<NeutralizationRecord> = self
+205	            .neutralizations
+206	            .iter()
+207	            .filter(|record| record.order_id.is_none())
+208	            .cloned()
+209	            .collect();
+210	        for record in unconfirmed {
+211	            if !self
+212	                .attempted_this_cycle
+213	                .insert((record.strategy_id.clone(), record.venue))
+214	            {
+215	                continue;
+216	            }
+217	            let request = Self::neutralization_request(&record);
+218	            let size = record.size;
+219	            let client_ref = record.client_ref.clone();
+220	            match self.gateway.submit(&request) {
+221	                // The venue named the order, whether it is the one created by the
+222	                // first attempt or one this retry created. Either way there is
+223	                // exactly one economic order behind this client reference.
+224	                Ok(accepted) => {
+225	                    self.ledger.track(
+226	                        client_ref.clone(),
+227	                        Some(accepted.order_id.clone()),
+228	                        Some(accepted.venue_seq),
+229	                        size,
+230	                        now,
+231	                    );
+232	                    if let Some(slot) = self
+233	                        .neutralizations
+234	                        .iter_mut()
+235	                        .find(|slot| slot.client_ref == client_ref)
+236	                    {
+237	                        slot.order_id = Some(accepted.order_id);
+238	                    }
+239	                }
+240	                // Still unresolved. Keep the record and its client reference so a
+241	                // later cycle retries under the same one.
+242	                Err(SubmitError::AcknowledgementLost) => {}
+243	                // Nothing was created by that attempt, so there is nothing to
+244	                // wait for. Drop the record and leave the exposure open for a
+245	                // later cycle to recompute and try again.
+246	                Err(SubmitError::Rejected(_)) | Err(SubmitError::Transport(_)) => {
+247	                    self.neutralizations.retain(|slot| slot.client_ref != client_ref);
+248	                }
+249	            }
+250	        }
+251	    }
+252	
+253	    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {
+254	        OrderRequest {
+255	            strategy_id: record.strategy_id.clone(),
+256	            instrument_id: record.instrument_id.clone(),
+257	            venue: record.venue,
+258	            kind: OrderKind::ImmediateOrCancel,
+259	            limit_price: record.limit_price,
+260	            size: record.size,
+261	            client_ref: record.client_ref.clone(),
+262	            expiry_time: record.expiry_time,
+263	        }
+264	    }
+265	
+266	    fn enter_new_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {
+267	        let available_cash = self.inventory.settlement_balance()?;
+268	        let candidates = self.strategies.candidates()?;
+269	        for candidate in candidates {
+270	            if self.positions.has(&candidate.strategy_id) {
+271	                continue;
+272	            }
+273	            if self.attempted.contains(&candidate.strategy_id) {
+274	                continue;
+275	            }
+276	            if candidate.pair_cost() > self.config.max_pair_cost {
+277	                continue;
+278	            }
+279	            if now >= candidate.expiry_time {
+280	                continue;
+281	            }
+282	            let north_size = leg_size(candidate.north_depth, self.config.max_leg_size);
+283	            let south_size = leg_size(candidate.south_depth, self.config.max_leg_size);
+284	            if north_size < self.config.min_leg_size || south_size < self.config.min_leg_size {
+285	                continue;
+286	            }
+287	            let notional = (candidate.north_price * north_size as f64)
+288	                + (candidate.south_price * south_size as f64);
+289	            if notional > available_cash {
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "    fn sync_observations(&mut self) {\n        match self.gateway.open_orders() {\n            Ok(open) => {\n                self.ledger.absorb_open_orders(&open);\n                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();\n            }\n            Err(_) => {\n                self.resting_at_venue.clear();\n            }\n        }\n        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {\n            self.observed_fill_events += self.ledger.absorb_batch(batch);\n        }\n    }\n\n    /// Match up corrective orders whose fate was unknown when they were sent.\n    ///\n    /// A record without an `order_id` is one the venue never acknowledged. The\n    /// client reference is the venue's idempotency key, so resubmitting under it\n    /// returns the original order rather than creating a second one.\n    fn reconcile_neutralizations(&mut self, now: Timestamp) {\n        // Identity is recovered when a later observation carries that\n        // `client_ref`: the ledger learns the venue id from the open-order list\n        // or from a fill event, and the record catches up with it here.\n        let recovered: Vec<(ClientRef, OrderId)> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .filter_map(|record| {\n                self.ledger\n                    .order_for(&record.client_ref)\n                    .map(|order_id| (record.client_ref.clone(), order_id))\n            })\n            .collect();\n        for (client_ref, order_id) in recovered {\n            if let Some(slot) = self\n                .neutralizations\n                .iter_mut()\n                .find(|slot| slot.client_ref == client_ref && slot.order_id.is_none())\n            {\n                slot.order_id = Some(order_id);\n            }\n        }\n\n        let unconfirmed: Vec<NeutralizationRecord> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .cloned()\n            .collect();\n        for record in unconfirmed {\n            if !self\n                .attempted_this_cycle\n                .insert((record.strategy_id.clone(), record.venue))\n            {\n                continue;\n            }\n            let request = Self::neutralization_request(&record);\n            let size = record.size;\n            let client_ref = record.client_ref.clone();\n            match self.gateway.submit(&request) {\n                // The venue named the order, whether it is the one created by the\n                // first attempt or one this retry created. Either way there is\n                // exactly one economic order behind this client reference.\n                Ok(accepted) => {\n                    self.ledger.track(\n                        client_ref.clone(),\n                        Some(accepted.order_id.clone()),\n                        Some(accepted.venue_seq),\n                        size,\n                        now,\n                    );\n                    if let Some(slot) = self\n                        .neutralizations\n                        .iter_mut()\n                        .find(|slot| slot.client_ref == client_ref)\n                    {\n                        slot.order_id = Some(accepted.order_id);\n                    }\n                }\n                // Still unresolved. Keep the record and its client reference so a\n                // later cycle retries under the same one.\n                Err(SubmitError::AcknowledgementLost) => {}\n                // Nothing was created by that attempt, so there is nothing to\n                // wait for. Drop the record and leave the exposure open for a\n                // later cycle to recompute and try again.\n                Err(SubmitError::Rejected(_)) | Err(SubmitError::Transport(_)) => {\n                    self.neutralizations.retain(|slot| slot.client_ref != client_ref);\n                }\n            }\n        }\n    }\n\n    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {\n        OrderRequest {\n            strategy_id: record.strategy_id.clone(),\n            instrument_id: record.instrument_id.clone(),\n            venue: record.venue,\n            kind: OrderKind::ImmediateOrCancel,\n            limit_price: record.limit_price,\n            size: record.size,\n            client_ref: record.client_ref.clone(),\n            expiry_time: record.expiry_time,\n        }\n    }\n\n    fn enter_new_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {\n        let available_cash = self.inventory.settlement_balance()?;\n        let candidates = self.strategies.candidates()?;\n        for candidate in candidates {\n            if self.positions.has(&candidate.strategy_id) {\n                continue;\n            }\n            if self.attempted.contains(&candidate.strategy_id) {\n                continue;\n            }\n            if candidate.pair_cost() > self.config.max_pair_cost {\n                continue;\n            }\n            if now >= candidate.expiry_time {\n                continue;\n            }\n            let north_size = leg_size(candidate.north_depth, self.config.max_leg_size);\n            let south_size = leg_size(candidate.south_depth, self.config.max_leg_size);\n            if north_size < self.config.min_leg_size || south_size < self.config.min_leg_size {\n                continue;\n            }\n            let notional = (candidate.north_price * north_size as f64)\n                + (candidate.south_price * south_size as f64);\n            if notional > available_cash {", "numLines": 130, "startLine": 160, "totalLines": 582}}

@@ -1,0 +1,54 @@
+[2] BASH find /app -type f -name "*.md" -o -name "*.toml" | head -50; echo "---"; ls -la /app
+[2] BASH find /app/src /app/tests -type f | sort
+[3] READ /app/spec/venue-semantics.md off=None lim=None
+[3] READ /app/spec/reconciliation-contract.md off=None lim=None
+[4] READ /app/spec/frozen-contract.md off=None lim=None
+[4] READ /app/spec/source-map.md off=None lim=None
+[5] READ /app/src/lib.rs off=None lim=None
+[5] READ /app/src/ports/mod.rs off=None lim=None
+[5] READ /app/src/engine/mod.rs off=None lim=None
+[6] READ /app/src/engine/cycle.rs off=None lim=None
+[7] READ /app/src/engine/fill_classifier.rs off=None lim=None
+[7] READ /app/src/types/snapshot.rs off=None lim=None
+[8] READ /app/src/engine/managers.rs off=None lim=None
+[8] READ /app/src/engine/neutralization.rs off=None lim=None
+[8] READ /app/src/engine/sizing.rs off=None lim=None
+[8] READ /app/src/engine/config.rs off=None lim=None
+[9] READ /app/src/types/ids.rs off=None lim=None
+[9] READ /app/src/types/pending_order.rs off=None lim=None
+[9] READ /app/src/types/position.rs off=None lim=None
+[10] READ /app/tests/diagnostics.rs off=None lim=None
+[10] READ /app/tests/harness/mod.rs off=None lim=None
+[11] READ /app/src/bin/reproduce.rs off=None lim=None
+[11] READ /app/src/types/strategy.rs off=None lim=None
+[11] READ /app/src/types/time.rs off=None lim=None
+[11] READ /app/src/types/mod.rs off=None lim=None
+[12] BASH cargo build --offline 2>&1 | tail -20 && echo "=== TESTS ===" && cargo test --offline --test diagnostics 2>&1 | tail -40
+[13] WRITE /app/src/engine/fill_classifier.rs (14744 bytes) obs='The file /app/src/engine/fill_classifier.rs has been updated'
+[14] EDIT /app/src/types/snapshot.rs (79->923) NOFILE obs='The file /app/src/types/snapshot.rs has been updated success'
+[15] EDIT /app/src/types/snapshot.rs (130->173) NOFILE obs='The file /app/src/types/snapshot.rs has been updated success'
+[16] WRITE /app/src/engine/cycle.rs (25078 bytes) obs='The file /app/src/engine/cycle.rs has been updated successfu'
+[17] BASH cargo build --offline 2>&1 | tail -20
+[18] BASH cargo test --offline --test diagnostics 2>&1 | tail -40
+[19] BASH grep -n -A3 "contributes no outstanding\|final for every order\|still finalizes" /app/spec/reconciliation-contract.md /app/spec/venue-semantics.md
+[20] EDIT /app/tests/diagnostics.rs (1137->4801) NOFILE obs='The file /app/tests/diagnostics.rs has been updated successf'
+[21] EDIT /app/tests/diagnostics.rs (143->3533) NOFILE obs='The file /app/tests/diagnostics.rs has been updated successf'
+[22] BASH sed -i 's/^use pairing_engine::types::time::Timestamp;$/use pairing_engine::types::time::Timestamp;\nuse pairing_engine::types::Venue;/' tests/diagnostics.rs && cargo test --offline --test diagnostics 2>&1 | tail -40
+[23] BASH cargo run --offline --bin reproduce 2>&1 | tail -50
+[24] EDIT /app/src/types/snapshot.rs (80->259) NOFILE obs='<tool_use_error>Found 2 matches of the string to replace, bu'
+[25] EDIT /app/src/types/snapshot.rs (111->290) NOFILE obs='The file /app/src/types/snapshot.rs has been updated success'
+[26] EDIT /app/src/engine/fill_classifier.rs (208->432) ok obs='The file /app/src/engine/fill_classifier.rs has been updated'
+[27] EDIT /app/src/engine/cycle.rs (245->284) ok obs='The file /app/src/engine/cycle.rs has been updated successfu'
+[28] EDIT /app/src/engine/cycle.rs (81->1600) ok obs='The file /app/src/engine/cycle.rs has been updated successfu'
+[29] EDIT /app/src/engine/cycle.rs (162->199) ok obs='The file /app/src/engine/cycle.rs has been updated successfu'
+[30] BASH cargo build --offline 2>&1 | tail -20 && cargo test --offline --test diagnostics 2>&1 | tail -8 && cargo run --offline --bin reproduce 2>&1 | tail -4
+[31] WRITE /app/tests/interactions.rs (11075 bytes) obs='File created successfully at: /app/tests/interactions.rs (fi'
+[32] BASH sed -i 's/^use pairing_engine::ports::{FillBatch, SubmitError};$/use pairing_engine::engine::AttributionLedger;\nuse pairing_engine::ports::{FillBatch, SubmitError};/' tests/interactions.rs && cargo test --offline --test
+[33] BASH cp src/engine/fill_classifier.rs /tmp/fc.bak && cp src/engine/cycle.rs /tmp/cy.bak # Mutation 1: revert locate() to order_id-first python3 - <<'EOF' import re p='/app/src/engine/fill_classifier.rs' s=open(p).read() old="
+[34] BASH python3 - <<'EOF' p='/app/src/engine/cycle.rs' s=open(p).read() old=""" if north_placed && south_placed { self.attempted.insert(candidate.strategy_id.clone()); }""" new=""" self.attempted.insert(candidate.strategy_id.clo
+[35] BASH cargo build --offline 2>&1 | tail -3 && echo "--- diagnostics ---" && cargo test --offline --test diagnostics 2>&1 | grep "test result" && echo "--- interactions ---" && cargo test --offline --test interactions 2>&1 | gr
+[36] BASH ls -la --time-style=+%H:%M src/types/ src/ports/ && echo "--- warnings ---" && cargo build --offline 2>&1 | grep -i warn | head; cargo clippy --offline 2>&1 2>/dev/null | grep -E "^(warning|error)" | sort | uniq -c | hea
+[37] EDIT /app/src/engine/cycle.rs (296->593) ok obs='The file /app/src/engine/cycle.rs has been updated successfu'
+[38] BASH cargo build --offline 2>&1|tail -2 && cargo test --offline --test diagnostics 2>&1|grep "test result" && cargo test --offline --test interactions 2>&1|grep "test result" && cargo run --offline --bin reproduce 2>&1|grep "
+[39] BASH sed -n '1,60p' src/engine/fill_classifier.rs >/dev/null; echo "=== in_window / cumulative / locate ===" && grep -n -A6 "fn in_window\|fn absorb_event\|fn locate" src/engine/fill_classifier.rs | head -50
+[40] BASH echo "=== custody inventory use in engine (must not drive attribution) ==="; grep -rn "instrument_inventory" src/ ; echo; echo "=== all engine changes ==="; ls -la --time-style=+%H:%M src/engine/

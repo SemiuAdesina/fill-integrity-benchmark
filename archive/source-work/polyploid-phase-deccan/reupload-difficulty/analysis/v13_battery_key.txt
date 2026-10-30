@@ -1,0 +1,8 @@
+v22c_scramble_then_sort_rows_first       REWARD=1 RC=0
+v05_penalised_forbidden_dr               REWARD=1 RC=0
+v16_prune_ties                           REWARD=0 RC=0
+v18_first_found_tie                      REWARD=0 RC=0
+v06_backward_traceback                   REWARD=0 RC=0
+v10_interleaved_path_order               REWARD=0 RC=0
+v04_omit_non_dr                          REWARD=0 RC=0
+v17_float_equality                       REWARD=0 RC=0

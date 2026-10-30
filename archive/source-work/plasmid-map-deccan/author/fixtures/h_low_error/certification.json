@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.02,
+  "internal": 4,
+  "deviation": 3022,
+  "c": 684,
+  "L": 2238
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 3.03
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 0.7,
+  "nodes": 3638,
+  "ties_at_count_and_deviation": 2
+ },
+ "held_out": [
+  "BspHI+SspI",
+  "BspHI+SalI"
+ ],
+ "truth": {
+  "internal": 4,
+  "deviation": 3230,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_low_error",
+ "seed": 1201,
+ "description": "one percent sizing error",
+ "vector": "pBluescriptIISK",
+ "vector_header": "X52328.1 pBluescript II SK(+) vector DNA, phagemid excised from lambda ZAPII",
+ "source": "phiX174",
+ "source_header": "J02482.1 Escherichia phage phiX174, complete genome",
+ "fragment": {
+  "left_enzyme": "BspHI",
+  "left_cut": 30,
+  "right_enzyme": "HpaI",
+  "right_cut": 2271
+ },
+ "cloning_site": [
+  "ClaI",
+  684
+ ],
+ "insert_length": 2241,
+ "enzymes": [
+  "BspHI",
+  "SalI",
+  "SspI",
+  "XhoI"
+ ],
+ "error_percent": 1,
+ "detection_limit": 100,
+ "observed": 8
+}

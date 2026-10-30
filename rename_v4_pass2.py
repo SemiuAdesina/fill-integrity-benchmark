@@ -91,7 +91,6 @@ for path in files():
         # never rewrite the canary lines
         text = text.replace(old, new)
     # restore anything that mangled the canary marker
-    text = text.replace("harbor-canary", "harbor-canary")
     if text != original:
         path.write_text(text)
         changed += 1

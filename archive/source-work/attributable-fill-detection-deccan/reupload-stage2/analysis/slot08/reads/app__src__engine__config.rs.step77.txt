@@ -1,0 +1,23 @@
+2	use crate::types::ids::{Price, Qty};
+3	
+4	#[derive(Debug, Clone, PartialEq)]
+5	pub struct EngineConfig {
+6	    pub max_pair_cost: Price,
+7	    pub min_leg_size: Qty,
+8	    pub max_leg_size: Qty,
+9	    pub neutralization_slippage: Price,
+10	    pub client_ref_prefix: String,
+11	}
+12	
+13	impl Default for EngineConfig {
+14	    fn default() -> Self {
+15	        Self {
+16	            max_pair_cost: 0.98,
+17	            min_leg_size: 5,
+18	            max_leg_size: 50,
+19	            neutralization_slippage: 0.02,
+20	            client_ref_prefix: String::from("pex"),
+21	        }
+22	    }
+23	}
+24

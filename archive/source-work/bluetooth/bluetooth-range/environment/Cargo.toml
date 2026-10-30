@@ -1,0 +1,13 @@
+[package]
+name = "bluetooth_range"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+name = "bluetooth_range"
+path = "src/lib.rs"
+
+[dependencies]

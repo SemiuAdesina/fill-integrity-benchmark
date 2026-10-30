@@ -1,0 +1,6 @@
+path:    /Users/macbok/Downloads/attributable-fill-detection-deccan-stage1-final.zip
+bytes:   154755
+sha256:  50c27fb9162792c49db0dfafa9aed7b398d1e325b6dccc402f48635623d84c6c
+members: 118
+roots:   attributable-fill-detection 
+symlinks in archive: 0

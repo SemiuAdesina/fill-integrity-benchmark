@@ -1,0 +1,3 @@
+p05_no_link_serialization
+05 link model
+payloads on a shared link are transmitted independently (link_free ignored)

@@ -1,0 +1,3 @@
+b19_no_width_semantics
+fields
+the range check uses the container width instead of the field width

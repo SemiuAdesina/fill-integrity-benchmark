@@ -1,0 +1,2163 @@
+{
+ "fixture": "case_c",
+ "programs": [
+  {
+   "type": 1,
+   "expression": "S+B+A-P",
+   "scale": 1,
+   "signedness": "unsigned",
+   "overflow": "reject",
+   "slices": [
+    {
+     "lsb": 0,
+     "width": 16
+    }
+   ],
+   "pair": {
+    "group": "G2",
+    "role": "lo",
+    "split": 16
+   }
+  },
+  {
+   "type": 2,
+   "expression": "S+B+A-P",
+   "scale": 1,
+   "signedness": "signed",
+   "overflow": "reject",
+   "slices": [
+    {
+     "lsb": 16,
+     "width": 16
+    }
+   ],
+   "pair": {
+    "group": "G2",
+    "role": "hi",
+    "split": 16
+   }
+  },
+  {
+   "type": 3,
+   "expression": "S+A-P",
+   "scale": 4,
+   "signedness": "signed",
+   "overflow": "reject",
+   "slices": [
+    {
+     "lsb": 12,
+     "width": 20
+    }
+   ],
+   "pair": {
+    "group": "G3",
+    "role": "hi",
+    "split": 10
+   }
+  },
+  {
+   "type": 4,
+   "expression": "S+A-P",
+   "scale": 4,
+   "signedness": "unsigned",
+   "overflow": "reject",
+   "slices": [
+    {
+     "lsb": 20,
+     "width": 10
+    }
+   ],
+   "pair": {
+    "group": "G3",
+    "role": "lo",
+    "split": 10
+   }
+  }
+ ],
+ "predictions": [
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988624632
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 12,
+   "word": 4063144994
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245232108
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 24,
+   "word": 1180485364
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337580854
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 40,
+   "word": 2770639799
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 44,
+   "word": 387191618
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 48,
+   "word": 2130741017
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 52,
+   "word": 4063120568
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 60,
+   "word": 2062288660
+  },
+  {
+   "object": "obj01",
+   "link": "l01",
+   "section": ".text",
+   "offset": 64,
+   "word": 3555369485
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988624632
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 12,
+   "word": 4063144994
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245232044
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 24,
+   "word": 1180485364
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337580854
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 40,
+   "word": 2753862583
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 44,
+   "word": 387191618
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 48,
+   "word": 2113963801
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 52,
+   "word": 4063120568
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 60,
+   "word": 2062288660
+  },
+  {
+   "object": "obj01",
+   "link": "l02",
+   "section": ".text",
+   "offset": 64,
+   "word": 3538592269
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988624632
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 12,
+   "word": 4063144994
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245232108
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 24,
+   "word": 1180485364
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337580854
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 40,
+   "word": 2770639799
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 44,
+   "word": 387191618
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 48,
+   "word": 2130741017
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 52,
+   "word": 4063120568
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 60,
+   "word": 2062288660
+  },
+  {
+   "object": "obj01",
+   "link": "l03",
+   "section": ".text",
+   "offset": 64,
+   "word": 3555369485
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988624632
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 12,
+   "word": 4294880290
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245211648
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 24,
+   "word": 2147469044
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337589759
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 40,
+   "word": 3209993143
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 44,
+   "word": 4063118146
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 48,
+   "word": 2146469657
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 52,
+   "word": 4294954168
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 60,
+   "word": 4063119124
+  },
+  {
+   "object": "obj01",
+   "link": "l04",
+   "section": ".text",
+   "offset": 64,
+   "word": 4278886925
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988628904
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 12,
+   "word": null
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245273743
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 24,
+   "word": null
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337565496
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 40,
+   "word": 2336529335
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 44,
+   "word": null
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 48,
+   "word": 1849722649
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 52,
+   "word": 930098360
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 60,
+   "word": 117741332
+  },
+  {
+   "object": "obj01",
+   "link": "l05",
+   "section": ".text",
+   "offset": 64,
+   "word": 3707413005
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 0,
+   "word": 1988628664
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 4,
+   "word": 17941
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 12,
+   "word": 365800482
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 16,
+   "word": 3245212560
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 24,
+   "word": 116468
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 28,
+   "word": 1337589759
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 40,
+   "word": 2147785655
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 44,
+   "word": 4294964034
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 48,
+   "word": 2130741017
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 52,
+   "word": 4185808056
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 60,
+   "word": 4185806612
+  },
+  {
+   "object": "obj01",
+   "link": "r01",
+   "section": ".text",
+   "offset": 64,
+   "word": 4278886925
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 12,
+   "word": 4108585940
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386282999
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 20,
+   "word": 4288490746
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 24,
+   "word": 4108644432
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 32,
+   "word": 2141146910
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 36,
+   "word": 4108645129
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 40,
+   "word": 43474
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 44,
+   "word": 833355776
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 56,
+   "word": 995154237
+  },
+  {
+   "object": "obj02",
+   "link": "l01",
+   "section": ".text",
+   "offset": 60,
+   "word": 4224175887
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 12,
+   "word": 4108585940
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386282983
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 20,
+   "word": 4284296442
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 24,
+   "word": 4108644432
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 32,
+   "word": 2136952606
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 36,
+   "word": 4108645129
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 40,
+   "word": 4294945234
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 44,
+   "word": 833421296
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 56,
+   "word": 990959933
+  },
+  {
+   "object": "obj02",
+   "link": "l02",
+   "section": ".text",
+   "offset": 60,
+   "word": 4224175887
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 12,
+   "word": 4108585940
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386282999
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 20,
+   "word": 4288490746
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 24,
+   "word": 4108644432
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 32,
+   "word": 2141146910
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 36,
+   "word": 4108645129
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 40,
+   "word": 43474
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 44,
+   "word": 833355776
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 56,
+   "word": 995154237
+  },
+  {
+   "object": "obj02",
+   "link": "l03",
+   "section": ".text",
+   "offset": 60,
+   "word": 4224175887
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 12,
+   "word": 1674775508
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386251482
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 20,
+   "word": 4288490746
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 24,
+   "word": 4108644432
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 32,
+   "word": 2141146910
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 36,
+   "word": 4108645129
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 40,
+   "word": 109010
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 44,
+   "word": 833421311
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 56,
+   "word": 1072748861
+  },
+  {
+   "object": "obj02",
+   "link": "l04",
+   "section": ".text",
+   "offset": 60,
+   "word": 7951
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 12,
+   "word": null
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386274940
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 20,
+   "word": 4294782202
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 24,
+   "word": 4294950992
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 32,
+   "word": 2147438366
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 36,
+   "word": 17161
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 40,
+   "word": null
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 44,
+   "word": 833388421
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 56,
+   "word": 1057020221
+  },
+  {
+   "object": "obj02",
+   "link": "l05",
+   "section": ".text",
+   "offset": 60,
+   "word": 4200681231
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 0,
+   "word": 407240704
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 4,
+   "word": 56732
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 12,
+   "word": 4058254292
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 16,
+   "word": 1386270711
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 20,
+   "word": 4184681722
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 24,
+   "word": 1015033936
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 32,
+   "word": 1944014622
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 36,
+   "word": 2020508425
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 40,
+   "word": 1863952850
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 44,
+   "word": 833369043
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 56,
+   "word": 1057020221
+  },
+  {
+   "object": "obj02",
+   "link": "r01",
+   "section": ".text",
+   "offset": 60,
+   "word": 4058304271
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 8,
+   "word": 4108429806
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 12,
+   "word": 1073695101
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 16,
+   "word": 1467580433
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532948010
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008036864
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 28,
+   "word": 4294908810
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 36,
+   "word": 1559
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 40,
+   "word": 4294290876
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 44,
+   "word": 4108429198
+  },
+  {
+   "object": "obj03",
+   "link": "l01",
+   "section": ".text",
+   "offset": 48,
+   "word": 2137264413
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 8,
+   "word": 4108433902
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 12,
+   "word": 4147581
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 16,
+   "word": 1467580433
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532948010
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008036880
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 28,
+   "word": 4294908810
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 36,
+   "word": 5655
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 40,
+   "word": 3224743356
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 44,
+   "word": 4108429198
+  },
+  {
+   "object": "obj03",
+   "link": "l02",
+   "section": ".text",
+   "offset": 48,
+   "word": 2141458717
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 8,
+   "word": 4108429806
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 12,
+   "word": 1073695101
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 16,
+   "word": 1467580433
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532948010
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008098304
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 28,
+   "word": 182131594
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 36,
+   "word": 1559
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 40,
+   "word": 4294290876
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 44,
+   "word": 4108429198
+  },
+  {
+   "object": "obj03",
+   "link": "l03",
+   "section": ".text",
+   "offset": 48,
+   "word": 2137264413
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 8,
+   "word": 4137777646
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 12,
+   "word": 673139069
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 16,
+   "word": 4108419089
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532959728
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008053966
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 28,
+   "word": 108338058
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 36,
+   "word": 4108428823
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 40,
+   "word": 4285902268
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 44,
+   "word": 1999628174
+  },
+  {
+   "object": "obj03",
+   "link": "l04",
+   "section": ".text",
+   "offset": 48,
+   "word": 1881411869
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 8,
+   "word": 1914579438
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 12,
+   "word": 866077053
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 16,
+   "word": null
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532969897
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008061408
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 28,
+   "word": 4145290122
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 36,
+   "word": 1377412631
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 40,
+   "word": 3795168700
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 44,
+   "word": null
+  },
+  {
+   "object": "obj03",
+   "link": "l05",
+   "section": ".text",
+   "offset": 48,
+   "word": 1299452189
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 0,
+   "word": 1906442244
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 4,
+   "word": 61912
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 8,
+   "word": 14830
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 12,
+   "word": 1001853
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 16,
+   "word": 752254993
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 20,
+   "word": 3532933168
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 24,
+   "word": 3008102399
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 28,
+   "word": 4294712202
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 36,
+   "word": 4294964759
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 40,
+   "word": 4294290876
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 44,
+   "word": 1408575374
+  },
+  {
+   "object": "obj03",
+   "link": "r01",
+   "section": ".text",
+   "offset": 48,
+   "word": 2143555869
+  }
+ ],
+ "hidden_links": [
+  {
+   "object": "obj01",
+   "id": "h01",
+   "bases": {
+    ".data": 143475040,
+    ".rodata": 143475120,
+    ".shared": 172638208,
+    ".text": 143474688,
+    ".vendor_rt": 240222208
+   },
+   "symbols": {
+    "ext_0_0": {
+     "section": ".vendor_rt",
+     "value": 1545605067
+    },
+    "ext_0_1": {
+     "section": null,
+     "value": 143343640
+    },
+    "ext_0_2": {
+     "section": null,
+     "value": 1139024214
+    },
+    "ext_0_3": {
+     "section": null,
+     "value": 143478850
+    },
+    "ext_0_4": {
+     "section": null,
+     "value": 0
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 1988624824
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 17941
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 1642376226
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 3245232055
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 4294887156
+    },
+    {
+     "section": ".text",
+     "offset": 28,
+     "word": 1337524224
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 2225380279
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 995550018
+    },
+    {
+     "section": ".text",
+     "offset": 48,
+     "word": 1073776409
+    },
+    {
+     "section": ".text",
+     "offset": 52,
+     "word": 7352
+    },
+    {
+     "section": ".text",
+     "offset": 60,
+     "word": 4151490324
+    },
+    {
+     "section": ".text",
+     "offset": 64,
+     "word": 4278886925
+    }
+   ]
+  },
+  {
+   "object": "obj01",
+   "id": "h02",
+   "bases": {
+    ".data": 231247984,
+    ".rodata": 231252144,
+    ".shared": 441135104,
+    ".text": 231247872,
+    ".vendor_rt": 320028672
+   },
+   "symbols": {
+    "ext_0_0": {
+     "section": null,
+     "value": 231313427
+    },
+    "ext_0_1": {
+     "section": ".data",
+     "value": 80287423
+    },
+    "ext_0_2": {
+     "section": null,
+     "value": 2378731560
+    },
+    "ext_0_3": {
+     "section": null,
+     "value": 605781250
+    },
+    "ext_0_4": {
+     "section": null,
+     "value": 0
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 1988628664
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 17941
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 44066
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 3245277183
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 80332532
+    },
+    {
+     "section": ".text",
+     "offset": 28,
+     "word": 1337530135
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 3220478903
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 2147480386
+    },
+    {
+     "section": ".text",
+     "offset": 48,
+     "word": 1929414425
+    },
+    {
+     "section": ".text",
+     "offset": 52,
+     "word": 374533304
+    },
+    {
+     "section": ".text",
+     "offset": 60,
+     "word": 4063717140
+    },
+    {
+     "section": ".text",
+     "offset": 64,
+     "word": 4278886925
+    }
+   ]
+  },
+  {
+   "object": "obj02",
+   "id": "h01",
+   "bases": {
+    ".data": 72802400,
+    ".rodata": 72802496,
+    ".shared": 177741824,
+    ".text": 72802304,
+    ".vendor_rt": 366133248
+   },
+   "symbols": {
+    "ext_1_0": {
+     "section": null,
+     "value": 276609759
+    },
+    "ext_1_1": {
+     "section": ".rodata",
+     "value": 72798233
+    },
+    "ext_1_2": {
+     "section": null,
+     "value": 0
+    },
+    "ext_1_3": {
+     "section": null,
+     "value": 72998952
+    },
+    "ext_1_4": {
+     "section": ".rodata",
+     "value": 72814657
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 407240704
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 56732
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 203754452
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 1386273494
+    },
+    {
+     "section": ".text",
+     "offset": 20,
+     "word": 3222088954
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 4294963280
+    },
+    {
+     "section": ".text",
+     "offset": 32,
+     "word": 2141146910
+    },
+    {
+     "section": ".text",
+     "offset": 36,
+     "word": 4222161673
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 240082
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 833355776
+    },
+    {
+     "section": ".text",
+     "offset": 56,
+     "word": 55613
+    },
+    {
+     "section": ".text",
+     "offset": 60,
+     "word": 16143
+    }
+   ]
+  },
+  {
+   "object": "obj02",
+   "id": "h02",
+   "bases": {
+    ".data": 171036832,
+    ".rodata": 171036976,
+    ".shared": 27607040,
+    ".text": 171036672,
+    ".vendor_rt": 523292672
+   },
+   "symbols": {
+    "ext_1_0": {
+     "section": null,
+     "value": 170971145
+    },
+    "ext_1_1": {
+     "section": null,
+     "value": 570468220
+    },
+    "ext_1_2": {
+     "section": null,
+     "value": 0
+    },
+    "ext_1_3": {
+     "section": ".shared",
+     "value": 558485206
+    },
+    "ext_1_4": {
+     "section": ".shared",
+     "value": 1808906493
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 407240704
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 56732
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 4294904788
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 1386217472
+    },
+    {
+     "section": ".text",
+     "offset": 20,
+     "word": 3717016826
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 399429712
+    },
+    {
+     "section": ".text",
+     "offset": 32,
+     "word": 2141146910
+    },
+    {
+     "section": ".text",
+     "offset": 36,
+     "word": 4123927305
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 415082962
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 833371822
+    },
+    {
+     "section": ".text",
+     "offset": 56,
+     "word": 586209597
+    },
+    {
+     "section": ".text",
+     "offset": 60,
+     "word": 1637871375
+    }
+   ]
+  },
+  {
+   "object": "obj03",
+   "id": "h01",
+   "bases": {
+    ".data": 260538512,
+    ".rodata": 260538816,
+    ".shared": 424898560,
+    ".text": 260538368,
+    ".vendor_rt": 199757824
+   },
+   "symbols": {
+    "ext_2_0": {
+     "section": null,
+     "value": 891623323
+    },
+    "ext_2_1": {
+     "section": ".vendor_rt",
+     "value": 436549081
+    },
+    "ext_2_2": {
+     "section": null,
+     "value": 0
+    },
+    "ext_2_3": {
+     "section": null,
+     "value": 260538407
+    },
+    "ext_2_4": {
+     "section": null,
+     "value": 1022841203
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 1906442244
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 61912
+    },
+    {
+     "section": ".text",
+     "offset": 8,
+     "word": 631085550
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 509561213
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 375750673
+    },
+    {
+     "section": ".text",
+     "offset": 20,
+     "word": 3532965321
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 3008069600
+    },
+    {
+     "section": ".text",
+     "offset": 28,
+     "word": 4034403210
+    },
+    {
+     "section": ".text",
+     "offset": 36,
+     "word": 1559
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 3221597628
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 762304398
+    },
+    {
+     "section": ".text",
+     "offset": 48,
+     "word": 1159991581
+    }
+   ]
+  },
+  {
+   "object": "obj03",
+   "id": "h02",
+   "bases": {
+    ".data": 122986576,
+    ".rodata": 122986640,
+    ".shared": 331902976,
+    ".text": 122982400,
+    ".vendor_rt": 471162880
+   },
+   "symbols": {
+    "ext_2_0": {
+     "section": ".data",
+     "value": 122990595
+    },
+    "ext_2_1": {
+     "section": ".data",
+     "value": 2147479487
+    },
+    "ext_2_2": {
+     "section": null,
+     "value": 0
+    },
+    "ext_2_3": {
+     "section": ".rodata",
+     "value": 122978337
+    },
+    "ext_2_4": {
+     "section": null,
+     "value": 2111510145
+    }
+   },
+   "sites": [
+    {
+     "section": ".text",
+     "offset": 0,
+     "word": 1906442244
+    },
+    {
+     "section": ".text",
+     "offset": 4,
+     "word": 61912
+    },
+    {
+     "section": ".text",
+     "offset": 8,
+     "word": 6638
+    },
+    {
+     "section": ".text",
+     "offset": 12,
+     "word": 1073695101
+    },
+    {
+     "section": ".text",
+     "offset": 16,
+     "word": 2147450897
+    },
+    {
+     "section": ".text",
+     "offset": 20,
+     "word": 3532980223
+    },
+    {
+     "section": ".text",
+     "offset": 24,
+     "word": 3008065504
+    },
+    {
+     "section": ".text",
+     "offset": 28,
+     "word": 4171963274
+    },
+    {
+     "section": ".text",
+     "offset": 36,
+     "word": 4294960663
+    },
+    {
+     "section": ".text",
+     "offset": 40,
+     "word": 4294290876
+    },
+    {
+     "section": ".text",
+     "offset": 44,
+     "word": 1988528014
+    },
+    {
+     "section": ".text",
+     "offset": 48,
+     "word": 1499730205
+    }
+   ]
+  }
+ ]
+}

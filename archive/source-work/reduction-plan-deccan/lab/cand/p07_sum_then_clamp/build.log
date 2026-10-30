@@ -1,0 +1,4 @@
+/Users/macbok/benchmark-suite-work/reduction-plan-deccan/lab/cand/p07_sum_then_clamp/src/recover.cpp:38:14: warning: unused function 'sat_add' [-Wunused-function]
+   38 | std::int64_t sat_add(std::int64_t a, std::int64_t b) { return std::max(kMin, std::min(kMax, a + b)); }
+      |              ^~~~~~~
+1 warning generated.

@@ -1,0 +1,3 @@
+b13_duplicate_link_ids_accepted
+validity
+accepts duplicate link ids (last one wins)

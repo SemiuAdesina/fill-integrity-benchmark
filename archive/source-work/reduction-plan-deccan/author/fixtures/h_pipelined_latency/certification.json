@@ -1,0 +1,19 @@
+{
+ "status_a": "ok",
+ "status_b": "ok",
+ "agree": true,
+ "seconds_a": 0.0,
+ "seconds_b": 0.001,
+ "replays": 43,
+ "legal": 37,
+ "matching": 4,
+ "within_budget": true,
+ "fixture": "h_pipelined_latency",
+ "seed": 211,
+ "separations": [
+  "latency_in_occupancy"
+ ],
+ "sources": 3,
+ "links": 10,
+ "switches": 2
+}

@@ -1,0 +1,10 @@
+[package]
+name="c2pa_probe"
+version="0.1.0"
+edition="2021"
+publish=false
+[[bin]]
+name="probe"
+path="src/main.rs"
+[dependencies]
+c2pa_model={path="../model"}

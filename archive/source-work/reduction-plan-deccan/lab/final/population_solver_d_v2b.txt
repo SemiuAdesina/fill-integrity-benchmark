@@ -1,0 +1,2 @@
+solver_d                                 reward=1 passed=14/14  fails=none
+DONE

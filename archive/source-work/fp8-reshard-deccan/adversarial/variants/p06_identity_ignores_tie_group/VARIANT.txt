@@ -1,0 +1,3 @@
+p06_identity_ignores_tie_group
+06 tie groups
+identifies blocks by tensor name even inside a tie group

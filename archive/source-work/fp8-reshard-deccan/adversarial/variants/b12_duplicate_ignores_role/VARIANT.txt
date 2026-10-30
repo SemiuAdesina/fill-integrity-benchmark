@@ -1,0 +1,3 @@
+b12_duplicate_ignores_role
+targets
+treats a forward and a backward target on one placement as duplicates

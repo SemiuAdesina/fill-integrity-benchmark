@@ -1,0 +1,7 @@
+{
+ "fixture": "h_reject_coverage_gap",
+ "expected_outcome": "reject",
+ "oracle_a": "reject:coverage",
+ "oracle_b": "reject:coverage",
+ "retained": true
+}

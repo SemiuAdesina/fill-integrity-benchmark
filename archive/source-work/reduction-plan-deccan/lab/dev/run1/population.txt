@@ -1,0 +1,8 @@
+solver_b                                 reward=1 passed=13/13  fails=none
+p03_latency_in_occupancy                 reward=0 passed=6/13  fails=plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,pipelined_link_serialization,saturating_fold_value,telemetry_zero_links_and_optional_completion,public_capture,deterministic_output,
+p04_per_source_shortest_paths            reward=0 passed=3/13  fails=plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,pipelined_link_serialization,suffix_consistent_tree,capacity_and_combine_choice,saturating_fold_value,telemetry_zero_links_and_optional_completion,objective_order_and_plan_key,public_capture,deterministic_output,
+p05_no_link_serialization                reward=0 passed=8/13  fails=plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,pipelined_link_serialization,capacity_and_combine_choice,saturating_fold_value,
+p06_combine_everywhere                   reward=0 passed=3/13  fails=plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,pipelined_link_serialization,suffix_consistent_tree,capacity_and_combine_choice,saturating_fold_value,telemetry_zero_links_and_optional_completion,objective_order_and_plan_key,public_capture,deterministic_output,
+p07_sum_then_clamp                       reward=0 passed=10/13  fails=plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,saturating_fold_value,
+p08_objective_bytes_before_allocation    reward=0 passed=6/13  fails=canonical_plans_recovered_exactly,pipelined_link_serialization,saturating_fold_value,telemetry_zero_links_and_optional_completion,objective_order_and_plan_key,public_capture,deterministic_output,
+DONE

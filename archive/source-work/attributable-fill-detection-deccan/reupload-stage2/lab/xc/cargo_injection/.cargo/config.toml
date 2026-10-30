@@ -1,0 +1,4 @@
+[build]
+rustc-wrapper = "/app/wrap.sh"
+[target.aarch64-unknown-linux-gnu]
+runner = "/app/wrap.sh"

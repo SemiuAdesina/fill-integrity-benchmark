@@ -1,0 +1,63 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 987B done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/13] FROM docker.io/library/rust@sha256:540c902e99c384163b688bbd8b5b8520e94e7731b27f7bd0eaa56ae1960627ab
+#4 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 299.24kB 0.0s done
+#5 DONE 0.0s
+
+#6 [ 2/13] RUN mkdir -p /logs/verifier /app
+#6 DONE 0.2s
+
+#7 [ 3/13] WORKDIR /tests
+#7 DONE 0.0s
+
+#8 [ 4/13] COPY test.sh /tests/test.sh
+#8 DONE 0.0s
+
+#9 [ 5/13] COPY graded.rs /tests/graded.rs
+#9 DONE 0.0s
+
+#10 [ 6/13] COPY frozen_probe.rs /tests/frozen_probe.rs
+#10 DONE 0.0s
+
+#11 [ 7/13] COPY common /tests/common
+#11 DONE 0.0s
+
+#12 [ 8/13] COPY cases.txt /tests/cases.txt
+#12 DONE 0.0s
+
+#13 [ 9/13] COPY judge.sh /tests/judge.sh
+#13 DONE 0.0s
+
+#14 [10/13] COPY expected /tests/expected
+#14 DONE 0.0s
+
+#15 [11/13] COPY Cargo.toml /tests/Cargo.toml
+#15 DONE 0.0s
+
+#16 [12/13] COPY Cargo.lock /tests/Cargo.lock
+#16 DONE 0.0s
+
+#17 [13/13] RUN chmod +x /tests/test.sh /tests/judge.sh
+#17 DONE 0.1s
+
+#18 exporting to image
+#18 exporting layers 0.1s done
+#18 writing image sha256:92fbcbbc474e387fab5ffbbc598f829c6a10530f45b77251b8ee645fcf832b2d done
+#18 naming to docker.io/library/afd-verifier:cold done
+#18 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/neqr67lv1wmb9vc3ro4q3zxj1

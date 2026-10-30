@@ -1,0 +1,7 @@
+{
+ "fixture": "h_reject_duplicate_targets",
+ "expected_outcome": "reject",
+ "oracle_a": "reject:overlap",
+ "oracle_b": "reject:overlap",
+ "retained": true
+}

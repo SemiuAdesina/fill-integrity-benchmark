@@ -1,0 +1,88 @@
+{
+ "fixture": "h_junction",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 54,
+  "insert_length": 1400,
+  "cuts": {
+   "AatII": [
+    1448,
+    2153
+   ],
+   "KpnI": [
+    470,
+    1646
+   ],
+   "PvuII": [
+    989,
+    1776
+   ],
+   "ScaI": [
+    2591
+   ]
+  },
+  "held_out": {
+   "AatII+KpnI": [
+    {
+     "length": 507,
+     "multiplicity": 1
+    },
+    {
+     "length": 978,
+     "multiplicity": 1
+    },
+    {
+     "length": 2403,
+     "multiplicity": 1
+    }
+   ],
+   "PvuII+ScaI": [
+    {
+     "length": 787,
+     "multiplicity": 1
+    },
+    {
+     "length": 815,
+     "multiplicity": 1
+    },
+    {
+     "length": 2484,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 3,
+ "deviation": 4837,
+ "held_out_truth": {
+  "AatII+KpnI": [
+   {
+    "length": 500,
+    "multiplicity": 1
+   },
+   {
+    "length": 988,
+    "multiplicity": 1
+   },
+   {
+    "length": 2427,
+    "multiplicity": 1
+   }
+  ],
+  "PvuII+ScaI": [
+   {
+    "length": 794,
+    "multiplicity": 1
+   },
+   {
+    "length": 814,
+    "multiplicity": 1
+   },
+   {
+    "length": 2452,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 1
+}

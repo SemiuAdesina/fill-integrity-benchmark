@@ -1,0 +1,204 @@
+{
+ "format_version": 1,
+ "error_percent": 1,
+ "detection_limit": 100,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "BspHI",
+   "enzymes": [
+    "BspHI"
+   ],
+   "bands": [
+    {
+     "length": 862,
+     "multiplicity": 1
+    },
+    {
+     "length": 1003,
+     "multiplicity": 1
+    },
+    {
+     "length": 1127,
+     "multiplicity": 1
+    },
+    {
+     "length": 2196,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SalI",
+   "enzymes": [
+    "SalI"
+   ],
+   "bands": [
+    {
+     "length": 5176,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 130,
+     "multiplicity": 1
+    },
+    {
+     "length": 1651,
+     "multiplicity": 1
+    },
+    {
+     "length": 3400,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "XhoI",
+   "enzymes": [
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 148,
+     "multiplicity": 1
+    },
+    {
+     "length": 5085,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI+XhoI",
+   "enzymes": [
+    "SspI",
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 131,
+     "multiplicity": 1
+    },
+    {
+     "length": 147,
+     "multiplicity": 1
+    },
+    {
+     "length": 653,
+     "multiplicity": 1
+    },
+    {
+     "length": 854,
+     "multiplicity": 1
+    },
+    {
+     "length": 3440,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SalI+XhoI",
+   "enzymes": [
+    "SalI",
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 142,
+     "multiplicity": 1
+    },
+    {
+     "length": 5039,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SalI+SspI",
+   "enzymes": [
+    "SalI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 129,
+     "multiplicity": 1
+    },
+    {
+     "length": 659,
+     "multiplicity": 1
+    },
+    {
+     "length": 990,
+     "multiplicity": 1
+    },
+    {
+     "length": 3435,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BspHI+XhoI",
+   "enzymes": [
+    "BspHI",
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 148,
+     "multiplicity": 1
+    },
+    {
+     "length": 225,
+     "multiplicity": 1
+    },
+    {
+     "length": 742,
+     "multiplicity": 1
+    },
+    {
+     "length": 873,
+     "multiplicity": 1
+    },
+    {
+     "length": 1009,
+     "multiplicity": 1
+    },
+    {
+     "length": 2208,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "BspHI+SspI",
+   "enzymes": [
+    "BspHI",
+    "SspI"
+   ]
+  },
+  {
+   "id": "BspHI+SalI",
+   "enzymes": [
+    "BspHI",
+    "SalI"
+   ]
+  }
+ ]
+}

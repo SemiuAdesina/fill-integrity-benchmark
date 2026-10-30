@@ -1,0 +1,28 @@
+OBS 0 B 4:true
+OBS 1 E 1:4
+OBS 2 E 1:0
+OBS 3 B 4:true
+OBS 4 E 1:6
+OBS 5 E 1:0
+OBS 6 E 1:6
+END 7 0
+
+=================================================================
+==837==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 1056 byte(s) in 2 object(s) allocated from:
+    #0 0xaaaacaab4a7c in operator new(unsigned long) (/b/cand+0x154a7c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+    #1 0xaaaacab90ab0 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaacaba6ec8 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:141:46
+    #3 0xaaaacaadacac in i_delay_is_measured_from_the_queueing_clock() /s/scenario.cpp:1592:15
+    #4 0xaaaacab5b0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #5 0xaaaacaaf3490 in main /s/scenario.cpp:2423:42
+    #6 0xffffa48b7740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffa48b7814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaaca9da12c in _start (/b/cand+0x7a12c) (BuildId: 17e2cabea17448873c7b5238941f79962d376bad)
+
+Objects leaked above:
+0x516000000080 (528 bytes)
+0x516000000380 (528 bytes)
+
+SUMMARY: AddressSanitizer: 1056 byte(s) leaked in 2 allocation(s).

@@ -1,0 +1,401 @@
+[7] CMD: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake --build build -j 4 2>&1 | tail -5 && echo "=== RUN ===" && ./build/roundel_demo 2>&1 | head -60
+--- obs tail ---
+:91: all] Error 2
+=== RUN ===
+
+=== cancelled job, slot reused, old ticket delivered late ===
+[after cancel] settled=1 live_slots=1
+scenario 1 threw: std::bad_alloc
+
+=== cancel, then completion, then cancel again ===
+job-started job=1 slot=0/1
+job-parked job=1
+cancel-requested job=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+ticket-queued job=1
+cancel-requested job=1
+job-settled job=1 outcome=cancelled
+ticket-rejected job=1
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0
+
+=== child fails ===
+[outcome] faulted
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=0
+fault-reported job=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+frame-released job=1 slot=0/1
+[arena] live=1 free=3 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+=== child succeeds ===
+[value] 42
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=21
+parent-continued job=1 live=2
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[8] CMD: grep -E "CMAKE_CXX_COMPILER:|CMAKE_CXX_FLAGS" build/CMakeCache.txt; which c++ g++ clang++; c++ --version | head -2
+--- obs tail ---
+E-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_CXX_FLAGS_RELWITHDEBINFO
+CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+/usr/bin/c++
+/usr/bin/g++
+/usr/bin/clang++
+c++ (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+
+[stdout]
+CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
+CMAKE_CXX_FLAGS:STRING=
+CMAKE_CXX_FLAGS_DEBUG:STRING=-g
+CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
+CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
+//ADVANCED property for variable: CMAKE_CXX_FLAGS
+CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG
+CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_CXX_FLAGS_MINSIZEREL
+CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_CXX_FLAGS_RELEASE
+CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_CXX_FLAGS_RELWITHDEBINFO
+CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+/usr/bin/c++
+/usr/bin/g++
+/usr/bin/clang++
+c++ (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+[metadata] {"noOutputExpected": false}
+
+[9] CMD: env | grep -i -E "cxx|flag|clang" ; echo "---"; grep -rn "color-diagnostics" build/CMakeFiles/roundel.dir/flags.make
+--- obs tail ---
+---
+build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+
+[stdout]
+---
+build/CMakeFiles/roundel.dir/flags.make:9:CXX_FLAGS = -g -fno-color-diagnostics -Wall -Wextra -Wpedantic -std=c++20
+[metadata] {"noOutputExpected": false}
+
+[10] CMD: rm -rf /tmp/b && cmake -S /app -B /tmp/b -DCMAKE_BUILD_TYPE=Debug > /tmp/cfg.log 2>&1; tail -3 /tmp/cfg.log; grep -h "CXX_FLAGS" /tmp/b/CMakeFiles/roundel.dir/flags.make
+--- obs tail ---
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/b
+CXX_FLAGS = -g -fno-diagnostics-color -Wall -Wextra -Wpedantic -std=c++20
+
+[stdout]
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/b
+CXX_FLAGS = -g -fno-diagnostics-color -Wall -Wextra -Wpedantic -std=c++20
+[metadata] {"noOutputExpected": false}
+
+[14] CMD: cmake --build /tmp/b -j 4 2>&1 | tail -20 && echo "=== RUN ===" && /tmp/b/roundel_demo 2>&1 | head -80
+--- obs tail ---
+d slot=0/2
+job-started job=2 slot=0/2
+job-parked job=2
+ticket-rejected job=1
+[arena] live=1 free=0 capacity=1 peak=1 check_outs=2 double_reclaims=0
+
+=== cancel, then completion, then cancel again ===
+job-started job=1 slot=0/1
+job-parked job=1
+cancel-requested job=1
+job-settled job=1 outcome=cancelled
+frame-released job=1 slot=0/1
+ticket-queued job=1
+cancel-requested job=1
+ticket-rejected job=1
+[arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0
+
+=== child fails ===
+[outcome] faulted
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=0
+child-destroyed job=1 slot=1/1
+parent-continued job=1 live=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+=== child succeeds ===
+[value] 42
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=21
+child-destroyed job=1 slot=1/1
+parent-continued job=1 live=1
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[26] CMD: cd /tmp && clang++ --version | head -1 && clang++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include -c /app/src/runtime.cpp -o /tmp/rt_clang.o 2>&1 | head -30 && echo CLANG_OK
+--- obs tail ---
+Debian clang version 17.0.6 (++20231208085813+6009708b4367-1~exp1~20231208085906.81)
+CLANG_OK
+Shell cwd was reset to /app
+
+[stdout]
+Debian clang version 17.0.6 (++20231208085813+6009708b4367-1~exp1~20231208085906.81)
+CLANG_OK
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[26] CMD: rm -rf /tmp/bs && cmake -S /app -B /tmp/bs -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 && cmake --build /tmp/bs -j 4 2>&1 | grep -E "error|warning" | head -20; echo "build done"; /tmp/bs/roundel_demo 
+--- obs tail ---
+build done
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+
+[stdout]
+build done
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer:DEADLYSIGNAL
+[metadata] {"noOutputExpected": false}
+
+[27] CMD: /tmp/bs/roundel_demo 2>&1 | head -60
+--- obs tail ---
+d slot=0/2
+job-started job=2 slot=0/2
+job-parked job=2
+ticket-rejected job=1
+[arena] live=1 free=0 capacity=1 peak=1 check_outs=2 double_reclaims=0
+
+=== cancel, then completion, then cancel again ===
+job-started job=1 slot=0/1
+job-parked job=1
+cancel-requested job=1
+job-settled job=1 outcome=cancelled
+frame-released job=1 slot=0/1
+ticket-queued job=1
+cancel-requested job=1
+ticket-rejected job=1
+[arena] live=0 free=4 capacity=4 peak=1 check_outs=1 double_reclaims=0
+
+=== child fails ===
+[outcome] faulted
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=0
+child-destroyed job=1 slot=1/1
+parent-continued job=1 live=1
+job-settled job=1 outcome=faulted
+fault-reported job=1
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+=== child succeeds ===
+[value] 42
+job-started job=1 slot=0/1
+job-parked job=1
+ticket-queued job=1
+ticket-accepted job=1 value=21
+child-destroyed job=1 slot=1/1
+parent-continued job=1 live=1
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: /tmp/bs/roundel_demo > /tmp/demo_asan.log 2>&1; echo "exit=$?"; wc -l /tmp/demo_asan.log; grep -n "DEADLY\|SUMMARY\|ERROR" /tmp/demo_asan.log | head; tail -5 /tmp/demo_asan.log
+--- obs tail ---
+exit=0
+54 /tmp/demo_asan.log
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+
+[stdout]
+exit=0
+54 /tmp/demo_asan.log
+job-settled job=1 outcome=delivered
+frame-released job=1 slot=0/1
+[arena] live=0 free=4 capacity=4 peak=2 check_outs=2 double_reclaims=0
+
+demo finished
+[metadata] {"noOutputExpected": false}
+
+[29] CMD: for i in 1 2 3 4 5; do /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1; echo "run$i exit=$? lines=$(wc -l < /tmp/d$i.log) deadly=$(grep -c DEADLY /tmp/d$i.log)"; done
+--- obs tail ---
+/bin/bash: line 1:  7280 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1
+run1 exit=139 lines=6 deadly=6
+run2 exit=0 lines=54 deadly=0
+run3 exit=0 lines=54 deadly=0
+run4 exit=0 lines=54 deadly=0
+/bin/bash: line 1:  7303 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1
+run5 exit=139 lines=6 deadly=6
+
+[stdout]
+/bin/bash: line 1:  7280 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1
+run1 exit=139 lines=6 deadly=6
+run2 exit=0 lines=54 deadly=0
+run3 exit=0 lines=54 deadly=0
+run4 exit=0 lines=54 deadly=0
+/bin/bash: line 1:  7303 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /tmp/d$i.log 2>&1
+run5 exit=139 lines=6 deadly=6
+[metadata] {"noOutputExpected": false}
+
+[31] CMD: cd /tmp && cnt=0; for i in $(seq 1 20); do /tmp/bs/roundel_demo >/dev/null 2>&1 || cnt=$((cnt+1)); done; echo "asan demo failures: $cnt/20"; cnt=0; for i in $(seq 1 20); do /tmp/b/roundel_demo >/dev/null 2>&1 || cnt=$((c
+--- obs tail ---
+&1
+/bin/bash: line 1:  7318 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7333 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7338 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7345 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+asan demo failures: 5/20
+plain demo failures: 0/20
+/bin/bash: line 1:  7376 Segmentation fault      (core dumped) /tmp/ta > /dev/null 2>&1
+/bin/bash: line 1:  7377 Segmentation fault      (core dumped) /tmp/ta > /dev/null 2>&1
+/bin/bash: line 1:  7382 Segmentation fault      (core dumped) /tmp/ta > /dev/null 2>&1
+asan t1 failures: 3/10
+/bin/bash: line 1:  7390 Segmentation fault      (core dumped) /tmp/t2a > /dev/null 2>&1
+/bin/bash: line 1:  7393 Segmentation fault      (core dumped) /tmp/t2a > /dev/null 2>&1
+/bin/bash: line 1:  7396 Segmentation fault      (core dumped) /tmp/t2a > /dev/null 2>&1
+/bin/bash: line 1:  7405 Segmentation fault      (core dumped) /tmp/t2a > /dev/null 2>&1
+asan t2 failures: 4/10
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: which gdb; echo "---"; cd /tmp && ASAN_OPTIONS=detect_stack_use_after_return=0 cnt=0; for i in $(seq 1 20); do /tmp/bs/roundel_demo >/dev/null 2>&1 || cnt=$((cnt+1)); done; echo "with use_after_return=0: $cnt/20 failures
+--- obs tail ---
+---
+/bin/bash: line 1:  7422 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7429 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7430 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+with use_after_return=0: 3/20 failures
+Shell cwd was reset to /app
+
+[stdout]
+---
+/bin/bash: line 1:  7422 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7429 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+/bin/bash: line 1:  7430 Segmentation fault      (core dumped) /tmp/bs/roundel_demo > /dev/null 2>&1
+with use_after_return=0: 3/20 failures
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: cd /tmp && for i in $(seq 1 10); do stdbuf -o0 -e0 /tmp/bs/roundel_demo > /tmp/dd$i.log 2>&1; if [ $? -ne 0 ]; then echo "CRASH on run $i"; tail -20 /tmp/dd$i.log; break; fi; done
+--- obs tail ---
+CRASH on run 1
+==7451==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
+Shell cwd was reset to /app
+
+[stdout]
+CRASH on run 1
+==7451==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: cd /tmp && rm -f /tmp/asan.log* && for i in $(seq 1 10); do ASAN_OPTIONS=log_path=/tmp/asan.log /tmp/bs/roundel_demo >/dev/null 2>/dev/null; if [ $? -ne 0 ]; then echo "crash run $i"; break; fi; done; ls -la /tmp/asan.lo
+--- obs tail ---
+Exit code 2
+/bin/bash: line 1:  7468 Segmentation fault      (core dumped) ASAN_OPTIONS=log_path=/tmp/asan.log /tmp/bs/roundel_demo > /dev/null 2> /dev/null
+crash run 6
+
+[error] tool reported failure
+
+[37] CMD: cd /tmp && printf '#include <cstdio>\nint main(){ std::printf("hello\\n"); return 0; }\n' > /tmp/hw.cpp && g++ -std=c++20 -g -fsanitize=address,undefined /tmp/hw.cpp -o /tmp/hw && cnt=0; for i in $(seq 1 20); do /tmp/hw 
+--- obs tail ---
+7532 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7537 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+hello-world asan failures: 6/20
+/tmp/c1.cpp: In function 'T f()':
+/tmp/c1.cpp:5:8: error: unable to find the promise type for this coroutine
+    5 | T f(){ co_return; }
+plain coro asan failures: 20/20
+Shell cwd was reset to /app
+
+[stdout]
+/bin/bash: line 1:  7508 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7509 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7510 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7521 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7532 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+/bin/bash: line 1:  7537 Segmentation fault      (core dumped) /tmp/hw > /dev/null 2>&1
+hello-world asan failures: 6/20
+/tmp/c1.cpp: In function 'T f()':
+/tmp/c1.cpp:5:8: error: unable to find the promise type for this coroutine
+    5 | T f(){ co_return; }
+plain coro asan failures: 20/20
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[39] CMD: cd /tmp && for p in /tmp/hw /tmp/bs/roundel_demo /tmp/ta /tmp/t2a; do cnt=0; for i in $(seq 1 40); do $p >/dev/null 2>&1 || cnt=$((cnt+1)); done; echo "$p : $cnt/40 crashes"; done 2>/dev/null
+--- obs tail ---
+/tmp/hw : 14/40 crashes
+/tmp/bs/roundel_demo : 6/40 crashes
+/tmp/ta : 7/40 crashes
+/tmp/t2a : 8/40 crashes
+Shell cwd was reset to /app
+
+[stdout]
+/tmp/hw : 14/40 crashes
+/tmp/bs/roundel_demo : 6/40 crashes
+/tmp/ta : 7/40 crashes
+/tmp/t2a : 8/40 crashes
+[stderr]
+
+Shell cwd was reset to /app
+[metadata] {"noOutputExpected": false}
+
+[53] CMD: rm -rf /tmp/f1 /tmp/f2 && cmake -S /app -B /tmp/f1 -DCMAKE_BUILD_TYPE=Debug > /dev/null 2>&1 && cmake -S /app -B /tmp/f2 -DCMAKE_BUILD_TYPE=Debug -DROUNDEL_SANITIZE=ON > /dev/null 2>&1 && for d in /tmp/f1 /tmp/f2; do ech
+--- obs tail ---
+--- /tmp/f1
+--- /tmp/f2
+=== -Werror check ===
+gcc -Werror: clean
+clang -Werror: clean
+
+[stdout]
+--- /tmp/f1
+--- /tmp/f2
+=== -Werror check ===
+gcc -Werror: clean
+clang -Werror: clean
+[metadata] {"noOutputExpected": false}

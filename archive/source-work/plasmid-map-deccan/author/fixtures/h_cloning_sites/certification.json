@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.02,
+  "internal": 4,
+  "deviation": 5926,
+  "c": 251,
+  "L": 2208
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 8.87
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 1.1,
+  "nodes": 4710,
+  "ties_at_count_and_deviation": 1
+ },
+ "held_out": [
+  "KpnI+XbaI",
+  "KpnI+NdeI"
+ ],
+ "truth": {
+  "internal": 4,
+  "deviation": 6892,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_cloning_sites",
+ "seed": 706,
+ "description": "four cloning sites and the optimum is not at the first",
+ "vector": "pUC18",
+ "vector_header": "L08752.1 pUC18 cloning vector",
+ "source": "T7",
+ "source_header": "V01146.1 Genome of bacteriophage T7",
+ "fragment": {
+  "left_enzyme": "AatII",
+  "left_cut": 22516,
+  "right_enzyme": "SnaBI",
+  "right_cut": 24734
+ },
+ "cloning_site": [
+  "BamHI",
+  251
+ ],
+ "insert_length": 2218,
+ "enzymes": [
+  "KpnI",
+  "NdeI",
+  "PvuII",
+  "XbaI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 8
+}

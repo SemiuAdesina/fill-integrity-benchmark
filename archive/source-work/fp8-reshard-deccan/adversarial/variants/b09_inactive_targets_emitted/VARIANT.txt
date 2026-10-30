@@ -1,0 +1,3 @@
+b09_inactive_targets_emitted
+targets
+writes states for inactive targets too

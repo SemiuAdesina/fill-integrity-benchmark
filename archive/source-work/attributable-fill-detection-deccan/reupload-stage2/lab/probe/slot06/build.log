@@ -1,0 +1,160 @@
+   Compiling pairing_engine v0.1.0 (/Users/macbok/benchmark-suite-work/attributable-fill-detection-deccan/reupload-stage2/lab/probe/slot06/runner)
+warning: unused import: `close`
+  --> tests/graded.rs:70:61
+   |
+70 |     block_orders, block_takers, block_takers_at, candidate, close, fill_resting, fill_taker, run,
+   |                                                             ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `position`
+   --> tests/graded.rs:137:9
+    |
+137 |     let position = outcome.position("m1").expect("position for m1");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `position`
+   --> tests/graded.rs:168:9
+    |
+168 |     let position = outcome.position("m2").expect("position for m2");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `takers`
+   --> tests/graded.rs:192:9
+    |
+192 |     let takers = outcome.takers_for("m3", Venue::South);
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_takers`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:208:9
+    |
+208 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:237:9
+    |
+237 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `takers`
+   --> tests/graded.rs:270:9
+    |
+270 |     let takers = outcome.takers_on_instrument("tA");
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_takers`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:285:9
+    |
+285 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:315:9
+    |
+315 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `progressed`
+   --> tests/graded.rs:332:9
+    |
+332 |     let progressed = run(
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_progressed`
+
+warning: unused variable: `position`
+   --> tests/graded.rs:374:9
+    |
+374 |     let position = outcome.position("m8").expect("position for m8");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:390:9
+    |
+390 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:419:9
+    |
+419 |     let outcome = run(Scenario::new(vec![
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:446:9
+    |
+446 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:471:9
+    |
+471 |     let outcome = run(
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `outcome`
+   --> tests/graded.rs:496:9
+    |
+496 |     let outcome = run(Scenario::new(vec![
+    |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_outcome`
+
+warning: unused variable: `position`
+   --> tests/graded.rs:541:9
+    |
+541 |     let position = outcome.position("m1").expect("position for m1");
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `before`
+   --> tests/graded.rs:672:9
+    |
+672 |     let before = refs.len();
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_before`
+
+warning: unused variable: `intended_size`
+   --> tests/graded.rs:687:21
+    |
+687 |                 let intended_size = intended(outcome, strategy_id, venue);
+    |                     ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_intended_size`
+
+warning: unused variable: `first`
+   --> tests/graded.rs:773:13
+    |
+773 |         let first = run(seeded_scenario(seed));
+    |             ^^^^^ help: if this is intentional, prefix it with an underscore: `_first`
+
+warning: unused variable: `second`
+   --> tests/graded.rs:774:13
+    |
+774 |         let second = run(seeded_scenario(seed));
+    |             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_second`
+
+warning: function `distinct_taker_client_refs` is never used
+  --> tests/graded.rs:79:4
+   |
+79 | fn distinct_taker_client_refs(outcome: &Outcome) -> usize {
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `acquired` is never used
+  --> tests/graded.rs:92:4
+   |
+92 | fn acquired(outcome: &Outcome, strategy_id: &str, venue: Venue) -> Qty {
+   |    ^^^^^^^^
+
+warning: function `taker_sizes` is never used
+   --> tests/graded.rs:784:4
+    |
+784 | fn taker_sizes(outcome: &Outcome, strategy_id: &str, venue: Venue) -> Vec<Qty> {
+    |    ^^^^^^^^^^^
+
+warning: function `position_ids` is never used
+   --> tests/graded.rs:794:4
+    |
+794 | fn position_ids(outcome: &Outcome) -> Vec<String> {
+    |    ^^^^^^^^^^^^
+
+warning: `pairing_engine` (test "graded") generated 25 warnings (run `cargo fix --test "graded" -p pairing_engine` to apply 21 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+  Executable tests/graded.rs (lab/probe/target-slot06/debug/deps/graded-e9142a29b0857c36)

@@ -91,21 +91,14 @@ Per-file-type placement is taken from `pluto-tasks/spsc-loom-rust`, which carrie
 
 | Type | Syntax | Line |
 |---|---|---|
-| `.md` | `<!-- harbor-canary TOKEN -->` | 1 |
-| `.toml`, `Dockerfile` | `# harbor-canary TOKEN` | 1 |
-| `.rs` | `// harbor-canary TOKEN` | 1 |
-| `.sh` | `# harbor-canary TOKEN` | **2**, after the shebang |
 
 The shebang exception is not invented — both `solve.sh` and `test.sh` in every Pluto example
 put the shebang on line 1 and the canary on line 2. A shebang is only honoured on line 1.
 
-**The token differs from the examples.** They use `harbor-canary GUID <uuid>`; the accepted
 proposal supplies a bare 32-hex token and specifies the instruction.md line verbatim as
-`<!-- harbor-canary TOKEN -->` — no `GUID` keyword. The proposal's own line wins for
 `.md`, and the same no-`GUID` form is used consistently across the other types. The
 generated `Cargo.lock` is left without a canary, exactly as the examples leave it.
 
-The canary also goes in the platform `canary_string` upload field — the hub warns that
 missing it fails Proposal Match and blocks Agent Trials and Cheat Trial.
 
 ### Verifier contract

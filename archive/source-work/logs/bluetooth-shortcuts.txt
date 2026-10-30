@@ -1,0 +1,55 @@
+### positive_only_modulo
+LABEL=bt-positive_only_modulo POPULATION=16 TOTAL=16 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL circular_error_drives_selection values
+FAIL predictions_are_load_bearing values
+FAIL compound_joint_maxima_and_boundary_tie values
+FAIL signed_half_open_wrap_boundaries values
+### wrong_boundary_ownership
+LABEL=bt-wrong_boundary_ownership POPULATION=16 TOTAL=16 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_joint_maxima_and_boundary_tie values
+FAIL signed_half_open_wrap_boundaries values
+### pbr_only_scoring
+LABEL=bt-pbr_only_scoring POPULATION=16 TOTAL=16 FAILED=5 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL joint_global_recovery values
+FAIL rtt_resolves_pbr_ambiguity values
+FAIL bounded_grid_endpoints_included values
+FAIL compound_wrap_rtt_paths_and_order values
+FAIL compound_joint_maxima_and_boundary_tie values
+### rtt_only_scoring
+LABEL=bt-rtt_only_scoring POPULATION=16 TOTAL=16 FAILED=8 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL joint_global_recovery values
+FAIL pbr_resolves_rtt_clock_ambiguity values
+FAIL bounded_grid_endpoints_included values
+FAIL circular_error_drives_selection values
+FAIL predictions_are_load_bearing values
+FAIL tied_antenna_paths_remain_distinct values
+FAIL compound_wrap_rtt_paths_and_order values
+FAIL compound_joint_maxima_and_boundary_tie values
+### residual_sums_only
+LABEL=bt-residual_sums_only POPULATION=16 TOTAL=16 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_joint_maxima_and_boundary_tie values
+### first_minimum_tie
+LABEL=bt-first_minimum_tie POPULATION=16 TOTAL=16 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+### one_global_antenna_bias
+LABEL=bt-one_global_antenna_bias POPULATION=16 TOTAL=16 FAILED=6 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL joint_global_recovery values
+FAIL bounded_grid_endpoints_included values
+FAIL deterministic_empty_evidence_tie values
+FAIL tied_antenna_paths_remain_distinct values
+FAIL compound_wrap_rtt_paths_and_order values
+FAIL compound_joint_maxima_and_boundary_tie values
+### float_arithmetic
+LABEL=bt-float_arithmetic POPULATION=16 TOTAL=16 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+### truncating_division
+LABEL=bt-truncating_division POPULATION=16 TOTAL=16 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL predictions_are_load_bearing values
+FAIL compound_joint_maxima_and_boundary_tie values
+### independent_stream_fitting
+LABEL=bt-independent_stream_fitting POPULATION=16 TOTAL=16 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL pbr_resolves_rtt_clock_ambiguity values
+FAIL predictions_are_load_bearing values
+FAIL compound_wrap_rtt_paths_and_order values
+FAIL compound_joint_maxima_and_boundary_tie values
+### empty_grid_is_zero_bias
+LABEL=bt-empty_grid_is_zero_bias POPULATION=16 TOTAL=16 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL empty_bias_grid_rejected values

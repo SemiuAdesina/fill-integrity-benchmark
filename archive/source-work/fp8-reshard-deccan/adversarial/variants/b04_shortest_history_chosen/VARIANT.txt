@@ -1,0 +1,3 @@
+b04_shortest_history_chosen
+selection
+keeps the shortest compatible history

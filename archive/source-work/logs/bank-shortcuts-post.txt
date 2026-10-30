@@ -1,0 +1,56 @@
+LABEL=_base POPULATION=12 TOTAL=12 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=_faithful_reimplementation POPULATION=12 TOTAL=12 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=no_minimum_cost_rule POPULATION=12 TOTAL=12 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=unordered_xor_stages POPULATION=12 TOTAL=12 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL compound_stage_chain_runs_against_grammar_order the call threw where a result was required
+LABEL=skip_minimum_stage_count POPULATION=12 TOTAL=12 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL equal_operation_count_prefers_fewer_stages canonical recorded rotate=0;stages=4>2, expected rotate=4;stages=
+LABEL=no_canonical_tie POPULATION=12 TOTAL=12 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=numeric_tie_key POPULATION=12 TOTAL=12 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=first_legal_candidate POPULATION=12 TOTAL=12 FAILED=3 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups canonical recorded rotate=3;stages=3>0,4>1, expected rotate=3;stages=4>1
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+  FAIL equal_operation_count_prefers_fewer_stages canonical recorded rotate=0;stages=4>2, expected rotate=4;stages=
+LABEL=single_trace_fit POPULATION=12 TOTAL=12 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL global_evidence canonical recorded rotate=1;stages=, expected rotate=1;stages=3>0,4>1
+  FAIL compound_replay canonical recorded rotate=7;stages=4>5,5>1, expected rotate=7;stages=4>5,5>1,6>2
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0, expected rotate=11;stages=4>1,1>0,5>3
+  FAIL compound_stage_chain_runs_against_grammar_order canonical recorded rotate=6;stages=1>0, expected rotate=6;stages=5>1,1>0
+LABEL=ignore_broadcast POPULATION=12 TOTAL=12 FAILED=5 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups the call threw where a result was required
+  FAIL conflict_disambiguates canonical recorded rotate=0;stages=, expected rotate=1;stages=
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+  FAIL compound_stage_chain_runs_against_grammar_order the call threw where a result was required
+LABEL=ignore_lane_rotation POPULATION=12 TOTAL=12 FAILED=7 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups the call threw where a result was required
+  FAIL conflict_disambiguates the call threw where a result was required
+  FAIL global_evidence the call threw where a result was required
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+  FAIL compound_stage_chain_runs_against_grammar_order the call threw where a result was required
+  FAIL equal_operation_count_prefers_fewer_stages canonical recorded rotate=0;stages=4>2, expected rotate=4;stages=
+LABEL=wrong_word_truncation POPULATION=12 TOTAL=12 FAILED=11 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL basic_identity the call threw where a result was required
+  FAIL word_boundaries the call threw where a result was required
+  FAIL broadcast_groups the call threw where a result was required
+  FAIL conflict_disambiguates the call threw where a result was required
+  FAIL ordered_xor the call threw where a result was required
+  FAIL global_evidence the call threw where a result was required
+  FAIL minimum_canonical the call threw where a result was required
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+  FAIL compound_stage_chain_runs_against_grammar_order the call threw where a result was required
+  FAIL equal_operation_count_prefers_fewer_stages the call threw where a result was required
+LABEL=parallel_xor_mask POPULATION=12 TOTAL=12 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL ordered_xor the call threw where a result was required
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+  FAIL compound_stage_chain_runs_against_grammar_order the call threw where a result was required
+LABEL=legality_only_reverse_enumeration POPULATION=12 TOTAL=12 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL basic_identity canonical recorded rotate=0;stages=3>0,4>1, expected rotate=0;stages=
+  FAIL word_boundaries canonical recorded rotate=0;stages=2>0,3>1, expected rotate=0;stages=2>0
+  FAIL broadcast_groups canonical recorded rotate=3;stages=3>0,4>1, expected rotate=3;stages=4>1
+  FAIL minimum_canonical canonical recorded rotate=0;stages=6>0,5>1,4>2, expected rotate=0;stages=

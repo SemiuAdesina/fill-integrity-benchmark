@@ -1,0 +1,168 @@
+In file included from /b/runtime.cpp:3:
+/b/include/roundel/runtime.hpp:13:2: error: unterminated conditional directive
+   13 | #ifndef ROUNDEL_RUNTIME_HPP
+      |  ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:259:5: error: no template named 'pair'; did you mean '::std::pair'?
+  259 |     pair<_FIter, _FIter>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:264:5: error: no template named 'pair'; did you mean '::std::pair'?
+  264 |     pair<_FIter, _FIter>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:432:5: error: no template named 'pair'; did you mean '::std::pair'?
+  432 |     pair<const _Tp&, const _Tp&>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:437:5: error: no template named 'pair'; did you mean '::std::pair'?
+  437 |     pair<const _Tp&, const _Tp&>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:442:5: error: no template named 'pair'; did you mean '::std::pair'?
+  442 |     pair<_FIter, _FIter>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:447:5: error: no template named 'pair'; did you mean '::std::pair'?
+  447 |     pair<_FIter, _FIter>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:453:9: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  453 |     min(initializer_list<_Tp>);
+      |         ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:458:9: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  458 |     min(initializer_list<_Tp>, _Compare);
+      |         ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:463:9: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  463 |     max(initializer_list<_Tp>);
+      |         ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:468:9: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  468 |     max(initializer_list<_Tp>, _Compare);
+      |         ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:472:5: error: no template named 'pair'; did you mean '::std::pair'?
+  472 |     pair<_Tp, _Tp>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:473:12: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  473 |     minmax(initializer_list<_Tp>);
+      |            ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:477:5: error: no template named 'pair'; did you mean '::std::pair'?
+  477 |     pair<_Tp, _Tp>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:478:12: error: no template named 'initializer_list'; did you mean '::std::initializer_list'?
+  478 |     minmax(initializer_list<_Tp>, _Compare);
+      |            ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/initializer_list:47:11: note: '::std::initializer_list' declared here
+   47 |     class initializer_list
+      |           ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:519:5: error: no template named 'pair'; did you mean '::std::pair'?
+  519 |     pair<_OIter1, _OIter2>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:701:14: error: no template named 'iterator_traits'; did you mean '::std::iterator_traits'?
+  701 |     typename iterator_traits<_IIter>::difference_type
+      |              ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator_base_types.h:177:12: note: '::std::iterator_traits' declared here
+  177 |     struct iterator_traits
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:706:14: error: no template named 'iterator_traits'; did you mean '::std::iterator_traits'?
+  706 |     typename iterator_traits<_IIter>::difference_type
+      |              ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator_base_types.h:177:12: note: '::std::iterator_traits' declared here
+  177 |     struct iterator_traits
+      |            ^
+In file included from /b/runtime.cpp:5:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/algorithm:61:
+In file included from /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_algo.h:59:
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:797:5: error: no template named 'pair'; did you mean '::std::pair'?
+  797 |     pair<_IIter1, _IIter2>
+      |     ^
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/stl_iterator.h:2593:12: note: '::std::pair' declared here
+ 2593 |     struct pair;
+      |            ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.

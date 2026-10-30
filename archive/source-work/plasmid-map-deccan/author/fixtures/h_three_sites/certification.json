@@ -1,0 +1,57 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.37,
+  "internal": 5,
+  "deviation": 46648,
+  "c": 930,
+  "L": 4157
+ },
+ "enumeration_solver": {
+  "status": "timeout",
+  "seconds": 120.0
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 23.4,
+  "nodes": 108378,
+  "ties_at_count_and_deviation": 12
+ },
+ "held_out": [
+  "AatII+MscI",
+  "BstBI+SspI"
+ ],
+ "truth": {
+  "internal": 5,
+  "deviation": 49112,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_three_sites",
+ "seed": 808,
+ "description": "an enzyme with three insert-region sites",
+ "vector": "pGEX-2T",
+ "vector_header": "U13850.1 pGEX-2T cloning vector, complete sequence",
+ "source": "ecoli_lac_region",
+ "source_header": "U00096.3:360000-372000 Escherichia coli str. K-12 substr. MG1655, complete genome",
+ "fragment": {
+  "left_enzyme": "BsrGI",
+  "left_cut": 1509,
+  "right_enzyme": "AatII",
+  "right_cut": 5672
+ },
+ "cloning_site": [
+  "EcoRI",
+  940
+ ],
+ "insert_length": 4163,
+ "enzymes": [
+  "AatII",
+  "BstBI",
+  "MscI",
+  "PvuI",
+  "SspI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 10
+}

@@ -1,0 +1,1 @@
+deviation bounded only by assignments and order statistics, never by the quadratic

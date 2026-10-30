@@ -1,0 +1,3 @@
+b19_unvisited_switch_selectable
+reduction
+offers every reduction-capable switch to the subset search, visited or not

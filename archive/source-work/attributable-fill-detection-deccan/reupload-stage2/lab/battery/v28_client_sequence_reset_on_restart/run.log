@@ -1,0 +1,4 @@
+MODE=patched LABEL=v4-v28_client_sequence_reset_on_restart REWARD=0 RC=1 ELAPSED=2s TOTAL 53 FAILED 4
+FAILS: v11_restart_does_not_repeat_resolved_work v17_attribution_of_a_filled_leg_survives_a_restart v13_seeded_orderings_preserve_safety_invariants v27_an_entry_leg_whose_acknowledgement_was_lost_is_recovered_under_the_same_reference 
+RUNLOG: CONTROL ok timing runner_build=2 runner_execution=0 judge=0 verdict total=53 failed=4 control=1 reward=0 
+WORKDIR: /tmp/afd-2QFuoL

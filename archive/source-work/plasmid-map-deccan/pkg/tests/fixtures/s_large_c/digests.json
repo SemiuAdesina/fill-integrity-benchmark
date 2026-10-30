@@ -1,0 +1,248 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 150,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "BclI",
+   "enzymes": [
+    "BclI"
+   ],
+   "bands": [
+    {
+     "length": 2851,
+     "multiplicity": 1
+    },
+    {
+     "length": 3006,
+     "multiplicity": 1
+    },
+    {
+     "length": 3201,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRI",
+   "enzymes": [
+    "EcoRI"
+   ],
+   "bands": [
+    {
+     "length": 3847,
+     "multiplicity": 1
+    },
+    {
+     "length": 5145,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI",
+   "enzymes": [
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 982,
+     "multiplicity": 1
+    },
+    {
+     "length": 2223,
+     "multiplicity": 1
+    },
+    {
+     "length": 2600,
+     "multiplicity": 1
+    },
+    {
+     "length": 3177,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "HpaI",
+   "enzymes": [
+    "HpaI"
+   ],
+   "bands": [
+    {
+     "length": 633,
+     "multiplicity": 1
+    },
+    {
+     "length": 747,
+     "multiplicity": 1
+    },
+    {
+     "length": 7653,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 1167,
+     "multiplicity": 1
+    },
+    {
+     "length": 2545,
+     "multiplicity": 1
+    },
+    {
+     "length": 5295,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRI+SspI",
+   "enzymes": [
+    "EcoRI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 400,
+     "multiplicity": 1
+    },
+    {
+     "length": 784,
+     "multiplicity": 1
+    },
+    {
+     "length": 1750,
+     "multiplicity": 1
+    },
+    {
+     "length": 2527,
+     "multiplicity": 1
+    },
+    {
+     "length": 3506,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BclI+FspI",
+   "enzymes": [
+    "BclI",
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 842,
+     "multiplicity": 1
+    },
+    {
+     "length": 990,
+     "multiplicity": 2
+    },
+    {
+     "length": 1188,
+     "multiplicity": 1
+    },
+    {
+     "length": 1227,
+     "multiplicity": 1
+    },
+    {
+     "length": 1712,
+     "multiplicity": 1
+    },
+    {
+     "length": 1970,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRI+HpaI",
+   "enzymes": [
+    "EcoRI",
+    "HpaI"
+   ],
+   "bands": [
+    {
+     "length": 624,
+     "multiplicity": 1
+    },
+    {
+     "length": 753,
+     "multiplicity": 1
+    },
+    {
+     "length": 1757,
+     "multiplicity": 1
+    },
+    {
+     "length": 1950,
+     "multiplicity": 1
+    },
+    {
+     "length": 3831,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRI+FspI",
+   "enzymes": [
+    "EcoRI",
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 324,
+     "multiplicity": 1
+    },
+    {
+     "length": 970,
+     "multiplicity": 2
+    },
+    {
+     "length": 1213,
+     "multiplicity": 1
+    },
+    {
+     "length": 2611,
+     "multiplicity": 1
+    },
+    {
+     "length": 2875,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "FspI+SspI",
+   "enzymes": [
+    "FspI",
+    "SspI"
+   ]
+  },
+  {
+   "id": "BclI+SspI",
+   "enzymes": [
+    "BclI",
+    "SspI"
+   ]
+  }
+ ]
+}

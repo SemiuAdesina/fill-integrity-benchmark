@@ -1,0 +1,194 @@
+[18]
+sed -i '/^fn record_in/,/^struct SubmissionRecordView;$/d' tests/scratch.rs && sed -i '/^#\[allow(dead_code)\]$/{x;/./d;x}' tests/scratch.rs && grep -n "record_in\|SubmissionRecordView\|allow(dead_code)" tests/scratch.rs
+
+[20]
+cat >> /app/tests/scratch.rs <<'EOF'
+
+/// The venue recycles an identifier once the first order's window has closed.
+/// An observation naming the recycled identifier belongs to the later order,
+/// and the client reference is what says so.
+#[test]
+fn a_recycled_identifier_belongs_to_the_later_order() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(vec![], vec![], "k1"),
+        batch(vec![], vec![], "k2"),
+        batch(vec![event("V-101", "pex-3", 10, at(OPEN + 1_600))], vec![], "k3"),
+    ]);
+    // Cycle 1 places m1's two legs. A second mandate is offered once m1's
+    // window has closed, and the venue hands it the recycled identifier V-101.
+    rig.strategies
+        .candidates
+        .borrow_mut()
+        .push(candidate("m2", 10, at(10_000)));
+    let mut engine = rig.engine();
+
+    engine.run_cycle().expect("cycle 1");
+    // m1 is already attempted, so drop it and let m2 be the only candidate when
+    // the engine next looks, well after m1's window has closed.
+    rig.strategies.candidates.borrow_mut().remove(0);
+    rig.clock.set(at(OPEN + 1_500));
+    engine.run_cycle().expect("cycle 2");
+    // m2's north leg is pex-3 and the venue gave it V-101 again.
+    let saved = rig.store.snapshot();
+    let recycled = saved
+        .submissions
+        .iter()
+        .find(|record| record.client_ref == client("pex-3"))
+        .expect("m2's north leg is tracked");
+    assert_eq!(recycled.order_id.as_ref().map(|id| id.as_str()), Some("V-101"));
+
+    rig.clock.set(at(OPEN + 1_800));
+    engine.run_cycle().expect("cycle 3");
+
+    let saved = rig.store.snapshot();
+    assert_eq!(
+        attributed_in(&saved, "pex-3"),
+        10,
+        "an observation naming a recycled identifier is attributed to the order \
+         whose client reference it carries, not to the first holder of the id"
+    );
+    assert_eq!(
+        attributed_in(&saved, "pex-1"),
+        0,
+        "m1's north leg acquires nothing from an observation about another order"
+    );
+}
+
+/// The window is tested against the venue's match timestamp, not against the
+/// cycle that happened to read the event: the feed may lag for many cycles.
+#[test]
+fn a_late_event_timestamped_inside_the_window_is_attributed() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(vec![], vec![], "k1"),
+        batch(vec![event("V-101", "pex-1", 8, at(OPEN + 60))], vec![], "k2"),
+    ]);
+    let mut engine = rig.engine();
+
+    engine.run_cycle().expect("cycle 1");
+    // Several cycles later the feed delivers an event whose match time is well
+    // inside the window this order opened in cycle 1.
+    rig.clock.set(at(OPEN + 700));
+    engine.run_cycle().expect("cycle 2");
+
+    let saved = rig.store.snapshot();
+    assert_eq!(
+        attributed_in(&saved, "pex-1"),
+        8,
+        "the window is tested against the venue's match timestamp, so a late \
+         event about an in-window match is still attributed"
+    );
+}
+
+/// Quantity above the basis belongs to orders this engine does not track, so it
+/// is dropped rather than assigned.
+#[test]
+fn a_block_larger_than_the_basis_drops_the_excess() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(
+            vec![],
+            vec![block("bA", &["V-101", "V-102"], 25, at(OPEN + 30))],
+            "k1",
+        ),
+    ]);
+    rig.both_resting();
+    let mut engine = rig.engine();
+
+    engine.run_cycle().expect("cycle 1");
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+
+    let saved = rig.store.snapshot();
+    let total: i64 = saved
+        .submissions
+        .iter()
+        .filter(|record| record.client_ref == client("pex-1") || record.client_ref == client("pex-2"))
+        .map(|record| record.attributed())
+        .sum();
+    assert_eq!(
+        total, 20,
+        "the block matched 25 against 20 outstanding; the 5 units no tracked \
+         order can account for are dropped"
+    );
+}
+EOF
+cargo test --offline --test scratch 2>&1 | tail -30
+
+[21]
+python3 - <<'PY'
+import re
+p='tests/scratch.rs'
+s=open(p).read()
+
+# 1) Fix the late-event test: it needs a third cycle to reach the event batch.
+s = s.replace('''    engine.run_cycle().expect("cycle 1");
+    // Several cycles later the feed delivers an event whose match time is well
+    // inside the window this order opened in cycle 1.
+    rig.clock.set(at(OPEN + 700));
+    engine.run_cycle().expect("cycle 2");
+''','''    engine.run_cycle().expect("cycle 1");
+    // Several cycles later the feed delivers an event whose match time is well
+    // inside the window this order opened in cycle 1.
+    rig.clock.set(at(OPEN + 700));
+    engine.run_cycle().expect("cycle 2");
+    rig.clock.set(at(OPEN + 800));
+    engine.run_cycle().expect("cycle 3");
+''')
+
+# 2) Replace the whole-engine recycling test with a ledger-level one, which is
+#    the only place an identifier can actually be recycled: the fake gateway
+#    hands out fresh ids.
+start = s.index('/// The venue recycles an identifier once the first order\'s window has closed.')
+end = s.index('/// The window is tested against the venue\'s match timestamp')
+s = s[:start] + '''/// The venue recycles an identifier once the first order's window has closed.
+/// An observation naming the recycled identifier belongs to the later order,
+/// and the client reference is what says so.
+#[test]
+fn a_recycled_identifier_belongs_to_the_later_order() {
+    let mut ledger = AttributionLedger::new();
+    ledger.track(client("c1"), Some(order("o1")), Some(1), 10, at(OPEN));
+    // The identifier o1 is handed out again long after c1's window closed.
+    ledger.track(client("c2"), Some(order("o1")), Some(2), 10, at(OPEN + 5_000));
+    let _ = ledger.absorb_batch(batch(
+        vec![event("o1", "c2", 6, at(OPEN + 5_100))],
+        vec![],
+        "k1",
+    ));
+    assert_eq!(
+        ledger.attributed_for(&client("c2")),
+        6,
+        "an observation naming a recycled identifier is attributed to the order \\
+         whose client reference it carries"
+    );
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        0,
+        "the first holder of the identifier acquires nothing from an observation \\
+         about another order"
+    );
+}
+
+''' + s[end:]
+
+s = s.replace('use pairing_engine::ports::{FillBatch, SubmitError};',
+              'use pairing_engine::engine::AttributionLedger;\nuse pairing_engine::ports::{FillBatch, SubmitError};')
+open(p,'w').write(s)
+PY
+cargo test --offline --test scratch 2>&1 | tail -25
+
+[22]
+cp src/engine/fill_classifier.rs /tmp/fc.bak && python3 - <<'PY'
+p='src/engine/fill_classifier.rs'
+s=open(p).read()
+s=s.replace('''        if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {
+            return Some(index);
+        }
+        self.index_of_order(order_id)''','''        if let Some(index) = self.index_of_order(order_id) {
+            return Some(index);
+        }
+        self.index_by_client_ref.get(client_ref).copied()''')
+open(p,'w').write(s)
+PY
+cargo test --offline --test scratch a_recycled 2>&1 | tail -12; cp /tmp/fc.bak src/engine/fill_classifier.rs

@@ -1,0 +1,65 @@
+[23]
+cd /tmp && sed -i 's|^static std::size_t count(const Journal& j, Mark m) { return j.count(m); }$|__attribute__((unused)) static std::size_t count(const Journal\& j, Mark m) { return j.count(m); }|' /tmp/t2.cpp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Werror -I/app/include /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp /tmp/t2.cpp -o /tmp/t2a 2>&1 | head -20 && echo BUILD_OK && ASAN_OPTIONS=detect_leaks=1 /tmp/t2a 2>&1 | tail -30
+
+[35]
+cd /tmp && sed -i 's|^int main() {$|int main() {\n    setvbuf(stdout, nullptr, _IONBF, 0);|' /tmp/t.cpp /tmp/t2.cpp && sed -i 's|#include <cstdio>|#include <cstdio>\n#include <cstdio>|' /tmp/t.cpp && head -12 /tmp/t.cpp | tail -4 && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Werror -I/app/include /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp /tmp/t.cpp -o /tmp/ta 2>&1|head -5; for i in $(seq 1 15); do /tmp/ta > /tmp/ta$i.log 2>&1; if [ $? -ne 0 ]; then echo "CRASH run $i:"; tail -6 /tmp/ta$i.log; break; fi; done
+
+[46]
+cd /tmp && sed -i 's|                const Duty d = pick(static_cast<int>(rng() % 6));|                Duty d = pick(static_cast<int>(rng() % 6));|' /tmp/stress.cpp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Werror -I/app/include /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp /tmp/stress.cpp -o /tmp/sta 2>&1 | head -20; for i in 1 2 3 4 5 6; do /tmp/sta && break; done
+
+[48]
+cd /tmp && sed -i 's|    std::printf("seed %u: cap=%zu|    if (s %% 50 == 0) std::printf("seed %u: cap=%zu|' /tmp/stress.cpp && g++ -std=c++20 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Werror -I/app/include /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp /tmp/stress.cpp -o /tmp/sta 2>&1|head -10; for i in 1 2 3 4 5 6; do /tmp/sta && break; done 2>&1 | tail -15
+
+[57]
+cd /tmp && cat >> /tmp/t4.cpp << 'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+using namespace roundel;
+static int fails = 0;
+#define CK(c) do { if(!(c)) { ++fails; std::printf("  FAIL %d: %s\n", __LINE__, #c); } } while(0)
+
+static Duty self_poster(Conductor* c, JobId self) {
+    c->post(self, 111);  // queued while running: binds no frame
+    const std::int64_t v = co_await park();
+    co_return v;
+}
+static Duty self_poster_after(Conductor* c, JobId self) {
+    c->post(self, 111);
+    const std::int64_t a = co_await park();
+    const std::int64_t b = co_await park();  // parks again in the same frame
+    co_return a * 100 + b;
+}
+int main() {
+    setvbuf(stdout, nullptr, _IONBF, 0);
+    {
+        Conductor c{4};
+        const JobId a = c.launch(self_poster(&c, 1));
+        c.post(a, 7);  // queued while parked
+        c.drain();
+        CK(c.settled(a));
+        CK(*c.value_of(a) == 7);
+        CK(c.journal().count_for(Mark::TicketRejected, a) == 1);
+        CK(c.journal().count_for(Mark::TicketAccepted, a) == 1);
+        CK(c.arena().live_slots() == 0);
+        std::printf("unbound-then-parked: value=%lld rejected=%zu accepted=%zu\n",
+                    (long long)*c.value_of(a), c.journal().count_for(Mark::TicketRejected, a),
+                    c.journal().count_for(Mark::TicketAccepted, a));
+    }
+    {
+        // same, but the job parks twice: the unbound ticket stays unbound
+        Conductor c{4};
+        const JobId a = c.launch(self_poster_after(&c, 1));
+        c.post(a, 7);
+        c.post(a, 8);
+        c.drain();
+        CK(c.settled(a));
+        CK(*c.value_of(a) == 708);
+        CK(c.journal().count_for(Mark::TicketRejected, a) == 1);
+        CK(c.journal().count_for(Mark::TicketAccepted, a) == 2);
+        std::printf("unbound+two parks: value=%lld\n", (long long)*c.value_of(a));
+    }
+    std::printf("%s (%d failures)\n", fails ? "FAILED" : "ok", fails);
+    return fails ? 1 : 0;
+}
+EOF
+g++ -std=c++20 -g -O1 -fsanitize=address,undefined -Wall -Wextra -Wpedantic -Werror -I/app/include /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp /tmp/t4.cpp -o /tmp/t4a 2>&1|head -10; for i in 1 2 3 4 5; do /tmp/t4a && break; done

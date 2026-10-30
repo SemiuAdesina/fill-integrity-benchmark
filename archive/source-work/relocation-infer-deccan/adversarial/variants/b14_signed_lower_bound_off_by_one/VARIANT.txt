@@ -1,0 +1,3 @@
+b14_signed_lower_bound_off_by_one
+arithmetic
+the signed range starts at -(2^(w-1)) + 1

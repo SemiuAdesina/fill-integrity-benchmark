@@ -1,0 +1,4 @@
+/Users/macbok/benchmark-suite-work/fp8-reshard-deccan/lab/cand/b08_suffix_compares_oldest/src/restore.cpp:41:43: warning: unused variable 'n' [-Wunused-variable]
+   41 |     const std::size_t m = shorter.size(), n = longer.size();
+      |                                           ^
+1 warning generated.

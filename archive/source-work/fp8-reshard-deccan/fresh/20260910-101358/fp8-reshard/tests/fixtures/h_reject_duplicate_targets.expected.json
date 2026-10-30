@@ -1,0 +1,6 @@
+{
+ "fixture": "h_reject_duplicate_targets",
+ "outcome": "reject",
+ "result": null,
+ "replay": []
+}

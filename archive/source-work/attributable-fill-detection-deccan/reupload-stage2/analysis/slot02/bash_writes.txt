@@ -1,0 +1,846 @@
+[75]
+python3 - <<'EOF'
+import re
+p='src/bin/reproduce.rs'
+s=open(p).read()
+s=s.replace("""use pairing_engine::{
+    Clock, Cursor, Duration, Engine, EngineConfig, FillBatch, FillEvent, FillEventSource,
+    InstrumentId, InventorySource, OpenOrder, OrderAccepted, OrderGateway, OrderId, OrderKind,
+    OrderRequest, PortError, Price, Qty, Snapshot, StateStore, StrategyCandidate, StrategyId,
+    StrategySource, Timestamp, Venue,
+};""","""use pairing_engine::{
+    BlockFill, BlockRef, Clock, Cursor, Duration, Engine, EngineConfig, FillBatch, FillEvent,
+    FillEventSource, InstrumentId, InventorySource, OpenOrder, OrderAccepted, OrderGateway, OrderId,
+    OrderKind, OrderRequest, PortError, Price, Qty, Snapshot, StateStore, StrategyCandidate,
+    StrategyId, StrategySource, Timestamp, Venue,
+};""")
+s=s.replace("    scenario_restart(&mut report);","    scenario_restart(&mut report);\n    scenario_block_closes_one_leg(&mut report);")
+open(p,'w').write(s)
+EOF
+cargo run --offline --bin reproduce 2>&1 | tail -22
+
+[79]
+python3 - <<'EOF'
+p='tests/harness/mod.rs'
+s=open(p).read()
+s=s.replace("""pub struct FakeGateway {
+    failures: RefCell<Vec<(usize, SubmitError)>>,
+    submits: Cell<usize>,
+    pub submitted: RefCell<Vec<OrderRequest>>,
+    pub open: RefCell<Vec<OpenOrder>>,
+    pub cancelled: RefCell<Vec<OrderId>>,
+    pub best_offer: Cell<Price>,
+    next_seq: Cell<u64>,
+}""","""pub struct FakeGateway {
+    failures: RefCell<Vec<(usize, SubmitError)>>,
+    submits: Cell<usize>,
+    pub submitted: RefCell<Vec<OrderRequest>>,
+    pub open: RefCell<Vec<OpenOrder>>,
+    pub cancelled: RefCell<Vec<OrderId>>,
+    pub best_offer: Cell<Price>,
+    /// Set to make `open_orders` fail, as the real venue port may.
+    pub open_unavailable: Cell<bool>,
+    next_seq: Cell<u64>,
+}""")
+s=s.replace("""            cancelled: RefCell::new(Vec::new()),
+            best_offer: Cell::new(0.5),""","""            cancelled: RefCell::new(Vec::new()),
+            best_offer: Cell::new(0.5),
+            open_unavailable: Cell::new(false),""")
+s=s.replace("""    fn open_orders(&self) -> Result<Vec<OpenOrder>, PortError> {
+        Ok(self.open.borrow().clone())
+    }""","""    fn open_orders(&self) -> Result<Vec<OpenOrder>, PortError> {
+        if self.open_unavailable.get() {
+            return Err(PortError::Unavailable("venue down".into()));
+        }
+        Ok(self.open.borrow().clone())
+    }""")
+open(p,'w').write(s)
+EOF
+grep -n "open_unavailable" tests/harness/mod.rs
+
+[108]
+mkdir -p /tmp/audit && cat > /tmp/audit/audit.rs <<'EOF'
+use std::cell::{Cell, RefCell};
+
+use pairing_engine::ports::{
+    BlockFill, Clock, FillBatch, FillEvent, FillEventSource, InventorySource, OpenOrder,
+    OrderAccepted, OrderGateway, OrderKind, OrderRequest, PortError, StateStore, StrategySource,
+    SubmitError,
+};
+use pairing_engine::types::ids::{
+    BlockRef, ClientRef, InstrumentId, OrderId, Price, Qty, StrategyId, Venue,
+};
+use pairing_engine::types::snapshot::{Cursor, Snapshot};
+use pairing_engine::types::strategy::StrategyCandidate;
+use pairing_engine::types::time::Timestamp;
+use pairing_engine::{Engine, EngineConfig};
+
+pub fn at(seconds: i64) -> Timestamp { Timestamp::from_seconds(seconds) }
+pub fn order(id: &str) -> OrderId { OrderId::new(id) }
+pub fn client(id: &str) -> ClientRef { ClientRef::new(id) }
+
+pub fn event(order_id: &str, client_ref: &str, cumulative: Qty, when: Timestamp) -> FillEvent {
+    FillEvent { seq: 1, order_id: order(order_id), client_ref: client(client_ref),
+        strategy_id: StrategyId::new("m1"), instrument_id: InstrumentId::new("I"),
+        venue: Venue::North, cumulative_filled_qty: cumulative, price: 0.5, at: when }
+}
+pub fn block(block_ref: &str, covers: &[&str], block_qty: Qty, when: Timestamp) -> BlockFill {
+    BlockFill { seq: 1, block_ref: BlockRef::new(block_ref), instrument_id: InstrumentId::new("I"),
+        venue: Venue::North, covers: covers.iter().map(|id| order(id)).collect(),
+        block_qty, price: 0.5, at: when }
+}
+pub fn open_order(order_id: &str, client_ref: &str, venue_seq: u64, size: Qty, filled: Qty) -> OpenOrder {
+    OpenOrder { order_id: order(order_id), client_ref: client(client_ref),
+        strategy_id: StrategyId::new("m1"), instrument_id: InstrumentId::new("I"),
+        venue: Venue::North, kind: OrderKind::RestingLimit, venue_seq,
+        limit_price: 0.5, size, filled_qty: filled }
+}
+pub fn batch(events: Vec<FillEvent>, blocks: Vec<BlockFill>, next_cursor: &str) -> FillBatch {
+    FillBatch { events, blocks, next_cursor: Cursor::new(next_cursor) }
+}
+pub fn candidate(strategy_id: &str, depth: Qty, expiry: Timestamp) -> StrategyCandidate {
+    StrategyCandidate::new(StrategyId::new(strategy_id), InstrumentId::new(format!("{strategy_id}-N")),
+        InstrumentId::new(format!("{strategy_id}-S")), 0.45, 0.45, depth, depth, expiry)
+}
+
+pub struct FakeClock { now: Cell<Timestamp> }
+impl FakeClock {
+    pub fn new(now: Timestamp) -> Self { Self { now: Cell::new(now) } }
+    pub fn set(&self, now: Timestamp) { self.now.set(now); }
+}
+impl Clock for FakeClock { fn now(&self) -> Timestamp { self.now.get() } }
+
+pub struct FakeInventory { pub balance: Cell<Price> }
+impl FakeInventory { pub fn new(balance: Price) -> Self { Self { balance: Cell::new(balance) } } }
+impl InventorySource for FakeInventory {
+    fn instrument_inventory(&self, _i: &InstrumentId) -> Result<Qty, PortError> { Ok(0) }
+    fn settlement_balance(&self) -> Result<Price, PortError> { Ok(self.balance.get()) }
+}
+
+pub struct FakeStrategies { pub candidates: RefCell<Vec<StrategyCandidate>> }
+impl FakeStrategies { pub fn new(c: Vec<StrategyCandidate>) -> Self { Self { candidates: RefCell::new(c) } } }
+impl StrategySource for FakeStrategies {
+    fn candidates(&self) -> Result<Vec<StrategyCandidate>, PortError> { Ok(self.candidates.borrow().clone()) }
+}
+
+pub struct FakeGateway {
+    failures: RefCell<Vec<(usize, SubmitError)>>,
+    submits: Cell<usize>,
+    pub submitted: RefCell<Vec<OrderRequest>>,
+    pub open: RefCell<Vec<OpenOrder>>,
+    pub cancelled: RefCell<Vec<OrderId>>,
+    pub best_offer: Cell<Price>,
+    next_seq: Cell<u64>,
+}
+impl FakeGateway {
+    pub fn new() -> Self {
+        Self { failures: RefCell::new(Vec::new()), submits: Cell::new(0),
+            submitted: RefCell::new(Vec::new()), open: RefCell::new(Vec::new()),
+            cancelled: RefCell::new(Vec::new()), best_offer: Cell::new(0.5), next_seq: Cell::new(100) }
+    }
+    pub fn fail_on(&self, submission: usize, error: SubmitError) {
+        self.failures.borrow_mut().push((submission, error));
+    }
+    pub fn set_open(&self, open: Vec<OpenOrder>) { *self.open.borrow_mut() = open; }
+    pub fn corrective(&self) -> Vec<(String, Qty)> {
+        self.submitted.borrow().iter().filter(|r| r.kind == OrderKind::ImmediateOrCancel)
+            .map(|r| (r.client_ref.to_string(), r.size)).collect()
+    }
+    pub fn resting(&self) -> Vec<(String, Qty)> {
+        self.submitted.borrow().iter().filter(|r| r.kind == OrderKind::RestingLimit)
+            .map(|r| (r.client_ref.to_string(), r.size)).collect()
+    }
+    pub fn cancels(&self) -> Vec<String> {
+        self.cancelled.borrow().iter().map(|o| o.to_string()).collect()
+    }
+}
+impl OrderGateway for FakeGateway {
+    fn submit(&self, request: &OrderRequest) -> Result<OrderAccepted, SubmitError> {
+        self.submitted.borrow_mut().push(request.clone());
+        let position = self.submits.get() + 1;
+        self.submits.set(position);
+        let failure = { let mut f = self.failures.borrow_mut();
+            f.iter().position(|(a, _)| *a == position).map(|i| f.remove(i).1) };
+        if let Some(error) = failure { return Err(error); }
+        let seq = self.next_seq.get() + 1;
+        self.next_seq.set(seq);
+        Ok(OrderAccepted { order_id: OrderId::new(format!("V-{seq}")), client_ref: request.client_ref.clone(), venue_seq: seq })
+    }
+    fn cancel(&self, order_id: &OrderId) -> Result<(), PortError> {
+        self.cancelled.borrow_mut().push(order_id.clone()); Ok(())
+    }
+    fn open_orders(&self) -> Result<Vec<OpenOrder>, PortError> { Ok(self.open.borrow().clone()) }
+    fn best_offer(&self, _i: &InstrumentId) -> Result<Option<Price>, PortError> { Ok(Some(self.best_offer.get())) }
+}
+
+pub struct FakeFills { pub batches: RefCell<Vec<FillBatch>>, pub polled_with: RefCell<Vec<String>> }
+impl FakeFills {
+    pub fn new(b: Vec<FillBatch>) -> Self { Self { batches: RefCell::new(b), polled_with: RefCell::new(Vec::new()) } }
+    pub fn push(
+
+[110]
+cat > /tmp/audit/audit2.rs <<'EOF'
+include!("/tmp/audit/common.rs");
+
+fn main() {
+    // S8: ack-lost corrective, then the retry is REJECTED, and meanwhile the
+    // resting leg picks up 6 units. What size does the engine eventually send?
+    println!("== S8: ack lost; retry rejected; resting leg later fills 6 ==");
+    let rig = Rig::new(north_filled());
+    rig.gateway.fail_on(3, SubmitError::AcknowledgementLost);   // initial IOC
+    rig.gateway.fail_on(4, SubmitError::Rejected("no depth".into())); // retry
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();                        // c1 place legs
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();   // c2 north fills -> cancel south
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // c3 IOC pex-3 size 10 -> ack lost
+    rig.gateway.set_open(vec![]);
+    // The cancelled resting order's in-flight fill lands: 6 of 10.
+    rig.fills.push(batch(vec![event("V-102", "pex-2", 6, at(OPEN + 100))], vec![], "k2"));
+    rig.clock.set(at(OPEN + 180)); e.run_cycle().unwrap();   // c4 retry pex-3 -> REJECTED
+    println!("  c4 corrective={:?}", rig.gateway.corrective());
+    rig.clock.set(at(OPEN + 240)); e.run_cycle().unwrap();   // c5
+    println!("  c5 corrective={:?}", rig.gateway.corrective());
+    println!("  pending={} positions={}", e.pending_orders().len(), e.positions().len());
+
+    // S8b: same, but the initial IOC was simply Rejected (no lost ack): the
+    // engine drops the record, so the later attempt must size to the residual.
+    println!("== S8b: initial IOC rejected, resting leg later fills 6 ==");
+    let rig = Rig::new(north_filled());
+    rig.gateway.fail_on(3, SubmitError::Rejected("no depth".into()));
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();
+    rig.gateway.set_open(vec![]);
+    rig.fills.push(batch(vec![event("V-102", "pex-2", 6, at(OPEN + 100))], vec![], "k2"));
+    rig.clock.set(at(OPEN + 180)); e.run_cycle().unwrap();
+    println!("  corrective={:?}", rig.gateway.corrective());
+
+    // S9: resting leg shows a partial fill in open_orders when the gap is found
+    println!("== S9: south resting with filled_qty=6 when the gap is found ==");
+    let rig = Rig::new(north_filled());
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 6)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();   // cancel
+    rig.gateway.set_open(vec![]);
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // corrective
+    println!("  corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+
+    // S10: in-flight fill lands in the cycle between cancel and corrective
+    println!("== S10: fill lands in the cycle after the cancel ==");
+    let rig = Rig::new(north_filled());
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();   // cancel south
+    rig.gateway.set_open(vec![]);
+    rig.fills.push(batch(vec![event("V-102", "pex-2", 6, at(OPEN + 100))], vec![], "k2"));
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // corrective sized to residual
+    println!("  corrective={:?}", rig.gateway.corrective());
+
+    // S11: two neutralizations in sequence, first finalized part-filled
+    println!("== S11: IOC1 fills 4 then is finalized; IOC2 ack-lost; then finalized ==");
+    let rig = Rig::new(north_filled());
+    rig.gateway.fail_on(4, SubmitError::AcknowledgementLost);
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();   // cancel
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // IOC1 pex-3 size 10 accepted V-103
+    rig.gateway.set_open(vec![]);
+    rig.fills.push(batch(vec![event("V-103", "pex-3", 4, at(OPEN + 120))],
+                         vec![block("bA", &["V-103"], 0, at(OPEN + 120))], "k2"));
+    rig.clock.set(at(OPEN + 180)); e.run_cycle().unwrap();   // IOC2 pex-4 size 6 -> ack lost
+    println!("  c4 corrective={:?}", rig.gateway.corrective());
+    for i in 4..7 { rig.clock.set(at(OPEN + 60 * i)); e.run_cycle().unwrap(); }
+    println!("  c7 corrective={:?}", rig.gateway.corrective());
+
+    // S12: retired leg with a live unacknowledged neutralization
+    println!("== S12: leg retired (expiry) while an unacknowledged IOC is committed ==");
+    let rig = Rig::new(north_filled());
+    rig.gateway.fail_on(3, SubmitError::AcknowledgementLost);
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // IOC ack lost
+    rig.gateway.set_open(vec![]);
+    rig.clock.set(at(9_800)); e.run_cycle().unwrap();        // leg retires (CANCEL_LEAD 300 of 10_000)
+    println!("  after retire: pending={} cancels={:?}", e.pending_orders().len(), rig.gateway.cancels());
+    rig.clock.set(at(9_900)); e.run_cycle().unwrap();
+    rig.clock.set(at(9_950)); e.run_cycle().unwrap();
+    println!("  corrective={:?}", rig.gateway.corrective());
+
+    // S13: entry leg Transport error
+    println!("== S13: north entry transport error ==");
+    let rig = Rig::new(vec![batch(vec![], vec![], "k0")]);
+    rig.gateway.fail_on(2, SubmitError::Transport("down".into()));
+    let mut e = rig.engine();
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60)); e.run_cycle().unwrap();
+    println!("  resting={:?} pending={} positions={}", rig.gateway.resting(), e.pending
+
+[119]
+cd /tmp/audit_app && python3 - <<'EOF'
+import re
+p='tests/probe.rs'
+s=open(p).read()
+
+# realistic generator: cumulative / filled never exceed the order's size
+s = s.replace("""            0..=4 => steps.push(Step::Event {
+                order_idx: rng.below(orders.len() as u64) as usize,
+                use_foreign_ref: rng.below(4) == 0,
+                cumulative: rng.below(35) as Qty,
+                at: OPEN + rng.below(3_200) as i64,
+            }),""",
+"""            0..=4 => {
+                let idx = rng.below(orders.len() as u64) as usize;
+                let size = orders[idx].size;
+                steps.push(Step::Event {
+                    order_idx: idx,
+                    use_foreign_ref: rng.below(4) == 0,
+                    cumulative: rng.below(size as u64 + 1) as Qty,
+                    at: OPEN + rng.below(3_200) as i64,
+                });
+            }""")
+s = s.replace("""            _ => steps.push(Step::Open {
+                order_idx: rng.below(orders.len() as u64) as usize,
+                use_foreign_ref: rng.below(4) == 0,
+                filled: rng.below(35) as Qty,
+            }),""",
+"""            _ => {
+                let idx = rng.below(orders.len() as u64) as usize;
+                let size = orders[idx].size;
+                steps.push(Step::Open {
+                    order_idx: idx,
+                    use_foreign_ref: rng.below(4) == 0,
+                    filled: rng.below(size as u64 + 1) as Qty,
+                });
+            }""")
+
+# invariant: with a realistic venue nothing can be attributed beyond the size
+s = s.replace("""            assert!(
+                m.direct + m.block <= m.size.max(m.direct),""",
+"""            assert!(
+                m.direct + m.block <= m.size,""")
+s = s.replace("""                "iteration {iteration}: attributed {} exceeds any defensible bound for size {}\\n{scenario:#?}",""",
+"""                "iteration {iteration}: attributed more than the order's size\\n{scenario:#?}",""")
+open(p,'w').write(s)
+EOF
+cargo test --offline --test probe 2>&1 | tail -25
+
+[120]
+cd /tmp/audit_app && python3 - <<'EOF'
+p='tests/probe.rs'
+s=open(p).read()
+s = s.replace("""                "iteration {iteration}: attributed more than the order's size\\n{scenario:#?}",
+                m.direct + m.block,
+                m.size
+            );""",
+"""                "iteration {iteration}: attributed {} exceeds the size {}\\n{scenario:#?}",
+                m.direct + m.block,
+                m.size
+            );""")
+open(p,'w').write(s)
+EOF
+cargo test --offline --test probe 2>&1 | tail -30
+
+[124]
+cat > /tmp/audit/audit3.rs <<'EOF'
+include!("/tmp/audit/common.rs");
+
+fn main() {
+    // X: venue still lists the cancelled leg, with a partial fill, next cycle
+    println!("== X: cancelled leg still listed with filled_qty=4 ==");
+    let rig = Rig::new(north_filled());
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();  // cancel
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 4)]);
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();  // corrective
+    println!("  corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+
+    // W: restart while the venue still lists the cancelled leg
+    println!("== W: restart while the venue still lists the cancelled leg ==");
+    let rig = Rig::new(north_filled());
+    {
+        let mut e = rig.engine();
+        rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+        e.run_cycle().unwrap();
+        rig.clock.set(at(OPEN + 60)); e.run_cycle().unwrap();   // cancel
+    }
+    {
+        let mut e = rig.engine();
+        rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();  // restart, still listed
+        println!("  corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+    }
+
+    // V: leg unconfirmed (absent) then re-appears resting
+    println!("== V: leg absent (unconfirmed) then re-listed ==");
+    let rig = Rig::new(north_filled());
+    let mut e = rig.engine();
+    e.run_cycle().unwrap();                                  // c1 place legs
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();   // c2 north fills, south absent -> nothing
+    println!("  c2 corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();   // c3 now resting -> cancel
+    println!("  c3 corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+    rig.gateway.set_open(vec![]);
+    rig.clock.set(at(OPEN + 180)); e.run_cycle().unwrap();   // c4 corrective
+    println!("  c4 corrective={:?} cancels={:?}", rig.gateway.corrective(), rig.gateway.cancels());
+
+    // U: exact quantity check for the S8 over-acquisition
+    println!("== U: over-acquisition trace (ack lost, retry rejected, 6 fill lands) ==");
+    let rig = Rig::new(north_filled());
+    rig.gateway.fail_on(3, SubmitError::AcknowledgementLost);
+    rig.gateway.fail_on(4, SubmitError::Rejected("no depth".into()));
+    let mut e = rig.engine();
+    rig.gateway.set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 60));  e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 120)); e.run_cycle().unwrap();
+    rig.gateway.set_open(vec![]);
+    rig.fills.push(batch(vec![event("V-102", "pex-2", 6, at(OPEN + 100))], vec![], "k2"));
+    rig.clock.set(at(OPEN + 180)); e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 240)); e.run_cycle().unwrap();
+    rig.clock.set(at(OPEN + 300)); e.run_cycle().unwrap();
+    let snap = rig.store.snapshot();
+    for s in &snap.submissions {
+        println!("   submission {} attributed={} finalized={} order_id={:?}",
+            s.client_ref, s.attributed(), s.finalized, s.order_id.as_ref().map(|o| o.to_string()));
+    }
+    println!("  corrective={:?} positions={:?}", rig.gateway.corrective(),
+        e.positions().iter().map(|p| (p.size_north, p.size_south)).collect::<Vec<_>>());
+}
+EOF
+rustc --edition 2021 -O --extern pairing_engine=/app/target/debug/libpairing_engine.rlib /tmp/audit/audit3.rs -o /tmp/audit/audit3 2>&1 | head -20 && /tmp/audit/audit3
+
+[125]
+cd /tmp/audit_app && cat >> tests/probe.rs <<'EOF'
+
+// ---------------------------------------------------------------------------
+// window boundaries for BLOCKS (the diagnostics only cover events)
+// ---------------------------------------------------------------------------
+
+fn block_at(at_secs: i64) -> AttributionLedger {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN), ("o2", "c2", 2, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(
+        vec![],
+        vec![block("b1", &["o1", "o2"], 7, secs(at_secs))],
+        "k",
+    ));
+    ledger
+}
+
+#[test]
+fn a_block_at_the_window_start_is_inside() {
+    let ledger = block_at(OPEN);
+    assert_eq!(ledger.attributed_for(&client("c1")), 4, "block at window_start is inside");
+    assert_eq!(ledger.attributed_for(&client("c2")), 3, "block at window_start is inside");
+}
+
+#[test]
+fn a_block_at_the_window_end_is_outside_but_still_finalizes() {
+    let ledger = block_at(OPEN + 900);
+    assert_eq!(
+        ledger.attributed_for(&client("c1")) + ledger.attributed_for(&client("c2")),
+        0,
+        "a block at window_start + ATTRIBUTION_WINDOW is outside the window, so its \
+         eligible set is empty and it allocates nothing"
+    );
+    assert!(
+        ledger.is_finalized(&client("c1")) && ledger.is_finalized(&client("c2")),
+        "it still finalizes every order it names"
+    );
+}
+
+#[test]
+fn a_block_one_ms_before_the_window_end_is_inside() {
+    let ledger = block_at(OPEN + 900);
+    let mut ledger = {
+        let mut l = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+        let _ = l.absorb_batch(
+            batch(vec![], vec![block("b1", &["o1"], 4, Timestamp::from_millis((OPEN + 900) * 1000 - 1))], "k"),
+        );
+        l
+    };
+    assert_eq!(ledger.attributed_for(&client("c1")), 4);
+    let _ = ledger;
+}
+
+#[test]
+fn a_block_before_the_window_start_is_outside() {
+    let ledger = block_at(OPEN - 1);
+    assert_eq!(ledger.attributed_for(&client("c1")), 0);
+    assert!(ledger.is_finalized(&client("c1")), "still finalizes");
+}
+
+// ---------------------------------------------------------------------------
+// several blocks in one batch, and events mixed with blocks
+// ---------------------------------------------------------------------------
+
+#[test]
+fn two_blocks_naming_the_same_orders_in_one_batch() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN), ("o2", "c2", 2, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(
+        vec![],
+        vec![
+            block("b1", &["o1", "o2"], 6, secs(OPEN + 10)),
+            block("b2", &["o1", "o2"], 6, secs(OPEN + 20)),
+        ],
+        "k",
+    ));
+    let total = ledger.attributed_for(&client("c1")) + ledger.attributed_for(&client("c2"));
+    assert_eq!(total, 6, "the second block has no basis left: the first closed them");
+}
+
+#[test]
+fn two_identical_blocks_with_different_refs_each_count() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(
+        vec![],
+        vec![
+            block("b1", &["o1"], 4, secs(OPEN + 10)),
+            block("b2", &["o1"], 4, secs(OPEN + 20)),
+        ],
+        "k",
+    ));
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        4,
+        "the first block closed the order, so the second allocates nothing"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// restart / re-track
+// ---------------------------------------------------------------------------
+
+#[test]
+fn re_tracking_does_not_move_the_window_start() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    ledger.track(client("c1"), Some(order("o1")), Some(1), 10, secs(OPEN + 5_000));
+    let _ = ledger.absorb_batch(batch(vec![event("o1", "c1", 4, secs(OPEN + 10))], vec![], "k"));
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        4,
+        "a re-track must not reopen the window: the original start is what the venue granted"
+    );
+}
+
+#[test]
+fn a_restart_preserves_everything_the_ledger_needs() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN), ("o2", "c2", 2, 30, OPEN)]);
+    let _ = ledger.absorb_batch(batch(
+        vec![event("o1", "c1", 4, secs(OPEN))],
+        vec![block("bA", &["o1", "o2"], 17, secs(OPEN + 10))],
+        "k1",
+    ));
+    let restored = AttributionLedger::restore(
+        ledger.submissions(),
+        ledger.absorbed_blocks(),
+        ledger.cursor(),
+    );
+    assert_eq!(restored.attributed_for(&client("c1")), 4 + 3);
+    assert_eq!(restored.attributed_for(&client("c2")), 14);
+    assert!(restored.is_finalized(&client("c1")));
+    assert_eq!(restored.cursor().as_str(), "k1");
+    // replaying the same batch after the restart changes nothing
+    let mut restored = restored;
+    let _ = restored.absorb_batch(batch(
+        vec![event("o1", "c1", 4, secs(OPEN))],
+        vec![block("bA", &["o1", "o2"], 17, secs(OPEN + 10))],
+        "k1",
+    ));
+    assert_eq!(restored.attributed_for(&client("c1")), 7);
+    assert_eq!(restored.attributed_for(&client("c2")), 14);
+}
+
+// ---------------------------------------------------------------------------
+// finality versus later observations
+// ---------------------------------------------------------------------------
+
+#[test]
+fn a_finalized_order_still_takes_a_later_event() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["o1"], 4, secs(OPEN + 10))], "k1"));
+    // the feed replays a per-order event for an order a block already closed
+    let _ = ledger.absorb_batch(batch(vec![event("o1", "c1", 10, secs(OPEN + 5))], vec![], "k2"));
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        4,
+        "a finalized order will never acquire another base unit"
+    );
+}
+
+#[test]
+fn a_finalized_order_still_takes_a_later_open_order_entry() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["o1"], 4, secs(OPEN + 10))],
+
+[127]
+cd /tmp/audit_app && python3 - <<'EOF'
+p='tests/probe.rs'
+s=open(p).read()
+old = """    for i in 0..n_orders {
+        let bucket = rng.below(3) as usize;
+        // ids are recycled across buckets, whose windows are 1000s apart (> 900)
+        let id = id_pool[(rng.below(id_pool.len() as u64)) as usize];
+        orders.push(Order {
+            client_ref: format!("c{i}"),
+            order_id: format!("{id}-{bucket}"),"""
+new = """    // one label per position within a bucket, reused across buckets: labels are
+    // unique inside a window (the venue never hands one id to two live orders)
+    // but recycled once a window has closed (buckets are 1000s apart > 900s).
+    let mut per_bucket = [0usize; 3];
+    for i in 0..n_orders {
+        let bucket = rng.below(3) as usize;
+        let slot = per_bucket[bucket];
+        per_bucket[bucket] += 1;
+        let id = id_pool[slot % id_pool.len()];
+        orders.push(Order {
+            client_ref: format!("c{i}"),
+            order_id: format!("{id}"),"""
+assert old in s
+s = s.replace(old,new)
+# drop the label-copying hack (labels now recycle naturally)
+old2 = """    // make some records share an order_id label only across disjoint windows:
+    // occasionally copy an earlier order's label into a far bucket
+    if n_orders >= 3 && rng.below(2) == 0 {
+        let src = orders[0].order_id.clone();
+        let last = orders.len() - 1;
+        orders[last].order_id = src;
+    }
+"""
+assert old2 in s
+s = s.replace(old2,"")
+open(p,'w').write(s)
+EOF
+cargo test --offline --test probe 2>&1 | tail -12
+
+[131]
+cd /tmp/audit_app && python3 - <<'EOF'
+p='tests/probe.rs'
+s=open(p).read()
+# invariant: only check the block arithmetic never exceeds the order's size
+s = s.replace("""            assert!(
+                m.direct + m.block <= m.size,
+                "iteration {iteration}: attributed {} exceeds the size {}\\n{scenario:#?}",
+                m.direct + m.block,
+                m.size
+            );""",
+"""            assert!(
+                m.block <= m.size,
+                "iteration {iteration}: block progress {} exceeds the size {}\\n{scenario:#?}",
+                m.block,
+                m.size
+            );""")
+# bias observation timestamps onto the window boundaries
+s = s.replace("""                    at: OPEN + rng.below(3_200) as i64,
+                });""",
+"""                    at: boundary_at(rng),
+                });""")
+s = s.replace("""                    at: OPEN + rng.below(3_200) as i64,
+                });""",
+"""                    at: boundary_at(rng),
+                });""")
+s = s.replace("""fn gen(rng: &mut Rng) -> Scenario {""",
+"""/// Timestamps biased onto the half-open window boundaries: the instant before
+/// the start, the start itself, one past it, the last instant inside, the end
+/// (excluded) and one past the end.
+fn boundary_at(rng: &mut Rng) -> i64 {
+    let bucket = rng.below(3) as i64;
+    let offset = match rng.below(7) {
+        0 => -1,
+        1 => 0,
+        2 => 1,
+        3 => 450,
+        4 => 899,
+        5 => 900,
+        _ => 901,
+    };
+    OPEN + bucket * 1_000 + offset
+}
+
+fn gen(rng: &mut Rng) -> Scenario {""")
+open(p,'w').write(s)
+EOF
+cd /tmp/audit_app && cargo test --offline --test probe 2>&1 | tail -12
+
+[133]
+cd /tmp/audit_app && cat >> tests/probe.rs <<'EOF'
+
+// ---------------------------------------------------------------------------
+// concrete demonstrations of the two suspected defects
+// ---------------------------------------------------------------------------
+
+/// A: an out-of-window observation binds a recycled label to the record, and a
+/// later block naming that label then closes the wrong order.
+#[test]
+fn demo_out_of_window_label_binds_and_then_finalizes() {
+    let mut ledger = AttributionLedger::new();
+    ledger.track(client("c1"), None, None, 10, secs(OPEN));
+    // A replay long after the window closed, under a label the venue has since
+    // recycled. It is outside the window, so it is not this order's evidence.
+    let _ = ledger.absorb_batch(batch(
+        vec![event("X", "c1", 6, secs(OPEN + 5_000))],
+        vec![],
+        "k1",
+    ));
+    assert_eq!(ledger.attributed_for(&client("c1")), 0, "not attributed");
+    assert_eq!(
+        ledger.order_for(&client("c1")),
+        None,
+        "the label must not be learned from an out-of-window observation"
+    );
+    // A block for whatever order X is now: it must not touch c1.
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["X"], 10, secs(OPEN + 5_100))], "k2"));
+    assert!(
+        !ledger.is_finalized(&client("c1")),
+        "a block naming a label this record does not carry must not close it"
+    );
+    assert_eq!(ledger.outstanding_for(&client("c1")), 10);
+}
+
+/// B: the same mis-bound label lets a block inside the window invent base units.
+#[test]
+fn demo_out_of_window_label_binds_and_then_allocates() {
+    let mut ledger = AttributionLedger::new();
+    ledger.track(client("c1"), None, None, 10, secs(OPEN));
+    let _ = ledger.absorb_batch(batch(
+        vec![event("X", "c1", 6, secs(OPEN + 5_000))],
+        vec![],
+        "k1",
+    ));
+    // A block matched inside c1's window names X - some other order, as far as
+    // the engine can tell, since the only evidence tying X to c1 was discarded.
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b2", &["X"], 6, secs(OPEN + 200))], "k2"));
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        0,
+        "6 base units were attributed on the strength of a label the engine never learned"
+    );
+}
+
+/// C: finality does not stop later direct observations.
+#[test]
+fn demo_finality_does_not_stop_later_direct_progress() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["o1"], 4, secs(OPEN + 10))], "k1"));
+    assert_eq!(ledger.attributed_for(&client("c1")), 4);
+    // the feed replays a per-order event for an order the block has closed
+    let _ = ledger.absorb_batch(batch(vec![event("o1", "c1", 10, secs(OPEN + 5))], vec![], "k2"));
+    assert_eq!(
+        ledger.attributed_for(&client("c1")),
+        4,
+        "a finalized order will never acquire another base unit"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// misc edge probes
+// ---------------------------------------------------------------------------
+
+#[test]
+fn a_block_larger_than_the_basis_is_capped() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN), ("o2", "c2", 2, 30, OPEN)]);
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["o1", "o2"], 500, secs(OPEN + 10))], "k"));
+    assert_eq!(ledger.attributed_for(&client("c1")), 10);
+    assert_eq!(ledger.attributed_for(&client("c2")), 30);
+}
+
+#[test]
+fn a_fully_filled_order_is_skipped_but_still_closed() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN), ("o2", "c2", 2, 10, OPEN)]);
+    let _ = ledger.absorb_batch(batch(vec![event("o1", "c1", 10, secs(OPEN))], vec![], "k1"));
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["o1", "o2"], 5, secs(OPEN + 10))], "k2"));
+    assert_eq!(ledger.attributed_for(&client("c1")), 10, "nothing left to allocate");
+    assert_eq!(ledger.attributed_for(&client("c2")), 5, "basis is c2's outstanding alone");
+    assert!(ledger.is_finalized(&client("c1")), "still closed by the block");
+}
+
+#[test]
+fn a_repeat_track_does_not_overwrite_a_known_label() {
+    let mut ledger = tracker(&[("o1", "c1", 1, 10, OPEN)]);
+    ledger.track(client("c1"), Some(order("o2")), Some(9), 99, secs(OPEN + 500));
+    assert_eq!(ledger.order_for(&client("c1")), Some(order("o1")));
+    assert_eq!(ledger.outstanding_for(&client("c1")), 10, "size is unchanged too");
+}
+EOF
+cargo test --offline --test probe 2>&1 | grep -E "^(test|failures|---- )|panicked|left:|right:|assert|must not|were attrib|will never" | head -60
+
+[138]
+cd /tmp/audit_app && python3 - <<'EOF'
+p='tests/probe.rs'
+s=open(p).read()
+# demo A: check finalization before the label assertion
+s = s.replace("""    assert_eq!(ledger.attributed_for(&client("c1")), 0, "not attributed");
+    assert_eq!(
+        ledger.order_for(&client("c1")),
+        None,
+        "the label must not be learned from an out-of-window observation"
+    );
+    // A block for whatever order X is now: it must not touch c1.
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["X"], 10, secs(OPEN + 5_100))], "k2"));
+    assert!(
+        !ledger.is_finalized(&client("c1")),
+        "a block naming a label this record does not carry must not close it"
+    );""",
+"""    assert_eq!(ledger.attributed_for(&client("c1")), 0, "not attributed");
+    // A block for whatever order X is now: it must not touch c1.
+    let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &["X"], 10, secs(OPEN + 5_100))], "k2"));
+    assert!(
+        !ledger.is_finalized(&client("c1")),
+        "a block naming a label this record does not carry must not close it: the \\
+         record learned X from an observation outside its own window"
+    );
+    assert_eq!(
+        ledger.order_for(&client("c1")),
+        None,
+        "the label must not be learned from an out-of-window observation"
+    );""")
+s += '''
+/// The whole divisible total is placed: shares plus remainder units equal
+/// min(block_qty, basis), for many shapes of eligible set.
+#[test]
+fn every_base_unit_of_the_divisible_total_is_placed() {
+    let mut rng = Rng(0x1234_5678_9ABC_DEF0);
+    for _ in 0..2_000 {
+        let n = 1 + rng.below(5) as usize;
+        let mut orders: Vec<(&str, &str, u64, Qty, i64)> = Vec::new();
+        for i in 0..n {
+            let size = 1 + rng.below(20) as Qty;
+            orders.push((Box::leak(format!("o{i}").into_boxed_str()), Box::leak(format!("c{i}").into_boxed_str()), i as u64, size, OPEN));
+        }
+        let mut ledger = tracker(&orders);
+        let basis: Qty = orders.iter().map(|o| o.3).sum();
+        let qty = rng.below((basis * 2) as u64) as Qty;
+        let ids: Vec<&str> = orders.iter().map(|o| o.0).collect();
+        let _ = ledger.absorb_batch(batch(vec![], vec![block("b1", &ids, qty, secs(OPEN + 10))], "k"));
+        let placed: Qty = orders.iter().map(|o| ledger.attributed_for(&client(o.1))).sum();
+        let expected = qty.min(basis);
+        assert_eq!(
+            placed, expected,
+            "sizes {:?} qty {qty}: the block must place min(q, basis) = {expected}",
+            orders.iter().map(|o| o.3).collect::<Vec<_>>()
+        );
+    }
+}
+'''
+open(p,'w').write(s)
+EOF
+cargo test --offline --test probe 2>&1 | grep -E "^test |test result|left:|right:|panicked" | head -40
+
+[161]
+python3 - <<'EOF'
+import re
+p='tests/diagnostics.rs'
+s=open(p).read()
+s=s.replace('window_end() + 4_000','at(OPEN + 5_000)').replace('window_end() + 4_100','at(OPEN + 5_100)')
+open(p,'w').write(s)
+EOF
+cargo test --offline --test diagnostics 2>&1 | tail -25

@@ -1,0 +1,63 @@
+    SNAPSHOT 000 stepstart ed2ac9061e16
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.toml" -o -name "*.rs" | head -50; echo "---"; ls -la /app ::  150 Sep  5 01:27 spec drwxr-xr-x 1 root root  50 Aug 12 15:43 src drwxr-xr-x 1 root root  72 Sep  5 01:27 target drwxr-xr-x 1 root root  42 Sep  5 01:27 tests 
+[14] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 025 step14 0ae2719c1d1f
+[15] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 026 step15 478eaa55a974
+[16] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 027 step16 06e711a243ed
+[17] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 028 step17 467c0dfc7666
+[18] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 029 step18 86a27d3866ea
+[19] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 030 step19 dc56457d0319
+[20] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 031 step20 7bcf52247df8
+[21] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 032 step21 d43d9ee5cb2c
+[22] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 033 step22 33e29af80d39
+[23] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 034 step23 fe35d9e6cce1
+[24] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 035 step24 e59c5444fbb8
+[25] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 036 step25 abf1fce40c12
+[26] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 037 step26 f0910b737c87
+[27] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -30 :: 
+[28] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -30 :: 
+[29] EDIT /app/tests/diagnostics.rs -> E ok
+[30] EDIT /app/tests/diagnostics.rs -> E ok
+[31] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -25 :: 
+[32] BASH rc=0 0.0s :: cargo run --offline --bin reproduce 2>&1 | tail -40 :: 
+[34] EDIT /app/tests/diagnostics.rs -> E ok
+[35] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -30 :: 
+[36] EDIT /app/tests/diagnostics.rs -> E ok
+[37] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -12 :: 
+[38] BASH rc=0 0.0s :: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning|error" -A 4 | head -40; echo "===  :: === clean === 
+[40] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 051 step40 8426648d2130
+[41] BASH rc=0 0.0s :: grep -n "self.finalize(&block.covers)" src/engine/fill_classifier.rs :: 284:            self.finalize(&block.covers); 315:        self.finalize(&block.covers); 
+[42] BASH rc=0 0.0s :: sed -i 's/ self.finalize(&block.covers);/ self.finalize(\&covered);/; s/^ self.finalize(&block.cover :: 284:            self.finalize(&covered); 315:        self.finalize(&covered); 
+    SNAPSHOT 053 step42 f78e23d4582f
+[43] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 054 step43 5c244e94e9e5
+[44] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 055 step44 7e9dff28fb72
+[45] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -5 && cargo test --offline --test diagnostics 2>&1 | tail -6 :: 
+[46] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 057 step46 eab078730cc7
+[47] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head -20; cargo test --offline --test :: 
+[48] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 059 step48 8c58c1256dad
+[49] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 060 step49 1e216f095c90
+[50] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head -20; cargo test --offline --test :: 
+[51] BASH rc=0 0.0s :: cargo run --offline --bin reproduce 2>&1 | grep -cE "^ PASS"; cargo run --offline --bin reproduce 2> :: 0 exit=0 
+[53] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 064 step53 1cd828f2bb61
+[54] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "^(warning|error)" -A 6 | head; cargo test --offline --test dia :: 
+[55] BASH rc=0 0.0s :: ls -la --time-style=+%H:%M src/types/ src/ports/ src/engine/ tests/ src/*.rs | grep -v "^total\|^d" ::  snapshot.rs -rw-r--r-- 1 root root 1737 23:00 strategy.rs -rw-r--r-- 1 root root 1827 23:00 time.rs  tests/: -rw-r--r-- 1 root root 25342 01:03 diagnostics.rs 
+[57] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -2 && echo "--- diagnostics ---" && cargo test --offline --test di :: --- diagnostics --- 

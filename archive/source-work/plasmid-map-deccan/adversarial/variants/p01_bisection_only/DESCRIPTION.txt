@@ -1,0 +1,1 @@
+branch and bound that only halves intervals: no branching on band windows or cut order

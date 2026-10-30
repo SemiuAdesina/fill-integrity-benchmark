@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/include/roundel/runtime.hpp:137:18: error: member access into incomplete type 'Conductor'
+/app2/src/runtime.cpp:139:9: error: use of undeclared identifier 'release_pending'
+/app2/src/runtime.cpp:203:11: error: no member named 'target' in 'roundel::Conductor::Pending'

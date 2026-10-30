@@ -1,0 +1,10 @@
+tree diff vs pkg:
+(end diff)
+fresh fixtures: 15 parsed and well-formed; oracle A = oracle B = shipped certified answer on 15
+fresh ORACLE: MODE=oracle LABEL=fresh REWARD=1 RC=0 ELAPSED=2s RUNLOG: CONTROL ok verdict passed=13/13 control=1 probe_failed_closed=0 reward=0  FAILS: none 
+fresh NOP: MODE=nop LABEL=fresh REWARD=0 RC=0 ELAPSED=2s RUNLOG: CONTROL ok verdict passed=4/13 control=1 probe_failed_closed=0 reward=0  FAILS: accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output, 
+fresh HOSTILE(h01): MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=3s RUNLOG: CONTROL ok verdict passed=4/13 control=1 probe_failed_closed=0 reward=0  FAILS: accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output, 
+fresh HANG(h09):   (patched build/run failed: ) MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=125s 
+fresh ADVERSARIAL(p03): MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=3s RUNLOG: CONTROL ok verdict passed=4/13 control=1 probe_failed_closed=0 reward=0  FAILS: accept_layouts_restored_exactly,next_state_trace_replay,topology_move_ragged_shards,tied_tensors_and_replicas,role_separation_and_resizing,suffix_rule_older_samples,coverage_and_inactive_targets,block_boundaries_and_ordering,deterministic_output, 
+fresh SOLVER_B: MODE=patched LABEL=fresh REWARD=1 RC=0 ELAPSED=3s RUNLOG: CONTROL ok verdict passed=13/13 control=1 probe_failed_closed=0 reward=0  FAILS: none 
+DONE

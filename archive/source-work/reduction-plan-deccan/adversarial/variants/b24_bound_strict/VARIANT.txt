@@ -1,0 +1,3 @@
+b24_bound_strict
+search bound
+abandons a partial tree whose bound equals the best completion (loses ties decided by allocation, bytes or key)

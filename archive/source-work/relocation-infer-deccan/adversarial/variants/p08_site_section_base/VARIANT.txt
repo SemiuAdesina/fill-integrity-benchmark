@@ -1,0 +1,3 @@
+p08_site_section_base
+08 address-model-naive
+takes B from the section containing the site instead of the symbol's section

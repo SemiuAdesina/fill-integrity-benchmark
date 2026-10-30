@@ -1,0 +1,17 @@
+{
+ "status_a": "infeasible",
+ "status_b": "infeasible",
+ "agree": true,
+ "seconds_a": 0.003,
+ "seconds_b": 0.002,
+ "replays": 396,
+ "legal": 146,
+ "matching": 0,
+ "within_budget": true,
+ "fixture": "h_infeasible_completion",
+ "seed": 1800,
+ "separations": [],
+ "sources": 3,
+ "links": 15,
+ "switches": 3
+}

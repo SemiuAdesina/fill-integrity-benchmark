@@ -1,0 +1,217 @@
+   Compiling polyploid-phase v1.0.0 (/Users/macbok/benchmark-suite-work/polyploid-phase-deccan/reupload-difficulty/lab/cand/slot07)
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:141:47
+    |
+141 | ...                   x[(((a1p * NS + b1p) * NS + a2p) * NS + b2p)] + ta[a1 * NS + a1p];
+    |                         ^                                        ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+141 -                                             x[(((a1p * NS + b1p) * NS + a2p) * NS + b2p)] + ta[a1 * NS + a1p];
+141 +                                             x[((a1p * NS + b1p) * NS + a2p) * NS + b2p] + ta[a1 * NS + a1p];
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:146:40
+    |
+146 | ...                   w1[(((a1 * NS + b1p) * NS + a2p) * NS + b2p)] = best;
+    |                          ^                                       ^
+    |
+help: remove these parentheses
+    |
+146 -                                     w1[(((a1 * NS + b1p) * NS + a2p) * NS + b2p)] = best;
+146 +                                     w1[((a1 * NS + b1p) * NS + a2p) * NS + b2p] = best;
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:157:52
+    |
+157 | ...                   let v = w1[(((a1 * NS + b1p) * NS + a2p) * NS + b2p)]
+    |                                  ^                                       ^
+    |
+help: remove these parentheses
+    |
+157 -                                         let v = w1[(((a1 * NS + b1p) * NS + a2p) * NS + b2p)]
+157 +                                         let v = w1[((a1 * NS + b1p) * NS + a2p) * NS + b2p]
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:163:40
+    |
+163 | ...                   w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)] = best;
+    |                          ^                                      ^
+    |
+help: remove these parentheses
+    |
+163 -                                     w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)] = best;
+163 +                                     w2[((a1 * NS + b1) * NS + a2p) * NS + b2p] = best;
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:174:52
+    |
+174 | ...                   let v = w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)]
+    |                                  ^                                      ^
+    |
+help: remove these parentheses
+    |
+174 -                                         let v = w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)]
+174 +                                         let v = w2[((a1 * NS + b1) * NS + a2p) * NS + b2p]
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:180:40
+    |
+180 | ...                   w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)] = best;
+    |                          ^                                     ^
+    |
+help: remove these parentheses
+    |
+180 -                                     w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)] = best;
+180 +                                     w3[((a1 * NS + b1) * NS + a2) * NS + b2p] = best;
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:192:52
+    |
+192 | ...                   let v = w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)]
+    |                                  ^                                     ^
+    |
+help: remove these parentheses
+    |
+192 -                                         let v = w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)]
+192 +                                         let v = w3[((a1 * NS + b1) * NS + a2) * NS + b2p]
+    |
+
+warning: unnecessary parentheses around index expression
+   --> src/solver/bounds.rs:198:41
+    |
+198 | ...                   row[(((a1 * NS + b1) * NS + a2) * NS + b2)] = best;
+    |                           ^                                    ^
+    |
+help: remove these parentheses
+    |
+198 -                                     row[(((a1 * NS + b1) * NS + a2) * NS + b2)] = best;
+198 +                                     row[((a1 * NS + b1) * NS + a2) * NS + b2] = best;
+    |
+
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `c`
+  --> src/solver/lagrange.rs:40:19
+   |
+40 |             .map(|c| {
+   |                   ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+warning: constant `PAIR` is never used
+  --> src/solver/bounds.rs:24:11
+   |
+24 | pub const PAIR: usize = NJ * NJ;
+   |           ^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `Bounds` is never constructed
+  --> src/solver/bounds.rs:27:12
+   |
+27 | pub struct Bounds {
+   |            ^^^^^^
+
+warning: associated items `new`, `has_pairs`, `bound_single`, `bound_single_at`, `bound_pair`, and `bound_pair_at` are never used
+   --> src/solver/bounds.rs:39:12
+    |
+ 38 | impl Bounds {
+    | ----------- associated items in this implementation
+ 39 |     pub fn new(model: &Model, use_pairs: bool) -> Bounds {
+    |            ^^^
+...
+221 |     pub fn has_pairs(&self) -> bool {
+    |            ^^^^^^^^^
+...
+226 |     pub fn bound_single(&self, depth: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^^^
+...
+231 |     pub fn bound_single_at(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^^^^^^
+...
+251 |     pub fn bound_pair(&self, depth: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^
+...
+256 |     pub fn bound_pair_at(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^^^^
+
+warning: function `single_max_node` is never used
+   --> src/solver/bounds.rs:292:4
+    |
+292 | fn single_max_node(model: &Model, c: usize, m: usize, j: usize) -> f64 {
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `pair_max_node` is never used
+   --> src/solver/bounds.rs:309:4
+    |
+309 | fn pair_max_node(model: &Model, c1: usize, c2: usize, m: usize, j: usize) -> f64 {
+    |    ^^^^^^^^^^^^^
+
+warning: struct `Lagrange` is never constructed
+  --> src/solver/lagrange.rs:28:12
+   |
+28 | pub struct Lagrange {
+   |            ^^^^^^^^
+
+warning: multiple associated items are never used
+   --> src/solver/lagrange.rs:38:12
+    |
+ 35 | impl Lagrange {
+    | ------------- associated items in this implementation
+...
+ 38 |     pub fn new(model: &Model) -> Lagrange {
+    |            ^^^
+...
+ 52 |     fn node_costs(
+    |        ^^^^^^^^^^
+...
+ 85 |     pub fn evaluate(&self, model: &Model, picks: &mut Vec<Vec<usize>>) -> f64 {
+    |            ^^^^^^^^
+...
+171 |     fn cheapest(&self, model: &Model, m: usize) -> f64 {
+    |        ^^^^^^^^
+...
+186 |     fn consensus(&self, model: &Model, m: usize) -> usize {
+    |        ^^^^^^^^^
+...
+205 |     pub fn optimize(&mut self, model: &Model, lower: f64, rounds: usize) -> f64 {
+    |            ^^^^^^^^
+...
+266 |     pub fn suffix(&self, model: &Model) -> Suffix {
+    |            ^^^^^^
+
+warning: struct `Suffix` is never constructed
+   --> src/solver/lagrange.rs:321:12
+    |
+321 | pub struct Suffix {
+    |            ^^^^^^
+
+warning: method `bound` is never used
+   --> src/solver/lagrange.rs:332:12
+    |
+329 | impl Suffix {
+    | ----------- method in this implementation
+...
+332 |     pub fn bound(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:348:10
+    |
+348 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 20 warnings (run `cargo fix --lib -p polyploid-phase` to apply 10 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.73s

@@ -1,0 +1,7 @@
+/b/runtime.cpp:178:2: error: expected '}'
+  178 | }
+      |  ^
+/b/runtime.cpp:8:19: note: to match this '{'
+    8 | namespace roundel {
+      |                   ^
+1 error generated.

@@ -1,0 +1,40 @@
+{
+ "fixture": "h_combine_choice",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l07",
+    "l14"
+   ],
+   [
+    "l01",
+    "l13",
+    "l14"
+   ],
+   [
+    "l05",
+    "l11",
+    "l13",
+    "l14"
+   ]
+  ],
+  "combine": [
+   "R2"
+  ],
+  "sink_value": 626
+ },
+ "observables": {
+  "completion": 10,
+  "allocation": 8,
+  "total_bytes": 56,
+  "link_bytes": {
+   "l07": 8,
+   "l01": 8,
+   "l05": 8,
+   "l11": 8,
+   "l13": 16,
+   "l14": 8
+  }
+ }
+}

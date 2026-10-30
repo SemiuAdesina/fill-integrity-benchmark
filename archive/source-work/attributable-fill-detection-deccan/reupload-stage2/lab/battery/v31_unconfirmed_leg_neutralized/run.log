@@ -1,0 +1,4 @@
+MODE=patched LABEL=v4-v31_unconfirmed_leg_neutralized REWARD=0 RC=1 ELAPSED=2s TOTAL 53 FAILED 2
+FAILS: v15_a_leg_of_unknown_state_is_never_neutralized_against v26_a_recycled_identifier_names_the_order_that_holds_it_now 
+RUNLOG: CONTROL ok timing runner_build=1 runner_execution=0 judge=1 verdict total=53 failed=2 control=1 reward=0 
+WORKDIR: /tmp/afd-S7agA3

@@ -1,0 +1,72 @@
+160	        }
+161	    }
+162	
+163	    /// Match up corrective orders whose fate was unknown when they were sent.
+164	    ///
+165	    /// A record without an `order_id` is one the venue never acknowledged. The
+166	    /// client reference is the venue's idempotency key, so resubmitting under it
+167	    /// returns the original order rather than creating a second one.
+168	    fn reconcile_neutralizations(&mut self, now: Timestamp) {
+169	        let mut resolved: Vec<(usize, OrderId)> = Vec::new();
+170	        for (index, record) in self.neutralizations.iter().enumerate() {
+171	            if record.order_id.is_some() {
+172	                continue;
+173	            }
+174	            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {
+175	                resolved.push((index, order_id));
+176	            }
+177	        }
+178	        for (index, order_id) in resolved {
+179	            self.neutralizations[index].order_id = Some(order_id);
+180	        }
+181	
+182	        let unconfirmed: Vec<NeutralizationRecord> = self
+183	            .neutralizations
+184	            .iter()
+185	            .filter(|record| record.order_id.is_none())
+186	            .cloned()
+187	            .collect();
+188	        for record in unconfirmed {
+189	            let request = Self::neutralization_request(&record);
+190	            match self.gateway.submit(&request) {
+191	                Ok(accepted) => {
+192	                    self.ledger.track(
+193	                        record.client_ref.clone(),
+194	                        Some(accepted.order_id.clone()),
+195	                        Some(accepted.venue_seq),
+196	                        record.size,
+197	                        now,
+198	                    );
+199	                    if let Some(slot) = self
+200	                        .neutralizations
+201	                        .iter_mut()
+202	                        .find(|slot| slot.client_ref == record.client_ref)
+203	                    {
+204	                        slot.order_id = Some(accepted.order_id);
+205	                    }
+206	                }
+207	                // Still unknown, so still unconfirmed. The record stays and the
+208	                // next cycle tries again under the same client reference.
+209	                Err(SubmitError::AcknowledgementLost) => {}
+210	                // The venue's idempotency means a retry under a reference it
+211	                // already knows resolves onto that order, so a rejection here
+212	                // says nothing exists under this reference. Nothing was created,
+213	                // so the record goes and a later cycle recomputes the exposure.
+214	                Err(_) => {
+215	                    self.neutralizations
+216	                        .retain(|slot| slot.client_ref != record.client_ref);
+217	                }
+218	            }
+219	        }
+220	    }
+221	
+222	    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {
+223	        OrderRequest {
+224	            strategy_id: record.strategy_id.clone(),
+225	            instrument_id: record.instrument_id.clone(),
+226	            venue: record.venue,
+227	            kind: OrderKind::ImmediateOrCancel,
+228	            limit_price: record.limit_price,
+229	            size: record.size,
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "        }\n    }\n\n    /// Match up corrective orders whose fate was unknown when they were sent.\n    ///\n    /// A record without an `order_id` is one the venue never acknowledged. The\n    /// client reference is the venue's idempotency key, so resubmitting under it\n    /// returns the original order rather than creating a second one.\n    fn reconcile_neutralizations(&mut self, now: Timestamp) {\n        let mut resolved: Vec<(usize, OrderId)> = Vec::new();\n        for (index, record) in self.neutralizations.iter().enumerate() {\n            if record.order_id.is_some() {\n                continue;\n            }\n            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {\n                resolved.push((index, order_id));\n            }\n        }\n        for (index, order_id) in resolved {\n            self.neutralizations[index].order_id = Some(order_id);\n        }\n\n        let unconfirmed: Vec<NeutralizationRecord> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .cloned()\n            .collect();\n        for record in unconfirmed {\n            let request = Self::neutralization_request(&record);\n            match self.gateway.submit(&request) {\n                Ok(accepted) => {\n                    self.ledger.track(\n                        record.client_ref.clone(),\n                        Some(accepted.order_id.clone()),\n                        Some(accepted.venue_seq),\n                        record.size,\n                        now,\n                    );\n                    if let Some(slot) = self\n                        .neutralizations\n                        .iter_mut()\n                        .find(|slot| slot.client_ref == record.client_ref)\n                    {\n                        slot.order_id = Some(accepted.order_id);\n                    }\n                }\n                // Still unknown, so still unconfirmed. The record stays and the\n                // next cycle tries again under the same client reference.\n                Err(SubmitError::AcknowledgementLost) => {}\n                // The venue's idempotency means a retry under a reference it\n                // already knows resolves onto that order, so a rejection here\n                // says nothing exists under this reference. Nothing was created,\n                // so the record goes and a later cycle recomputes the exposure.\n                Err(_) => {\n                    self.neutralizations\n                        .retain(|slot| slot.client_ref != record.client_ref);\n                }\n            }\n        }\n    }\n\n    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {\n        OrderRequest {\n            strategy_id: record.strategy_id.clone(),\n            instrument_id: record.instrument_id.clone(),\n            venue: record.venue,\n            kind: OrderKind::ImmediateOrCancel,\n            limit_price: record.limit_price,\n            size: record.size,", "numLines": 70, "startLine": 160, "totalLines": 559}}

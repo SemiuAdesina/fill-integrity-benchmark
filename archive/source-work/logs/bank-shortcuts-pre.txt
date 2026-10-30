@@ -1,0 +1,27 @@
+LABEL=bank-_base POPULATION=10 TOTAL=10 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=bank-_faithful_reimplementation POPULATION=10 TOTAL=10 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=bank-first_legal_candidate POPULATION=10 TOTAL=10 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups canonical recorded rotate=3;stages=3>0,4>1, expected rotate=3;stages=4>1
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=bank-ignore_broadcast POPULATION=10 TOTAL=10 FAILED=4 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups the call threw where a result was required
+  FAIL conflict_disambiguates canonical recorded rotate=0;stages=, expected rotate=1;stages=
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+LABEL=bank-ignore_lane_rotation POPULATION=10 TOTAL=10 FAILED=5 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL broadcast_groups the call threw where a result was required
+  FAIL conflict_disambiguates the call threw where a result was required
+  FAIL global_evidence the call threw where a result was required
+  FAIL compound_replay the call threw where a result was required
+  FAIL compound_global_tie the call threw where a result was required
+LABEL=bank-no_canonical_tie POPULATION=10 TOTAL=10 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=bank-no_minimum_cost_rule POPULATION=10 TOTAL=10 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=bank-numeric_tie_key POPULATION=10 TOTAL=10 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0,6>2, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=bank-single_trace_fit POPULATION=10 TOTAL=10 FAILED=3 CONTROL=1 REGRESSION=1 REWARD=0
+  FAIL global_evidence canonical recorded rotate=1;stages=, expected rotate=1;stages=3>0,4>1
+  FAIL compound_replay canonical recorded rotate=7;stages=4>5,5>1, expected rotate=7;stages=4>5,5>1,6>2
+  FAIL compound_global_tie canonical recorded rotate=3;stages=4>1,1>0, expected rotate=11;stages=4>1,1>0,5>3
+LABEL=bank-skip_minimum_stage_count POPULATION=10 TOTAL=10 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1
+LABEL=bank-unordered_xor_stages POPULATION=10 TOTAL=10 FAILED=0 CONTROL=1 REGRESSION=1 REWARD=1

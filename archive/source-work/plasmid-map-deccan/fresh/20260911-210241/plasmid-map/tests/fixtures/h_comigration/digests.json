@@ -1,0 +1,232 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 150,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "BspHI",
+   "enzymes": [
+    "BspHI"
+   ],
+   "bands": [
+    {
+     "length": 262,
+     "multiplicity": 1
+    },
+    {
+     "length": 871,
+     "multiplicity": 1
+    },
+    {
+     "length": 997,
+     "multiplicity": 1
+    },
+    {
+     "length": 1145,
+     "multiplicity": 1
+    },
+    {
+     "length": 1666,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI",
+   "enzymes": [
+    "DraI"
+   ],
+   "bands": [
+    {
+     "length": 693,
+     "multiplicity": 1
+    },
+    {
+     "length": 1569,
+     "multiplicity": 1
+    },
+    {
+     "length": 2780,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI",
+   "enzymes": [
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 5045,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 642,
+     "multiplicity": 1
+    },
+    {
+     "length": 1893,
+     "multiplicity": 1
+    },
+    {
+     "length": 2560,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI+SspI",
+   "enzymes": [
+    "DraI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 227,
+     "multiplicity": 1
+    },
+    {
+     "length": 637,
+     "multiplicity": 1
+    },
+    {
+     "length": 688,
+     "multiplicity": 2
+    },
+    {
+     "length": 1226,
+     "multiplicity": 1
+    },
+    {
+     "length": 1608,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BspHI+FspI",
+   "enzymes": [
+    "BspHI",
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 265,
+     "multiplicity": 1
+    },
+    {
+     "length": 388,
+     "multiplicity": 1
+    },
+    {
+     "length": 612,
+     "multiplicity": 1
+    },
+    {
+     "length": 856,
+     "multiplicity": 1
+    },
+    {
+     "length": 1165,
+     "multiplicity": 1
+    },
+    {
+     "length": 1702,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "BspHI+SspI",
+   "enzymes": [
+    "BspHI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 246,
+     "multiplicity": 1
+    },
+    {
+     "length": 262,
+     "multiplicity": 1
+    },
+    {
+     "length": 410,
+     "multiplicity": 1
+    },
+    {
+     "length": 616,
+     "multiplicity": 1
+    },
+    {
+     "length": 960,
+     "multiplicity": 1
+    },
+    {
+     "length": 1177,
+     "multiplicity": 1
+    },
+    {
+     "length": 1284,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI+FspI",
+   "enzymes": [
+    "DraI",
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 334,
+     "multiplicity": 1
+    },
+    {
+     "length": 360,
+     "multiplicity": 1
+    },
+    {
+     "length": 1547,
+     "multiplicity": 1
+    },
+    {
+     "length": 2797,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "FspI+SspI",
+   "enzymes": [
+    "FspI",
+    "SspI"
+   ]
+  },
+  {
+   "id": "BspHI+DraI",
+   "enzymes": [
+    "BspHI",
+    "DraI"
+   ]
+  }
+ ]
+}

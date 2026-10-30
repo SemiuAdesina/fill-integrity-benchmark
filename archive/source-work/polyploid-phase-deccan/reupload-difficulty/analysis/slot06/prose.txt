@@ -1,0 +1,55 @@
+[step 2] I'll start by reading the spec and the existing code.
+
+[step 16] Now let me look at the example files and current build state.
+
+[step 17] Now I'll write the solver. Starting with the core tables and Viterbi:
+
+[step 22] Now fixing the move-scan formula (the double-reduction term must cancel correctly):
+
+[step 32] The search finds the optimum but I'm not filtering candidates by score before picking the smallest key. Let me fix that with the frozen scorer:
+
+[step 39] All 6 solver checks pass. Now let's run on the real cross:
+
+[step 40] Let me build a scratch harness to probe how close to optimal we are:
+
+[step 43] The gap between the relaxed bound (-682.97) and the incumbent (-705.14) is only ~22. Let me build a branch-and-bound with a much tighter per-progeny Viterbi bound:
+
+[step 47] The tree is too big. Let me add symmetry breaking — the 24 relabellings per parent are redundant:
+
+[step 49] B&B with symmetry breaking confirms the optimum in 0.5s. Now let me check how it scales to the worst case (28 markers, 32 progeny):
+
+[step 52] Let me validate the stochastic search against exact B&B on many small instances:
+
+[step 53] Let me test whether adding a second (column-sharing) bound tightens the search:
+
+[step 58] Production-strength stochastic already matches B&B there. Let me build a comparison harness and validate broadly:
+
+[step 65] Now let me write the exact branch-and-bound as a proper solver module:
+
+[step 67] Now wire the exact search into `solve`:
+
+[step 76] Stochastic matches B&B on all 26 instances (17 proven optimal). Now let me stress the full-size case:
+
+[step 77] While that runs, let me remove the duplicated Viterbi work in the tie-break phase:
+
+[step 85] Production strength misses the optimum at full size (gap 0.78). Let me find which lever matters:
+
+[step 86] Let me add a beam search over the column chain — a guided alternative to random restarts:
+
+[step 87] Let me restructure cleanly — shared relaxation module, then exact and beam:
+
+[step 89] Now rewrite `exact.rs` on top of the shared relaxation, and add the beam:
+
+[step 92] Now the beam search, which reuses the same bounds as a guided heuristic for large crosses:
+
+[step 100] The beam finds in 0.5 s what 200 restarts needed. Let me tune the search around it:
+
+[step 102] Let me restructure the orchestration so small crosses are closed exactly and skip the random restarts:
+
+[step 112] Random restarts add nothing beyond beam starts + kicks. Let me check whether more kicks help:
+
+[step 121] More kicks do find better optima (gen7: -1460.18 → -1457.46). Let me set kicks to 80 and measure clean timing:
+
+[step 141] The beam incumbent dramatically improves the exact search. Let me use it at every size:
+
+[step 148] Let me guard the tie-break against a pathological blowup in the permutation cross product:

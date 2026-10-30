@@ -1,0 +1,3 @@
+b22_record_validation_skipped
+validation
+never validates rings or cursors

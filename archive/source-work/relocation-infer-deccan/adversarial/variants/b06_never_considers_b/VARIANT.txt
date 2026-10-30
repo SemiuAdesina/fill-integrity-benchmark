@@ -1,0 +1,3 @@
+b06_never_considers_b
+expression
+the search never considers the section base

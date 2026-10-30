@@ -1,0 +1,44 @@
+    SNAPSHOT 000 stepstart ed2ac9061e16
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.toml" | head -50; echo "---"; ls -R /app | head -80 :: bf6fca76891def reproduce-b1bf6fca76891def.d  /app/target/debug/examples:  /app/target/debug/incremental: diagnostics-2dntf0pgvc9x4 pairing_engine-2p1c6mmrxvqxj 
+[7] BASH rc=0 0.0s :: ls -la /app/tests/ 2>/dev/null; echo "---"; wc -l /app/src/**/*.rs /app/src/*.rs /app/tests/*.rs 2>/ :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[14] BASH rc=0 0.0s :: cat /app/src/types/mod.rs /app/src/lib.rs /app/src/engine/mod.rs /app/src/engine/managers.rs /app/sr ::       }     } }  impl fmt::Display for Timestamp {     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {         write!(f, "t{}", self.millis)     } } 
+[16] BASH rc=0 0.0s :: ls /app/tests/harness/; echo "---"; cat /app/tests/harness/*.rs :: ())     }      fn save(&self, snapshot: &Snapshot) -> Result<(), PortError> {         *self.saved.borrow_mut() = Some(snapshot.clone());         Ok(())     } } 
+[24] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 023 step24 b0033146a4e6
+[25] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 024 step25 2c419cb423f0
+[26] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 025 step26 2b202f687256
+[27] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 026 step27 afa62506fc90
+[28] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 027 step28 9189382c3879
+[29] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -30 :: 
+[30] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -40 :: 
+[31] BASH rc=0 0.0s :: grep -n "final" spec/venue-semantics.md spec/reconciliation-contract.md | head -40 :: ntributes **nothing**, whatever it managed to spec/reconciliation-contract.md:138:- attribution progress already accumulated, and each order's finalized state; 
+[32] EDIT /app/tests/diagnostics.rs -> E ok
+[33] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -30 :: 
+[34] BASH rc=0 0.0s :: cargo run --offline --bin reproduce 2>&1 | tail -50 :: 
+[35] WRITE /app/tests/interactions.rs -> W ok
+[36] EDIT /app/tests/harness/mod.rs -> E ok
+[37] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='tests/harness/mod.rs' s=open(p).read() s=s.replace("use std::cell::{C :: RefCell}; use std::collections::HashMap;  use pairing_engine::ports::{     BlockFill, Clock, FillBatch, FillEvent, FillEventSource, InventorySource, OpenOrder, 
+[38] EDIT /app/tests/interactions.rs -> E ok
+[39] BASH rc=0 0.0s :: cargo test --offline --test interactions 2>&1 | tail -40 :: 
+[40] EDIT /app/tests/interactions.rs -> E ok
+[41] BASH rc=0 0.0s :: cargo test --offline --test interactions 2>&1 | tail -40 :: 
+[42] BASH rc=0 0.0s :: sed -n 95,130p tests/interactions.rs :: a rejected submission creates no order, so no corrective has \          been committed to yet"     );      rig.cycle(&mut engine, OPEN + 180);      assert_eq!( 
+[43] EDIT /app/tests/interactions.rs -> E ok
+[44] EDIT /app/tests/interactions.rs -> E ok
+[45] EDIT /app/tests/interactions.rs -> E ok
+[46] BASH rc=0 0.0s :: cargo test --offline --test interactions 2>&1 | tail -30 :: 
+[48] BASH rc=0 0.0s :: grep -rn "instrument_inventory\|direct_filled\|cumulative_filled_qty\|block_filled" src/ | grep -v " :: t.rs:70:    pub direct_filled: Qty, src/types/snapshot.rs:72:    pub block_filled: Qty, src/types/snapshot.rs:79:        self.direct_filled + self.block_filled 
+[49] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 048 step49 ca013b6fc296
+[50] BASH rc=0 0.0s :: cat >> /app/tests/interactions.rs <<'EOF' /// A restart in the middle of a closure must not lose the :: 
+[51] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -i "warn" -A5; echo "=== build clean ==="; cargo test --offline 2> :: === build clean === === reproduce === 
+[52] BASH rc=0 0.0s :: cargo test --offline 2>&1 | grep -B5 -A25 "FAILED" | head -60 :: 
+[53] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 052 step53 379a6f19ed32
+[54] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -3; echo "=== TESTS ==="; cargo test --offline 2>&1 | grep -E "^te :: === TESTS === === REPRODUCE === 
+[56] BASH rc=0 0.0s :: ls -la --time-style=+%H:%M src/ports/mod.rs src/types/*.rs src/engine/*.rs src/lib.rs src/bin/reprod :: r-- 1 root root  3257 23:00 src/types/snapshot.rs -rw-r--r-- 1 root root  1737 23:00 src/types/strategy.rs -rw-r--r-- 1 root root  1827 23:00 src/types/time.rs 
+[57] BASH rc=0 0.0s :: for i in 1 2 3 4 5 6; do :; done; echo done :: done 

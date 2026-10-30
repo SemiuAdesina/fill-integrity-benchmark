@@ -1,0 +1,3 @@
+b01_capacity_ignored
+reduction
+never checks the accumulator capacity

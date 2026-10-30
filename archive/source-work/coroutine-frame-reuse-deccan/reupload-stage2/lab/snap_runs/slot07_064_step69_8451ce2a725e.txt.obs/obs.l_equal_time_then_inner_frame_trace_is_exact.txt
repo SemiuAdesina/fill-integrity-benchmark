@@ -1,0 +1,12 @@
+FRAME 120
+FRAME 96
+OBS 0 B 4:true
+OBS 1 B 4:true
+OBS 2 B 4:true
+OBS 3 B 4:true
+OBS 4 B 4:true
+OBS 5 E 27:A1@0;R1@0;A1@4;C1;P1:1;S1=D
+OBS 6 E 1:7
+OBS 7 E 1:4
+OBS 8 E 1:0
+END 9 0

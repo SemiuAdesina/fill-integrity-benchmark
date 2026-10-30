@@ -1,0 +1,21 @@
+tree diff vs pkg:
+(end diff)
+  h_cloning_sites    reference=same python=True
+  h_comigration      reference=same python=True
+  h_junction         reference=same python=True
+  h_low_error        reference=same python=True
+  h_parsimony        reference=same python=True
+  h_sub_detection    reference=same python=True
+  h_three_sites      reference=same python=True
+  h_ties             reference=same python=True
+  public             reference=same python=True
+  s_large_a          reference=same python=None
+  s_large_b          reference=same python=None
+  s_large_c          reference=same python=None
+fresh fixtures: 12 parsed; shipped certified answers reproduced on 12
+fresh ORACLE: MODE=oracle LABEL=fresh REWARD=1 RC=0 ELAPSED=14s RUNLOG: CONTROL ok verdict passed=13/13 control=1 probe_failed_closed=0 reward=0  FAILS: none 
+fresh NOP: MODE=nop LABEL=fresh REWARD=0 RC=0 ELAPSED=3s RUNLOG: CONTROL ok verdict passed=1/13 control=1 probe_failed_closed=0 reward=0  FAILS: b_vector_region_positions_match_the_backbone,c_every_observed_digest_is_reproduced,d_every_fixture_yields_the_least_map,e_fewer_insert_region_sites_come_first,f_fragments_below_the_detection_limit_are_unseen,g_bands_carry_multiplicity,h_the_cloning_site_is_chosen_among_all_listed,i_ties_resolve_by_position_order,j_held_out_digests_are_predicted_within_tolerance,k_large_constructs_are_recovered_within_budget,l_low_sizing_error_is_handled,m_answers_follow_the_supplied_backbone, 
+fresh HOSTILE(h01): MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=2s RUNLOG: CONTROL ok verdict passed=1/13 control=1 probe_failed_closed=0 reward=0  FAILS: b_vector_region_positions_match_the_backbone,c_every_observed_digest_is_reproduced,d_every_fixture_yields_the_least_map,e_fewer_insert_region_sites_come_first,f_fragments_below_the_detection_limit_are_unseen,g_bands_carry_multiplicity,h_the_cloning_site_is_chosen_among_all_listed,i_ties_resolve_by_position_order,j_held_out_digests_are_predicted_within_tolerance,k_large_constructs_are_recovered_within_budget,l_low_sizing_error_is_handled,m_answers_follow_the_supplied_backbone, 
+fresh HANG(h09):   (patched build/run failed: ) MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=305s 
+fresh ADVERSARIAL(b11):   (patched build/run failed: ) MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=866s 
+fresh ENUMERATION: MODE=patched LABEL=fresh REWARD=0 RC=0 ELAPSED=408s RUNLOG: CONTROL ok verdict passed=4/13 control=1 probe_failed_closed=1 reward=0  FAILS: a_map_documents_decode_and_are_valid,c_every_observed_digest_is_reproduced,d_every_fixture_yields_the_least_map,f_fragments_below_the_detection_limit_are_unseen,i_ties_resolve_by_position_order,j_held_out_digests_are_predicted_within_tolerance,k_large_constructs_are_recovered_within_budget,l_low_sizing_error_is_handled,m_answers_follow_the_supplied_backbone, 

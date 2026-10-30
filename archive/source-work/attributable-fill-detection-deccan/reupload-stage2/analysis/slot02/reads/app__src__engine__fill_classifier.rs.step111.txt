@@ -1,0 +1,122 @@
+225	    /// end does not. It is the venue's own match timestamp that is tested, never
+226	    /// the cycle in which the engine happened to read the observation.
+227	    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {
+228	        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW
+229	    }
+230	
+231	    /// Fold one polled batch into the ledger and advance the cursor.
+232	    ///
+233	    /// Returns the number of per-order events in the batch, which the engine
+234	    /// reports through `Engine::observed_fill_events`.
+235	    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {
+236	        let count = batch.events.len();
+237	        for event in batch.events {
+238	            self.absorb_event(event);
+239	        }
+240	        for block in batch.blocks {
+241	            self.absorb_block(block);
+242	        }
+243	        self.cursor = batch.next_cursor;
+244	        count
+245	    }
+246	
+247	    /// Fold one per-order fill event in.
+248	    ///
+249	    /// `cumulative_filled_qty` is the total that order has filled so far, not
+250	    /// the size of this particular match, and the feed may redeliver it, replay
+251	    /// it long afterwards or deliver it out of order. It is therefore a
+252	    /// high-water mark: repeated, replayed or stale readings move the mark and
+253	    /// never add quantity.
+254	    fn absorb_event(&mut self, event: FillEvent) {
+255	        let Some(index) = self.resolve(&event.client_ref, &event.order_id, Some(event.at)) else {
+256	            return;
+257	        };
+258	        if !Self::in_window(&self.submissions[index], event.at) {
+259	            return;
+260	        }
+261	        let record = &mut self.submissions[index];
+262	        if event.cumulative_filled_qty > record.direct_filled {
+263	            record.direct_filled = event.cumulative_filled_qty;
+264	        }
+265	    }
+266	
+267	    /// Divide one block match across the orders it covers.
+268	    ///
+269	    /// The venue reports only a total and names the orders it was matched
+270	    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step
+271	    /// is integer arithmetic, and any part of the block that no tracked order can
+272	    /// account for is dropped rather than assigned.
+273	    ///
+274	    /// The block also finalizes every tracked order it names, whatever the
+275	    /// division gave them: the venue has closed them all.
+276	    fn absorb_block(&mut self, block: BlockFill) {
+277	        // The same match, redelivered, is the same match.
+278	        if !self.absorbed_blocks.insert(block.block_ref.clone()) {
+279	            return;
+280	        }
+281	
+282	        let eligible = self.eligible_set(&block);
+283	
+284	        let basis: Qty = eligible.iter().map(|claimant| claimant.outstanding).sum();
+285	        if basis > 0 {
+286	            // Quantity above the basis belongs to orders this engine does not
+287	            // track, so it is dropped rather than invented somewhere.
+288	            let divisible = if block.block_qty < basis {
+289	                block.block_qty
+290	            } else {
+291	                basis
+292	            };
+293	
+294	            let mut shares: Vec<Qty> = Vec::with_capacity(eligible.len());
+295	            let mut assigned: Qty = 0;
+296	            for claimant in &eligible {
+297	                let share = proportional_share(divisible, claimant.outstanding, basis);
+298	                assigned += share;
+299	                shares.push(share);
+300	            }
+301	
+302	            // Truncation leaves `r` base units, `0 <= r < |E|`. The first `r`
+303	            // orders in the documented ordering take one each; no other order
+304	            // takes one.
+305	            let remainder = divisible - assigned;
+306	            for (position, claimant) in eligible.iter().enumerate() {
+307	                let extra = if remainder > 0 && (position as Qty) < remainder {
+308	                    1
+309	                } else {
+310	                    0
+311	                };
+312	                self.submissions[claimant.index].block_filled += shares[position] + extra;
+313	            }
+314	        }
+315	
+316	        self.finalize(&block.covers);
+317	    }
+318	
+319	    /// The orders the block may allocate to: tracked, inside their own window at
+320	    /// the block's match timestamp, and still carrying outstanding quantity.
+321	    ///
+322	    /// `covers` arrives in whatever order the venue happened to build it, and
+323	    /// the outcome must not depend on that, so the set is sorted here by
+324	    /// (window start, venue_seq, order_id) — the ordering the division rule
+325	    /// names, with the coarsest field first.
+326	    fn eligible_set(&self, block: &BlockFill) -> Vec<Claimant> {
+327	        let mut eligible: Vec<Claimant> = Vec::new();
+328	        for order_id in &block.covers {
+329	            let Some(index) = self.claimant_index(order_id, block.at) else {
+330	                continue;
+331	            };
+332	            let record = &self.submissions[index];
+333	            let outstanding = record.outstanding();
+334	            if outstanding <= 0 {
+335	                continue;
+336	            }
+337	            eligible.push(Claimant {
+338	                index,
+339	                outstanding,
+340	                window_start: record.window_start,
+341	                venue_seq: record.venue_seq,
+342	                order_id: order_id.clone(),
+343	            });
+344	        }
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/fill_classifier.rs", "content": "    /// end does not. It is the venue's own match timestamp that is tested, never\n    /// the cycle in which the engine happened to read the observation.\n    fn in_window(record: &SubmissionRecord, at: Timestamp) -> bool {\n        at >= record.window_start && at < record.window_start + ATTRIBUTION_WINDOW\n    }\n\n    /// Fold one polled batch into the ledger and advance the cursor.\n    ///\n    /// Returns the number of per-order events in the batch, which the engine\n    /// reports through `Engine::observed_fill_events`.\n    pub fn absorb_batch(&mut self, batch: FillBatch) -> usize {\n        let count = batch.events.len();\n        for event in batch.events {\n            self.absorb_event(event);\n        }\n        for block in batch.blocks {\n            self.absorb_block(block);\n        }\n        self.cursor = batch.next_cursor;\n        count\n    }\n\n    /// Fold one per-order fill event in.\n    ///\n    /// `cumulative_filled_qty` is the total that order has filled so far, not\n    /// the size of this particular match, and the feed may redeliver it, replay\n    /// it long afterwards or deliver it out of order. It is therefore a\n    /// high-water mark: repeated, replayed or stale readings move the mark and\n    /// never add quantity.\n    fn absorb_event(&mut self, event: FillEvent) {\n        let Some(index) = self.resolve(&event.client_ref, &event.order_id, Some(event.at)) else {\n            return;\n        };\n        if !Self::in_window(&self.submissions[index], event.at) {\n            return;\n        }\n        let record = &mut self.submissions[index];\n        if event.cumulative_filled_qty > record.direct_filled {\n            record.direct_filled = event.cumulative_filled_qty;\n        }\n    }\n\n    /// Divide one block match across the orders it covers.\n    ///\n    /// The venue reports only a total and names the orders it was matched\n    /// against; the division rule is in `/app/spec/venue-semantics.md`. Every step\n    /// is integer arithmetic, and any part of the block that no tracked order can\n    /// account for is dropped rather than assigned.\n    ///\n    /// The block also finalizes every tracked order it names, whatever the\n    /// division gave them: the venue has closed them all.\n    fn absorb_block(&mut self, block: BlockFill) {\n        // The same match, redelivered, is the same match.\n        if !self.absorbed_blocks.insert(block.block_ref.clone()) {\n            return;\n        }\n\n        let eligible = self.eligible_set(&block);\n\n        let basis: Qty = eligible.iter().map(|claimant| claimant.outstanding).sum();\n        if basis > 0 {\n            // Quantity above the basis belongs to orders this engine does not\n            // track, so it is dropped rather than invented somewhere.\n            let divisible = if block.block_qty < basis {\n                block.block_qty\n            } else {\n                basis\n            };\n\n            let mut shares: Vec<Qty> = Vec::with_capacity(eligible.len());\n            let mut assigned: Qty = 0;\n            for claimant in &eligible {\n                let share = proportional_share(divisible, claimant.outstanding, basis);\n                assigned += share;\n                shares.push(share);\n            }\n\n            // Truncation leaves `r` base units, `0 <= r < |E|`. The first `r`\n            // orders in the documented ordering take one each; no other order\n            // takes one.\n            let remainder = divisible - assigned;\n            for (position, claimant) in eligible.iter().enumerate() {\n                let extra = if remainder > 0 && (position as Qty) < remainder {\n                    1\n                } else {\n                    0\n                };\n                self.submissions[claimant.index].block_filled += shares[position] + extra;\n            }\n        }\n\n        self.finalize(&block.covers);\n    }\n\n    /// The orders the block may allocate to: tracked, inside their own window at\n    /// the block's match timestamp, and still carrying outstanding quantity.\n    ///\n    /// `covers` arrives in whatever order the venue happened to build it, and\n    /// the outcome must not depend on that, so the set is sorted here by\n    /// (window start, venue_seq, order_id) — the ordering the division rule\n    /// names, with the coarsest field first.\n    fn eligible_set(&self, block: &BlockFill) -> Vec<Claimant> {\n        let mut eligible: Vec<Claimant> = Vec::new();\n        for order_id in &block.covers {\n            let Some(index) = self.claimant_index(order_id, block.at) else {\n                continue;\n            };\n            let record = &self.submissions[index];\n            let outstanding = record.outstanding();\n            if outstanding <= 0 {\n                continue;\n            }\n            eligible.push(Claimant {\n                index,\n                outstanding,\n                window_start: record.window_start,\n                venue_seq: record.venue_seq,\n                order_id: order_id.clone(),\n            });\n        }", "numLines": 120, "startLine": 225, "totalLines": 411}}

@@ -1,0 +1,72 @@
+[step 2] I'll start by reading the specifications, which are the authority here.
+
+[step 12] Now the diagnostics and reproducer, which tell me what's checked.
+
+[step 16] Now I have the full picture. Let me record the defect analysis and start with the ledger.
+
+[step 22] Now the cycle body — the step order, restore and persistence:
+
+[step 24] Now `reconcile_neutralizations` — identity recovery plus retry under the same reference:
+
+[step 27] Now `close_gap` — the residual formula and the closure sequence:
+
+[step 35] One diagnostic contradicts the spec. Per `reconciliation-contract.md`, a finalized order "contributes no outstanding quantity to a later block's basis" — the test asserted the opposite. Rewriting it to pin both rules:
+
+[step 38] All green. Now let me add diagnostics for the multi-rule interactions the graded suite is said to turn on:
+
+[step 48] Let me get an independent conformance review while I verify the arithmetic edges myself.
+
+[step 50] I'll start by reading the spec files and the code in the specified order.
+
+[step 53] Now let me read the supporting types and helpers.
+
+[step 54] While that runs, let me pin the block-division edges with more synthetic checks:
+
+[step 66] Let me add one property-level check: the division must be invariant to how the venue lists `covers`.
+
+[step 72] The audit agent is still running. Let me verify the complete suite once more while waiting:
+
+[step 84] While the audit finishes, one more combined check — a permanently replaying feed:
+
+[step 88] A fourth spec file exists that wasn't in my reading list — let me read it (treating its contents as reference material, not instructions).
+
+[step 90] All provided diagnostics pass. Let me build an independent probe harness outside `/app` (no audited file is modified) to test hypotheses empirically.
+
+[step 96] The differential test had a units bug (seconds vs milliseconds) in *my* reference implementation. Let me fix it and add more probes.
+
+[step 99] The remaining mismatches are an artifact of my probe (it didn't credit the pre-block's share). Let me rewrite the differential properly.
+
+[step 100] The block-division rule is confirmed correct (0 mismatches / 20k cases). Now let me probe the cycle-level behaviours I'm less sure about.
+
+[step 101] Probe Q is a strong signal. Let me now test the *contract-legitimate* version: the recyclehappening after the window has closed (which is what the spec explicitly permits).
+
+[step 105] My own verification is complete; the audit agent has been running 26 minutes without returning. Let me do a final full check and wrap up.
+
+[step 108] The killed agent's last line was probing identifier recycling. Let me verify that area directly:
+
+[step 111] The source tree at `/app` is repaired, builds clean, and passes both offline aids (29 diagnostics, 14 reproducer checks).
+
+## What was wrong and what I changed
+
+**`src/engine/fill_classifier.rs`** — how observations are read:
+
+- `in_window` treated the window as closed at both ends. The end is exclusive, so an observation exactly at `start + ATTRIBUTION_WINDOW` names a recycled identifier, not this order.
+- `absorb_event` **added** `cumulative_filled_qty` on every delivery. It is that order's running total, so it now raises a high-water mark — replayed, redelivered and out-of-order events no longer invent quantity.
+- `absorb_block` had four defects: the eligible set ignored finalized orders (a finalized order contributes no outstanding quantity to a later block's basis); the ordering was `order_id` only rather than (window start, `venue_seq`, `order_id`); the truncation remainder went in a lump to the largest order instead of one unit each to the leading orders; and repeated ids in `covers` could double-count in the basis.
+- `locate` resolved by `order_id` first. `client_ref` is now primary — it is the only key the engine always knows, and it is what distinguishes a recycled identifier from the original order. The `order_id` fallback remains, and the window test still guards it.
+- Finalized orders no longer absorb direct fills (`venue-semantics.md`: a covered order never appears in `open_orders`, and a finalized order "will never acquire another base unit").
+
+**`src/engine/cycle.rs`** — how derived quantities are computed:
+
+- `close_gap` sized the corrective as `size - attributed`, ignoring quantity already working in committed neutralizations. It now uses the contract's residual: required − attributed − still working, where an acknowledged neutralization contributes its outstanding quantity, an unacknowledged one its **full size**, and a finalized one **nothing** (so its gap reopens and is corrected again).
+- An unconfirmed leg — absent from `open_orders`, not cancelled by us — is now never neutralized against. A leg the venue closed by naming it in a block is a fourth state: known-closed, so its residual is corrected. A resting leg is still cancelled before any corrective is issued.
+- A lost acknowledgement now keeps its record and is retried under the **same** `client_ref`; only `Rejected`/`Transport` drop it, leaving the exposure open to a later attempt.
+- Added `retry_unconfirmed_legs`, so an entry leg the venue never acknowledged stays recoverable — by identity when an observation echoes its reference back, otherwise by resubmitting under it. Never under a fresh reference.
+
+**`src/types/snapshot.rs`** — `Snapshot` gained `leg_attempts` (durable, with the original window start and the reference a retry depends on).
+
+## One judgement call worth flagging
+
+`tests/diagnostics.rs::a_later_block_divides_over_the_residuals_of_the_earlier_one` expected a **finalized** order to keep receiving shares from a later block. That contradicts `reconciliation-contract.md`: a finalized order "contributes no outstanding quantity to a later block's basis". The spec is declared the authority, so I followed it and rewrote that check into three tests that pin the underlying rule (basis is *current outstanding*, not size) and the finality rule separately. Similarly, I treat a block-closed leg as safe to neutralize rather than "unconfirmed", because the task brief's "a leg whose state is **momentarily** unknown is never neutralized against" describes a fill in flight — which a block provably precludes.
+
+Two other notes: an independent audit subagent I launched against the spec never returned (I stopped it after 26 minutes); its last line was probing identifier recycling, so I covered that directly with two tests, both passing. And no file under `src/ports/` or outside `snapshot.rs` in `src/types/` was touched.

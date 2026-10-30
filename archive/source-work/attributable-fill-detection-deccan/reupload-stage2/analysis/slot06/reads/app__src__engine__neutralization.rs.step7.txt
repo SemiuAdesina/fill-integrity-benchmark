@@ -1,0 +1,42 @@
+2	use crate::engine::sizing::neutralization_limit_price;
+3	use crate::ports::{OrderGateway, PortError};
+4	use crate::types::ids::{StrategyId, Price, Qty, Venue, InstrumentId};
+5	use crate::types::pending_order::PendingOrder;
+6	
+7	#[derive(Debug, Clone, PartialEq)]
+8	pub struct NeutralizationPlan {
+9	    pub strategy_id: StrategyId,
+10	    pub instrument_id: InstrumentId,
+11	    pub venue: Venue,
+12	    pub size: Qty,
+13	    pub limit_price: Price,
+14	}
+15	
+16	/// Price a corrective order for `remaining_size` base units on the leg's venue.
+17	///
+18	/// The caller decides how much is still unresolved; this function only prices it
+19	/// and declines when there is nothing left to cover. Quantities are whole base
+20	/// units, so a residual of one unit is a real residual.
+21	pub fn plan_neutralization(
+22	    gateway: &dyn OrderGateway,
+23	    unfilled_leg: &PendingOrder,
+24	    remaining_size: Qty,
+25	    slippage: Price,
+26	) -> Result<Option<NeutralizationPlan>, PortError> {
+27	    if remaining_size <= 0 {
+28	        return Ok(None);
+29	    }
+30	    let best_offer = match gateway.best_offer(&unfilled_leg.instrument_id)? {
+31	        Some(price) => price,
+32	        None => return Ok(None),
+33	    };
+34	    Ok(Some(NeutralizationPlan {
+35	        strategy_id: unfilled_leg.strategy_id.clone(),
+36	        instrument_id: unfilled_leg.instrument_id.clone(),
+37	        venue: unfilled_leg.venue,
+38	        size: remaining_size,
+39	        limit_price: neutralization_limit_price(best_offer, slippage),
+40	    }))
+41	}
+42
+

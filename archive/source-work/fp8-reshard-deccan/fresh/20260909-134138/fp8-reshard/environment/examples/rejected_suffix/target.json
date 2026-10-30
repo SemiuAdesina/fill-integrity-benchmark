@@ -1,0 +1,17 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "norm.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 256,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 256,
+   "history_length": 4,
+   "active": true
+  }
+ ]
+}

@@ -1,0 +1,192 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "KpnI",
+   "enzymes": [
+    "KpnI"
+   ],
+   "bands": [
+    {
+     "length": 1252,
+     "multiplicity": 1
+    },
+    {
+     "length": 3656,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "NdeI",
+   "enzymes": [
+    "NdeI"
+   ],
+   "bands": [
+    {
+     "length": 1995,
+     "multiplicity": 1
+    },
+    {
+     "length": 2843,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuII",
+   "enzymes": [
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 578,
+     "multiplicity": 1
+    },
+    {
+     "length": 1969,
+     "multiplicity": 1
+    },
+    {
+     "length": 2345,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "XbaI",
+   "enzymes": [
+    "XbaI"
+   ],
+   "bands": [
+    {
+     "length": 1838,
+     "multiplicity": 1
+    },
+    {
+     "length": 3064,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuII+XbaI",
+   "enzymes": [
+    "PvuII",
+    "XbaI"
+   ],
+   "bands": [
+    {
+     "length": 464,
+     "multiplicity": 1
+    },
+    {
+     "length": 613,
+     "multiplicity": 1
+    },
+    {
+     "length": 1346,
+     "multiplicity": 1
+    },
+    {
+     "length": 2337,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "KpnI+PvuII",
+   "enzymes": [
+    "KpnI",
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 534,
+     "multiplicity": 1
+    },
+    {
+     "length": 589,
+     "multiplicity": 1
+    },
+    {
+     "length": 1223,
+     "multiplicity": 1
+    },
+    {
+     "length": 2361,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "NdeI+XbaI",
+   "enzymes": [
+    "NdeI",
+    "XbaI"
+   ],
+   "bands": [
+    {
+     "length": 243,
+     "multiplicity": 1
+    },
+    {
+     "length": 1749,
+     "multiplicity": 1
+    },
+    {
+     "length": 2838,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "NdeI+PvuII",
+   "enzymes": [
+    "NdeI",
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 579,
+     "multiplicity": 1
+    },
+    {
+     "length": 637,
+     "multiplicity": 1
+    },
+    {
+     "length": 1307,
+     "multiplicity": 1
+    },
+    {
+     "length": 2227,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "KpnI+XbaI",
+   "enzymes": [
+    "KpnI",
+    "XbaI"
+   ]
+  },
+  {
+   "id": "KpnI+NdeI",
+   "enzymes": [
+    "KpnI",
+    "NdeI"
+   ]
+  }
+ ]
+}

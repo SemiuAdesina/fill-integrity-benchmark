@@ -1,0 +1,6 @@
+#
+# Build artifacts never enter the agent image. The image warms its own target
+# directory during the build, so a directory carried in from the assembly
+# machine would only shadow it with objects built elsewhere.
+target/
+**/target/

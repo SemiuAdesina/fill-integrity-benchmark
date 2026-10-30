@@ -1,0 +1,55 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.01,
+  "internal": 2,
+  "deviation": 65247,
+  "c": 4097,
+  "L": 2973
+ },
+ "enumeration_solver": {
+  "status": "timeout",
+  "seconds": 120.0
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 0.5,
+  "nodes": 2569,
+  "ties_at_count_and_deviation": 1
+ },
+ "held_out": [
+  "FspI+SspI"
+ ],
+ "truth": {
+  "internal": 3,
+  "deviation": 66419,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_parsimony",
+ "seed": 219,
+ "description": "a closer fit exists with more insert-region sites, so fewest sites must come first",
+ "vector": "pGEX-2T",
+ "vector_header": "U13850.1 pGEX-2T cloning vector, complete sequence",
+ "source": "T7",
+ "source_header": "V01146.1 Genome of bacteriophage T7",
+ "fragment": {
+  "left_enzyme": "NsiI",
+  "left_cut": 19990,
+  "right_enzyme": "NheI",
+  "right_cut": 22970
+ },
+ "cloning_site": [
+  "EcoRV",
+  4097
+ ],
+ "insert_length": 2980,
+ "enzymes": [
+  "BspHI",
+  "BstBI",
+  "FspI",
+  "SspI"
+ ],
+ "error_percent": 3,
+ "detection_limit": 250,
+ "observed": 8
+}

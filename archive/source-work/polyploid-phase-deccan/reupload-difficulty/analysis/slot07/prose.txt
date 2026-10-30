@@ -1,0 +1,29 @@
+[step 2] I'll start by reading the specification and understanding the existing code.
+
+[step 6] Now let me read the source files.
+
+[step 14] Now the tests and examples.
+
+[step 20] Now let me check the diagnostics test and then start building the solver.
+
+[step 33] Let me build a validation harness with brute-force-enumerable crosses before going further.
+
+[step 39] Now the Lagrangian bound, which should be far tighter than either relaxation:
+
+[step 60] Now the core: an exact branch and bound. Let me write it.
+
+[step 76] Now the canonicalisation and tie-breaking module:
+
+[step 95] The dual is provably flat (`L(λ) ≥ L(0)` since each `F_c` is convex in `λ` and the correction is exactly that min), so the Lagrangian is dead weight. Let me confirm the real difficulty of the graded instances, then spend the effort on node cost and a safety cap.
+
+[step 96] Now the optimization work. First, legal-state sets in the model:
+
+[step 102] Now update the entry point with the wall-clock cap:
+
+[step 110] The local search with 512 restarts hits the proven optimum exactly on every instance I can verify. Let me check its cost at the top of the declared range:
+
+[step 113] The local search has a real weakness: `polish` does full re-evaluation per candidate move. Let me replace it with an incremental version (forward/backward vectors make each candidate cost one state sweep instead of a whole Viterbi):
+
+[step 127] The new polish can oscillate (simultaneous updates) and return a worse assignment. Let me make it monotone and track the best ever seen:
+
+[step 131] The combined sweep stops too early — a bad *combination* of moves doesn't mean no single move helps. Let me fall back to the best single move:

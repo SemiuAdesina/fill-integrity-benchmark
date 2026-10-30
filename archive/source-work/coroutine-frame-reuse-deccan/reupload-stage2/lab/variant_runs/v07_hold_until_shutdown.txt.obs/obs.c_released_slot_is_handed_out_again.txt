@@ -1,0 +1,3 @@
+  FAIL /h/harness.hpp:102: unexpected exception escaped: std::bad_alloc
+OBS 0 B 4:true
+OBS 1 E 1:1

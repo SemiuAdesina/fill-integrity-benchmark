@@ -1,0 +1,9 @@
+[package]
+name="plasmid_liar"
+version="0.1.0"
+edition="2021"
+publish=false
+[lib]
+name="plasmid_liar"
+path="src/lib.rs"
+[dependencies]

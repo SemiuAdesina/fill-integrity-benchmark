@@ -1,0 +1,10 @@
+OUTCOME
+attempt|ref=0|strategy=m12|instrument=tS|venue=North|kind=RestingLimit|price=0.450000000000|size=30|result=accepted
+attempt|ref=1|strategy=m12|instrument=tT|venue=South|kind=RestingLimit|price=0.520000000000|size=30|result=accepted
+venue-order|ref=0|strategy=m12|instrument=tS|venue=North|kind=RestingLimit|price=0.450000000000|size=30|filled=0|live=true|cancelled=false
+venue-order|ref=1|strategy=m12|instrument=tT|venue=South|kind=RestingLimit|price=0.520000000000|size=30|filled=0|live=true|cancelled=false
+cancelled-count=0
+pending|ref=0|strategy=m12|instrument=tS|venue=North|price=0.450000000000|size=30|expiry=1086400000|created=1000000000
+pending|ref=1|strategy=m12|instrument=tT|venue=South|price=0.520000000000|size=30|expiry=1086400000|created=1000000000
+inventory|instrument=tS|qty=55
+END

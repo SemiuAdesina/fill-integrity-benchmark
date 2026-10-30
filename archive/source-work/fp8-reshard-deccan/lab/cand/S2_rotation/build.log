@@ -1,0 +1,7 @@
+/Users/macbok/benchmark-suite-work/fp8-reshard-deccan/lab/cand/S2_rotation/src/restore.cpp:79:24: warning: unused variable 't' [-Wunused-variable]
+   79 |     for (const Target& t : targets)
+      |                        ^
+/Users/macbok/benchmark-suite-work/fp8-reshard-deccan/lab/cand/S2_rotation/src/restore.cpp:40:6: warning: unused function 'suffix_equal' [-Wunused-function]
+   40 | bool suffix_equal(const std::vector<std::int64_t>& shorter, const std::vector<std::int64_t>& longer) {
+      |      ^~~~~~~~~~~~
+2 warnings generated.

@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/src/runtime.cpp:139:9: error: use of undeclared identifier 'release_pending'
+/app2/src/runtime.cpp:143:16: error: no member named 'root' in 'roundel::Conductor::JobState'
+/app2/src/runtime.cpp:144:58: error: no member named 'root' in 'roundel::Conductor::JobState'

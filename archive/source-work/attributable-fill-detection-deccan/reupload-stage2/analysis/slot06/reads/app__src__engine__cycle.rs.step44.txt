@@ -1,0 +1,77 @@
+499	                );
+500	                if let Some(slot) = self
+501	                    .neutralizations
+502	                    .iter_mut()
+503	                    .find(|slot| slot.client_ref == client_ref)
+504	                {
+505	                    slot.order_id = Some(accepted.order_id);
+506	                }
+507	            }
+508	            // The venue may have created it. Keep the record and the reference:
+509	            // the retry has to reuse that reference to land on the same order.
+510	            Err(SubmitError::AcknowledgementLost) => {}
+511	            // Nothing came back from the venue: no economic order exists, so
+512	            // drop the record and let a later cycle work out what is missing.
+513	            Err(_) => {
+514	                self.neutralizations.retain(|slot| slot.client_ref != client_ref);
+515	                self.ledger.discard(&client_ref);
+516	            }
+517	        }
+518	
+519	        Ok(())
+520	    }
+521	
+522	    fn open_position(&mut self, north_leg: &PendingOrder, south_leg: &PendingOrder, now: Timestamp) {
+523	        let position = Position::new(
+524	            north_leg.strategy_id.clone(),
+525	            north_leg.size,
+526	            south_leg.size,
+527	            north_leg.limit_price,
+528	            south_leg.limit_price,
+529	            north_leg.expiry_time,
+530	            now,
+531	        );
+532	        let strategy_id = position.strategy_id.clone();
+533	        self.positions.insert(position);
+534	        self.pending.remove(&north_leg.order_id);
+535	        self.pending.remove(&south_leg.order_id);
+536	        self.neutralizations
+537	            .retain(|record| record.strategy_id != strategy_id);
+538	    }
+539	
+540	    fn retire_stale_orders(&mut self, now: Timestamp) {
+541	        for order_id in self.pending.expiring(now) {
+542	            let _ = self.gateway.cancel(&order_id);
+543	            self.pending.remove(&order_id);
+544	            self.closing.remove(&order_id);
+545	            self.replaced.remove(&order_id);
+546	        }
+547	    }
+548	
+549	    fn persist(&self) -> Result<(), PortError> {
+550	        let snapshot = Snapshot {
+551	            positions: self.positions.all(),
+552	            pending_orders: self.pending.all(),
+553	            attempted_strategies: self.attempted.iter().cloned().collect(),
+554	            client_seq: self.client_seq,
+555	            fill_cursor: self.ledger.cursor(),
+556	            submissions: self.ledger.submissions(),
+557	            absorbed_blocks: self.ledger.absorbed_blocks(),
+558	            closing_orders: self.closing.iter().cloned().collect(),
+559	            replaced_orders: self.replaced.iter().cloned().collect(),
+560	            neutralizations: self.neutralizations.clone(),
+561	        };
+562	        self.store.save(&snapshot)
+563	    }
+564	
+565	    fn next_client_ref(&mut self) -> ClientRef {
+566	        self.client_seq += 1;
+567	        ClientRef::new(format!(
+568	            "{}-{}",
+569	            self.config.client_ref_prefix, self.client_seq
+570	        ))
+571	    }
+572	}
+573
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "                );\n                if let Some(slot) = self\n                    .neutralizations\n                    .iter_mut()\n                    .find(|slot| slot.client_ref == client_ref)\n                {\n                    slot.order_id = Some(accepted.order_id);\n                }\n            }\n            // The venue may have created it. Keep the record and the reference:\n            // the retry has to reuse that reference to land on the same order.\n            Err(SubmitError::AcknowledgementLost) => {}\n            // Nothing came back from the venue: no economic order exists, so\n            // drop the record and let a later cycle work out what is missing.\n            Err(_) => {\n                self.neutralizations.retain(|slot| slot.client_ref != client_ref);\n                self.ledger.discard(&client_ref);\n            }\n        }\n\n        Ok(())\n    }\n\n    fn open_position(&mut self, north_leg: &PendingOrder, south_leg: &PendingOrder, now: Timestamp) {\n        let position = Position::new(\n            north_leg.strategy_id.clone(),\n            north_leg.size,\n            south_leg.size,\n            north_leg.limit_price,\n            south_leg.limit_price,\n            north_leg.expiry_time,\n            now,\n        );\n        let strategy_id = position.strategy_id.clone();\n        self.positions.insert(position);\n        self.pending.remove(&north_leg.order_id);\n        self.pending.remove(&south_leg.order_id);\n        self.neutralizations\n            .retain(|record| record.strategy_id != strategy_id);\n    }\n\n    fn retire_stale_orders(&mut self, now: Timestamp) {\n        for order_id in self.pending.expiring(now) {\n            let _ = self.gateway.cancel(&order_id);\n            self.pending.remove(&order_id);\n            self.closing.remove(&order_id);\n            self.replaced.remove(&order_id);\n        }\n    }\n\n    fn persist(&self) -> Result<(), PortError> {\n        let snapshot = Snapshot {\n            positions: self.positions.all(),\n            pending_orders: self.pending.all(),\n            attempted_strategies: self.attempted.iter().cloned().collect(),\n            client_seq: self.client_seq,\n            fill_cursor: self.ledger.cursor(),\n            submissions: self.ledger.submissions(),\n            absorbed_blocks: self.ledger.absorbed_blocks(),\n            closing_orders: self.closing.iter().cloned().collect(),\n            replaced_orders: self.replaced.iter().cloned().collect(),\n            neutralizations: self.neutralizations.clone(),\n        };\n        self.store.save(&snapshot)\n    }\n\n    fn next_client_ref(&mut self) -> ClientRef {\n        self.client_seq += 1;\n        ClientRef::new(format!(\n            \"{}-{}\",\n            self.config.client_ref_prefix, self.client_seq\n        ))\n    }\n}\n", "numLines": 75, "startLine": 499, "totalLines": 573}}

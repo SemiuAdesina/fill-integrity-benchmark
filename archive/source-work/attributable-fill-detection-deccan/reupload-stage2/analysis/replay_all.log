@@ -1,0 +1,17 @@
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot01: replayed 41 tool calls; 3 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot02: replayed 177 tool calls; 14 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot03: replayed 62 tool calls; 8 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot04: replayed 68 tool calls; 22 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot05: replayed 46 tool calls; 15 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot06: replayed 60 tool calls; 9 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot07: replayed 54 tool calls; 11 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+  with tarfile.open(fileobj=io.BytesIO(r.stdout)) as tf: tf.extractall(os.path.join(od, "final_tests"))
+slot08: replayed 129 tool calls; 20 distinct src snapshots; final files: ['src/engine/config.rs', 'src/engine/cycle.rs', 'src/engine/fill_classifier.rs', 'src/engine/managers.rs', 'src/engine/mod.rs', 'src/engine/neutralization.rs', 'src/engine/sizing.rs', 'src/types/snapshot.rs']
+REPLAY ALL DONE

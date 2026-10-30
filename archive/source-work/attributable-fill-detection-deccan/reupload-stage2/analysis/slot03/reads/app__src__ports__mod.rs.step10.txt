@@ -1,0 +1,160 @@
+2	use std::error::Error;
+3	use std::fmt;
+4	
+5	use crate::types::ids::{
+6	    BlockRef, ClientRef, InstrumentId, OrderId, Price, Qty, StrategyId, Venue,
+7	};
+8	use crate::types::snapshot::{Cursor, Snapshot};
+9	use crate::types::strategy::StrategyCandidate;
+10	use crate::types::time::Timestamp;
+11	
+12	#[derive(Debug, Clone, PartialEq, Eq)]
+13	pub enum PortError {
+14	    Unavailable(String),
+15	    Transport(String),
+16	}
+17	
+18	impl fmt::Display for PortError {
+19	    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+20	        match self {
+21	            PortError::Unavailable(detail) => write!(f, "unavailable: {detail}"),
+22	            PortError::Transport(detail) => write!(f, "transport: {detail}"),
+23	        }
+24	    }
+25	}
+26	
+27	impl Error for PortError {}
+28	
+29	#[derive(Debug, Clone, PartialEq, Eq)]
+30	pub enum SubmitError {
+31	    Rejected(String),
+32	    AcknowledgementLost,
+33	    Transport(String),
+34	}
+35	
+36	impl fmt::Display for SubmitError {
+37	    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+38	        match self {
+39	            SubmitError::Rejected(detail) => write!(f, "rejected: {detail}"),
+40	            SubmitError::AcknowledgementLost => write!(f, "acknowledgement lost"),
+41	            SubmitError::Transport(detail) => write!(f, "transport: {detail}"),
+42	        }
+43	    }
+44	}
+45	
+46	impl Error for SubmitError {}
+47	
+48	#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+49	pub enum OrderKind {
+50	    RestingLimit,
+51	    ImmediateOrCancel,
+52	}
+53	
+54	#[derive(Debug, Clone, PartialEq)]
+55	pub struct OrderRequest {
+56	    pub strategy_id: StrategyId,
+57	    pub instrument_id: InstrumentId,
+58	    pub venue: Venue,
+59	    pub kind: OrderKind,
+60	    pub limit_price: Price,
+61	    pub size: Qty,
+62	    pub client_ref: ClientRef,
+63	    pub expiry_time: Timestamp,
+64	}
+65	
+66	#[derive(Debug, Clone, PartialEq)]
+67	pub struct OrderAccepted {
+68	    pub order_id: OrderId,
+69	    pub client_ref: ClientRef,
+70	    /// Sequence number of the venue tick in which the order was accepted.
+71	    /// Monotonic per venue and shared by every order accepted in the same tick.
+72	    pub venue_seq: u64,
+73	}
+74	
+75	#[derive(Debug, Clone, PartialEq)]
+76	pub struct OpenOrder {
+77	    pub order_id: OrderId,
+78	    pub client_ref: ClientRef,
+79	    pub strategy_id: StrategyId,
+80	    pub instrument_id: InstrumentId,
+81	    pub venue: Venue,
+82	    pub kind: OrderKind,
+83	    pub venue_seq: u64,
+84	    pub limit_price: Price,
+85	    pub size: Qty,
+86	    pub filled_qty: Qty,
+87	}
+88	
+89	#[derive(Debug, Clone, PartialEq)]
+90	pub struct FillEvent {
+91	    pub seq: u64,
+92	    pub order_id: OrderId,
+93	    pub client_ref: ClientRef,
+94	    pub strategy_id: StrategyId,
+95	    pub instrument_id: InstrumentId,
+96	    pub venue: Venue,
+97	    pub cumulative_filled_qty: Qty,
+98	    pub price: Price,
+99	    /// Venue timestamp of the match. This is the instant the attribution window
+100	    /// is tested against, not the instant the event was delivered.
+101	    pub at: Timestamp,
+102	}
+103	
+104	/// One block match: several of the engine's own orders on one instrument and
+105	/// venue matched together and reported as a single netted quantity.
+106	///
+107	/// The venue names every order the block was matched against in `covers` and
+108	/// reports only the block total in `block_qty`. It does not say how the total
+109	/// divides. The division rule is in `/app/spec/venue-semantics.md`.
+110	#[derive(Debug, Clone, PartialEq)]
+111	pub struct BlockFill {
+112	    pub seq: u64,
+113	    /// Idempotency key for the block. The same `block_ref` is the same match,
+114	    /// however many times it is delivered.
+115	    pub block_ref: BlockRef,
+116	    pub instrument_id: InstrumentId,
+117	    pub venue: Venue,
+118	    pub covers: Vec<OrderId>,
+119	    /// Total base units matched by this block, across every covered order.
+120	    pub block_qty: Qty,
+121	    pub price: Price,
+122	    pub at: Timestamp,
+123	}
+124	
+125	#[derive(Debug, Clone, PartialEq)]
+126	pub struct FillBatch {
+127	    pub events: Vec<FillEvent>,
+128	    pub blocks: Vec<BlockFill>,
+129	    pub next_cursor: Cursor,
+130	}
+131	
+132	pub trait InventorySource {
+133	    fn instrument_inventory(&self, instrument_id: &InstrumentId) -> Result<Qty, PortError>;
+134	    fn settlement_balance(&self) -> Result<Price, PortError>;
+135	}
+136	
+137	pub trait OrderGateway {
+138	    fn submit(&self, request: &OrderRequest) -> Result<OrderAccepted, SubmitError>;
+139	    fn cancel(&self, order_id: &OrderId) -> Result<(), PortError>;
+140	    fn open_orders(&self) -> Result<Vec<OpenOrder>, PortError>;
+141	    fn best_offer(&self, instrument_id: &InstrumentId) -> Result<Option<Price>, PortError>;
+142	}
+143	
+144	pub trait StrategySource {
+145	    fn candidates(&self) -> Result<Vec<StrategyCandidate>, PortError>;
+146	}
+147	
+148	pub trait FillEventSource {
+149	    fn poll(&self, cursor: &Cursor) -> Result<FillBatch, PortError>;
+150	}
+151	
+152	pub trait StateStore {
+153	    fn load(&self) -> Result<Option<Snapshot>, PortError>;
+154	    fn save(&self, snapshot: &Snapshot) -> Result<(), PortError>;
+155	}
+156	
+157	pub trait Clock {
+158	    fn now(&self) -> Timestamp;
+159	}
+160
+

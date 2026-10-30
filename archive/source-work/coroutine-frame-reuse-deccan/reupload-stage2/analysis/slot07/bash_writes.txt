@@ -1,0 +1,414 @@
+[22]
+cat >> /app/include/roundel/runtime.hpp <<'EOF'
+
+// -------------------------------------------------------------------------
+// Conductor
+// -------------------------------------------------------------------------
+
+class Conductor {
+  public:
+    // `capacity` frames may be checked out at the same time.
+    explicit Conductor(std::size_t capacity = 8);
+    ~Conductor();
+
+    Conductor(const Conductor&) = delete;
+    Conductor& operator=(const Conductor&) = delete;
+
+    // Adopt a freshly made Duty as a root job and run it to its first
+    // suspension. Returns the job's identifier, which is never reused.
+    JobId launch(Duty duty);
+
+    // The conductor's logical clock. It starts at 0 and only ever moves
+    // forward, to the ready time of the ticket a step delivers.
+    std::uint64_t now() const noexcept { return tick_; }
+
+    // Queue a completion for `job`, ready at now(), to be delivered by a later
+    // step().
+    void post(JobId job, std::int64_t value);
+    // Queue a completion for `job` ready at now() + delay.
+    void post_after(JobId job, std::int64_t value, std::uint64_t delay);
+    // Queue a completion that raises an exception where `job` is parked, ready
+    // at now(). A job that does not catch it ends up Faulted.
+    void post_fault(JobId job);
+    // The same, ready at now() + delay.
+    void post_fault_after(JobId job, std::uint64_t delay);
+
+    // Ask `job` to stop. Calling this more than once, or for a job that has
+    // already settled, must be harmless.
+    void cancel(JobId job);
+
+    // Deliver at most one queued ticket: the one that comes first in the
+    // delivery order (earliest ready time; then lowest job identifier; then
+    // earliest queued). Returns false when the queue was empty. Nothing else
+    // runs.
+    bool step();
+    // Deliver queued tickets until the queue is empty. Returns how many ran.
+    std::size_t drain();
+
+    std::size_t pending_tickets() const noexcept { return queue_.size(); }
+
+    // Outcome of a settled job, or nullopt while it is still running.
+    std::optional<Outcome> outcome_of(JobId job) const;
+    // Value produced by a job that delivered one.
+    std::optional<std::int64_t> value_of(JobId job) const;
+    // True once the job has settled, whatever the outcome.
+    bool settled(JobId job) const;
+    // Jobs launched but not yet settled.
+    std::size_t live_jobs() const;
+
+    Journal& journal() noexcept { return journal_; }
+    const Journal& journal() const noexcept { return journal_; }
+    FrameArena& arena() noexcept { return arena_; }
+    const FrameArena& arena() const noexcept { return arena_; }
+
+    // Installed while a Conductor is alive so promise_type::operator new can
+    // reach the arena.
+    static FrameArena* active_arena() noexcept;
+
+    // --- called by the coroutine machinery -----------------------------
+    void note_parked(JobId job, std::coroutine_handle<> h);
+    void settle(JobId job, Outcome outcome, std::int64_t value);
+    JobId next_job_id() noexcept { return ++last_job_; }
+
+    // True once for a cancellation that has been asked for but not yet acted
+    // on. Taking it consumes it, so a job that rides the unwind out and
+    // carries on is not stopped a second time by the same request.
+    bool take_cancel_request(JobId job) noexcept;
+    // Forget that `h` is the frame a job is waiting in. Called when a frame is
+    // destroyed outside the conductor's own bookkeeping.
+    void forget_parked(std::coroutine_handle<> h) noexcept;
+
+  private:
+    // A queued completion. When it was made for a job that was parked, `bound`
+    // is true and `slot` names the one frame it may ever be delivered to --
+    // its pool index and that slot's epoch together, because neither number is
+    // a frame on its own.
+    struct Pending {
+        JobId job = kNoJob;
+        std::int64_t value = 0;
+        bool faulted = false;
+        bool bound = false;
+        SlotId slot{};
+        std::uint64_t ready = 0;
+        std::uint64_t seq = 0;
+
+[24]
+cat >> /app/src/runtime.cpp <<'EOF'
+
+// -------------------------------------------------------------------------
+// Conductor
+// -------------------------------------------------------------------------
+
+Conductor::Conductor(std::size_t capacity) : arena_(capacity, 512) {
+    arena_.observe(&journal_);
+    previous_arena_ = g_arena;
+    g_arena = &arena_;
+}
+
+Conductor::~Conductor() {
+    // Anything still open is stopped and its frames destroyed, lowest
+    // identifier first, so the arena is whole when it goes away.
+    std::vector<JobId> ids;
+    ids.reserve(jobs_.size());
+    for (const auto& kv : jobs_) {
+        ids.push_back(kv.first);
+    }
+    std::sort(ids.begin(), ids.end());
+    for (JobId job : ids) {
+        const JobState* st = find(job);
+        if (st != nullptr && !st->settled) {
+            settle(job, Outcome::Cancelled, 0);
+        }
+    }
+    flush_releases();
+    for (JobId job : ids) {
+        JobState* st = find(job);
+        if (st == nullptr || !st->root) {
+            continue;
+        }
+        std::coroutine_handle<> r = std::exchange(st->root, {});
+        st->parked = {};
+        st->parked_slot = SlotId{};
+        const SlotId slot = FrameArena::slot_of(r.address());
+        r.destroy();
+        journal_.record_slot(Mark::FrameReleased, job, slot);
+    }
+    g_arena = previous_arena_;
+}
+
+FrameArena* Conductor::active_arena() noexcept { return g_arena; }
+
+Conductor::JobState* Conductor::find(JobId job) {
+    auto it = jobs_.find(job);
+    return (it == jobs_.end()) ? nullptr : &it->second;
+}
+
+const Conductor::JobState* Conductor::find(JobId job) const {
+    auto it = jobs_.find(job);
+    return (it == jobs_.end()) ? nullptr : &it->second;
+}
+
+JobId Conductor::launch(Duty duty) {
+    Duty::handle_type h = duty.release();
+    if (!h) {
+        return kNoJob;
+    }
+    const JobId job = next_job_id();
+    h.promise().conductor = this;
+    h.promise().job = job;
+
+    JobState st;
+    st.root = h;
+    JobState* state = &jobs_.emplace(job, st).first->second;
+
+    journal_.record_slot(Mark::JobStarted, job, FrameArena::slot_of(h.address()));
+
+    resume_frame(state, h);
+    return job;
+}
+
+void Conductor::note_parked(JobId job, std::coroutine_handle<> h) {
+    JobState* st = find(job);
+    if (st == nullptr || st->settled) {
+        return;
+    }
+    st->parked = h;
+    st->parked_slot = FrameArena::slot_of(h.address());
+    journal_.record_slot(Mark::JobParked, job, st->parked_slot);
+}
+
+void Conductor::settle(JobId job, Outcome outcome, std::int64_t value) {
+    JobState* st = find(job);
+    if (st == nullptr || st->settled) {
+        // One outcome per job: whatever else arrives afterwards changes
+        // nothing.
+        return;
+    }
+    st->settled = true;
+    st->outcome = outcome;
+    st->value = value;
+    st->parked = {};
+    st->parked_slot = SlotId{};
+    journal_.record(Mark::JobSettled, job, static_cast<std::int64_t>(outcome));
+    if (outcome == Outcome::Faulted) {
+        journal_.record(Mark::FaultReported, job);
+    }
+    // The frames go back now, not at the next step and not at shutdown. When
+    // the settle happened inside a resume the release waits only until control
+    // is back out of that resume, so no frame is destroyed underneath itself.
+    release_queue_.push_back(job);
+    if (resume_depth_ == 0) {
+        flush_releases();
+    }
+}
+
+void Conductor::flush_releases() {
+    if (flushing_) {
+        return;
+    }
+    flushing_ = true;
+    while (!release_queue_.empty()) {
+        std::vector<JobId> batch;
+        batch.swap(release_queue_);
+        for (JobId job : batch) {
+            JobState* st = find(job);
+            if (st == nullptr || !st->root) {
+                continue;
+            }
+            std::coroutine_handle<> r = std::exchange(st->root, {});
+            st->parked = {};
+            st->parked_slot = SlotId{};
+            // Read the name of the storage before it goes back.
+            const SlotId slot = FrameArena::slot_of(r.address());
+            
+
+[32]
+cd /tmp/t && sed -i 's/^static std::string step_traced/static std::string step_traced_unused/' harness.hpp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include main.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o t 2>&1 | head -20 && ./t 2>&1 | head -40
+
+[34]
+cd /tmp/t && sed -i 's/^static std::string step_traced/static std::string step_traced_unused/' harness.hpp; g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include extra.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o x 2>&1 | head -20 && ASAN_OPTIONS=detect_leaks=1 ./x 2>&1 | head -40
+
+[35]
+cd /tmp/t && sed -i 's/count_for(Mark::ChildDestroyed))/count(Mark::ChildDestroyed))/' extra.cpp && sed -i 's/^Duty throwing_child()/Duty throwing_child_unused()/' extra.cpp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include extra.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o x 2>&1 | grep -E 'error|warning: unused' | head; ASAN_OPTIONS=detect_leaks=1 ./x 2>&1 | head -40
+
+[39]
+cd /tmp/t && cat >> /dev/null <<'X'
+X
+python3 - <<'PY'
+import re
+p='/tmp/t/extra.cpp'
+s=open(p).read()
+add='''
+Conductor* g_lc = nullptr;
+int g_launch_failures = 0;
+
+Duty launcher_job() {
+    co_await park();
+    try {
+        g_lc->launch(waiter());
+    } catch (const std::bad_alloc&) {
+        ++g_launch_failures;
+    }
+    co_return 1;
+}
+
+// Launching from inside a job when the arena is out of slots reports the
+// failure to the job rather than losing a frame.
+void test_launch_inside_exhausted() {
+    Conductor c{1};
+    g_lc = &c;
+    g_launch_failures = 0;
+    const JobId j = c.launch(launcher_job());
+    c.post(j, 1);
+    c.drain();
+    check_eq(g_launch_failures, 1, "exhaustion reported to the job");
+    check(c.outcome_of(j) == Outcome::Delivered, "job carried on");
+    check_eq(static_cast<long long>(c.value_of(j).value_or(-1)), 1, "job value");
+    check_eq(static_cast<long long>(c.arena().live_slots()), 0, "storage back");
+    check_eq(static_cast<long long>(c.arena().double_reclaims()), 0, "no double reclaims");
+}
+'''
+s=s.replace('}  // namespace\n\nint main() {', add+'\n}  // namespace\n\nint main() {\n    test_launch_inside_exhausted();')
+open(p,'w').write(s)
+PY
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include extra.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o x 2>&1 | grep -E 'error' | head; ASAN_OPTIONS=detect_leaks=1 ./x 2>&1 | head
+
+[41]
+cd /tmp/t && sed -i '/^static std::string step_traced_unused_unused/,+4d' harness.hpp && sed -i '/^Conductor\* g_c2 = nullptr;$/d' main.cpp && sed -i 's/^Duty throwing_child_unused() {/Duty throwing_child_unused() __attribute__((unused));\nDuty throwing_child_unused() {/' extra.cpp && clang++ -std=c++20 -Wall -Wextra -Wpedantic -Werror -g -fsanitize=address,undefined -I/app/include main.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o tc 2>&1 | grep -E 'error|warning' | head -5; ASAN_OPTIONS=detect_leaks=1 ./tc 2>&1 | tail -2
+
+[45]
+python3 - <<'PY'
+p='src/runtime.cpp'
+s=open(p).read()
+pairs=[
+ ("    const SlotId slot = FrameArena::slot_of(child_.address());",
+  "    const SlotId slot = slot_of_frame(child_.address());"),
+ ("        const SlotId slot = FrameArena::slot_of(r.address());\n        r.destroy();\n        journal_.record_slot(Mark::FrameReleased, job, slot);\n    }\n    g_arena = previous_arena_;",
+  "        const SlotId slot = slot_of_frame(r.address());\n        r.destroy();\n        journal_.record_slot(Mark::FrameReleased, job, slot);\n    }\n    g_arena = previous_arena_;"),
+ ("    journal_.record_slot(Mark::JobStarted, job, FrameArena::slot_of(h.address()));",
+  "    journal_.record_slot(Mark::JobStarted, job, slot_of_frame(h.address()));"),
+ ("    st->parked_slot = FrameArena::slot_of(h.address());",
+  "    st->parked_slot = slot_of_frame(h.address());"),
+ ("            const SlotId slot = FrameArena::slot_of(r.address());",
+  "            const SlotId slot = slot_of_frame(r.address());"),
+ ("        t.slot = FrameArena::slot_of(st->parked.address());",
+  "        t.slot = st->parked_slot;"),
+ ("    if (!t.bound || !waiting || FrameArena::slot_of(st->parked.address()) != t.slot) {",
+  "    if (!t.bound || !waiting || st->parked_slot != t.slot) {"),
+]
+for a,b in pairs:
+    assert s.count(a)==1, (a, s.count(a))
+    s=s.replace(a,b)
+open(p,'w').write(s)
+print("ok")
+PY
+grep -n 'slot_of_frame\|parked_slot' src/runtime.cpp
+
+[52]
+cd /tmp/t && cat > tiny.cpp <<'EOF'
+#include <cstdio>
+int main(){ std::printf("hi\n"); return 0; }
+EOF
+g++ -fsanitize=address,undefined -g tiny.cpp -o tiny && for i in 1 2 3 4 5; do ./tiny >/dev/null 2>/tmp/te; echo "tiny run$i exit=$?"; done; which gdb; ulimit -c
+
+[64]
+cd /tmp/t && sed -i 's/for (std::size_t i = released; i < es.size(); ++i) {/for (std::size_t i = released + 1; i < es.size(); ++i) {/' stress.cpp && sed -i 's/^JobId g_self = kNoJob;$//' stress.cpp && g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include stress.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o s 2>&1 | grep -E 'error' | head -3; ./s > /tmp/s.out 2>&1; tail -8 /tmp/s.out
+
+[65]
+cd /tmp/t && python3 - <<'PY'
+p='stress.cpp'
+s=open(p).read()
+s=s.replace("""            if (op < 18 && jobs.size() < 5) {
+                switch (rng() % 7) {""","""            if (op < 18 && jobs.size() < 5) {
+                const int kind = static_cast<int>(rng() % 7);
+                try {""")
+# rewrite the launch switch into try/catch
+old = """                    case 0: jobs.push_back(c.launch(leaf())); break;
+                    case 1: jobs.push_back(c.launch(double_wait())); break;
+                    case 2: jobs.push_back(c.launch(outer())); break;
+                    case 3: jobs.push_back(c.launch(risky())); break;
+                    case 4: jobs.push_back(c.launch(self_scheduler())); break;
+                    case 5: jobs.push_back(c.launch(catcher())); break;
+                    default: jobs.push_back(c.launch(middle())); break;
+                }"""
+new = """                switch (kind) {
+                    case 0: jobs.push_back(c.launch(leaf())); break;
+                    case 1: jobs.push_back(c.launch(double_wait())); break;
+                    case 2: jobs.push_back(c.launch(outer())); break;
+                    case 3: jobs.push_back(c.launch(risky())); break;
+                    case 4: jobs.push_back(c.launch(self_scheduler())); break;
+                    case 5: jobs.push_back(c.launch(catcher())); break;
+                    default: jobs.push_back(c.launch(middle())); break;
+                }
+                } catch (const std::bad_alloc&) {
+                    // Out of slots: reported, and nothing else changed.
+                    jobs.pop_back();
+                }"""
+assert old in s
+s=s.replace(old,new)
+s=s.replace('switch (kind) {','switch (kind) {',1)
+open(p,'w').write(s)
+PY
+sed -n '86,108p' stress.cpp
+
+[66]
+cd /tmp/t && python3 - <<'PY'
+p='stress.cpp'
+s=open(p).read()
+s=s.replace("""                } catch (const std::bad_alloc&) {
+                    // Out of slots: reported, and nothing else changed.
+                    jobs.pop_back();
+                }""","""                } catch (const std::bad_alloc&) {
+                    // Out of slots: reported, and nothing else changed. The
+                    // launch never got as far as recording a job.
+                }""")
+open(p,'w').write(s)
+PY
+g++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include stress.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o s 2>&1 | grep -E 'error'|head -3; ./s > /tmp/s.out 2>&1; echo "exit=$?"; tail -8 /tmp/s.out
+
+[67]
+cd /tmp/t && sed -i 's/seed <= 40/seed <= 200/' stress.cpp && g++ -std=c++20 -O1 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include stress.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o s 2>&1|grep error|head -3; ./s >/tmp/s.out 2>&1; echo "gcc exit=$?"; tail -2 /tmp/s.out; clang++ -std=c++20 -O1 -Wall -Wextra -Wpedantic -g -fsanitize=address,undefined -I/app/include stress.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o sc 2>&1|grep error|head -3; ./sc >/tmp/sc.out 2>&1; echo "clang exit=$?"; tail -2 /tmp/sc.out
+
+[68]
+cd /tmp/t && cat > size.cpp <<'EOF'
+#include "roundel/runtime.hpp"
+#include <cstdio>
+#include <string>
+using namespace roundel;
+static std::size_t g_max = 0;
+Duty a(){ co_return co_await park(); }
+Duty b(){ std::int64_t x=co_await park(); std::int64_t y=co_await park(); co_return x+y; }
+Duty c(){ std::string s="hello world"; std::int64_t v=co_await park(); s+=std::to_string(v); co_return static_cast<std::int64_t>(s.size()); }
+int main(){
+  Conductor con{8};
+  auto d1=a(); auto d2=b(); auto d3=c();
+  std::printf("ok\n");
+  return 0;
+}
+EOF
+python3 - <<'PY'
+import re
+p='/app/src/runtime.cpp'
+s=open(p).read()
+PY
+g++ -std=c++20 -I/app/include -c /app/src/runtime.cpp -o /tmp/rr.o -DROUNDEL_TRACE_SIZE 2>/dev/null; grep -n 'block_bytes\|arena_(' /app/src/runtime.cpp | head
+
+[69]
+cp src/runtime.cpp /tmp/runtime.cpp.bak && python3 - <<'PY'
+p='/app/src/runtime.cpp'
+s=open(p).read()
+s=s.replace("""void* Duty::promise_type::operator new(std::size_t bytes) {
+    if (g_arena == nullptr) {""","""void* Duty::promise_type::operator new(std::size_t bytes) {
+    std::fprintf(stderr, "FRAME %zu\\n", bytes);
+    if (g_arena == nullptr) {""")
+s=s.replace('#include <new>','#include <new>\n#include <cstdio>')
+open(p,'w').write(s)
+PY
+cd /tmp/t && g++ -std=c++20 -I/app/include /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -c -o /dev/null 2>&1|head -3; for f in main extra stress; do g++ -std=c++20 -O1 -I/app/include $f.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -o m_$f 2>/dev/null; ./m_$f >/dev/null 2>/tmp/sz.$f; echo "$f max frame bytes: $(grep FRAME /tmp/sz.$f | sort -n -k2 | tail -1)"; done
+
+[75]
+cd /tmp/t && cat > leak.cpp <<'EOF'
+#include <cstdio>
+int main(){ int* p = new int[10]; p[0]=1; std::printf("%d\n", p[0]); return 0; }
+EOF
+g++ -fsanitize=address -g leak.cpp -o leak; for i in 1 2 3; do ./leak >/tmp/l.out 2>/tmp/l.err; echo "leak-test exit=$? detected=$(grep -c 'LeakSanitizer\|SUMMARY: AddressSanitizer' /tmp/l.err)"; done

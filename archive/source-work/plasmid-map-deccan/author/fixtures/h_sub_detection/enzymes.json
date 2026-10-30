@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "AatII",
+   "site": "GACGTC",
+   "cut_offset": 5
+  },
+  {
+   "name": "ApaI",
+   "site": "GGGCCC",
+   "cut_offset": 5
+  },
+  {
+   "name": "BsrGI",
+   "site": "TGTACA",
+   "cut_offset": 1
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "AgeI",
+   "position": 666
+  },
+  {
+   "enzyme": "MfeI",
+   "position": 1507
+  },
+  {
+   "enzyme": "ClaI",
+   "position": 2597
+  }
+ ]
+}

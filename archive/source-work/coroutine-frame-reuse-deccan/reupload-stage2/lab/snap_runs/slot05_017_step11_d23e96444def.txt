@@ -1,0 +1,52 @@
+/b/runtime.cpp:139:9: error: use of undeclared identifier 'release_pending'
+  139 |         release_pending();
+      |         ^
+/b/runtime.cpp:143:16: error: no member named 'root' in 'roundel::Conductor::JobState'
+  143 |         if (st.root) {
+      |             ~~ ^
+/b/runtime.cpp:144:58: error: no member named 'root' in 'roundel::Conductor::JobState'
+  144 |             std::coroutine_handle<> r = std::exchange(st.root, {});
+      |                                                       ~~ ^
+/b/runtime.cpp:176:8: error: no member named 'root' in 'roundel::Conductor::JobState'
+  176 |     st.root = h;
+      |     ~~ ^
+/b/runtime.cpp:190:18: error: assigning to 'bool' from incompatible type 'std::coroutine_handle<>'
+  190 |     st->parked = h;
+      |                  ^
+/b/runtime.cpp:203:11: error: no member named 'target' in 'roundel::Conductor::Pending'
+  203 |         t.target = st->parked;
+      |         ~ ^
+/b/runtime.cpp:229:29: error: no viable conversion from 'bool' to 'std::coroutine_handle<>'
+  229 |     std::coroutine_handle<> parked = st->parked;
+      |                             ^        ~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:96:5: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'bool' to 'const coroutine_handle<void> &' for 1st argument
+   96 |     coroutine_handle<void>
+      |     ^~~~~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:96:5: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'bool' to 'coroutine_handle<void> &&' for 1st argument
+   96 |     coroutine_handle<void>
+      |     ^~~~~~~~~~~~~~~~
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:102:17: note: candidate constructor not viable: no known conversion from 'bool' to 'std::nullptr_t' for 1st argument
+  102 |       constexpr coroutine_handle(std::nullptr_t __h) noexcept
+      |                 ^                ~~~~~~~~~~~~~~~~~~
+/b/runtime.cpp:255:5: error: use of undeclared identifier 'pending_release_'
+  255 |     pending_release_ = job;
+      |     ^
+/b/runtime.cpp:258:17: error: out-of-line definition of 'release_pending' does not match any declaration in 'roundel::Conductor'
+  258 | void Conductor::release_pending() {
+      |                 ^~~~~~~~~~~~~~~
+/b/runtime.cpp:259:37: error: use of undeclared identifier 'pending_release_'
+  259 |     const JobId job = std::exchange(pending_release_, kNoJob);
+      |                                     ^
+/b/runtime.cpp:264:31: error: no member named 'root' in 'roundel::Conductor::JobState'
+  264 |     if (st == nullptr || !st->root) {
+      |                           ~~  ^
+/b/runtime.cpp:267:51: error: no member named 'root' in 'roundel::Conductor::JobState'
+  267 |     std::coroutine_handle<> r = std::exchange(st->root, {});
+      |                                               ~~  ^
+/b/runtime.cpp:275:12: error: no member named 'target' in 'roundel::Conductor::Pending'
+  275 |     if (!t.target) {
+      |          ~ ^
+/b/runtime.cpp:281:52: error: no member named 'target' in 'roundel::Conductor::Pending'
+  281 |     auto typed = Duty::handle_type::from_address(t.target.address());
+      |                                                  ~ ^
+14 errors generated.

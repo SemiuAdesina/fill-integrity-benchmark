@@ -1,0 +1,107 @@
+490	            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {
+491	                Some(order) => order.clone(),
+492	                None => continue,
+493	            };
+494	            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {
+495	                Some(order) => order.clone(),
+496	                None => continue,
+497	            };
+498	
+499	            let north_complete = self.leg_is_complete(&north_leg);
+500	            let south_complete = self.leg_is_complete(&south_leg);
+501	
+502	            if north_complete && south_complete {
+503	                self.open_position(&north_leg, &south_leg, now);
+504	            } else if north_complete {
+505	                self.close_gap(&south_leg, now)?;
+506	            } else if south_complete {
+507	                self.close_gap(&north_leg, now)?;
+508	            }
+509	        }
+510	        Ok(())
+511	    }
+512	
+513	    /// Close the exposure left by a leg that did not complete.
+514	    ///
+515	    /// Closing a resting leg is a two-step move: the first cycle marks it, the
+516	    /// next one cancels it and covers what is missing. That gives an in-flight
+517	    /// fill a cycle to arrive before another economic order is sent.
+518	    fn close_gap(&mut self, leg: &PendingOrder, now: Timestamp) -> Result<(), PortError> {
+519	        match self.visibility(leg) {
+520	            LegVisibility::Resting => {
+521	                if self.closing.insert(leg.order_id.clone()) {
+522	                    return Ok(());
+523	                }
+524	                if self.gateway.cancel(&leg.order_id).is_err() {
+525	                    return Ok(());
+526	                }
+527	                self.resting_at_venue.remove(&leg.order_id);
+528	                self.replaced.insert(leg.order_id.clone());
+529	            }
+530	            // The venue has closed it, or this engine withdrew it: there is
+531	            // nothing to cancel first, and what it is short is known.
+532	            LegVisibility::Closed | LegVisibility::Withdrawn => {}
+533	            // Its absence from the live list proves nothing: it may still be
+534	            // resting and a fill may still be in flight. Neutralizing now would
+535	            // acquire quantity the desk already owns, doubling the exposure the
+536	            // correction was meant to close.
+537	            LegVisibility::Unconfirmed => return Ok(()),
+538	        }
+539	
+540	        let gap = self.residual_for(leg);
+541	        let plan = match plan_neutralization(self.gateway, leg, gap, self.config.neutralization_slippage)? {
+542	            Some(plan) => plan,
+543	            None => return Ok(()),
+544	        };
+545	
+546	        // The record is written before the order is sent, so a submission whose
+547	        // outcome is unknown is still something this engine knows it committed to.
+548	        let client_ref = self.next_client_ref();
+549	        let record = NeutralizationRecord {
+550	            strategy_id: plan.strategy_id,
+551	            venue: plan.venue,
+552	            instrument_id: plan.instrument_id,
+553	            client_ref: client_ref.clone(),
+554	            order_id: None,
+555	            limit_price: plan.limit_price,
+556	            size: plan.size,
+557	            expiry_time: leg.expiry_time,
+558	        };
+559	        let size = record.size;
+560	        let request = Self::neutralization_request(&record);
+561	        self.neutralizations.push(record);
+562	        self.ledger
+563	            .track(client_ref.clone(), None, None, size, now);
+564	
+565	        match self.gateway.submit(&request) {
+566	            Ok(accepted) => {
+567	                self.ledger.learn_order(
+568	                    &client_ref,
+569	                    accepted.order_id.clone(),
+570	                    Some(accepted.venue_seq),
+571	                );
+572	                if let Some(slot) = self
+573	                    .neutralizations
+574	                    .iter_mut()
+575	                    .find(|slot| slot.client_ref == client_ref)
+576	                {
+577	                    slot.order_id = Some(accepted.order_id);
+578	                }
+579	            }
+580	            // The venue may have created it under an identifier this engine
+581	            // cannot see. The record stays, so it counts as working and the
+582	            // retry reuses the reference it was sent under.
+583	            Err(SubmitError::AcknowledgementLost) => {}
+584	            // Nothing was created, so there is nothing committed to. Drop the
+585	            // record and let a later cycle recompute the residual and try again:
+586	            // one failed attempt must not latch the mandate shut.
+587	            Err(_) => {
+588	                self.neutralizations
+589	                    .retain(|slot| slot.client_ref != client_ref);
+590	            }
+591	        }
+592	
+593	        Ok(())
+594	    }
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "            let north_leg = match self.pending.leg(&strategy_id, Venue::North) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n            let south_leg = match self.pending.leg(&strategy_id, Venue::South) {\n                Some(order) => order.clone(),\n                None => continue,\n            };\n\n            let north_complete = self.leg_is_complete(&north_leg);\n            let south_complete = self.leg_is_complete(&south_leg);\n\n            if north_complete && south_complete {\n                self.open_position(&north_leg, &south_leg, now);\n            } else if north_complete {\n                self.close_gap(&south_leg, now)?;\n            } else if south_complete {\n                self.close_gap(&north_leg, now)?;\n            }\n        }\n        Ok(())\n    }\n\n    /// Close the exposure left by a leg that did not complete.\n    ///\n    /// Closing a resting leg is a two-step move: the first cycle marks it, the\n    /// next one cancels it and covers what is missing. That gives an in-flight\n    /// fill a cycle to arrive before another economic order is sent.\n    fn close_gap(&mut self, leg: &PendingOrder, now: Timestamp) -> Result<(), PortError> {\n        match self.visibility(leg) {\n            LegVisibility::Resting => {\n                if self.closing.insert(leg.order_id.clone()) {\n                    return Ok(());\n                }\n                if self.gateway.cancel(&leg.order_id).is_err() {\n                    return Ok(());\n                }\n                self.resting_at_venue.remove(&leg.order_id);\n                self.replaced.insert(leg.order_id.clone());\n            }\n            // The venue has closed it, or this engine withdrew it: there is\n            // nothing to cancel first, and what it is short is known.\n            LegVisibility::Closed | LegVisibility::Withdrawn => {}\n            // Its absence from the live list proves nothing: it may still be\n            // resting and a fill may still be in flight. Neutralizing now would\n            // acquire quantity the desk already owns, doubling the exposure the\n            // correction was meant to close.\n            LegVisibility::Unconfirmed => return Ok(()),\n        }\n\n        let gap = self.residual_for(leg);\n        let plan = match plan_neutralization(self.gateway, leg, gap, self.config.neutralization_slippage)? {\n            Some(plan) => plan,\n            None => return Ok(()),\n        };\n\n        // The record is written before the order is sent, so a submission whose\n        // outcome is unknown is still something this engine knows it committed to.\n        let client_ref = self.next_client_ref();\n        let record = NeutralizationRecord {\n            strategy_id: plan.strategy_id,\n            venue: plan.venue,\n            instrument_id: plan.instrument_id,\n            client_ref: client_ref.clone(),\n            order_id: None,\n            limit_price: plan.limit_price,\n            size: plan.size,\n            expiry_time: leg.expiry_time,\n        };\n        let size = record.size;\n        let request = Self::neutralization_request(&record);\n        self.neutralizations.push(record);\n        self.ledger\n            .track(client_ref.clone(), None, None, size, now);\n\n        match self.gateway.submit(&request) {\n            Ok(accepted) => {\n                self.ledger.learn_order(\n                    &client_ref,\n                    accepted.order_id.clone(),\n                    Some(accepted.venue_seq),\n                );\n                if let Some(slot) = self\n                    .neutralizations\n                    .iter_mut()\n                    .find(|slot| slot.client_ref == client_ref)\n                {\n                    slot.order_id = Some(accepted.order_id);\n                }\n            }\n            // The venue may have created it under an identifier this engine\n            // cannot see. The record stays, so it counts as working and the\n            // retry reuses the reference it was sent under.\n            Err(SubmitError::AcknowledgementLost) => {}\n            // Nothing was created, so there is nothing committed to. Drop the\n            // record and let a later cycle recompute the residual and try again:\n            // one failed attempt must not latch the mandate shut.\n            Err(_) => {\n                self.neutralizations\n                    .retain(|slot| slot.client_ref != client_ref);\n            }\n        }\n\n        Ok(())\n    }", "numLines": 105, "startLine": 490, "totalLines": 656}}

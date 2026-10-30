@@ -1,0 +1,10 @@
+/b/runtime.cpp:91:35: error: assigning to 'bool' from incompatible type 'void'
+   91 |         detached_ = cp.conductor->push_frame(cp.job, child_);
+      |                     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/b/runtime.cpp:224:17: error: return type of out-of-line definition of 'roundel::Conductor::push_frame' differs from that in the declaration
+  224 | bool Conductor::push_frame(JobId job, std::coroutine_handle<> h) {
+      | ~~~~            ^
+/b/include/roundel/runtime.hpp:300:10: note: previous declaration is here
+  300 |     void push_frame(JobId job, std::coroutine_handle<> h);
+      |     ~~~~ ^
+2 errors generated.

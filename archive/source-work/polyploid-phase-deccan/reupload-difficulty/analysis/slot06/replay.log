@@ -1,0 +1,134 @@
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.rs" -o -name "*.md" -o -name "*.toml" -o -name "*.json" | head -50; echo  :: 6 Sep  7 17:46 spec drwxr-xr-x 1 root root  176 Sep  7 17:46 src drwxr-xr-x 1 root root   80 Sep  7 17:46 target drwxr-xr-x 1 root root   60 Sep  7 17:46 tests 
+[13] BASH rc=0 0.0s :: cat README.md && cat Cargo.toml && cat src/lib.rs && cat src/bin/phase.rs && cat examples/README.md :: field by field to check the formats and canonical ordering: the haplotype rows, every progeny's two state paths, `total_log_likelihood` and `canonical_digest`. 
+[14] BASH rc=0 0.1s :: python3 -c " import json d=json.load(open('cross.json')) print(d['markers'], d['offspring']) print(' :: , True, True] B dr rate [0, 0.289772, 0, 0, 0, 0.233696, 0.18933, 0.181965, 0.280416, 0, 0.266179, 0.218749] space A 393216 space B 331776 product 130459631616 
+[15] BASH rc=0 0.0s :: grep -n "solver" tests/diagnostics.rs | head -30; echo ---; head -60 tests/diagnostics.rs; echo ---; :: State::new(2, 3).unwrap()), 2); }  #[test] fn relabelling_resorts_the_unordered_pair() {     let state = State::new(0, 3).unwrap(); --- 79 tests/diagnostics.rs 
+[16] BASH rc=0 0.1s :: cat examples/small.result.json && python3 -c " import json;d=json.load(open('examples/small.cross.js ::  ],    "rate": [     0.067313,     0,     0,     0.082293,     0.064 build deps examples incremental libpolyploid_phase.d libpolyploid_phase.rlib phase phase.d 
+[17] WRITE /app/src/solver/tables.rs -> W ok
+[18] WRITE /app/src/solver/canon.rs -> W ok
+[19] WRITE /app/src/solver/search.rs -> W ok
+[20] EDIT /app/src/solver/tables.rs -> E ok
+[21] EDIT /app/src/solver/tables.rs -> E ok
+[22] EDIT /app/src/solver/search.rs -> E ok
+[23] EDIT /app/src/solver/search.rs -> E ok
+[24] EDIT /app/src/solver/search.rs -> E ok
+[25] EDIT /app/src/solver/search.rs -> E ok
+[26] EDIT /app/src/solver/search.rs -> E ok
+[27] EDIT /app/src/solver/search.rs -> E ok
+[28] WRITE /app/src/solver/tiebreak.rs -> W ok
+[29] WRITE /app/src/solver.rs -> W ok
+[30] BASH rc=0 0.0s :: cargo build --release --offline 2>&1 | tail -30 :: 
+[31] BASH rc=0 0.0s :: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -40 :: 
+[32] EDIT /app/src/solver.rs -> E ok
+[33] EDIT /app/src/solver.rs -> E ok
+[34] BASH rc=0 0.0s :: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25 :: 
+[35] EDIT /app/src/solver.rs -> E ok
+[36] BASH rc=0 0.0s :: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25 :: 
+[37] EDIT /app/src/solver.rs -> E ok
+[38] BASH rc=0 0.0s :: timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25 :: 
+[39] BASH rc=0 0.0s :: time timeout 600 ./target/release/phase && cat result.json | head -c 600 :: ],[0,3],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2]],"B":[[1,2],[1,2],[1,2],[1,2],[1,2],[1,2],[1,2],[1,3],[1,3],[1 real	0m0.009s user	0m0.008s sys	0m0.001s 
+[40] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver.rs' s=open(p).read() s=s.replace("mod canon;\nmod search;\ :: 19:pub mod canon; 20:pub mod search; 21:pub mod tables; 22:pub mod tiebreak; 
+[41] WRITE /app/src/bin/scratch.rs -> W ok
+[42] BASH rc=127 0.0s :: cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" | head; time ./target/rele :: ./target/release/scratch: No such file or directory  real	0m0.000s user	0m0.000s sys	0m0.000s bash: line 1: ./target/release/scratch: No such file or directory 
+[43] WRITE /app/src/bin/scratch.rs -> W ok
+[44] EDIT /app/src/bin/scratch.rs -> E ok
+[45] BASH rc=127 0.0s :: python3 - <<'EOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" best: f64, ca: Vec<u8>, cb :: bash: line 38: ./target/release/scratch: No such file or directory  real	0m0.000s user	0m0.000s sys	0m0.000s 
+[46] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/bsoi4vl2m.output :: cat: /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/bsoi4vl2m.output: No such file or directory 
+[47] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() # add symmetry breaking state s = s.repl :: 
+[48] BASH rc=127 0.0s :: time timeout 300 ./target/release/scratch /app/cross.json bnb 20000000 24 :: timeout: failed to run command './target/release/scratch': No such file or directory  real	0m0.001s user	0m0.000s sys	0m0.001s 
+[49] WRITE /app/make_cross.py -> W ok
+[50] BASH rc=0 0.1s :: for s in 1 2 3; do python3 make_cross.py $s 28 32 1.5; done && for f in /tmp/gen1_28_32_1.5.json /tm :: et/release/scratch': No such file or directory == /tmp/gen3_28_32_1.5.json timeout: failed to run command './target/release/scratch': No such file or directory 
+[51] BASH rc=0 0.0s :: (timeout 600 ./target/release/scratch /tmp/gen1_28_32_1.5.json bnb 3000000 0 > /tmp/bnb1.txt 2>&1; e :: 
+[52] BASH rc=1 0.2s :: python3 - <<'EOF' import json,random # smaller instances where B&B is feasible rnd=random.Random(7)  :: n23_12_8_0.8.json == /tmp/gen24_12_8_0.8.json == /tmp/gen25_14_12_2.0.json == /tmp/gen26_14_12_2.0.json == /tmp/gen27_16_8_1.2.json == /tmp/gen28_16_8_1.2.json 
+[53] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() # add UB1 machinery s=s.replace(""" ///  :: done 
+[55] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" let mut children: Vec<(u :: 
+[56] BASH rc=1 0.0s :: timeout 200 ./target/release/scratch /app/cross.json bnb 4000000 20 2>&1 | grep -E "root|ub1|incumbe :: --- gen25 14x10 --- 
+[57] BASH rc=1 0.0s :: timeout 300 ./target/release/scratch /tmp/gen25_14_10_1.5.json best 53 40 2>&1 | grep -E "stochastic :: --- 400x40 --- 
+[58] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace("""use polyploid_phase::solv :: built 
+[59] BASH rc=0 0.0s :: cat > /tmp/cmp.sh <<'EOF' #!/bin/bash out=/tmp/cmp_results.txt : > $out for cfg in "10 8 1.5" "12 8  :: started 
+[60] BASH rc=0 0.0s :: time ./target/release/phase 2>&1 | tail -3; echo; ls -la result.json :: =10 total_log_likelihood=-725.2001583337 wrote /app/result.json  -rw-r--r-- 1 root root 1925 Sep  7 21:34 result.json  real	0m0.009s user	0m0.009s sys	0m0.000s 
+[61] BASH rc=0 0.0s :: nproc; cat /tmp/cmp_results.txt 2>/dev/null | tail -20 :: 10 
+[62] BASH rc=0 0.1s :: python3 make_cross.py 7 28 32 1.5 && time ./target/release/phase /tmp/gen7_28_32_1.5.json /tmp/out28 :: /tmp/gen7_28_32_1.5.json total_log_likelihood=-1667.2937789887 wrote /tmp/out28.json  real	0m0.097s user	0m0.097s sys	0m0.000s 
+[63] BASH rc=0 0.1s :: nohup timeout 900 ./target/release/scratch /tmp/gen7_28_32_1.5.json best 500 100 > /tmp/heavy28.txt  :: ok 
+[64] BASH rc=1 0.0s :: time ./target/release/scratch /app/cross.json best 53 40 2>&1 | grep stochastic ::  real	0m0.001s user	0m0.000s sys	0m0.001s 
+[65] WRITE /app/src/solver/exact.rs -> W ok
+[66] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// Notes an assignment :: p. 235:    pub enumerated: bool, 336:    Outcome { value: best, assignments, enumerated: true } 404:    Outcome { value: best, assignments, enumerated: false } 
+[67] EDIT /app/src/solver.rs -> E ok
+[68] EDIT /app/src/solver.rs -> E ok
+[69] EDIT /app/src/solver.rs -> E ok
+[70] BASH rc=0 0.0s :: cargo build --release 2>&1 | grep -E "^(error|warning: unused)" -A5 | head -30; echo "=== build done :: === build done === 
+[71] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/exact.rs' s=open(p).read() s=s.replace(""" pub fn ties(self) -> Ve :: a[mm][j]);             let pb = usize::from(self.bpb[mm][pa * NS + sb]);             j = pa * NS + pb;             out[mm - 1] = j;         }         out     } 
+[72] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/tables.rs' s=open(p).read() s=s.replace(""" let _sa = j / NS; let  :: === ok === 
+[73] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("fn close(ctx: &Ctx, mut outcome: :: === ok === 
+[74] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12 :: 
+[75] BASH rc=0 0.0s :: cat /tmp/cmp_results.txt; echo "=== heavy 28 ==="; cat /tmp/heavy28.txt 2>/dev/null | head -3 :: DONE === heavy 28 === timeout: failed to run command './target/release/scratch': No such file or directory 
+[76] BASH rc=0 0.0s :: cat > /tmp/big.sh <<'EOF' #!/bin/bash for s in 7 8 9 13 14; do for sl in 1.0 1.5 2.0; do f=/tmp/gen$ :: started 
+[77] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace("""use crate::solver::ta :: 77:pub fn min_signature_path( 89:pub fn min_signature_with( 109:        node.push(row); 
+[78] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace(""" min_signature_with(c :: === ok === 
+[79] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -4; echo "=== big ==="; cat ::  prod=[] heavy=[] /tmp/gen13_28_32_1.0.json prod=[] heavy=[] === heavy === timeout: failed to run command './target/release/scratch': No such file or directory 
+[80] BASH rc=0 0.1s :: ./target/release/phase >/dev/null 2>&1; cp result.json /tmp/r1.json; ./target/release/phase >/dev/nu :: 1,1,1,1,1,1,0],[0,0,0,1,0,1,0,0,0,0,0,0]],"B":[[0,1,1,1,1,1,1,0,1,1,1,1],[0,1,1,1,1,0,1,0,1,0,1,1],[0,0,0,1,1,0,1,0,1,0,0,0],[0,0,0,0,1,0,1,0,0,0,0,0]]},"paths"
+[81] BASH rc=1 0.0s :: sleep 0; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt; ps aux |  ::  prod=[] heavy=[] DONE === heavy === timeout: failed to run command './target/release/scratch': No such file or directory 0 bash: line 1: ps: command not found 
+[82] BASH rc=0 0.0s :: cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt; echo "=== running: :: y=[] DONE === heavy === timeout: failed to run command './target/release/scratch': No such file or directory === running: 0 bash: line 1: ps: command not found 
+[83] BASH rc=0 0.0s :: sed -n '1,200p' spec/result-format-v1.md :: ore than `1e-8`. - `canonical_digest` is not sixteen lowercase hexadecimal characters, or does   not match the digest of the reported canonical reconstruction. 
+[84] BASH rc=0 0.0s :: sleep 0; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt :: =[] heavy=[] /tmp/gen14_28_32_2.0.json prod=[] heavy=[] DONE === heavy === timeout: failed to run command './target/release/scratch': No such file or directory 
+[85] BASH rc=0 0.0s :: for cfg in "200 40" "28 200" "100 60" "400 20"; do set -- $cfg ( timeout 900 ./target/release/scratc :: launched 
+[86] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/exact.rs' s=open(p).read() # extract relaxed bounds into a shared  :: 3025 13656 ok 
+[87] WRITE /app/src/solver/relaxed.rs -> W ok
+[88] EDIT /app/src/solver/relaxed.rs -> E ok
+[89] WRITE SKIP (tool error) /app/src/solver/exact.rs :: '<tool_use_error>File has been modified since read, either by the user or by a linter. Read it again before attempting to'
+[90] BASH rc=0 0.0s :: rm -f src/solver/exact.rs; echo removed :: removed 
+[91] WRITE /app/src/solver/exact.rs -> W ok
+[92] WRITE /app/src/solver/beam.rs -> W ok
+[93] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("""pub mod canon; pub mod exact;" :: === done === 
+[94] BASH rc=0 0.0s :: python3 - <<'PYEOF' for p in ['src/solver/beam.rs','src/solver/exact.rs']: s=open(p).read() s=s.repl :: === done === 
+[95] BASH rc=0 0.0s :: cat /tmp/lever.txt 2>/dev/null; echo "--- big ---"; cat /tmp/big_results.txt; echo "--- running: $(p ::  prod=[] heavy=[] /tmp/gen14_28_32_1.5.json prod=[] heavy=[] /tmp/gen14_28_32_2.0.json prod=[] heavy=[] DONE --- running: 0 bash: line 1: ps: command not found 
+[96] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::tabl :: === built === 
+[97] BASH rc=1 0.0s :: cat > /tmp/beamtest.sh <<'EOF' #!/bin/bash for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.jso :: bash: line 37: /tmp/beamtest.sh: Permission denied cat: /tmp/beam_results.txt: No such file or directory 
+[98] BASH rc=0 0.0s :: chmod +x /tmp/beamtest.sh; bash /tmp/beamtest.sh; cat /tmp/beam_results.txt :: mtest.sh: line 5: /usr/bin/time: No such file or directory /tmp/gen13_28_32_1.5.json :: /tmp/beamtest.sh: line 5: /usr/bin/time: No such file or directory DONE 
+[99] BASH rc=0 0.0s :: cat > /tmp/beamtest.sh <<'EOF' #!/bin/bash for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.jso :: r/bin/time: No such file or directory DONE == /tmp/gen7_28_32_1.0.json == /tmp/gen7_28_32_1.5.json == /tmp/gen8_28_32_2.0.json == /tmp/gen9_28_32_1.0.json DONE 
+[100] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("fn stochastic(\n ctx: &Ct :: built started 
+[101] BASH rc=0 0.0s :: sleep 0; cat /tmp/tune_results.txt; echo "--- cmp ---"; cat /tmp/cmp_results.txt :: 4_28_32_2.0.json r=60 k=60 :: /tmp/gen21_28_32_1.0.json r=25 k=40 :: /tmp/gen21_28_32_1.0.json r=25 k=150 :: /tmp/gen21_28_32_1.0.json r=60 k=60 :: --- cmp --- 
+[102] BASH rc=0 0.1s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::beam :: === built === 
+[103] BASH rc=0 0.0s :: time ./target/release/phase 2>&1 | tail -2; echo; cargo test --offline --locked --release --test sol :: total_log_likelihood=-725.2001583337 wrote /app/result.json   real	0m0.009s user	0m0.007s sys	0m0.002s 
+[104] BASH rc=0 0.0s :: cat /tmp/tune_results.txt; echo "--- cmp ---"; tail -8 /tmp/cmp_results.txt :: 32_1.5.json r=60 k=60 :: /tmp/gen21_28_32_2.0.json r=25 k=40 :: /tmp/gen21_28_32_2.0.json r=25 k=150 :: /tmp/gen21_28_32_2.0.json r=60 k=60 :: DONE --- cmp --- 
+[105] BASH rc=0 0.4s :: ps aux | grep -c "[s]cratch"; for f in /tmp/gen7_28_32_1.0.json /tmp/gen8_28_32_2.0.json /tmp/gen9_2 :: g_likelihood=-1525.3610974395 real	0m0.102s == /tmp/gen9_28_32_1.0.json total_log_likelihood=-1546.1129240178 real	0m0.097s bash: line 1: ps: command not found 
+[106] BASH rc=1 0.0s :: pkill -f "target/release/scratch" ; pkill -f tune.sh; pkill -f cmp.sh; sleep 0; ps aux | grep -c "[s :: 0 0 bash: line 1: pkill: command not found bash: line 1: pkill: command not found bash: line 1: pkill: command not found bash: line 1: ps: command not found 
+[107] BASH rc=1 0.0s :: ps aux | grep "[s]cratch" | wc -l; grep -c tune /tmp/tune_results.txt :: 0 0 bash: line 1: ps: command not found 
+[108] BASH rc=0 0.0s :: pkill -9 -f "release/scratch"; sleep 0; ps aux | grep "[s]cratch" | wc -l :: 0 bash: line 1: pkill: command not found bash: line 1: ps: command not found 
+[109] BASH rc=0 0.1s :: cat > /tmp/tune2.sh <<'EOF' #!/bin/bash : > /tmp/tune2.txt for s in 7 9 13 14 21 33; do for sl in 1. :: ry /tmp/tune2.sh: line 10: ./target/release/scratch: No such file or directory /tmp/tune2.sh: line 10: ./target/release/scratch: No such file or directory DONE 
+[110] BASH rc=0 0.0s :: grep -rn "solver::" tests/ src/bin/ src/lib.rs 2>/dev/null | grep -v "^src/solver" | head -20 :: d_phase::solver::relaxed::Relaxed::new(&ctx); src/bin/scratch.rs:500:                polyploid_phase::solver::beam::beam(&ctx, &relaxed, beam::width(&ctx), 8); 
+[111] BASH rc=0 0.0s :: sleep 0; sort /tmp/tune2.txt 2>/dev/null :: ry /tmp/tune2.sh: line 10: ./target/release/scratch: No such file or directory /tmp/tune2.sh: line 10: ./target/release/scratch: No such file or directory DONE 
+[112] BASH rc=0 0.1s :: cat > /tmp/tune3.sh <<'EOF' #!/bin/bash : > /tmp/tune3.txt for s in 7 9 13 14 21 33; do f=/tmp/gen${ :: started 
+[113] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(""" let restarts = 24 + 40 :: built total_log_likelihood=-725.2001583337 wrote /app/result.json  real	0m0.008s user	0m0.009s sys	0m0.000s 
+[115] EDIT /app/src/solver.rs -> E ok
+[116] BASH rc=0 0.0s :: sleep 0; cat /tmp/tune3.txt 2>/dev/null | sort :: release/scratch: No such file or directory /tmp/gen9_28_32_1.5.json r=8 k=80 :: /tmp/tune3.sh: line 7: ./target/release/scratch: No such file or directory DONE 
+[117] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(''' other => panic!("unknown :: built 
+[118] BASH rc=0 0.0s :: grep -n "pub fn" src/cross_model.rs | head -30 :: ut Vec<State> { 210:    pub fn haplotypes(&self, parent: Parent) -> &Haplotypes { 217:    pub fn haplotypes_mut(&mut self, parent: Parent) -> &mut Haplotypes { 
+[119] BASH rc=127 0.0s :: python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace('ha.get(h, mm) as u8','ha.ro :: built bash: line 8: ./target/release/scratch: No such file or directory bash: line 8: ./target/release/scratch: No such file or directory 
+[120] BASH rc=0 0.0s :: sleep 0; sort /tmp/tune3.txt | grep -E "k=80|k=150" :: rget/release/scratch: No such file or directory /tmp/gen9_28_32_1.5.json r=8 k=80 :: /tmp/tune3.sh: line 7: ./target/release/scratch: No such file or directory 
+[121] BASH rc=0 0.2s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// Perturbations tried :: == /tmp/gen7_28_32_1.5.json total_log_likelihood=-1667.2937789887 real	0m0.095s == /tmp/gen9_28_32_1.5.json total_log_likelihood=-1633.4363332517 real	0m0.095s 
+[122] BASH rc=1 0.0s :: cat > /tmp/final_cmp.sh <<'EOF' #!/bin/bash : > /tmp/final_cmp.txt for spec in "51 16 16 1.5" "52 16 :: started 0 bash: line 15: ps: command not found 
+[124] BASH rc=0 0.1s :: sleep 0; cat /tmp/final_cmp.txt :: /tmp/gen51_16_16_1.5.json phase=[total_log_likelihood=-502.5647645440] heavy=[] 
+[125] BASH rc=1 0.1s :: sleep 0; cat /tmp/final_cmp.txt; ps aux | grep -c "[r]elease/" :: _log_likelihood=-216.1382404610] heavy=[] /tmp/gen53_20_20_1.5.json phase=[total_log_likelihood=-752.5173782550] heavy=[] 0 bash: line 1: ps: command not found 
+[126] BASH rc=0 0.1s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.belo :: on ::  /tmp/gen14_28_32_1.5.json ::  /tmp/gen21_28_32_1.5.json ::  /tmp/gen33_28_32_1.5.json ::  /tmp/gen7_28_32_1.5.json ::  /tmp/gen9_28_32_1.5.json ::  DONE 
+[127] BASH rc=0 0.0s :: sleep 0; cat /tmp/width.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt :: en7_28_32_1.0.json phase=[total_log_likelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 
+[128] BASH rc=1 0.0s :: sleep 0; cat /tmp/width.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt; ps aux|grep - :: kelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[129] BASH rc=0 0.0s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.belo :: en7_28_32_1.0.json phase=[total_log_likelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 
+[131] BASH rc=1 0.0s :: sleep 0; cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/" :: kelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[133] BASH rc=0 0.0s :: grep -n -i "recombination\|range\|0\.\|rate" spec/cross-format-v1.md | head -40 :: length other than `M - 1`, or with an 128:   entry outside `0.0 < r <= 0.5`. 130:   than `M`, or an `allowed` and `rate` pair that disagree as described above. 
+[134] BASH rc=0 0.0s :: grep -n "m - 1\|m-1\|n - 1" src/solver/*.rs :: 1][other].as_ref().is_none_or(|b| held < b), src/solver/tiebreak.rs:249:    out[m - 1] = cursor; src/solver/tiebreak.rs:253:                out[mm - 1] = prev; 
+[136] BASH rc=0 0.0s :: grep -n -i "markers\|offspring" spec/cross-format-v1.md | head -20; echo ---; grep -n -i "range\|at  :: r. 122:3. `markers` outside `12..=28`, or `offspring` outside `8..=32`. 124:5. `child_gl` with the wrong number of progeny, the wrong number of markers for --- 
+[137] BASH rc=1 0.0s :: cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/" :: kelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[138] BASH rc=0 0.1s :: cat > /tmp/nodes.sh <<'EOF' #!/bin/bash : > /tmp/nodes.txt for spec in "61 12 8 1.5" "62 12 16 1.5"  ::  /tmp/gen63_14_16_1.5.json /tmp/gen64_16_8_1.5.json /tmp/gen65_16_16_1.5.json /tmp/gen66_16_32_1.5.json /tmp/gen67_12_32_1.5.json /tmp/gen68_18_8_1.5.json DONE 
+[139] BASH rc=0 0.0s :: sleep 0; cat /tmp/nodes.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt :: en7_28_32_1.0.json phase=[total_log_likelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 
+[140] BASH rc=1 0.0s :: sleep 0; cat /tmp/nodes.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt; ps aux|grep - :: kelihood=-1534.5533645613] heavy=[] /tmp/gen33_28_32_1.5.json phase=[total_log_likelihood=-1622.0775785632] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[141] BASH rc=0 0.1s :: python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// How much work the e :: built == /app/cross.json total_log_likelihood=-725.2001583337 real	0m0.009s == /tmp/gen7_28_32_1.5.json total_log_likelihood=-1667.2937789887 real	0m0.096s 
+[142] BASH rc=0 0.1s :: pkill -9 -f "release/scratch"; pkill -9 -f "release/phase"; pkill -9 -f "\.sh"; sleep 0; ps aux | gr :: ] DONE bash: line 1: pkill: command not found bash: line 1: pkill: command not found bash: line 1: pkill: command not found bash: line 1: ps: command not found 
+[143] BASH rc=0 0.2s :: ps aux | grep "[r]elease" | wc -l; for f in /app/cross.json /tmp/gen7_28_32_1.5.json /tmp/gen9_28_32 :: g_likelihood=-1667.2937789887 real	0m0.099s == /tmp/gen9_28_32_1.5.json total_log_likelihood=-1633.4363332517 real	0m0.099s bash: line 1: ps: command not found 
+[144] BASH rc=0 0.0s :: ps aux | grep "[r]elease" | head -8 :: bash: line 1: ps: command not found 
+[145] BASH rc=0 0.0s :: pkill -9 -f "gen9_28_32"; sleep 0; ps aux | grep "[r]elease" | wc -l :: 0 bash: line 1: pkill: command not found bash: line 1: ps: command not found 
+[146] BASH rc=0 0.0s :: cat > /tmp/last_cmp.sh <<'EOF' #!/bin/bash : > /tmp/last_cmp.txt for spec in "71 20 16 1.5" "72 22 1 :: started 
+[148] BASH rc=0 0.1s :: python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace("""/// Largest number of :: built 
+[149] BASH rc=0 0.0s :: cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l :: likelihood=-889.7844304508] heavy=[] /tmp/gen74_24_10_1.5.json phase=[total_log_likelihood=-433.5700606896] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[151] BASH rc=0 0.0s :: sleep 0; cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l :: likelihood=-889.7844304508] heavy=[] /tmp/gen74_24_10_1.5.json phase=[total_log_likelihood=-433.5700606896] heavy=[] DONE 0 bash: line 1: ps: command not found 
+[152] BASH rc=0 0.0s :: git status --short 2>&1 | head; git log --oneline -3 2>&1 | head :: bash: line 1: git: command not found bash: line 1: git: command not found 
+[153] BASH rc=0 0.0s :: sleep 0; cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l :: likelihood=-889.7844304508] heavy=[] /tmp/gen74_24_10_1.5.json phase=[total_log_likelihood=-433.5700606896] heavy=[] DONE 0 bash: line 1: ps: command not found 

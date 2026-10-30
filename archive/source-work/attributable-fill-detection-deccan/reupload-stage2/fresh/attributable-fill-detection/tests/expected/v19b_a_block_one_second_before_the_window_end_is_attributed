@@ -1,0 +1,12 @@
+OUTCOME
+attempt|ref=0|strategy=wa|instrument=nW|venue=North|kind=RestingLimit|price=0.450000000000|size=30|result=accepted
+attempt|ref=1|strategy=wa|instrument=tW|venue=South|kind=RestingLimit|price=0.520000000000|size=30|result=accepted
+attempt|ref=2|strategy=wa|instrument=tW|venue=South|kind=ImmediateOrCancel|price=0.551000000000|size=30|result=accepted
+venue-order|ref=0|strategy=wa|instrument=nW|venue=North|kind=RestingLimit|price=0.450000000000|size=30|filled=30|live=false|cancelled=false
+venue-order|ref=1|strategy=wa|instrument=tW|venue=South|kind=RestingLimit|price=0.520000000000|size=30|filled=0|live=false|cancelled=true
+venue-order|ref=2|strategy=wa|instrument=tW|venue=South|kind=ImmediateOrCancel|price=0.551000000000|size=30|filled=0|live=false|cancelled=false
+cancelled-count=1
+position|strategy=wa|north=30|south=30|north-price=0.450000000000|south-price=0.520000000000|pair-cost=0.970000000000|notional=29.100000000000|expiry=1086400000|created=1000030000
+inventory|instrument=nW|qty=30
+inventory|instrument=tW|qty=30
+END

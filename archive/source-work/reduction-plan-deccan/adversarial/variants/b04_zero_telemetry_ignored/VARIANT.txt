@@ -1,0 +1,3 @@
+b04_zero_telemetry_ignored
+telemetry
+treats links observed with 0 bytes as unconstrained

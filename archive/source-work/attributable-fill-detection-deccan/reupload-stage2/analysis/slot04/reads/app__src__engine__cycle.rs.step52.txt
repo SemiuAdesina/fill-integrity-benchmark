@@ -1,0 +1,97 @@
+300	                candidate.strategy_id.clone(),
+301	                candidate.instrument_for(venue).clone(),
+302	                venue,
+303	                accepted.order_id,
+304	                client_ref,
+305	                accepted.venue_seq,
+306	                request.limit_price,
+307	                size,
+308	                candidate.expiry_time,
+309	                now,
+310	            ));
+311	        }
+312	    }
+313	
+314	    /// Quantity attributable to this leg: the resting order itself, plus every
+315	    /// corrective order this engine sent for the same mandate and venue.
+316	    fn acquired_for(&self, leg: &PendingOrder) -> Qty {
+317	        let mut total = self.ledger.attributed_for(&leg.client_ref);
+318	        for record in self.records_for(leg) {
+319	            total += self.ledger.attributed_for(&record.client_ref);
+320	        }
+321	        total
+322	    }
+323	
+324	    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {
+325	        self.neutralizations
+326	            .iter()
+327	            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)
+328	            .collect()
+329	    }
+330	
+331	    /// Quantity still working in corrective orders this engine has already
+332	    /// committed to for this leg.
+333	    ///
+334	    /// This is the term that stops consecutive cycles from sending the same
+335	    /// exposure twice: a commitment counts as working until it resolves.
+336	    fn working_for(&self, leg: &PendingOrder) -> Qty {
+337	        let mut total = 0;
+338	        for record in self.records_for(leg) {
+339	            total += match record.order_id {
+340	                // The venue has named it, so it contributes whatever it has
+341	                // still to acquire. One the venue has since closed contributes
+342	                // nothing, whatever it managed to fill: the venue cancelled the
+343	                // rest and the gap it leaves behind is real.
+344	                Some(_) if self.ledger.has(&record.client_ref) => {
+345	                    self.ledger.outstanding_for(&record.client_ref)
+346	                }
+347	                Some(_) => {
+348	                    if record.size > 0 {
+349	                        record.size
+350	                    } else {
+351	                        0
+352	                    }
+353	                }
+354	                // The acknowledgement was lost. The venue may have created the
+355	                // order and the engine cannot see it, so its full size counts
+356	                // as working rather than nothing at all.
+357	                None => {
+358	                    if record.size > 0 {
+359	                        record.size
+360	                    } else {
+361	                        0
+362	                    }
+363	                }
+364	            };
+365	        }
+366	        total
+367	    }
+368	
+369	    /// The exposure still open on this leg: what the mandate asked for, less
+370	    /// what is already attributed to it, less what is already working.
+371	    fn residual_for(&self, leg: &PendingOrder) -> Qty {
+372	        leg.size - self.acquired_for(leg) - self.working_for(leg)
+373	    }
+374	
+375	    /// Exact integer comparison. There is no tolerance: a leg short by one base
+376	    /// unit is short.
+377	    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {
+378	        self.acquired_for(leg) >= leg.size
+379	    }
+380	
+381	    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+382	        if self.resting_at_venue.contains(&leg.order_id) {
+383	            LegVisibility::Resting
+384	        } else if self.replaced.contains(&leg.order_id) {
+385	            LegVisibility::Withdrawn
+386	        } else {
+387	            LegVisibility::Unconfirmed
+388	        }
+389	    }
+390	
+391	    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {
+392	        for strategy_id in self.pending.strategy_ids() {
+393	            if self.positions.has(&strategy_id) {
+394	                continue;
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "                candidate.strategy_id.clone(),\n                candidate.instrument_for(venue).clone(),\n                venue,\n                accepted.order_id,\n                client_ref,\n                accepted.venue_seq,\n                request.limit_price,\n                size,\n                candidate.expiry_time,\n                now,\n            ));\n        }\n    }\n\n    /// Quantity attributable to this leg: the resting order itself, plus every\n    /// corrective order this engine sent for the same mandate and venue.\n    fn acquired_for(&self, leg: &PendingOrder) -> Qty {\n        let mut total = self.ledger.attributed_for(&leg.client_ref);\n        for record in self.records_for(leg) {\n            total += self.ledger.attributed_for(&record.client_ref);\n        }\n        total\n    }\n\n    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {\n        self.neutralizations\n            .iter()\n            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)\n            .collect()\n    }\n\n    /// Quantity still working in corrective orders this engine has already\n    /// committed to for this leg.\n    ///\n    /// This is the term that stops consecutive cycles from sending the same\n    /// exposure twice: a commitment counts as working until it resolves.\n    fn working_for(&self, leg: &PendingOrder) -> Qty {\n        let mut total = 0;\n        for record in self.records_for(leg) {\n            total += match record.order_id {\n                // The venue has named it, so it contributes whatever it has\n                // still to acquire. One the venue has since closed contributes\n                // nothing, whatever it managed to fill: the venue cancelled the\n                // rest and the gap it leaves behind is real.\n                Some(_) if self.ledger.has(&record.client_ref) => {\n                    self.ledger.outstanding_for(&record.client_ref)\n                }\n                Some(_) => {\n                    if record.size > 0 {\n                        record.size\n                    } else {\n                        0\n                    }\n                }\n                // The acknowledgement was lost. The venue may have created the\n                // order and the engine cannot see it, so its full size counts\n                // as working rather than nothing at all.\n                None => {\n                    if record.size > 0 {\n                        record.size\n                    } else {\n                        0\n                    }\n                }\n            };\n        }\n        total\n    }\n\n    /// The exposure still open on this leg: what the mandate asked for, less\n    /// what is already attributed to it, less what is already working.\n    fn residual_for(&self, leg: &PendingOrder) -> Qty {\n        leg.size - self.acquired_for(leg) - self.working_for(leg)\n    }\n\n    /// Exact integer comparison. There is no tolerance: a leg short by one base\n    /// unit is short.\n    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {\n        self.acquired_for(leg) >= leg.size\n    }\n\n    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {\n        if self.resting_at_venue.contains(&leg.order_id) {\n            LegVisibility::Resting\n        } else if self.replaced.contains(&leg.order_id) {\n            LegVisibility::Withdrawn\n        } else {\n            LegVisibility::Unconfirmed\n        }\n    }\n\n    fn reconcile_open_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {\n        for strategy_id in self.pending.strategy_ids() {\n            if self.positions.has(&strategy_id) {\n                continue;", "numLines": 95, "startLine": 300, "totalLines": 557}}

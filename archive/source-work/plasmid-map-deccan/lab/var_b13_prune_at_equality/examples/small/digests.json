@@ -1,0 +1,123 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 100,
+ "insert_length": {
+  "min": 200,
+  "max": 1200
+ },
+ "max_internal_sites": 1,
+ "observed": [
+  {
+   "id": "FspI",
+   "enzymes": [
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 447,
+     "multiplicity": 1
+    },
+    {
+     "length": 1011,
+     "multiplicity": 1
+    },
+    {
+     "length": 1646,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuII",
+   "enzymes": [
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 325,
+     "multiplicity": 1
+    },
+    {
+     "length": 1015,
+     "multiplicity": 1
+    },
+    {
+     "length": 1768,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SbfI",
+   "enzymes": [
+    "SbfI"
+   ],
+   "bands": [
+    {
+     "length": 3151,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI+SbfI",
+   "enzymes": [
+    "FspI",
+    "SbfI"
+   ],
+   "bands": [
+    {
+     "length": 184,
+     "multiplicity": 1
+    },
+    {
+     "length": 454,
+     "multiplicity": 1
+    },
+    {
+     "length": 997,
+     "multiplicity": 1
+    },
+    {
+     "length": 1463,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI+PvuII",
+   "enzymes": [
+    "FspI",
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 324,
+     "multiplicity": 1
+    },
+    {
+     "length": 453,
+     "multiplicity": 1
+    },
+    {
+     "length": 973,
+     "multiplicity": 1
+    },
+    {
+     "length": 1285,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "PvuII+SbfI",
+   "enzymes": [
+    "PvuII",
+    "SbfI"
+   ]
+  }
+ ]
+}

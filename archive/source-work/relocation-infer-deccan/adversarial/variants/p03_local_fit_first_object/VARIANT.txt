@@ -1,0 +1,3 @@
+p03_local_fit_first_object
+03 per-site/local fit
+fits each relocation type on the first object that carries it and reconciles nothing across objects

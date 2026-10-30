@@ -1,0 +1,72 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" | head -50; echo "---"; find /app -type f -name "*.rs" | head -50; ec :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[3] BASH rc=0 0.0s :: cat /app/spec/venue-semantics.md :: emory state. The venue and the custody account keep theirs.  ## Clock  - `now` is monotonic and advances between cycles. - There is no real time. Do not sleep. 
+[4] BASH rc=0 0.0s :: cat /app/spec/reconciliation-contract.md :: ntainer holds the engine's orders must never decide an attribution outcome, and no quantity decision may depend on floating point or on a comparison tolerance. 
+[5] BASH rc=0 0.0s :: cat /app/spec/frozen-contract.md; echo "==== SOURCE MAP ===="; cat /app/spec/source-map.md ::   Each suite runs on its own and reports the observable outcome it saw. The graded suite is not here; it is broader and holds the engine to the whole contract. 
+[6] BASH rc=0 0.0s :: for f in src/lib.rs src/ports/mod.rs src/types/mod.rs src/types/ids.rs src/types/time.rs src/types/p ::  match venue {     61	            Venue::North => self.north_depth,     62	            Venue::South => self.south_depth,     63	        }     64	    }     65	} 
+[7] BASH rc=0 0.0s :: for f in src/engine/mod.rs src/engine/config.rs src/engine/cycle.rs src/engine/fill_classifier.rs sr ::  > MAX_TAKER_PRICE {     24	        MAX_TAKER_PRICE     25	    } else {     26	        raw     27	    };     28	    (capped * 1000.0).round() / 1000.0     29	} 
+[8] BASH rc=0 0.0s :: cat -n /app/src/engine/cycle.rs ::   ClientRef::new(format!(    469	            "{}-{}",    470	            self.config.client_ref_prefix, self.client_seq    471	        ))    472	    }    473	} 
+[9] BASH rc=0 0.0s :: cat -n /app/src/engine/fill_classifier.rs; echo "===== neutralization.rs ====="; cat -n /app/src/eng ::  > MAX_TAKER_PRICE {     24	        MAX_TAKER_PRICE     25	    } else {     26	        raw     27	    };     28	    (capped * 1000.0).round() / 1000.0     29	} 
+[10] BASH rc=0 0.0s :: wc -l /app/tests/*.rs /app/tests/harness/mod.rs; echo "==="; cat -n /app/tests/harness/mod.rs :: f bound == 0 {   1187	            0   1188	        } else {   1189	            (self.next_u64() % bound as u64) as usize   1190	        }   1191	    }   1192	} 
+[12] BASH rc=0 0.0s :: for f in /app/tests/observation_identity.rs /app/tests/direct_progress.rs /app/tests/block_reconcili :: 120	        "corrective orders for the leg the block allocated 12 to are {:?}",    121	        taker_sizes(&outcome, "bg", Venue::South)    122	    );    123	} 
+[13] BASH rc=0 0.0s :: for f in /app/tests/neutralization_lifecycle.rs /app/tests/restart_recovery.rs /app/tests/cross_mand ::    xe {:?}, xf {:?}",    109	        taker_sizes(&outcome, "xe", Venue::South),    110	        taker_sizes(&outcome, "xf", Venue::South)    111	    );    112	} 
+[16] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[17] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[18] BASH rc=0 0.0s :: cargo test --offline --test block_reconciliation 2>&1 | sed -n '1,80p' :: 
+[19] WRITE /app/src/types/snapshot.rs -> W ok
+    SNAPSHOT 016 step19 731412306b5c
+[20] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 017 step20 ffc8267170a5
+[21] WRITE /app/src/engine/neutralization.rs -> W ok
+    SNAPSHOT 018 step21 53b00064fad5
+[22] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 019 step22 9f9249796b7d
+[23] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 020 step23 f40416831d38
+[24] BASH rc=0 0.0s :: cargo build --offline 2>&1 | head -60 :: 
+[25] BASH rc=1 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[26] BASH rc=0 0.0s :: cargo test --offline --test neutralization_lifecycle 2>&1 | grep -A8 "stdout ----" | head -40 :: 
+[27] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 024 step27 ec508471bb50
+[28] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/engine/fill_classifier.rs' s=open(p).read() s=s.replace(""" pub f :: 137:    pub fn mark_closing(&mut self, client_ref: &ClientRef) { 
+    SNAPSHOT 025 step28 1ff498a675da
+[29] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 026 step29 2c90cd7ce844
+[30] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^(error|warning: unused)" -A6 | head -40 :: 
+[31] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/engine/cycle.rs' s=open(p).read() s=s.replace(""" attempt: AttemptState::Un :: 
+    SNAPSHOT 028 step31 b329370436c3
+[32] BASH rc=1 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[34] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 031 step34 556ce6bf51c0
+[35] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^(error|warning)" -A8 | head -40 :: 
+[36] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/engine/cycle.rs' s=open(p).read() s=s.replace("use crate::types::ids::{Clie :: BUILD_DONE 
+    SNAPSHOT 033 step36 3e791427346e
+[37] BASH rc=0 0.0s :: cat /app/src/engine/mod.rs :: n::{plan_neutralization, NeutralizationPlan}; pub use managers::{PendingOrderManager, PositionManager}; pub use sizing::{neutralization_limit_price, leg_size}; 
+[38] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/engine/managers.rs' s=open(p).read() # keep only PositionManager idx=s.inde :: DONE 
+    SNAPSHOT 035 step38 ef2475eea834
+[39] BASH rc=1 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: 
+[40] WRITE /app/tests/block_ordering_probes.rs -> W ok
+[41] BASH rc=0 0.0s :: cargo test --offline --test block_ordering_probes 2>&1 | grep -E "^(test |test result)|panicked|asse :: 
+[42] EDIT /app/tests/block_ordering_probes.rs -> E ok
+[43] BASH rc=0 0.0s :: cargo test --offline --test block_ordering_probes 2>&1 | grep -E "^(test |test result)|panicked|left :: 
+[44] BASH rc=0 0.0s :: cargo test --offline --test block_ordering_probes a_refused_cancellation 2>&1 | sed -n '/panicked/,/ :: 
+[45] EDIT /app/tests/block_ordering_probes.rs -> E ok
+[46] BASH rc=0 0.0s :: cargo test --offline --test block_ordering_probes 2>&1 | grep -E "^(test |test result)|panicked|left :: 
+[47] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 044 step47 a0fce1bda9ef
+[48] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "^(error|warning)" -A6 | head -20; for t in observation_identit :: s              block_reconciliation         neutralization_lifecycle     restart_recovery             cross_mandate_isolation      block_ordering_probes        
+[51] WRITE /app/tests/soak.rs -> W ok
+[52] BASH rc=0 0.0s :: cargo test --offline --test soak 2>&1 | grep -E "^(test |test result)|panicked|seed" | head -20 :: 
+[53] BASH rc=1 0.0s :: cat > /tmp/dist.rs <<'EOF' EOF python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace(""" c :: 
+[54] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace(''' println!("worst corrective-order :: 
+[55] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() old = s[s.index(" let steps = 26;"):s.index(" ru :: 
+[56] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/harness/mod.rs' s=open(p).read() s=s.replace(""" pub attempts: Vec<SubmitA :: 
+[57] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace(""" // One exposure draws a bounded  :: 
+[58] BASH rc=0 0.0s :: cargo test --offline --test soak -- --nocapture 2>&1 | tail -25 :: 
+[59] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace(" for id in ids {"," for id in [\"s0 :: 
+[60] BASH rc=0 0.0s :: cargo test --offline --test soak -- --nocapture 2>&1 | tail -20 :: 
+[61] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace('for id in ["s0", "s1", "s2"] {','fo :: 
+[62] BASH rc=0 0.0s :: cargo test --offline --test soak -- --nocapture 2>&1 | tail -20 :: 
+[63] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/soak.rs' s=open(p).read() s=s.replace(' for id in ["s0", "s1", "s2"] {\n l :: 
+[64] BASH rc=0 0.0s :: cargo test --offline 2>&1 | grep -E "^(test result|error|warning: unused)" | head -20; echo "---"; c :: --- 
+[67] BASH rc=1 0.0s :: cargo build --offline && for t in observation_identity direct_progress block_reconciliation neutrali :: ion_identity --- --- direct_progress --- --- block_reconciliation --- --- neutralization_lifecycle --- --- restart_recovery --- --- cross_mandate_isolation --- 

@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.01,
+  "internal": 3,
+  "deviation": 33441,
+  "c": 666,
+  "L": 4839
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 6.72
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 0.4,
+  "nodes": 1861,
+  "ties_at_count_and_deviation": 1
+ },
+ "held_out": [
+  "BsrGI+SspI",
+  "AatII+BsrGI"
+ ],
+ "truth": {
+  "internal": 3,
+  "deviation": 36599,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_sub_detection",
+ "seed": 302,
+ "description": "a single digest misses a fragment below the detection limit",
+ "vector": "pEGFP-N1",
+ "vector_header": "U55762.1 Cloning vector pEGFP-N1, complete sequence, enhanced green fluorescent protein (egfp) and neomycin phosphotransferase genes, complete cds",
+ "source": "ecoli_lac_region",
+ "source_header": "U00096.3:360000-372000 Escherichia coli str. K-12 substr. MG1655, complete genome",
+ "fragment": {
+  "left_enzyme": "BstBI",
+  "left_cut": 2765,
+  "right_enzyme": "NsiI",
+  "right_cut": 7601
+ },
+ "cloning_site": [
+  "AgeI",
+  666
+ ],
+ "insert_length": 4836,
+ "enzymes": [
+  "AatII",
+  "ApaI",
+  "BsrGI",
+  "SspI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 250,
+ "observed": 8
+}

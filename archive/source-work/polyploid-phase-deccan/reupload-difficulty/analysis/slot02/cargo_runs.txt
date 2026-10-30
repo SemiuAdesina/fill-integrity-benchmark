@@ -1,0 +1,858 @@
+[26] CMD: cargo build --release --offline 2>&1 | tail -30
+--- obs tail ---
+            `usize` implements `From<bool>`
+             `usize` implements `From<std::ptr::Alignment>`
+             `usize` implements `From<u16>`
+             `usize` implements `From<u8>`
+
+For more information about this error, try `rustc --explain E0277`.
+warning: `polyploid-phase` (lib) generated 1 warning
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 1 warning emitted
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: unused import: `ALL_STATES`
+  --> src/solver.rs:27:53
+   |
+27 |     Haplotypes, ProgenyPath, Reconstruction, State, ALL_STATES, HOMOLOGS,
+   |                                                     ^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+error[E0277]: the trait bound `usize: From<i32>` is not satisfied
+  --> src/solver/canon.rs:46:35
+   |
+46 |                     out |= 1 << p[usize::from(h)];
+   |                                   ^^^^^ the trait `From<i32>` is not implemented for `usize`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `usize` implements `From<bool>`
+             `usize` implements `From<std::ptr::Alignment>`
+             `usize` implements `From<u16>`
+             `usize` implements `From<u8>`
+
+For more information about this error, try `rustc --explain E0277`.
+warning: `polyploid-phase` (lib) generated 1 warning
+error: could not compile `polyploid-phase` (lib) due to 1 previous error; 1 warning emitted
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: cargo build --release --offline 2>&1 | tail -30
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.61s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.61s
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -30
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.15s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.15s
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: sed -i 's/use polyploid_phase::solver::search::{descend, evaluate, CtxOpt};/use polyploid_phase::solver::search::descend;/' tests/exp.rs && TRIALS=2000 cargo test --offline --release --test exp -- --nocapture 2>&1 | tail
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.92s
+     Running tests/exp.rs (target/release/deps/exp-29e270b004889ec7)
+
+running 1 test
+trials=2000 best=-707.217806833 elapsed=409.212344ms
+distinct local optima: 2000
+     -707.2178  x1
+     -707.5743  x1
+     -709.8865  x1
+     -710.0641  x1
+     -711.3769  x1
+     -711.5346  x1
+     -711.6970  x1
+     -711.9565  x1
+     -712.0175  x1
+     -712.0210  x1
+     -712.2470  x1
+     -712.3569  x1
+solve total = -705.140456203
+test experiment ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.80s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.92s
+     Running tests/exp.rs (target/release/deps/exp-29e270b004889ec7)
+
+running 1 test
+trials=2000 best=-707.217806833 elapsed=409.212344ms
+distinct local optima: 2000
+     -707.2178  x1
+     -707.5743  x1
+     -709.8865  x1
+     -710.0641  x1
+     -711.3769  x1
+     -711.5346  x1
+     -711.6970  x1
+     -711.9565  x1
+     -712.0175  x1
+     -712.0210  x1
+     -712.2470  x1
+     -712.3569  x1
+solve total = -705.140456203
+test experiment ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.80s
+[metadata] {"noOutputExpected": false}
+
+[39] CMD: WHAT=lists cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "canonical|elapsed|error" | head
+--- obs tail ---
+canonical A = 16512, canonical B = 13888, joint = 229318656
+elapsed 1.341258741s
+
+[stdout]
+canonical A = 16512, canonical B = 13888, joint = 229318656
+elapsed 1.341258741s
+[metadata] {"noOutputExpected": false}
+
+[40] CMD: WHAT=block TRIALS=1 ITERS=3 timeout 900 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "lists built|sweep|final|block best|error\[" | head -20
+--- obs tail ---
+lists built 1.350472949s a=16512 b=13888
+trial 0 sweep 0: -708.708101341
+trial 0 sweep 1: -708.708101341
+trial 0 final = -708.708101341
+block best = -708.708101341 elapsed 5.582892212s
+
+[stdout]
+lists built 1.350472949s a=16512 b=13888
+trial 0 sweep 0: -708.708101341
+trial 0 sweep 1: -708.708101341
+trial 0 final = -708.708101341
+block best = -708.708101341 elapsed 5.582892212s
+[metadata] {"noOutputExpected": false}
+
+[41] CMD: WHAT=ils ITERS=20000 timeout 900 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "ILS best|improved to" | tail -20
+--- obs tail ---
+iter 1 improved to -726.427645494
+iter 4 improved to -721.619530727
+iter 9 improved to -721.582123678
+iter 11 improved to -719.833777394
+iter 12 improved to -718.532382953
+iter 13 improved to -717.513161366
+iter 27 improved to -716.385536684
+iter 32 improved to -713.624250036
+iter 836 improved to -713.398270249
+iter 994 improved to -712.053848096
+iter 1251 improved to -711.449834849
+iter 1734 improved to -708.137251262
+iter 16395 improved to -707.896851212
+iter 16396 improved to -706.798613562
+ILS best = -706.798613562 elapsed 3.455525843s
+
+[stdout]
+iter 1 improved to -726.427645494
+iter 4 improved to -721.619530727
+iter 9 improved to -721.582123678
+iter 11 improved to -719.833777394
+iter 12 improved to -718.532382953
+iter 13 improved to -717.513161366
+iter 27 improved to -716.385536684
+iter 32 improved to -713.624250036
+iter 836 improved to -713.398270249
+iter 994 improved to -712.053848096
+iter 1251 improved to -711.449834849
+iter 1734 improved to -708.137251262
+iter 16395 improved to -707.896851212
+iter 16396 improved to -706.798613562
+ILS best = -706.798613562 elapsed 3.455525843s
+[metadata] {"noOutputExpected": false}
+
+[43] CMD: WHAT=combo ITERS=3 timeout 1200 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "lists built|after ILS|sweep|combo best" | head -30
+--- obs tail ---
+lists built 1.367668237s a=16512 b=13888
+round 0 after ILS: -708.137251262 elapsed 2.239892036s
+  sweep 0: -707.181677369 elapsed 4.377120769s
+  sweep 1: -707.058056338 elapsed 6.495009267s
+  sweep 2: -707.058056338 elapsed 8.559178481s
+round 1 after ILS: -707.058056338 elapsed 9.42164993s
+  sweep 0: -708.707225298 elapsed 11.500400767s
+round 2 after ILS: -708.707225298 elapsed 12.357180767s
+  sweep 0: -708.975550992 elapsed 14.424733427s
+combo best = -708.975550992 elapsed 14.424745935s
+
+[stdout]
+lists built 1.367668237s a=16512 b=13888
+round 0 after ILS: -708.137251262 elapsed 2.239892036s
+  sweep 0: -707.181677369 elapsed 4.377120769s
+  sweep 1: -707.058056338 elapsed 6.495009267s
+  sweep 2: -707.058056338 elapsed 8.559178481s
+round 1 after ILS: -707.058056338 elapsed 9.42164993s
+  sweep 0: -708.707225298 elapsed 11.500400767s
+round 2 after ILS: -708.707225298 elapsed 12.357180767s
+  sweep 0: -708.975550992 elapsed 14.424733427s
+combo best = -708.975550992 elapsed 14.424745935s
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: WHAT=combo ITERS=4 timeout 1800 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "lists built|after ILS|sweep|combo best" | head -30
+--- obs tail ---
+lists built 1.351291598s a=16512 b=13888
+round 0 after ILS: -706.192585548 elapsed 2.211478119s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 4.352896984s
+round 1 after ILS: -706.192585548 elapsed 5.211164237s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 7.357828759s
+round 2 after ILS: -706.192585548 elapsed 8.224847391s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 10.364387395s
+round 3 after ILS: -706.192585548 elapsed 11.230607785s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 13.369002522s
+combo best = -706.192585548 elapsed 13.369020821s
+
+[stdout]
+lists built 1.351291598s a=16512 b=13888
+round 0 after ILS: -706.192585548 elapsed 2.211478119s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 4.352896984s
+round 1 after ILS: -706.192585548 elapsed 5.211164237s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 7.357828759s
+round 2 after ILS: -706.192585548 elapsed 8.224847391s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 10.364387395s
+round 3 after ILS: -706.192585548 elapsed 11.230607785s
+  sweep 0: -706.192585548 (best -706.192585548) elapsed 13.369002522s
+combo best = -706.192585548 elapsed 13.369020821s
+[metadata] {"noOutputExpected": false}
+
+[54] CMD: SEEDS=8 timeout 1800 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "seed |best over" | head -20
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: b37xtxr2d). Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b37xtxr2d.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b37xtxr2d", "timedOutAfterMs": 120000}
+
+[56] CMD: SEEDS=8 ROUNDS=0 ILS=20000 timeout 600 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "seed |best over" | head -12
+--- obs tail ---
+seed 0: -706.192585548  (4.964337031s)
+seed 1: -707.194886469  (4.836513378s)
+seed 2: -705.140456203  (4.75796811s)
+seed 3: -705.327535609  (4.858747494s)
+seed 4: -705.140456203  (4.861245986s)
+seed 5: -705.327535609  (4.874724646s)
+seed 6: -705.140456203  (4.789260111s)
+seed 7: -706.262290445  (4.915229074s)
+best over seeds = -705.140456203 total elapsed 38.858154005s
+
+[stdout]
+seed 0: -706.192585548  (4.964337031s)
+seed 1: -707.194886469  (4.836513378s)
+seed 2: -705.140456203  (4.75796811s)
+seed 3: -705.327535609  (4.858747494s)
+seed 4: -705.140456203  (4.861245986s)
+seed 5: -705.327535609  (4.874724646s)
+seed 6: -705.140456203  (4.789260111s)
+seed 7: -706.262290445  (4.915229074s)
+best over seeds = -705.140456203 total elapsed 38.858154005s
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: SEEDS=6 ROUNDS=8 ILS=20000 timeout 1200 cargo test --offline --release --test exp -- --nocapture 2>&1 | grep -E "seed |best over" > /tmp/exp_ils_block.txt 2>&1
+--- obs tail ---
+Command running in background with ID: b54o27f5c. Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b54o27f5c.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b54o27f5c"}
+
+[64] CMD: cargo build --release 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.66s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.66s
+[metadata] {"noOutputExpected": false}
+
+[65] CMD: SEEDS=8 RESTARTS=512 ROUNDS=20000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+Command running in background with ID: blqq25v7s. Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/blqq25v7s.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "blqq25v7s"}
+
+[67] CMD: SEEDS=2 RESTARTS=512 ROUNDS=0 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+seed 0: -725.200158334  (1.484196349s)
+seed 1: -725.200158334  (1.456142711s)
+best over seeds = -725.200158334 total elapsed 2.940377048s
+
+[stdout]
+seed 0: -725.200158334  (1.484196349s)
+seed 1: -725.200158334  (1.456142711s)
+best over seeds = -725.200158334 total elapsed 2.940377048s
+[metadata] {"noOutputExpected": false}
+
+[69] CMD: cargo test --release --test dbg -- --nocapture 2>&1 | tail -10
+--- obs tail ---
+running 1 test
+markers 12 offspring 10
+opts A: [1, 4, 4, 1, 6, 1, 4, 4, 4, 4, 4, 4]
+opts B: [1, 6, 6, 4, 1, 4, 1, 1, 4, 4, 6, 6]
+best of 200 random restarts = -711.454205505
+test debug ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+[stdout]
+running 1 test
+markers 12 offspring 10
+opts A: [1, 4, 4, 1, 6, 1, 4, 4, 4, 4, 4, 4]
+opts B: [1, 6, 6, 4, 1, 4, 1, 1, 4, 4, 6, 6]
+best of 200 random restarts = -711.454205505
+test debug ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+[metadata] {"noOutputExpected": false}
+
+[72] CMD: SEEDS=8 RESTARTS=512 ROUNDS=20000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+seed 0: -705.140456203  (5.029498222s)
+seed 1: -705.327535609  (5.078192139s)
+seed 2: -705.674116373  (5.185143146s)
+seed 3: -705.140456203  (5.121483462s)
+seed 4: -705.327535609  (5.000189207s)
+seed 5: -705.327535609  (5.046789013s)
+seed 6: -706.262290445  (5.007082451s)
+seed 7: -705.327535609  (5.074086424s)
+best over seeds = -705.140456203 total elapsed 40.542585136s
+
+[stdout]
+seed 0: -705.140456203  (5.029498222s)
+seed 1: -705.327535609  (5.078192139s)
+seed 2: -705.674116373  (5.185143146s)
+seed 3: -705.140456203  (5.121483462s)
+seed 4: -705.327535609  (5.000189207s)
+seed 5: -705.327535609  (5.046789013s)
+seed 6: -706.262290445  (5.007082451s)
+seed 7: -705.327535609  (5.074086424s)
+best over seeds = -705.140456203 total elapsed 40.542585136s
+[metadata] {"noOutputExpected": false}
+
+[73] CMD: SEEDS=4 RESTARTS=512 ROUNDS=200000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+Command running in background with ID: bb087wkx4. Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/bb087wkx4.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bb087wkx4"}
+
+[84] CMD: sed -i 's/ block_sweeps: sweeps,/ strong,\n block_sweeps: sweeps,/' tests/exp.rs && sed -i 's/ let sweeps: usize = std::env::var("SWEEPS").ok().and_then(|s| s.parse().ok()).unwrap_or(4);/ let sweeps: usize = std::env::va
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.88s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.88s
+[metadata] {"noOutputExpected": false}
+
+[85] CMD: SEEDS=8 RESTARTS=512 ROUNDS=20000 STRONG=2000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+seed 0: -705.140456203  (10.97590249s)
+seed 1: -705.140456203  (11.602374539s)
+seed 2: -705.140456203  (11.490184883s)
+seed 3: -705.140456203  (11.808167137s)
+seed 4: -705.140456203  (11.182555444s)
+seed 5: -705.140456203  (11.796040402s)
+seed 6: -705.140456203  (10.956305153s)
+seed 7: -705.140456203  (11.414845855s)
+best over seeds = -705.140456203 total elapsed 91.226521259s
+
+[stdout]
+seed 0: -705.140456203  (10.97590249s)
+seed 1: -705.140456203  (11.602374539s)
+seed 2: -705.140456203  (11.490184883s)
+seed 3: -705.140456203  (11.808167137s)
+seed 4: -705.140456203  (11.182555444s)
+seed 5: -705.140456203  (11.796040402s)
+seed 6: -705.140456203  (10.956305153s)
+seed 7: -705.140456203  (11.414845855s)
+best over seeds = -705.140456203 total elapsed 91.226521259s
+[metadata] {"noOutputExpected": false}
+
+[86] CMD: SEEDS=4 RESTARTS=2048 ROUNDS=200000 STRONG=40000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+Command running in background with ID: b68000de0. Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/b68000de0.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b68000de0"}
+
+[90] CMD: python3 gen.py 28 32 1 /tmp/syn28.json && python3 -c " import json d=json.load(open('/tmp/syn28.json')) print(d['markers'], d['offspring'], len(d['child_gl']), len(d['child_gl'][0])) " && SEEDS=1 RESTARTS=64 ROUNDS=1000 
+--- obs tail ---
+/tmp/syn28.json
+28 32 32 28
+seed 0: -1034.718392439  (8.991834022s)
+best over seeds = -1034.718392439 total elapsed 8.991850477s
+
+[stdout]
+/tmp/syn28.json
+28 32 32 28
+seed 0: -1034.718392439  (8.991834022s)
+best over seeds = -1034.718392439 total elapsed 8.991850477s
+[metadata] {"noOutputExpected": false}
+
+[96] CMD: cargo build --release 2>&1 | tail -5 && SEEDS=8 RESTARTS=512 ROUNDS=20000 STRONG=2000 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.90s
+seed 0: -705.140456203  (11.698547101s)
+seed 1: -705.140456203  (12.120650759s)
+seed 2: -705.140456203  (12.00163852s)
+seed 3: -705.140456203  (12.377425031s)
+seed 4: -705.140456203  (11.883914689s)
+seed 5: -705.140456203  (12.411270346s)
+seed 6: -705.140456203  (11.63685526s)
+seed 7: -705.140456203  (11.742248311s)
+best over seeds = -705.140456203 total elapsed 95.872684419s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.90s
+seed 0: -705.140456203  (11.698547101s)
+seed 1: -705.140456203  (12.120650759s)
+seed 2: -705.140456203  (12.00163852s)
+seed 3: -705.140456203  (12.377425031s)
+seed 4: -705.140456203  (11.883914689s)
+seed 5: -705.140456203  (12.411270346s)
+seed 6: -705.140456203  (11.63685526s)
+seed 7: -705.140456203  (11.742248311s)
+best over seeds = -705.140456203 total elapsed 95.872684419s
+[metadata] {"noOutputExpected": false}
+
+[97] CMD: SEEDS=1 RESTARTS=0 ROUNDS=200 STRONG=0 SWEEPS=0 CROSS=/tmp/syn28.json cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed"; SEEDS=1 RESTARTS=0 ROUNDS=0 STRONG=100 SWEEPS=0 CROSS=/tmp/syn28.json cargo tes
+--- obs tail ---
+seed 0: -1134.952754631  (304.060214ms)
+seed 0: -1039.192995914  (8.702197095s)
+
+[stdout]
+seed 0: -1134.952754631  (304.060214ms)
+seed 0: -1039.192995914  (8.702197095s)
+[metadata] {"noOutputExpected": false}
+
+[98] CMD: SEEDS=2 RESTARTS=512 ROUNDS=2000 STRONG=200 SWEEPS=0 CROSS=/tmp/syn28.json cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+seed 0: -1033.181518263  (24.950528058s)
+seed 1: -1035.306107628  (23.414405107s)
+best over seeds = -1033.181518263 total elapsed 48.364968873s
+
+[stdout]
+seed 0: -1033.181518263  (24.950528058s)
+seed 1: -1035.306107628  (23.414405107s)
+best over seeds = -1033.181518263 total elapsed 48.364968873s
+[metadata] {"noOutputExpected": false}
+
+[102] CMD: cargo build --release 2>&1 | tail -3 && SEEDS=2 RESTARTS=512 ROUNDS=2000 STRONG=200 SWEEPS=0 CROSS=/tmp/syn28.json cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.97s
+seed 0: -1029.881285134  (26.313817493s)
+seed 1: -1035.231730814  (26.712412883s)
+best over seeds = -1029.881285134 total elapsed 53.026261904s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.97s
+seed 0: -1029.881285134  (26.313817493s)
+seed 1: -1035.231730814  (26.712412883s)
+best over seeds = -1029.881285134 total elapsed 53.026261904s
+[metadata] {"noOutputExpected": false}
+
+[110] CMD: cargo build --release 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.81s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.81s
+[metadata] {"noOutputExpected": false}
+
+[113] CMD: cargo build --release 2>&1|tail -2; for f in /tmp/syn28.json; do echo "== $f"; DEFAULT=1 CROSS=$f cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^default"; done
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+== /tmp/syn28.json
+default: -1036.191250930  (22.026445052s)
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+== /tmp/syn28.json
+default: -1036.191250930  (22.026445052s)
+[metadata] {"noOutputExpected": false}
+
+[114] CMD: cp result.json /tmp/r1.json && ./target/release/phase >/dev/null && cmp /tmp/r1.json result.json && echo "byte-identical on repeat" ; cargo test --offline --locked --test diagnostics 2>&1 | tail -15
+--- obs tail ---
+byte-identical on repeat
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+byte-identical on repeat
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[115] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.28s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.34s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.28s
+[metadata] {"noOutputExpected": false}
+
+[125] CMD: TRIALS=30 FREE=2 cargo test --release --test dbg -- --nocapture 2>&1 | tail -15
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.31s
+     Running tests/dbg.rs (target/release/deps/dbg-b816cd8049bebbe2)
+
+running 1 test
+test solver_matches_brute_force has been running for over 60 seconds
+30 trials, 0 below the enumerated optimum
+test solver_matches_brute_force ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 227.65s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.31s
+     Running tests/dbg.rs (target/release/deps/dbg-b816cd8049bebbe2)
+
+running 1 test
+test solver_matches_brute_force has been running for over 60 seconds
+30 trials, 0 below the enumerated optimum
+test solver_matches_brute_force ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 227.65s
+[metadata] {"noOutputExpected": false}
+
+[126] CMD: TRIALS=6 FREE=3 cargo test --release --test dbg -- --nocapture 2>&1 | tail -8
+--- obs tail ---
+Command running in background with ID: bhvnx5u3u. Output is being written to: /tmp/claude-0/-app/3b9227fb-9678-4b90-a63e-0482d1287bcf/tasks/bhvnx5u3u.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bhvnx5u3u"}
+
+[128] CMD: cp /tmp/search_backup.rs src/solver/search.rs && grep -n "listable = \|<= 60_000" src/solver/search.rs && cargo build --release 2>&1 | tail -2
+--- obs tail ---
+795:    let listable = 400_000u128;
+803:        && (a_list.len() as u128) * (b_list.len() as u128) <= 60_000
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.89s
+
+[stdout]
+795:    let listable = 400_000u128;
+803:        && (a_list.len() as u128) * (b_list.len() as u128) <= 60_000
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.89s
+[metadata] {"noOutputExpected": false}
+
+[129] CMD: SEEDS=8 ROUNDS=30000 STRONG=2777 SWEEPS=0 cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^seed|best over"
+--- obs tail ---
+seed 0: -705.140456203  (16.700614114s)
+seed 1: -705.140456203  (17.493269688s)
+seed 2: -705.140456203  (17.16615524s)
+seed 3: -705.140456203  (17.870194956s)
+seed 4: -705.140456203  (17.071559047s)
+seed 5: -705.140456203  (17.913519642s)
+seed 6: -705.140456203  (16.588458498s)
+seed 7: -705.140456203  (17.399440275s)
+best over seeds = -705.140456203 total elapsed 138.203346075s
+
+[stdout]
+seed 0: -705.140456203  (16.700614114s)
+seed 1: -705.140456203  (17.493269688s)
+seed 2: -705.140456203  (17.16615524s)
+seed 3: -705.140456203  (17.870194956s)
+seed 4: -705.140456203  (17.071559047s)
+seed 5: -705.140456203  (17.913519642s)
+seed 6: -705.140456203  (16.588458498s)
+seed 7: -705.140456203  (17.399440275s)
+best over seeds = -705.140456203 total elapsed 138.203346075s
+[metadata] {"noOutputExpected": false}
+
+[131] CMD: cargo build --release 2>&1|tail -3 && ./target/release/phase && python3 verify.py
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.96s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+scorer total      = -705.1404562027437
+reported total    = -705.1404562027437
+delta             = 0.0
+canonical defect  = None
+digest computed   = 0c236db82cf70066
+digest reported   = 0c236db82cf70066
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.96s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+scorer total      = -705.1404562027437
+reported total    = -705.1404562027437
+delta             = 0.0
+canonical defect  = None
+digest computed   = 0c236db82cf70066
+digest reported   = 0c236db82cf70066
+[metadata] {"noOutputExpected": false}
+
+[138] CMD: cargo build --release 2>&1 | grep -E "^(warning|error)" -A5 | head -40; echo "=== build done"
+--- obs tail ---
+=== build done
+
+[stdout]
+=== build done
+[metadata] {"noOutputExpected": false}
+
+[139] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12 && cargo test --offline --locked --test diagnostics 2>&1 | tail -8
+--- obs tail ---
+tent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.02s
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.02s
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[141] CMD: for f in /tmp/c_min.json /tmp/c_28_8.json /tmp/c_12_32.json /tmp/c_1_3.json /tmp/c_mixed.json; do printf "%-22s " $f; DEFAULT=1 CROSS=$f cargo test --release --test exp -- --nocapture 2>&1 | grep -E "^default" || echo FA
+--- obs tail ---
+/tmp/c_min.json        default: -75.288031959  (45.00321ms)
+/tmp/c_28_8.json       default: -223.691824435  (20.723366964s)
+/tmp/c_12_32.json      default: -364.886443836  (26.591679814s)
+/tmp/c_1_3.json        default: -96.540708220  (22.297096244s)
+/tmp/c_mixed.json      default: -953.317827847  (10.376896171s)
+
+[stdout]
+/tmp/c_min.json        default: -75.288031959  (45.00321ms)
+/tmp/c_28_8.json       default: -223.691824435  (20.723366964s)
+/tmp/c_12_32.json      default: -364.886443836  (26.591679814s)
+/tmp/c_1_3.json        default: -96.540708220  (22.297096244s)
+/tmp/c_mixed.json      default: -953.317827847  (10.376896171s)
+[metadata] {"noOutputExpected": false}
+
+[144] CMD: cargo build --release 2>&1|tail -2 && time ./target/release/phase && python3 verify.py && for f in /tmp/c_12_32.json /tmp/syn28.json; do printf "%-20s " $f; DEFAULT=1 CROSS=$f cargo test --release --test exp -- --nocaptu
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.84s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m18.484s
+user	0m18.458s
+sys	0m0.025s
+scorer total      = -705.1404562027437
+reported total    = -705.1404562027437
+delta             = 0.0
+canonical defect  = None
+digest computed   = 0c236db82cf70066
+digest reported   = 0c236db82cf70066
+/tmp/c_12_32.json    default: -364.886443836  (26.399756851s)
+/tmp/syn28.json      default: -1036.191250930  (22.094349414s)
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.84s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m18.484s
+user	0m18.458s
+sys	0m0.025s
+scorer total      = -705.1404562027437
+reported total    = -705.1404562027437
+delta             = 0.0
+canonical defect  = None
+digest computed   = 0c236db82cf70066
+digest reported   = 0c236db82cf70066
+/tmp/c_12_32.json    default: -364.886443836  (26.399756851s)
+/tmp/syn28.json      default: -1036.191250930  (22.094349414s)
+[metadata] {"noOutputExpected": false}
+
+[146] CMD: cargo build --release 2>&1 | tail -3 && cargo test --offline --locked --test diagnostics 2>&1 | tail -5 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+--- obs tail ---
+k. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.99s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.99s
+[metadata] {"noOutputExpected": false}
+
+[152] CMD: cargo build --release 2>&1 | grep -E "warning|error" -A6 | head -30; echo "=== ok"; ./target/release/phase && cp result.json /tmp/b.json && cmp /tmp/a.json result.json && echo "same answer as before"
+--- obs tail ---
+=== ok
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+same answer as before
+
+[stdout]
+=== ok
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+same answer as before
+[metadata] {"noOutputExpected": false}
+
+[154] CMD: cargo build --release 2>&1|tail -2 && cargo test --offline --locked --release --test solver_checks 2>&1|tail -11 && cargo test --offline --locked --test diagnostics 2>&1|tail -4 && ./target/release/phase >/dev/null && cm
+--- obs tail ---
+` profile [optimized + debuginfo] target(s) in 2.90s
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.16s
+
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+final answer unchanged
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.90s
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.16s
+
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+final answer unchanged
+[metadata] {"noOutputExpected": false}

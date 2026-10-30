@@ -1,0 +1,3 @@
+b23_touching_intervals_rejected
+targets
+treats intervals that touch as overlapping

@@ -1,0 +1,3 @@
+[workspace]
+members=["model","probe","liar-probe","judge"]
+resolver="2"

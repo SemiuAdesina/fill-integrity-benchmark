@@ -1,0 +1,151 @@
+[2] BASH find /app -type f -name "*.rs" -o -name "*.md" -o -name "*.toml" -o -name "*.json" | head -50; echo "---"; ls -la /app
+[3] Read {"file_path": "/app/spec/cross-format-v1.md"}
+[4] Read {"file_path": "/app/spec/scoring-model.md"}
+[5] Read {"file_path": "/app/spec/result-format-v1.md"}
+[6] Read {"file_path": "/app/src/scoring.rs"}
+[7] Read {"file_path": "/app/src/cross_model.rs"}
+[8] Read {"file_path": "/app/src/solver.rs"}
+[9] Read {"file_path": "/app/src/cross_input.rs"}
+[10] Read {"file_path": "/app/src/digest.rs"}
+[11] Read {"file_path": "/app/src/result_output.rs"}
+[12] Read {"file_path": "/app/tests/solver_checks.rs"}
+[13] BASH cat README.md && cat Cargo.toml && cat src/lib.rs && cat src/bin/phase.rs && cat examples/README.md
+[14] BASH python3 -c " import json d=json.load(open('cross.json')) print(d['markers'], d['offspring']) print('A dosage', d['parent_dosage']['A']) print('B dosage', d['parent_dosage']['B']) from collections import Counter print('A 
+[15] BASH grep -n "solver" tests/diagnostics.rs | head -30; echo ---; head -60 tests/diagnostics.rs; echo ---; wc -l tests/diagnostics.rs
+[16] BASH cat examples/small.result.json && python3 -c " import json;d=json.load(open('examples/small.cross.json'));print(json.dumps(d,indent=1)[:1500])" && ls target/release/ 2>/dev/null | head
+[17] WRITE /app/src/solver/tables.rs (12775 bytes)
+[18] WRITE /app/src/solver/canon.rs (4695 bytes)
+[19] WRITE /app/src/solver/search.rs (13342 bytes)
+[20] EDIT /app/src/solver/tables.rs (208->341) ok
+[21] EDIT /app/src/solver/tables.rs (124->66) ok
+[22] EDIT /app/src/solver/search.rs (1001->1487) ok
+[23] EDIT /app/src/solver/search.rs (641->648) ok
+[24] EDIT /app/src/solver/search.rs (620->196) ok
+[25] EDIT /app/src/solver/search.rs (207->236) ok
+[26] EDIT /app/src/solver/search.rs (197->226) ok
+[27] EDIT /app/src/solver/search.rs (74->624) ok
+[28] WRITE /app/src/solver/tiebreak.rs (11491 bytes)
+[29] WRITE /app/src/solver.rs (2972 bytes)
+[30] BASH cargo build --release --offline 2>&1 | tail -30
+[31] BASH timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -40
+[32] EDIT /app/src/solver.rs (694->1412) ok
+[33] EDIT /app/src/solver.rs (213->267) ok
+[34] BASH timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+[35] EDIT /app/src/solver.rs (47->65) ok
+[36] BASH timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+[37] EDIT /app/src/solver.rs (65->39) ok
+[38] BASH timeout 1200 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -25
+[39] BASH time timeout 600 ./target/release/phase && cat result.json | head -c 600
+[40] BASH python3 - <<'EOF' import re p='src/solver.rs' s=open(p).read() s=s.replace("mod canon;\nmod search;\nmod tables;\nmod tiebreak;","pub mod canon;\npub mod search;\npub mod tables;\npub mod tiebreak;") open(p,'w').write(s)
+[41] WRITE /app/src/bin/scratch.rs (5677 bytes)
+[42] BASH cargo build --release --offline 2>&1 | grep -E "^(error|warning: unused)" | head; time ./target/release/scratch /app/cross.json best 400 40; echo ---; ./target/release/scratch /app/cross.json bound
+[43] WRITE /app/src/bin/scratch.rs (12665 bytes)
+[44] EDIT /app/src/bin/scratch.rs (118->230) ok
+[45] BASH python3 - <<'EOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" best: f64, ca: Vec<u8>, cb: Vec<u8>, nodes: u64, limit: u64, }""",""" best: f64, ca: Vec<u8>, cb: Vec<u8>, best_ca: Vec<u8>, best_cb: Vec<u8>, nod
+[46] BASH sleep 60; cat /tmp/claude-0/-app/826f7630-168e-4747-924d-5ea51d00b4b4/tasks/bsoi4vl2m.output
+[47] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() # add symmetry breaking state s = s.replace(""" nodes: u64, limit: u64, }""",""" nodes: u64, limit: u64, /// Order state of every pair of homolog rows, per pare
+[48] BASH time timeout 300 ./target/release/scratch /app/cross.json bnb 20000000 24
+[49] WRITE /app/make_cross.py (3717 bytes)
+[50] BASH for s in 1 2 3; do python3 make_cross.py $s 28 32 1.5; done && for f in /tmp/gen1_28_32_1.5.json /tmp/gen2_28_32_1.5.json /tmp/gen3_28_32_1.5.json; do echo "== $f"; timeout 300 ./target/release/scratch $f bnb 5000000 12 
+[51] BASH (timeout 600 ./target/release/scratch /tmp/gen1_28_32_1.5.json bnb 3000000 0 > /tmp/bnb1.txt 2>&1; echo "exit=$?" >> /tmp/bnb1.txt) & sleep 100; cat /tmp/bnb1.txt
+[52] BASH python3 - <<'EOF' import json,random # smaller instances where B&B is feasible rnd=random.Random(7) import subprocess for (m,n,slope,bias) in [(12,8,1.5,None),(14,10,1.5,None),(12,10,1.0,None),(16,12,1.5,None),(12,8,0.8,
+[53] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() # add UB1 machinery s=s.replace(""" /// Order state of every pair of homolog rows, per parent: 0 equal so far,""",""" /// Per marker, the best a marker can cont
+[55] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" let mut children: Vec<(usize, usize, f64, Vec<[f64; NJ]>, [u8; 6], [u8; 6])> = Vec::with_capacity(na * nb);""",""" let mut children: Vec<(usize,
+[56] BASH timeout 200 ./target/release/scratch /app/cross.json bnb 4000000 20 2>&1 | grep -E "root|ub1|incumbent|bnb best"; echo "--- gen25 14x10 ---"; timeout 200 ./target/release/scratch /tmp/gen25_14_10_1.5.json bnb 4000000 20 
+[57] BASH timeout 300 ./target/release/scratch /tmp/gen25_14_10_1.5.json best 53 40 2>&1 | grep -E "stochastic"; echo "--- 400x40 ---"; timeout 600 ./target/release/scratch /tmp/gen25_14_10_1.5.json best 400 40 2>&1 | grep -E "sto
+[58] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace("""use polyploid_phase::solver::search::{local_search, Rng};""","""use polyploid_phase::solver::search::{local_search, Rng}; use polyploid_phase::so
+[59] BASH cat > /tmp/cmp.sh <<'EOF' #!/bin/bash out=/tmp/cmp_results.txt : > $out for cfg in "10 8 1.5" "12 8 1.5" "12 10 1.5" "12 12 1.5" "14 8 1.5" "14 10 1.5" "14 12 2.0" "16 8 1.5" "16 10 1.5" "18 8 1.5"; do set -- $cfg for s 
+[60] BASH time ./target/release/phase 2>&1 | tail -3; echo; ls -la result.json
+[61] BASH nproc; cat /tmp/cmp_results.txt 2>/dev/null | tail -20
+[62] BASH python3 make_cross.py 7 28 32 1.5 && time ./target/release/phase /tmp/gen7_28_32_1.5.json /tmp/out28.json 2>&1 | tail -2
+[63] BASH nohup timeout 900 ./target/release/scratch /tmp/gen7_28_32_1.5.json best 500 100 > /tmp/heavy28.txt 2>&1 & python3 make_cross.py 8 28 32 2.0 >/dev/null; python3 make_cross.py 9 28 32 1.0 >/dev/null; echo ok
+[64] BASH time ./target/release/scratch /app/cross.json best 53 40 2>&1 | grep stochastic
+[65] WRITE /app/src/solver/exact.rs (16709 bytes)
+[66] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// Notes an assignment, keeping every one that ties with the incumbent. fn record(""","""/// Notes an assignment, keeping every one that ties 
+[67] EDIT /app/src/solver.rs (596->1128) MISS
+[68] EDIT /app/src/solver.rs (136->149) ok
+[69] EDIT /app/src/solver.rs (77->1174) ok
+[70] BASH cargo build --release 2>&1 | grep -E "^(error|warning: unused)" -A5 | head -30; echo "=== build done ==="; cargo test --offline --locked --test diagnostics 2>&1 | tail -5
+[71] BASH python3 - <<'PYEOF' p='src/solver/exact.rs' s=open(p).read() s=s.replace(""" pub fn ties(self) -> Vec<(Vec<u8>, Vec<u8>)> { self.ties }""",""" pub fn ties(&self) -> Vec<(Vec<u8>, Vec<u8>)> { self.ties.clone() }""") open(
+[72] BASH python3 - <<'PYEOF' p='src/solver/tables.rs' s=open(p).read() s=s.replace(""" let _sa = j / NS; let sb = j % NS;""",""" let sb = j % NS;""") open(p,'w').write(s) PYEOF cargo build --release 2>&1 | grep -E "^(error|warnin
+[73] BASH python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("fn close(ctx: &Ctx, mut outcome: search::Outcome) -> search::Outcome {","fn close(ctx: &Ctx, outcome: search::Outcome) -> search::Outcome {") open(p,'w'
+[74] BASH cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+[75] BASH cat /tmp/cmp_results.txt; echo "=== heavy 28 ==="; cat /tmp/heavy28.txt 2>/dev/null | head -3
+[76] BASH cat > /tmp/big.sh <<'EOF' #!/bin/bash for s in 7 8 9 13 14; do for sl in 1.0 1.5 2.0; do f=/tmp/gen${s}_28_32_${sl}.json [ -f $f ] || python3 /app/make_cross.py $s 28 32 $sl >/dev/null a=$(timeout 600 ./target/release/sc
+[77] BASH python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace("""use crate::solver::tables::{Ctx, NS};""","""use crate::solver::tables::{Ctx, Prog, NS};""") s=s.replace("""pub fn min_signature_path( ctx: &C
+[78] BASH python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace(""" min_signature_with(ctx, &ctx.viterbi(c, ca, cb), perm_a, perm_b) }""",""" min_signature_with(ctx, c, ca, cb, &ctx.viterbi(c, ca, cb), perm_a
+[79] BASH cargo test --offline --locked --release --test solver_checks 2>&1 | tail -4; echo "=== big ==="; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt
+[80] BASH ./target/release/phase >/dev/null 2>&1; cp result.json /tmp/r1.json; ./target/release/phase >/dev/null 2>&1; cp result.json /tmp/r2.json; cmp /tmp/r1.json /tmp/r2.json && echo "byte identical"; head -c 300 /tmp/r1.json
+[81] BASH sleep 120; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt; ps aux | grep -c "[s]cratch"
+[82] BASH cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt; echo "=== running: $(ps aux | grep -c '[s]cratch')"
+[83] BASH sed -n '1,200p' spec/result-format-v1.md
+[84] BASH sleep 110; cat /tmp/big_results.txt 2>/dev/null; echo "=== heavy ==="; cat /tmp/heavy28.txt
+[85] BASH for cfg in "200 40" "28 200" "100 60" "400 20"; do set -- $cfg ( timeout 900 ./target/release/scratch /tmp/gen7_28_32_1.0.json best $1 $2 2>&1 | grep stochastic | sed "s/^/R=$1 K=$2 /" >> /tmp/lever.txt ) & done; echo la
+[86] BASH python3 - <<'PYEOF' p='src/solver/exact.rs' s=open(p).read() # extract relaxed bounds into a shared struct start=s.index("impl<'a> Exact<'a> {") new_head = '''/// The relaxations the exact search bounds the rest of the c
+[87] WRITE /app/src/solver/relaxed.rs (8288 bytes)
+[88] EDIT /app/src/solver/relaxed.rs (552->502) ok
+[89] WRITE /app/src/solver/exact.rs (9063 bytes)
+[90] BASH rm -f src/solver/exact.rs; echo removed
+[91] WRITE /app/src/solver/exact.rs (9063 bytes)
+[92] WRITE /app/src/solver/beam.rs (7182 bytes)
+[93] BASH python3 - <<'PYEOF' p='src/solver.rs' s=open(p).read() s=s.replace("""pub mod canon; pub mod exact;""","""pub mod beam; pub mod canon; pub mod exact; pub mod relaxed;""") open(p,'w').write(s) PYEOF cargo build --release 
+[94] BASH python3 - <<'PYEOF' for p in ['src/solver/beam.rs','src/solver/exact.rs']: s=open(p).read() s=s.replace("use crate::solver::tables::{Ctx, NJ};","use crate::solver::tables::{Ctx, NJ, NS};") open(p,'w').write(s) PYEOF carg
+[95] BASH cat /tmp/lever.txt 2>/dev/null; echo "--- big ---"; cat /tmp/big_results.txt; echo "--- running: $(ps aux | grep -c '[s]cratch')"
+[96] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::tables::{Ctx, Prog, NJ, NS};""","""use crate::solver::beam; use crate::solver::relaxed::Relaxed; use crate::solver::tables::
+[97] BASH cat > /tmp/beamtest.sh <<'EOF' #!/bin/bash for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json /tmp/gen13_28_32_1.5.json; do [ -f $f ] || python3 /app/make_cross.p
+[98] BASH chmod +x /tmp/beamtest.sh; bash /tmp/beamtest.sh; cat /tmp/beam_results.txt
+[99] BASH cat > /tmp/beamtest.sh <<'EOF' #!/bin/bash for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json; do [ -f $f ] || continue echo "== $f" >> /tmp/beam_results.txt ./ta
+[100] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("fn stochastic(\n ctx: &Ctx,","pub fn stochastic(\n ctx: &Ctx,") open(p,'w').write(s) p='src/bin/scratch.rs' s=open(p).read() s=s.replace(''' othe
+[101] BASH sleep 100; cat /tmp/tune_results.txt; echo "--- cmp ---"; cat /tmp/cmp_results.txt
+[102] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::solver::beam; use crate::solver::relaxed::Relaxed;""","""use crate::solver::beam; use crate::solver::exact::Exact; use crate::solver
+[103] BASH time ./target/release/phase 2>&1 | tail -2; echo; cargo test --offline --locked --release --test solver_checks 2>&1 | tail -3
+[104] BASH cat /tmp/tune_results.txt; echo "--- cmp ---"; tail -8 /tmp/cmp_results.txt
+[105] BASH ps aux | grep -c "[s]cratch"; for f in /tmp/gen7_28_32_1.0.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json; do echo "== $f"; ( time ./target/release/phase $f /tmp/o.json ) 2>&1 | grep -E "total_log|real"; done
+[106] BASH pkill -f "target/release/scratch" ; pkill -f tune.sh; pkill -f cmp.sh; sleep 1; ps aux | grep -c "[s]cratch"; cat /tmp/tune_results.txt | grep -c tune
+[107] BASH ps aux | grep "[s]cratch" | wc -l; grep -c tune /tmp/tune_results.txt
+[108] BASH pkill -9 -f "release/scratch"; sleep 1; ps aux | grep "[s]cratch" | wc -l
+[109] BASH cat > /tmp/tune2.sh <<'EOF' #!/bin/bash : > /tmp/tune2.txt for s in 7 9 13 14 21 33; do for sl in 1.5; do f=/tmp/gen${s}_28_32_${sl}.json [ -f $f ] || python3 /app/make_cross.py $s 28 32 $sl >/dev/null done; done for s i
+[110] BASH grep -rn "solver::" tests/ src/bin/ src/lib.rs 2>/dev/null | grep -v "^src/solver" | head -20
+[111] BASH sleep 90; sort /tmp/tune2.txt 2>/dev/null
+[112] BASH cat > /tmp/tune3.sh <<'EOF' #!/bin/bash : > /tmp/tune3.txt for s in 7 9 13 14 21 33; do f=/tmp/gen${s}_28_32_1.5.json for cfg in "8 80" "8 150" "8 40"; do set -- $cfg ( echo "$f r=$1 k=$2 :: $(./target/release/scratch $f
+[113] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(""" let restarts = 24 + 4096 / (ctx.m * ctx.n).max(1); stochastic(ctx, &starts, restarts, KICKS)""",""" stochastic(ctx, &starts, RESTARTS, KICKS)"
+[114] Read {"file_path": "/app/src/solver.rs"}
+[115] EDIT /app/src/solver.rs (875->1582) ok
+[116] BASH sleep 115; cat /tmp/tune3.txt 2>/dev/null | sort
+[117] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(''' other => panic!("unknown mode {other}"),''',''' "check" => { use polyploid_phase::cross_model::Parent; use polyploid_phase::scoring::score; let 
+[118] BASH grep -n "pub fn" src/cross_model.rs | head -30
+[119] BASH python3 - <<'PYEOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace('ha.get(h, mm) as u8','ha.rows()[h][mm] as u8') s=s.replace('hb.get(h, mm) as u8','hb.rows()[h][mm] as u8') open(p,'w').write(s) PYEOF cargo build -
+[120] BASH sleep 100; sort /tmp/tune3.txt | grep -E "k=80|k=150"
+[121] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// Perturbations tried around every starting assignment. const KICKS: usize = 40;""","""/// Perturbations tried around every starting assignme
+[122] BASH cat > /tmp/final_cmp.sh <<'EOF' #!/bin/bash : > /tmp/final_cmp.txt for spec in "51 16 16 1.5" "52 16 16 2.0" "53 20 20 1.5" "54 12 20 1.5" "55 16 8 1.2" "7 28 32 1.0" "13 28 32 1.5" "33 28 32 1.5"; do set -- $spec f=/tmp
+[123] Read {"file_path": "/app/src/solver/search.rs", "offset": 355, "limit": 120}
+[124] BASH sleep 110; cat /tmp/final_cmp.txt
+[125] BASH sleep 115; cat /tmp/final_cmp.txt; ps aux | grep -c "[r]elease/"
+[126] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.below(3);"," let width = 1 + rng.below(4);") open(p,'w').write(s) PYEOF cargo build --release --bin scratch 2>&1 | grep -E "
+[127] BASH sleep 115; cat /tmp/width.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt
+[128] BASH sleep 115; cat /tmp/width.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/"
+[129] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace(" let width = 1 + rng.below(4);"," let width = 1 + rng.below(3);") open(p,'w').write(s) PYEOF cargo build --release 2>&1 | grep -E "^error" -A5|he
+[130] Read {"file_path": "/app/src/solver/canon.rs"}
+[131] BASH sleep 115; cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/"
+[132] Read {"file_path": "/app/src/solver/tables.rs", "offset": 1, "limit": 120}
+[133] BASH grep -n -i "recombination\|range\|0\.\|rate" spec/cross-format-v1.md | head -40
+[134] BASH grep -n "m - 1\|m-1\|n - 1" src/solver/*.rs
+[135] Read {"file_path": "/app/src/solver/tables.rs", "offset": 128, "limit": 160}
+[136] BASH grep -n -i "markers\|offspring" spec/cross-format-v1.md | head -20; echo ---; grep -n -i "range\|at least\|minimum" spec/cross-format-v1.md | head
+[137] BASH cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/"
+[138] BASH cat > /tmp/nodes.sh <<'EOF' #!/bin/bash : > /tmp/nodes.txt for spec in "61 12 8 1.5" "62 12 16 1.5" "63 14 16 1.5" "64 16 8 1.5" "65 16 16 1.5" "66 16 32 1.5" "67 12 32 1.5" "68 18 8 1.5"; do set -- $spec f=/tmp/gen$1_$2
+[139] BASH sleep 115; cat /tmp/nodes.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt
+[140] BASH sleep 115; cat /tmp/nodes.txt 2>/dev/null; echo "--- final ---"; cat /tmp/final_cmp.txt; ps aux|grep -c "[r]elease/"
+[141] BASH python3 - <<'PYEOF' p='src/solver/search.rs' s=open(p).read() s=s.replace("""/// How much work the exact search may do, counted in forward passes over all /// progeny and scaled so the wall time it buys is much the same 
+[142] BASH pkill -9 -f "release/scratch"; pkill -9 -f "release/phase"; pkill -9 -f "\.sh"; sleep 1; ps aux | grep -c "[r]elease/"; cat /tmp/final_cmp.txt
+[143] BASH ps aux | grep "[r]elease" | wc -l; for f in /app/cross.json /tmp/gen7_28_32_1.5.json /tmp/gen9_28_32_1.5.json; do echo "== $f"; ( time ./target/release/phase $f /tmp/o.json ) 2>&1 | grep -E "total_log|real"; done
+[144] BASH ps aux | grep "[r]elease" | head -8
+[145] BASH pkill -9 -f "gen9_28_32"; sleep 1; ps aux | grep "[r]elease" | wc -l
+[146] BASH cat > /tmp/last_cmp.sh <<'EOF' #!/bin/bash : > /tmp/last_cmp.txt for spec in "71 20 16 1.5" "72 22 12 1.5" "73 18 24 2.0" "74 24 10 1.5"; do set -- $spec f=/tmp/gen$1_$2_$3_$4.json [ -f $f ] || python3 /app/make_cross.py
+[147] Read {"file_path": "/app/src/solver/tiebreak.rs", "offset": 250, "limit": 75}
+[148] BASH python3 - <<'PYEOF' p='src/solver/tiebreak.rs' s=open(p).read() s=s.replace("""/// Largest number of joint states tolerated at one marker before the exact /// lexicographic pass is abandoned for the plain Viterbi path. c
+[149] BASH cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l
+[150] Read {"file_path": "/app/src/solver/search.rs", "offset": 1, "limit": 40}
+[151] BASH sleep 110; cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l
+[152] BASH git status --short 2>&1 | head; git log --oneline -3 2>&1 | head
+[153] BASH sleep 90; cat /tmp/last_cmp.txt; ps aux|grep "[r]elease"|wc -l

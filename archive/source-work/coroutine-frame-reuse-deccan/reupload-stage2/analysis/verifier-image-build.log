@@ -1,0 +1,55 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 928B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/silkeh/clang@sha256:45c29eadcae5f9817d0d7dc8518a0cb2a565647e7e049656d1c0bc6e9d9649d3
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/10] FROM docker.io/silkeh/clang@sha256:45c29eadcae5f9817d0d7dc8518a0cb2a565647e7e049656d1c0bc6e9d9649d3
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 122.21kB done
+#5 DONE 0.0s
+
+#6 [ 5/10] COPY graded.cpp      /tests/graded.cpp
+#6 CACHED
+
+#7 [ 7/10] COPY CMakeLists.txt  /tests/CMakeLists.txt
+#7 CACHED
+
+#8 [ 2/10] RUN mkdir -p /logs/verifier /app /verifier
+#8 CACHED
+
+#9 [ 3/10] WORKDIR /tests
+#9 CACHED
+
+#10 [ 4/10] COPY harness.hpp     /tests/harness.hpp
+#10 CACHED
+
+#11 [ 6/10] COPY verifier_driver.cpp /tests/verifier_driver.cpp
+#11 CACHED
+
+#12 [ 8/10] COPY frozen          /tests/frozen
+#12 CACHED
+
+#13 [ 9/10] COPY test.sh         /tests/test.sh
+#13 CACHED
+
+#14 [10/10] RUN chmod +x /tests/test.sh
+#14 CACHED
+
+#15 exporting to image
+#15 exporting layers done
+#15 writing image sha256:54eaa99e0124be58b824d9b1ba21dcf4c67e28b219c6408988222e8a981898be done
+#15 naming to docker.io/library/rc-verifier:reup-base done
+#15 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/efdo6yab68gbq8or94pa20uva
+VERIFIER IMAGE BUILD rc=0

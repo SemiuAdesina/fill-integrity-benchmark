@@ -1,0 +1,3 @@
+b12_sink_kind_not_checked
+validity
+does not reject a sink that is also an endpoint or switch

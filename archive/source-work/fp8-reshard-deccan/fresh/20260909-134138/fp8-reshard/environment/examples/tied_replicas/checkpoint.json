@@ -1,0 +1,115 @@
+{
+ "format_version": 1,
+ "records": [
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "logical_begin": 0,
+   "logical_end": 512,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    120,
+    3000,
+    50,
+    900
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "logical_begin": 0,
+   "logical_end": 300,
+   "replica": 1,
+   "stage": 0,
+   "shard": 0,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    3000,
+    120
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "logical_begin": 300,
+   "logical_end": 512,
+   "replica": 1,
+   "stage": 0,
+   "shard": 1,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    120,
+    3000
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "forward",
+   "block_size": 512,
+   "logical_begin": 512,
+   "logical_end": 700,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 2097152,
+   "inverse_scale": 8,
+   "amax_history": [
+    8,
+    7,
+    7
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "backward",
+   "block_size": 512,
+   "logical_begin": 0,
+   "logical_end": 512,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 8388608,
+   "inverse_scale": 2,
+   "amax_history": [
+    2,
+    1
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "embed.weight",
+   "tie_group": "tie_e",
+   "role": "backward",
+   "block_size": 512,
+   "logical_begin": 512,
+   "logical_end": 700,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 1048576,
+   "inverse_scale": 16,
+   "amax_history": [
+    9
+   ],
+   "cursor": 0
+  }
+ ]
+}

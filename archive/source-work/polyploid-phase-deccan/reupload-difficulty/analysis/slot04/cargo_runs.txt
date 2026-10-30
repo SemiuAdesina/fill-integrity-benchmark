@@ -1,0 +1,1217 @@
+[15] CMD: python3 -c "import sys; print(sys.version)"; ls /usr/lib/python3/dist-packages 2>/dev/null | head; pip3 list 2>/dev/null | head -20; which cargo rustc; cargo --version
+--- obs tail ---
+3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]
+__pycache__
+gyp
+gyp-0.1.egg-info
+pkg_resources
+six-1.16.0.egg-info
+six.py
+/usr/local/cargo/bin/cargo
+/usr/local/cargo/bin/rustc
+cargo 1.83.0 (5ffbef321 2024-10-29)
+
+[stdout]
+3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]
+__pycache__
+gyp
+gyp-0.1.egg-info
+pkg_resources
+six-1.16.0.egg-info
+six.py
+/usr/local/cargo/bin/cargo
+/usr/local/cargo/bin/rustc
+cargo 1.83.0 (5ffbef321 2024-10-29)
+[metadata] {"noOutputExpected": false}
+
+[23] CMD: cargo build --release --offline 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.00s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.00s
+[metadata] {"noOutputExpected": false}
+
+[24] CMD: cargo test --offline --release --test solver_checks -- --nocapture --test-threads=1 2>&1 | tail -30
+--- obs tail ---
+e2c2)
+
+running 6 tests
+test answers_are_in_canonical_form ... ok
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.40s
+
+[stdout]
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.32s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test answers_are_in_canonical_form ... ok
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.40s
+[metadata] {"noOutputExpected": false}
+
+[25] CMD: cargo test --offline --release --lib experiment_real_cross -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 1.41s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+best = -706.47552991  elapsed 378.42667ms
+xa = [0, 2, 2, 0, 4, 0, 1, 1, 2, 3, 3, 1]
+xb = [0, 0, 3, 0, 0, 3, 0, 0, 3, 1, 1, 5]
+per eval 69.835µs
+test solver::search::tests::experiment_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.39s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.41s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+best = -706.47552991  elapsed 378.42667ms
+xa = [0, 2, 2, 0, 4, 0, 1, 1, 2, 3, 3, 1]
+xb = [0, 0, 3, 0, 0, 3, 0, 0, 3, 1, 1, 5]
+per eval 69.835µs
+test solver::search::tests::experiment_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.39s
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: sed -i 's/^pub mod canonical;/pub mod bound;\npub mod canonical;/' src/solver.rs && cargo test --offline --release --lib bounds_on_the_real_cross -- --nocapture 2>&1 | tail -12
+--- obs tail ---
+running 1 test
+search      = -709.508049
+emission ub = -544.403709
+dr ub       = -43.511962
+trans ub    = -165.423609
+trivial     = -753.339279
+per marker  = -765.680741
+per progeny = -684.719049
+test solver::bound::tests::bounds_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.20s
+
+[stdout]
+running 1 test
+search      = -709.508049
+emission ub = -544.403709
+dr ub       = -43.511962
+trans ub    = -165.423609
+trivial     = -753.339279
+per marker  = -765.680741
+per progeny = -684.719049
+test solver::bound::tests::bounds_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.20s
+[metadata] {"noOutputExpected": false}
+
+[29] CMD: cat >> src/solver/search.rs <<'EOF' #[cfg(test)] mod experiments { use super::*; use crate::cross_input::parse_cross; use crate::solver::core::Tables; use std::collections::BTreeMap; #[test] fn landscape() { let text = s
+--- obs tail ---
+running 1 test
+elapsed 13.23603976s
+best -705.140456
+   -705.14  x18
+   -705.33  x15
+   -705.67  x11
+   -706.01  x27
+   -706.19  x16
+   -706.28  x2
+   -706.32  x12
+   -706.39  x36
+   -706.45  x6
+   -706.48  x16
+   -706.49  x27
+   -706.51  x6
+   -706.61  x16
+   -706.74  x7
+   -706.75  x1
+test solver::search::experiments::landscape ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 13.24s
+
+[stdout]
+running 1 test
+elapsed 13.23603976s
+best -705.140456
+   -705.14  x18
+   -705.33  x15
+   -705.67  x11
+   -706.01  x27
+   -706.19  x16
+   -706.28  x2
+   -706.32  x12
+   -706.39  x36
+   -706.45  x6
+   -706.48  x16
+   -706.49  x27
+   -706.51  x6
+   -706.61  x16
+   -706.74  x7
+   -706.75  x1
+test solver::search::experiments::landscape ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 13.24s
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: sed -i 's/^pub mod core;/pub mod core;\npub mod exact;/' src/solver.rs && cargo test --offline --release --lib branch_and_bound -- --nocapture 2>&1 | tail -8
+--- obs tail ---
+running 1 test
+search = -706.475530
+finished=true nodes=99 pruned=87 best=-706.475530 ties=0 elapsed=1.212995ms
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.38s
+
+[stdout]
+running 1 test
+search = -706.475530
+finished=true nodes=99 pruned=87 best=-706.475530 ties=0 elapsed=1.212995ms
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.38s
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: python3 - <<'EOF' import re p='src/solver/exact.rs' s=open(p).read() # add bases field s = s.replace(""" /// Forward vectors, one level per marker. levels: Vec<Vec<[f64; NJ]>>,""", """ /// Forward vectors, one level per 
+--- obs tail ---
+test solver::exact::tests::branch_and_bound_on_the_real_cross has been running for over 60 seconds
+finished=true nodes=1975135 pruned=576 best=-705.140456 ties=576 elapsed=91.144041639s
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 91.53s
+
+[stdout]
+test solver::exact::tests::branch_and_bound_on_the_real_cross has been running for over 60 seconds
+finished=true nodes=1975135 pruned=576 best=-705.140456 ties=576 elapsed=91.144041639s
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 91.53s
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: python3 - <<'EOF' p='src/solver/exact.rs' s=open(p).read() # add symmetry check method before `fn record` s = s.replace(""" fn record(&mut self, total: f64) {""", """ /// True while the rows fixed so far can still end up
+--- obs tail ---
+finished=true nodes=3968 pruned=3 best=-705.140456 ties=1 elapsed=181.409097ms
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.56s
+
+[stdout]
+finished=true nodes=3968 pruned=3 best=-705.140456 ties=1 elapsed=181.409097ms
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.56s
+[metadata] {"noOutputExpected": false}
+
+[36] CMD: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() start=s.index(" /// The optimum by enumeration over every admissible parental assignment.") end=s.index(" #[test]\n fn branch_and_bound_matches_enumeration") 
+--- obs tail ---
+d here
+
+Some errors have detailed explanations: E0524, E0596.
+For more information about an error, try `rustc --explain E0524`.
+warning: `polyploid-phase` (lib test) generated 2 warnings
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 2 warnings emitted
+
+[stdout]
+   --> src/solver/selftest.rs:100:18
+    |
+85  |         let floats = |n: usize, lo: f64, hi: f64| -> String {
+    |                      -------------------------------------- first closure is constructed here
+86  |             let parts: Vec<String> = (0..n)
+87  |                 .map(|_| format!("{:.6}", lo + (hi - lo) * (rng.below(1000) as f64) / 1000.0))
+    |                                                             --- first borrow occurs due to use of `*rng` in closure
+...
+100 |             .map(|_| format!("{:.6}", 0.05 + 0.4 * (rng.below(1000) as f64) / 1000.0))
+    |                  ^^^                                --- second borrow occurs due to use of `*rng` in closure
+    |                  |
+    |                  second closure is constructed here
+...
+118 |             floats(markers - 1, 0.01, 0.4),
+    |             ------ first borrow later used here
+
+Some errors have detailed explanations: E0524, E0596.
+For more information about an error, try `rustc --explain E0524`.
+warning: `polyploid-phase` (lib test) generated 2 warnings
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() start=s.index(" let list = |items: &[u8]| -> String {") end=s.index(" /// The optimum by enumeration") s = s[:start] + ''' let list = |items: &[u8]| -> String
+--- obs tail ---
+non-zero")
+FAILED
+
+failures:
+
+failures:
+    solver::selftest::tests::branch_and_bound_matches_enumeration
+    solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+
+[stdout]
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... thread 'solver::selftest::tests::branch_and_bound_matches_enumeration' panicked at src/solver/selftest.rs:165:44:
+generated cross must be valid: CrossError("double_reduction is not allowed but its rate is non-zero")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... thread 'solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer' panicked at src/solver/selftest.rs:194:44:
+generated cross must be valid: CrossError("double_reduction is not allowed but its rate is non-zero")
+FAILED
+
+failures:
+
+failures:
+    solver::selftest::tests::branch_and_bound_matches_enumeration
+    solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: python3 - <<'EOF' p='src/solver/selftest.rs' s=open(p).read() s = s.replace(""" let allowed_a = bools(rng, markers); let allowed_b = bools(rng, markers); let rate_a = floats(rng, markers, 0.05, 0.45); let rate_b = floats
+--- obs tail ---
+^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: function `bools` is never used
+  --> src/solver/selftest.rs:91:12
+   |
+91 |         fn bools(rng: &mut Rng, n: usize) -> String {
+   |            ^^^^^
+
+warning: `polyploid-phase` (lib test) generated 4 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 5.06s
+
+[stdout]
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: function `bools` is never used
+  --> src/solver/selftest.rs:91:12
+   |
+91 |         fn bools(rng: &mut Rng, n: usize) -> String {
+   |            ^^^^^
+
+warning: `polyploid-phase` (lib test) generated 4 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 5.06s
+[metadata] {"noOutputExpected": false}
+
+[55] CMD: cargo build --offline --release 2>&1 | tail -30
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: field `optimistic` is never read
+  --> src/solver/exact.rs:29:5
+   |
+26 | pub struct Branch<'a> {
+   |            ------ field in this struct
+...
+29 |     optimistic: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (lib) generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.31s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: field `optimistic` is never read
+  --> src/solver/exact.rs:29:5
+   |
+26 | pub struct Branch<'a> {
+   |            ------ field in this struct
+...
+29 |     optimistic: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (lib) generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.31s
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: cargo test --offline --locked --test diagnostics 2>&1 | tail -30
+--- obs tail ---
+target(s) in 1.07s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: field `optimistic` is never read
+  --> src/solver/exact.rs:29:5
+   |
+26 | pub struct Branch<'a> {
+   |            ------ field in this struct
+...
+29 |     optimistic: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (lib) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.07s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[58] CMD: timeout 3000 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -40
+--- obs tail ---
+lve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.48s
+
+[stdout]
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:147:17
+    |
+147 |                 paths = trial_paths;
+    |                 ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: field `optimistic` is never read
+  --> src/solver/exact.rs:29:5
+   |
+26 | pub struct Branch<'a> {
+   |            ------ field in this struct
+...
+29 |     optimistic: Vec<Vec<[f64; NJ]>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (lib) generated 2 warnings
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.37s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.48s
+[metadata] {"noOutputExpected": false}
+
+[64] CMD: timeout 900 cargo test --offline --release --lib scaling_at_the_top -- --nocapture --test-threads=1 --include-ignored 2>&1 | tail -20
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: bcva4d17w). Output is being written to: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bcva4d17w.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bcva4d17w", "timedOutAfterMs": 120000}
+
+[72] CMD: cargo build --offline --release 2>&1 | grep -E "^(warning|error)" -A6 | head -40; echo "---"; cargo build --offline --release 2>&1 | tail -3
+--- obs tail ---
+---
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+---
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[73] CMD: touch /app/src/lib.rs && cargo build --offline --release 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.53s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.53s
+[metadata] {"noOutputExpected": false}
+
+[80] CMD: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 timeout 600 cargo test --offline --release --lib scaling_at_the_top -- --nocapture --test-threads=1 --include-ignored 2>&1 | tail -8
+--- obs tail ---
+|                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 1 warning
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 1 warning emitted
+
+[stdout]
+    |                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 1 warning
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 1 warning emitted
+[metadata] {"noOutputExpected": false}
+
+[81] CMD: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 cargo test --offline --release --lib scaling_at_the_top 2>&1 | grep -B10 "E0308" | head -30
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+error[E0308]: mismatched types
+--
+
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+    |
+219 |                     cur = v; xa = ta; xb = tb; paths = tp;
+    |                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+For more information about this error, try `rustc --explain E0308`.
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+error[E0308]: mismatched types
+--
+
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+    |
+219 |                     cur = v; xa = ta; xb = tb; paths = tp;
+    |                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+For more information about this error, try `rustc --explain E0308`.
+[metadata] {"noOutputExpected": false}
+
+[82] CMD: cargo test --offline --release --lib scaling_at_the_top 2>&1 | grep -A12 "E0308" | head -20
+--- obs tail ---
+E0308]: mismatched types
+   --> src/solver/selftest.rs:256:13
+    |
+256 |         for &(markers, offspring, dosage) in cases {
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ----- this is an iterator with items of type `(usize, usize, u8)`
+    |             |
+    |             expected `(usize, usize, u8)`, found `&_`
+    |
+    = note:  expected tuple `(usize, usize, u8)`
+            found reference `&_`
+
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+--
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 1 warning
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 1 warning emitted
+
+[stdout]
+error[E0308]: mismatched types
+   --> src/solver/selftest.rs:256:13
+    |
+256 |         for &(markers, offspring, dosage) in cases {
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ----- this is an iterator with items of type `(usize, usize, u8)`
+    |             |
+    |             expected `(usize, usize, u8)`, found `&_`
+    |
+    = note:  expected tuple `(usize, usize, u8)`
+            found reference `&_`
+
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+--
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 1 warning
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 1 warning emitted
+[metadata] {"noOutputExpected": false}
+
+[84] CMD: SCALE_CASES="28,32,2" SCALE_BUDGET=200000 timeout 600 cargo test --offline --release --lib scaling_at_the_top -- --nocapture --test-threads=1 --include-ignored 2>&1 | tail -6
+--- obs tail ---
+running 1 test
+test solver::selftest::tests::scaling_at_the_top_of_the_range ... M=28 N=32 d=2: finished=false nodes=200001 pruned=0 best=-1542.017692 gap=-1.00e-8 ties=0 elapsed=80.33839618s
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 85.18s
+
+[stdout]
+running 1 test
+test solver::selftest::tests::scaling_at_the_top_of_the_range ... M=28 N=32 d=2: finished=false nodes=200001 pruned=0 best=-1542.017692 gap=-1.00e-8 ties=0 elapsed=80.33839618s
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 85.18s
+[metadata] {"noOutputExpected": false}
+
+[90] CMD: timeout 900 cargo test --offline --release --lib planted_scaling -- --nocapture --test-threads=1 --include-ignored 2>&1 | tail -8
+--- obs tail ---
+Command running in background with ID: b01o5rr7f. Output is being written to: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/b01o5rr7f.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b01o5rr7f"}
+
+[95] CMD: (timeout 1200 cargo test --offline --release --lib planted_scaling -- --nocapture --test-threads=1 --include-ignored > /tmp/planted.log 2>&1 &) ; sleep 100; cat /tmp/planted.log
+--- obs tail ---
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+    |
+219 |                     cur = v; xa = ta; xb = tb; paths = tp;
+    |                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (lib test) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+test solver::selftest::tests::planted_scaling ...
+
+[stdout]
+warning: value assigned to `paths` is never read
+   --> src/solver/search.rs:219:48
+    |
+219 |                     cur = v; xa = ta; xb = tb; paths = tp;
+    |                                                ^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (lib test) generated 1 warning
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+test solver::selftest::tests::planted_scaling ...
+[metadata] {"noOutputExpected": false}
+
+[102] CMD: cargo build --offline --release 2>&1 | grep -E "error|warning: unused" -A8 | head -40; cargo build --offline --release 2>&1 | tail -2
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[103] CMD: touch /app/src/solver/exact.rs && cargo build --offline --release 2>&1 | tail -30
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.63s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.63s
+[metadata] {"noOutputExpected": false}
+
+[108] CMD: SCALE_BUDGET=200000 timeout 300 cargo test --offline --release --lib planted_scaling -- --nocapture --test-threads=1 --include-ignored > /tmp/p2.log 2>&1; tail -6 /tmp/p2.log
+--- obs tail ---
+M=28 N=16 d=2 s=2: finished=false nodes=200001 pruned=0 best=-629.2597 gap=5.557e0 ties=1 elapsed=14.531364794s
+M=20 N=32 d=1 s=2: finished=false nodes=200001 pruned=0 best=-821.1672 gap=1.488e1 ties=1 elapsed=15.950962259s
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 106.11s
+
+[stdout]
+M=28 N=16 d=2 s=2: finished=false nodes=200001 pruned=0 best=-629.2597 gap=5.557e0 ties=1 elapsed=14.531364794s
+M=20 N=32 d=1 s=2: finished=false nodes=200001 pruned=0 best=-821.1672 gap=1.488e1 ties=1 elapsed=15.950962259s
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 106.11s
+[metadata] {"noOutputExpected": false}
+
+[111] CMD: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 --include-ignored > /tmp/ils.log 2>&1; grep "^M=" /tmp/ils.log
+--- obs tail ---
+M=28 N=32 d=2:  8x8 = -1355.2315 (3.840057663s)  24x24 = -1359.7477 (3.88145138s)  60x60 = -1358.5745 (11.438341097s)
+M=20 N=32 d=1:  8x8 = -827.0060 (777.711132ms)  24x24 = -832.7354 (1.644588316s)  60x60 = -834.1244 (6.718565772s)
+
+[stdout]
+M=28 N=32 d=2:  8x8 = -1355.2315 (3.840057663s)  24x24 = -1359.7477 (3.88145138s)  60x60 = -1358.5745 (11.438341097s)
+M=20 N=32 d=1:  8x8 = -827.0060 (777.711132ms)  24x24 = -832.7354 (1.644588316s)  60x60 = -834.1244 (6.718565772s)
+[metadata] {"noOutputExpected": false}
+
+[114] CMD: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 --include-ignored > /tmp/ils2.log 2>&1; sed -n '/running 1 test/,$p' /tmp/ils2.log
+--- obs tail ---
+running 1 test
+test solver::selftest::tests::local_search_effort ... M=28 N=16 d=2:  8x8 = -628.9679/-628.9679 (1.940891313s)  24x24 = -623.9469/-623.9469 (2.099282053s)  60x60 = -630.4204/-630.4204 (6.588283274s)
+M=28 N=32 d=2:  8x8 = -1355.2315/-1355.2315 (3.838298999s)  24x24 = -1359.7477/-1359.7477 (3.86183308s)  60x60 = -1358.5745/-1358.5745 (11.482450232s)
+M=20 N=32 d=1:  8x8 = -827.0060/-827.0060 (782.018525ms)  24x24 = -832.7354/-832.7354 (1.678673132s)  60x60 = -834.1244/-834.1244 (6.755040738s)
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 39.03s
+
+[stdout]
+running 1 test
+test solver::selftest::tests::local_search_effort ... M=28 N=16 d=2:  8x8 = -628.9679/-628.9679 (1.940891313s)  24x24 = -623.9469/-623.9469 (2.099282053s)  60x60 = -630.4204/-630.4204 (6.588283274s)
+M=28 N=32 d=2:  8x8 = -1355.2315/-1355.2315 (3.838298999s)  24x24 = -1359.7477/-1359.7477 (3.86183308s)  60x60 = -1358.5745/-1358.5745 (11.482450232s)
+M=20 N=32 d=1:  8x8 = -827.0060/-827.0060 (782.018525ms)  24x24 = -832.7354/-832.7354 (1.678673132s)  60x60 = -834.1244/-834.1244 (6.755040738s)
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 39.03s
+[metadata] {"noOutputExpected": false}
+
+[116] CMD: timeout 600 cargo test --offline --release --lib local_search_effort -- --nocapture --test-threads=1 --include-ignored > /tmp/ils3.log 2>&1; sed -n '/running 1 test/,$p' /tmp/ils3.log
+--- obs tail ---
+running 1 test
+test solver::selftest::tests::local_search_effort ... M=28 N=16 d=2:  s0 = -623.9469  s1 = -625.7565  s2 = -629.4246  s3 = -627.9082  s4 = -616.5261  s5 = -628.7574  8x8 = -628.9679/-628.9679 (1.92968194s)
+M=28 N=32 d=2:  s0 = -1359.7477  s1 = -1352.6808  s2 = -1357.2722  s3 = -1348.5363  s4 = -1348.8324  s5 = -1369.3274  8x8 = -1355.2315/-1355.2315 (3.773006848s)
+M=20 N=32 d=1:  s0 = -832.7354  s1 = -837.7348  s2 = -837.9201  s3 = -833.9947  s4 = -826.1369  s5 = -841.6449  8x8 = -827.0060/-827.0060 (779.480946ms)
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 56.04s
+
+[stdout]
+running 1 test
+test solver::selftest::tests::local_search_effort ... M=28 N=16 d=2:  s0 = -623.9469  s1 = -625.7565  s2 = -629.4246  s3 = -627.9082  s4 = -616.5261  s5 = -628.7574  8x8 = -628.9679/-628.9679 (1.92968194s)
+M=28 N=32 d=2:  s0 = -1359.7477  s1 = -1352.6808  s2 = -1357.2722  s3 = -1348.5363  s4 = -1348.8324  s5 = -1369.3274  8x8 = -1355.2315/-1355.2315 (3.773006848s)
+M=20 N=32 d=1:  s0 = -832.7354  s1 = -837.7348  s2 = -837.9201  s3 = -833.9947  s4 = -826.1369  s5 = -841.6449  8x8 = -827.0060/-827.0060 (779.480946ms)
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 56.04s
+[metadata] {"noOutputExpected": false}
+
+[122] CMD: cargo build --offline --release 2>&1 | tail -5 && time ./target/release/phase
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.41s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.885s
+user	0m0.884s
+sys	0m0.001s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.41s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.885s
+user	0m0.884s
+sys	0m0.001s
+[metadata] {"noOutputExpected": false}
+
+[124] CMD: timeout 900 cargo test --offline --release --lib solve_on_planted -- --nocapture --test-threads=1 --include-ignored > /tmp/e2e.log 2>&1; sed -n '/running 1 test/,$p' /tmp/e2e.log
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: bqxvtl8ma). Output is being written to: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/bqxvtl8ma.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bqxvtl8ma", "timedOutAfterMs": 120000}
+
+[127] CMD: cargo build --offline --release 2>&1 | tail -5
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.71s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.71s
+[metadata] {"noOutputExpected": false}
+
+[131] CMD: cargo build --offline --release 2>&1 | tail -3; ./target/release/phase
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.43s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.43s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+[metadata] {"noOutputExpected": false}
+
+[134] CMD: timeout 900 cargo test --offline --release --lib solve_on_planted -- --nocapture --test-threads=1 --include-ignored > /tmp/e2e2.log 2>&1; sed -n '/running 1 test/,$p' /tmp/e2e2.log
+--- obs tail ---
+Command running in background with ID: broquk63x. Output is being written to: /tmp/claude-0/-app/35c57182-3ac7-4519-88ed-4e4483820298/tasks/broquk63x.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "broquk63x"}
+
+[138] CMD: cargo build --offline --release 2>&1 | tail -2 && time ./target/release/phase
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.71s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.437s
+user	0m1.433s
+sys	0m0.001s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.71s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.437s
+user	0m1.433s
+sys	0m0.001s
+[metadata] {"noOutputExpected": false}
+
+[139] CMD: pkill -f polyploid_phase; sleep 1; timeout 900 cargo test --offline --locked --test diagnostics 2>&1 | tail -8
+--- obs tail ---
+Exit code 144
+
+[error] tool reported failure
+
+[140] CMD: timeout 900 cargo test --offline --locked --test diagnostics 2>&1 | tail -8
+--- obs tail ---
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[141] CMD: timeout 900 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+--- obs tail ---
+Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.82s
+
+[stdout]
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.82s
+[metadata] {"noOutputExpected": false}
+
+[142] CMD: timeout 900 cargo test --offline --release --lib 2>&1 | tail -25
+--- obs tail ---
+02s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.45s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 18 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test cross_model::tests::state_is_unordered ... ok
+test cross_model::tests::switch_count_treats_states_as_multisets ... ok
+test digest::tests::digest_hex_is_zero_padded ... ok
+test digest::tests::matches_the_published_reference_vectors ... ok
+test json::tests::rejects_trailing_content_and_duplicate_keys ... ok
+test json::tests::round_trips_a_nested_document ... ok
+test solver::bound::tests::bounds_on_the_real_cross ... ok
+test solver::exact::tests::branch_and_bound_on_the_real_cross ... ok
+test solver::search::tests::experiment_real_cross ... ok
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... ok
+test solver::selftest::tests::local_search_effort ... ignored
+test solver::selftest::tests::planted_scaling ... ignored
+test solver::selftest::tests::scaling_at_the_top_of_the_range ... ignored
+test solver::selftest::tests::solve_on_planted_crosses ... ignored
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+test solver::tiebreak::tests::minimal_paths_reach_the_optimum ... ok
+test solver::search::experiments::landscape ... ok
+
+test result: ok. 14 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 15.02s
+[metadata] {"noOutputExpected": false}
+
+[149] CMD: cargo test --offline --release --lib 2>&1 | tail -22
+--- obs tail ---
+ests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 12 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.12s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.13s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 15 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test cross_model::tests::state_is_unordered ... ok
+test cross_model::tests::switch_count_treats_states_as_multisets ... ok
+test digest::tests::digest_hex_is_zero_padded ... ok
+test digest::tests::matches_the_published_reference_vectors ... ok
+test json::tests::rejects_trailing_content_and_duplicate_keys ... ok
+test json::tests::round_trips_a_nested_document ... ok
+test solver::bound::tests::bounds_on_the_real_cross ... ok
+test solver::exact::tests::branch_and_bound_proves_the_real_cross_optimal ... ok
+test solver::selftest::tests::planted_scaling ... ignored
+test solver::selftest::tests::scaling_at_the_top_of_the_range ... ignored
+test solver::selftest::tests::solve_on_planted_crosses ... ignored
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... ok
+test solver::tiebreak::tests::minimal_paths_reach_the_optimum ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 12 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.12s
+[metadata] {"noOutputExpected": false}
+
+[158] CMD: cargo test --offline --release --lib canonical 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.24s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 3 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test solver::canonical::tests::canonical_form_leaves_the_worked_example_alone ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 7.25s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.24s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 3 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test solver::canonical::tests::canonical_form_leaves_the_worked_example_alone ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 7.25s
+[metadata] {"noOutputExpected": false}
+
+[164] CMD: cargo build --offline --release 2>&1 | tail -6
+--- obs tail ---
+|                                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning (run `cargo fix --lib -p polyploid-phase` to apply 1 suggestion)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.46s
+
+[stdout]
+   |                                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: `polyploid-phase` (lib) generated 1 warning (run `cargo fix --lib -p polyploid-phase` to apply 1 suggestion)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.46s
+[metadata] {"noOutputExpected": false}
+
+[165] CMD: cargo build --offline --release 2>&1 | grep -B5 "unused_imports" | head
+--- obs tail ---
+--> src/solver.rs:19:54
+   |
+19 |     Haplotypes, Parent, ProgenyPath, Reconstruction, State, ALL_STATES, HOMOLOGS,
+   |                                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+[stdout]
+  --> src/solver.rs:19:54
+   |
+19 |     Haplotypes, Parent, ProgenyPath, Reconstruction, State, ALL_STATES, HOMOLOGS,
+   |                                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+[metadata] {"noOutputExpected": false}
+
+[167] CMD: cargo build --offline --release 2>&1 | tail -3; cargo test --offline --release --lib 2>&1 | tail -4
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.39s
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.13s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.39s
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.13s
+[metadata] {"noOutputExpected": false}
+
+[177] CMD: cargo build --offline --release 2>&1 | tail -3 && ./target/release/phase && python3 /tmp/verify.py
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.44s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+independent score  -705.1404562027
+document score     -705.1404562027
+digest             0c236db82cf70066
+
+all independent checks pass
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.44s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+independent score  -705.1404562027
+document score     -705.1404562027
+digest             0c236db82cf70066
+
+all independent checks pass
+[metadata] {"noOutputExpected": false}
+
+[178] CMD: timeout 900 cargo test --offline --locked --test diagnostics 2>&1 | tail -4; timeout 900 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -5
+--- obs tail ---
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.44s
+
+[stdout]
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.44s
+[metadata] {"noOutputExpected": false}
+
+[179] CMD: timeout 900 cargo test --offline --release --lib 2>&1 | tail -20; echo "=== warnings (all targets):"; cargo build --offline --release --all-targets 2>&1 | grep -c warning
+--- obs tail ---
+lid_scoring_canonical_answer ... ok
+
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.69s
+
+=== warnings (all targets):
+0
+
+[stdout]
+running 16 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test cross_model::tests::state_is_unordered ... ok
+test cross_model::tests::switch_count_treats_states_as_multisets ... ok
+test digest::tests::digest_hex_is_zero_padded ... ok
+test digest::tests::matches_the_published_reference_vectors ... ok
+test json::tests::rejects_trailing_content_and_duplicate_keys ... ok
+test json::tests::round_trips_a_nested_document ... ok
+test solver::canonical::tests::canonical_form_leaves_the_worked_example_alone ... ok
+test solver::bound::tests::bounds_on_the_real_cross ... ok
+test solver::exact::tests::branch_and_bound_proves_the_real_cross_optimal ... ok
+test solver::selftest::tests::planted_scaling ... ignored
+test solver::selftest::tests::scaling_at_the_top_of_the_range ... ignored
+test solver::selftest::tests::solve_on_planted_crosses ... ignored
+test solver::selftest::tests::branch_and_bound_matches_enumeration ... ok
+test solver::tiebreak::tests::minimal_paths_reach_the_optimum ... ok
+test solver::selftest::tests::the_pipeline_reports_a_valid_scoring_canonical_answer ... ok
+
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.69s
+
+=== warnings (all targets):
+0
+[metadata] {"returnCodeInterpretation": "No matches found", "noOutputExpected": false}
+
+[180] CMD: cp src/solver.rs /tmp/solver.rs.bak && python3 - <<'EOF' p='src/solver.rs' s=open(p).read() old = s[s.index("const SEEDS: [u64; 6] = ["):s.index("];", s.index("const SEEDS"))+3] new = "const SEEDS: [u64; 60] = [\n" + "".
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.42s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m11.967s
+user	0m11.965s
+sys	0m0.001s
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.45s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.42s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m11.967s
+user	0m11.965s
+sys	0m0.001s
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.45s
+[metadata] {"noOutputExpected": false}
+
+[181] CMD: cargo test --offline --release --lib 2>&1 | tail -3 && ./target/release/phase && python3 /tmp/verify.py && python3 /tmp/verify2.py
+--- obs tail ---
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.16s
+
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+independent score  -705.1404562027
+document score     -705.1404562027
+digest             0c236db82cf70066
+
+all independent checks pass
+paths optimal for the haplotypes: -705.1404562027 (document -705.1404562027)
+markers where a different column pair beats the reported one: none
+
+both halves of the objective are at a fixed point
+
+[stdout]
+test result: ok. 13 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.16s
+
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+independent score  -705.1404562027
+document score     -705.1404562027
+digest             0c236db82cf70066
+
+all independent checks pass
+paths optimal for the haplotypes: -705.1404562027 (document -705.1404562027)
+markers where a different column pair beats the reported one: none
+
+both halves of the objective are at a fixed point
+[metadata] {"noOutputExpected": false}
+
+[183] CMD: cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -3 && md5sum result.json && ./target/release/phase >/dev/null && md5sum result.j
+--- obs tail ---
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.03s
+
+a56a9ac732b14d5db316195407ef51e9  result.json
+a56a9ac732b14d5db316195407ef51e9  result.json
+
+[stdout]
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.03s
+
+a56a9ac732b14d5db316195407ef51e9  result.json
+a56a9ac732b14d5db316195407ef51e9  result.json
+[metadata] {"noOutputExpected": false}
+
+[184] CMD: touch src/solver.rs && cargo build --offline --locked --release --all-targets 2>&1 | grep -E "warning|error" | head -20; echo "---build done---"
+--- obs tail ---
+---build done---
+
+[stdout]
+---build done---
+[metadata] {"noOutputExpected": false}

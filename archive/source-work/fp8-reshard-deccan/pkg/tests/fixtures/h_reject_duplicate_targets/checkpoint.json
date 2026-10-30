@@ -1,0 +1,415 @@
+{
+ "format_version": 1,
+ "records": [
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 1003,
+   "logical_end": 1134,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2090,
+    2223,
+    2542,
+    166279,
+    175
+   ],
+   "cursor": 3
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 1000,
+   "logical_end": 1388,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 8192,
+   "inverse_scale": 2048,
+   "amax_history": [
+    541,
+    1968,
+    109,
+    1898
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 1000,
+   "logical_end": 1741,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    0,
+    3139,
+    164505,
+    903862,
+    889
+   ],
+   "cursor": 4
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 0,
+   "logical_end": 566,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    2514,
+    287762,
+    0,
+    3670,
+    3644
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 2000,
+   "logical_end": 3000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    831894,
+    302493,
+    595707,
+    0,
+    2895
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 594,
+   "logical_end": 1000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2653,
+    208740,
+    2302,
+    51559,
+    1911
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 1000,
+   "logical_end": 2000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    492184,
+    3316,
+    946704,
+    689615
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 2000,
+   "logical_end": 2001,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    2504,
+    3911,
+    1878,
+    1823,
+    839
+   ],
+   "cursor": 4
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 566,
+   "logical_end": 1000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 32,
+   "inverse_scale": 524288,
+   "amax_history": [
+    287762,
+    0,
+    3670,
+    3644,
+    2514
+   ],
+   "cursor": 4
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 0,
+   "logical_end": 169,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2653,
+    208740,
+    2302,
+    51559,
+    1911
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 1000,
+   "logical_end": 1003,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2090,
+    2223,
+    2542,
+    166279,
+    175
+   ],
+   "cursor": 3
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 1741,
+   "logical_end": 2000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    889,
+    0,
+    3139,
+    164505,
+    903862
+   ],
+   "cursor": 0
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 1388,
+   "logical_end": 2000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 8192,
+   "inverse_scale": 2048,
+   "amax_history": [
+    109,
+    1898,
+    541,
+    1968
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 1134,
+   "logical_end": 2000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2223,
+    2542,
+    166279,
+    175,
+    2090
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 2631,
+   "logical_end": 3000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    1160,
+    95,
+    3941
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 0,
+   "logical_end": 1000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 16,
+   "inverse_scale": 1048576,
+   "amax_history": [
+    875709,
+    555310,
+    692381,
+    644138,
+    3682
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 2000,
+   "logical_end": 2001,
+   "replica": 0,
+   "stage": 0,
+   "shard": 2,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    2061,
+    716,
+    826,
+    3578
+   ],
+   "cursor": 1
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 0,
+   "logical_end": 1000,
+   "replica": 0,
+   "stage": 0,
+   "shard": 0,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    250434,
+    3462,
+    2583
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "logical_begin": 169,
+   "logical_end": 594,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 64,
+   "inverse_scale": 262144,
+   "amax_history": [
+    2653,
+    208740,
+    2302,
+    51559,
+    1911
+   ],
+   "cursor": 2
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "logical_begin": 2000,
+   "logical_end": 2631,
+   "replica": 0,
+   "stage": 0,
+   "shard": 1,
+   "scale": 4096,
+   "inverse_scale": 4096,
+   "amax_history": [
+    1160,
+    95,
+    3941
+   ],
+   "cursor": 2
+  }
+ ]
+}

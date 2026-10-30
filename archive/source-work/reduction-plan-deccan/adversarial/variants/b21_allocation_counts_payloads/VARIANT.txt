@@ -1,0 +1,3 @@
+b21_allocation_counts_payloads
+reduction
+charges the accumulator per participating payload instead of once

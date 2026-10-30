@@ -1,0 +1,20 @@
+{
+ "status_a": "ok",
+ "status_b": "ok",
+ "agree": true,
+ "seconds_a": 0.001,
+ "seconds_b": 0.002,
+ "replays": 180,
+ "legal": 146,
+ "matching": 2,
+ "within_budget": true,
+ "fixture": "h_saturation_fold",
+ "seed": 700,
+ "separations": [
+  "sum_then_clamp",
+  "fold_in_input_order"
+ ],
+ "sources": 4,
+ "links": 12,
+ "switches": 2
+}

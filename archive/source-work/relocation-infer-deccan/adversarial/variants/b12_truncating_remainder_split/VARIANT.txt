@@ -1,0 +1,3 @@
+b12_truncating_remainder_split
+arithmetic
+the low half of a pair uses the language remainder, negative for negative values

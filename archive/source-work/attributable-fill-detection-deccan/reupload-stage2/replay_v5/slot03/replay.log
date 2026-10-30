@@ -1,0 +1,59 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.rs" -o -name "*.md" -o -name "*.toml" | sort :: app/tests/direct_progress.rs /app/tests/harness/mod.rs /app/tests/neutralization_lifecycle.rs /app/tests/observation_identity.rs /app/tests/restart_recovery.rs 
+[30] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 && cargo test --offline 2>&1 | tail -80 :: 
+[31] BASH rc=1 0.0s :: for t in observation_identity direct_progress neutralization_lifecycle restart_recovery cross_mandat :: === observation_identity === === direct_progress === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[34] WRITE /app/src/types/snapshot.rs -> W ok
+    SNAPSHOT 031 step34 d469554496b9
+[35] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 032 step35 a30e95171f47
+[36] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 033 step36 24b50f96b231
+[37] WRITE /app/src/engine/managers.rs -> W ok
+    SNAPSHOT 034 step37 a3703e67ee21
+[38] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 035 step38 3c6a26d67ebd
+[39] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 036 step39 7ae8688355fc
+[40] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/types/snapshot.rs' s=open(p).read() start=s.index('/// A leg the  :: rsor, 180-    pub submissions: Vec<SubmissionRecord>, 181-    pub absorbed_blocks: Vec<BlockRef>, 182-    pub neutralizations: Vec<NeutralizationRecord>, 183-} 
+    SNAPSHOT 037 step40 aef94ee8037b
+[41] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 038 step41 6e03179273b6
+[42] WRITE /app/src/engine/neutralization.rs -> W ok
+    SNAPSHOT 039 step42 dd6ff9111fe1
+[43] BASH rc=0 0.0s :: cargo build --offline 2>&1 | head -60 :: 
+[44] EDIT /app/src/engine/managers.rs -> E ok
+    SNAPSHOT 041 step44 6ca564842317
+[45] BASH rc=0 0.0s :: cargo build --offline 2>&1 | head -60 :: 
+[46] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[47] WRITE /app/tests/extra_contract.rs -> W ok
+[48] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -E "^test |^---- |panicked at|assertion|left: :: 
+[49] BASH rc=0 0.0s :: cargo test --offline --test extra_contract a_refused_cancellation 2>&1 | sed -n '1,40p' :: 
+[50] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/extra_contract.rs' s=open(p).read() s=s.replace(""" .step(vec![block_taker :: 
+[51] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/extra_contract.rs' s=open(p).read() s=s.replace(""" .step(vec![block_taker :: 
+[52] BASH rc=0 0.0s :: cat >> tests/extra_contract.rs <<'RS' /// Two corrective orders whose windows opened in different cy :: 
+[53] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/extra_contract.rs' s=open(p).read() s=s.replace(""" (vec![10, 0], vec![30, :: 
+[54] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 051 step54 c5b980af9c14
+[55] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "^(error|warning: unused)" -A5 | head -30; for t in observation :: s              block_reconciliation         neutralization_lifecycle     restart_recovery             cross_mandate_isolation      extra_contract               
+[57] BASH rc=0 0.0s :: cat >> tests/extra_contract.rs <<'RS' /// A corrective order whose acknowledgement was lost, then a  :: 
+[58] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/extra_contract.rs' s=open(p).read() s=s.replace(""" .idle_steps(2) .step(v :: 
+[60] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 057 step60 8ceb1ea2c998
+[61] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 058 step61 684705938ee3
+[62] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 059 step62 1dfbc907f792
+[63] BASH rc=1 0.0s :: cargo build --offline 2>&1 | grep -E "^error" -A6; for t in observation_identity direct_progress blo :: s              block_reconciliation         neutralization_lifecycle     restart_recovery             cross_mandate_isolation      extra_contract               
+[64] BASH rc=1 0.0s :: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning" -A6 | head -40; echo "=== clippy- :: === clippy-ish: unused pub is fine === 0 
+[66] BASH rc=1 0.0s :: python3 - <<'PY' p='tests/harness/mod.rs' s=open(p).read() s=s.replace("#![allow(dead_code)]\n","#![ ::              block_reconciliation         neutralization_lifecycle     restart_recovery             cross_mandate_isolation      extra_contract               0 
+[68] BASH rc=0 0.0s :: cargo build --offline && for t in observation_identity direct_progress block_reconciliation neutrali :: 
+[69] BASH rc=0 0.0s :: grep -rn "closing_orders\|replaced_orders\|worn_ids\|pending_orders:" src/ | head; echo "---"; grep  :: src/engine/managers.rs:162:pub fn worn_ids(legs: &[LegRecord]) -> Vec<OrderId> { --- 27 
+[70] BASH rc=1 0.0s :: python3 - <<'PY' p='src/engine/managers.rs' s=open(p).read() start=s.index("/// Venue identifiers so :: 
+    SNAPSHOT 067 step70 83bd23aca91d
+[71] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^error" -A6 | head -20 :: 
+[72] EDIT /app/src/engine/managers.rs -> E ok
+    SNAPSHOT 069 step72 7899902deb3b
+[74] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[75] BASH rc=0 0.0s :: for s in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[76] BASH rc=1 0.0s :: cargo test --offline --test extra_contract 2>&1 | tail -6; echo "=== clippy/warnings ==="; cargo bui :: === clippy/warnings === 0 
+[77] BASH rc=0 0.0s :: cargo test --offline 2>&1 | grep -E "^(test result|error|warning)" | sort | uniq -c :: 

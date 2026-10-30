@@ -1,0 +1,42 @@
+{
+ "fixture": "h_saturation_fold",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l06",
+    "l10",
+    "l11"
+   ],
+   [
+    "l08",
+    "l11"
+   ],
+   [
+    "l02",
+    "l10",
+    "l11"
+   ],
+   [
+    "l03",
+    "l10",
+    "l11"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 2147480652
+ },
+ "observables": {
+  "completion": 14,
+  "allocation": 0,
+  "total_bytes": 88,
+  "link_bytes": {
+   "l06": 8,
+   "l02": 8,
+   "l03": 8,
+   "l10": 24,
+   "l08": 8,
+   "l11": 32
+  }
+ }
+}

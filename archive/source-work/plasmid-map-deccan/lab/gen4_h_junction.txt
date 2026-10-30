@@ -1,0 +1,6 @@
+REJECTED h_junction         attempt=7 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.01, "internal": 5, "deviation": 5314, "c": 3646, "L": 1889}}
+REJECTED h_junction         attempt=8 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.01, "internal": 4, "deviation": 19379, "c": 1665, "L": 1545}}
+REJECTED h_junction         attempt=19 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.02, "internal": 3, "deviation": 6274, "c": 1638, "L": 1020}}
+REJECTED h_junction         attempt=20 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.06, "internal": 2, "deviation": 5167, "c": 2069, "L": 1509}}
+REJECTED h_junction         attempt=22 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.1, "internal": 5, "deviation": 12734, "c": 3193, "L": 2512}}
+RETAINED h_junction         seed=523 pUC18 V=2686 L=1400 e=2 D=200 enzymes=4 internal=3 (truth 3) dev=4837 ref=0.15s enum=ok py=1.6s ties=1 (2s)

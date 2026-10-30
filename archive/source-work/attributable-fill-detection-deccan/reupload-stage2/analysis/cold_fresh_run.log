@@ -1,0 +1,46 @@
+02:57:40
+zip sha256: 50c27fb9162792c49db0dfafa9aed7b398d1e325b6dccc402f48635623d84c6c
+extracted root: attributable-fill-detection
+=== preflight on extraction ===
+      instruction.md words: 436
+preflight failures: 0
+=== diff extraction vs pkg ===
+extraction identical to pkg
+=== cold image builds (no cache) ===
+agent image built
+verifier image built
+=== fresh oracle ===
+MODE=oracle LABEL=cold-oracle REWARD=1 RC=0 ELAPSED=1s TOTAL 53 FAILED 0
+RUNLOG: CONTROL ok timing runner_build=1 runner_execution=0 judge=0 verdict total=53 failed=0 control=1 reward=0 
+reward reset to 0 after the candidate phase
+CONTROL ok
+timing runner_build=1 runner_execution=0 judge=0
+verdict PASS lines: 53
+=== fresh NOP ===
+MODE=nop LABEL=cold-nop REWARD=0 RC=1 ELAPSED=1s TOTAL 53 FAILED 22
+=== fresh hang (candidate loops forever) ===
+MODE=patched LABEL=cold-hang REWARD=0 RC=1 ELAPSED=63s TOTAL 53 FAILED 53
+RUNLOG: CONTROL ok timing runner_build=1 runner_execution=62 judge=0 verdict total=53 failed=53 control=1 reward=0 
+case v1_symmetric_paired_fill_creates_exactly_one_position exceeded its budget; failing closed, no further candidate code is run
+reward reset to 0 after the candidate phase
+=== fresh replay spot-check (07, 08, 01) ===
+slot07 MODE=patched LABEL=cold-slot07 REWARD=1 RC=0 ELAPSED=1s TOTAL 53 FAILED 0
+slot07 FAILS: <none>
+slot08 MODE=patched LABEL=cold-slot08 REWARD=1 RC=0 ELAPSED=1s TOTAL 53 FAILED 0
+slot08 FAILS: <none>
+slot01 MODE=patched LABEL=cold-slot01 REWARD=0 RC=1 ELAPSED=1s TOTAL 53 FAILED 1
+slot01 FAILS: v27_an_entry_leg_whose_acknowledgement_was_lost_is_recovered_under_the_same_reference 
+=== public diagnostics from the extracted environment ===
+ref: observation_identity: test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ref: direct_progress: test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ref: block_reconciliation: test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ref: neutralization_lifecycle: test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ref: restart_recovery: test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ref: cross_mandate_isolation: test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: observation_identity: test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: direct_progress: test result: FAILED. 2 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: block_reconciliation: test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: neutralization_lifecycle: test result: FAILED. 2 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: restart_recovery: test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+nop: cross_mandate_isolation: test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+ALL COLD RUNS DONE

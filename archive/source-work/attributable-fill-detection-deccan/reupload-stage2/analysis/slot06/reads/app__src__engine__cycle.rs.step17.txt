@@ -1,0 +1,62 @@
+285	            kind: OrderKind::RestingLimit,
+286	            limit_price: candidate.price_for(venue),
+287	            size,
+288	            client_ref: client_ref.clone(),
+289	            expiry_time: candidate.expiry_time,
+290	        };
+291	        if let Ok(accepted) = self.gateway.submit(&request) {
+292	            self.resting_at_venue.insert(accepted.order_id.clone());
+293	            self.ledger.track(
+294	                client_ref.clone(),
+295	                Some(accepted.order_id.clone()),
+296	                Some(accepted.venue_seq),
+297	                size,
+298	                now,
+299	            );
+300	                candidate.strategy_id.clone(),
+301	                candidate.instrument_for(venue).clone(),
+302	                venue,
+303	                accepted.order_id,
+304	                client_ref,
+305	                accepted.venue_seq,
+306	                request.limit_price,
+307	                size,
+308	                candidate.expiry_time,
+309	                now,
+310	            ));
+311	        }
+312	    }
+313	
+314	    /// Quantity attributable to this leg: the resting order itself, plus every
+315	    /// corrective order this engine sent for the same mandate and venue.
+316	    fn acquired_for(&self, leg: &PendingOrder) -> Qty {
+317	        let mut total = self.ledger.attributed_for(&leg.client_ref);
+318	        for record in self.records_for(leg) {
+319	            total += self.ledger.attributed_for(&record.client_ref);
+320	        }
+321	        total
+322	    }
+323	
+324	    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {
+325	        self.neutralizations
+326	            .iter()
+327	            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)
+328	            .collect()
+329	    }
+330	
+331	    /// Exact integer comparison. There is no tolerance: a leg short by one base
+332	    /// unit is short.
+333	    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {
+334	        self.acquired_for(leg) >= leg.size
+335	    }
+336	
+337	    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+338	        if self.resting_at_venue.contains(&leg.order_id) {
+339	            LegVisibility::Resting
+340	        } else if self.replaced.contains(&leg.order_id) {
+341	            LegVisibility::Withdrawn
+342	        } else {
+343	            LegVisibility::Unconfirmed
+344	        }
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "            kind: OrderKind::RestingLimit,\n            limit_price: candidate.price_for(venue),\n            size,\n            client_ref: client_ref.clone(),\n            expiry_time: candidate.expiry_time,\n        };\n        if let Ok(accepted) = self.gateway.submit(&request) {\n            self.resting_at_venue.insert(accepted.order_id.clone());\n            self.ledger.track(\n                client_ref.clone(),\n                Some(accepted.order_id.clone()),\n                Some(accepted.venue_seq),\n                size,\n                now,\n            );\n                candidate.strategy_id.clone(),\n                candidate.instrument_for(venue).clone(),\n                venue,\n                accepted.order_id,\n                client_ref,\n                accepted.venue_seq,\n                request.limit_price,\n                size,\n                candidate.expiry_time,\n                now,\n            ));\n        }\n    }\n\n    /// Quantity attributable to this leg: the resting order itself, plus every\n    /// corrective order this engine sent for the same mandate and venue.\n    fn acquired_for(&self, leg: &PendingOrder) -> Qty {\n        let mut total = self.ledger.attributed_for(&leg.client_ref);\n        for record in self.records_for(leg) {\n            total += self.ledger.attributed_for(&record.client_ref);\n        }\n        total\n    }\n\n    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {\n        self.neutralizations\n            .iter()\n            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)\n            .collect()\n    }\n\n    /// Exact integer comparison. There is no tolerance: a leg short by one base\n    /// unit is short.\n    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {\n        self.acquired_for(leg) >= leg.size\n    }\n\n    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {\n        if self.resting_at_venue.contains(&leg.order_id) {\n            LegVisibility::Resting\n        } else if self.replaced.contains(&leg.order_id) {\n            LegVisibility::Withdrawn\n        } else {\n            LegVisibility::Unconfirmed\n        }", "numLines": 60, "startLine": 285, "totalLines": 497}}

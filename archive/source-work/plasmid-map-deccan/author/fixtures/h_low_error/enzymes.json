@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "BspHI",
+   "site": "TCATGA",
+   "cut_offset": 1
+  },
+  {
+   "name": "SalI",
+   "site": "GTCGAC",
+   "cut_offset": 1
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  },
+  {
+   "name": "XhoI",
+   "site": "CTCGAG",
+   "cut_offset": 1
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "ClaI",
+   "position": 684
+  },
+  {
+   "enzyme": "HindIII",
+   "position": 689
+  },
+  {
+   "enzyme": "ScaI",
+   "position": 2526
+  }
+ ]
+}

@@ -1,0 +1,71 @@
+{
+ "fixture": "h_parsimony",
+ "map": {
+  "format_version": 1,
+  "cloning_site": 4097,
+  "insert_length": 2973,
+  "cuts": {
+   "BspHI": [
+    1198,
+    1303,
+    2311,
+    4683
+   ],
+   "BstBI": [
+    655,
+    6971
+   ],
+   "FspI": [
+    1920,
+    7631
+   ],
+   "SspI": [
+    166,
+    1338
+   ]
+  },
+  "held_out": {
+   "FspI+SspI": [
+    {
+     "length": 456,
+     "multiplicity": 1
+    },
+    {
+     "length": 582,
+     "multiplicity": 1
+    },
+    {
+     "length": 1172,
+     "multiplicity": 1
+    },
+    {
+     "length": 5711,
+     "multiplicity": 1
+    }
+   ]
+  }
+ },
+ "internal": 2,
+ "deviation": 65247,
+ "held_out_truth": {
+  "FspI+SspI": [
+   {
+    "length": 460,
+    "multiplicity": 1
+   },
+   {
+    "length": 574,
+    "multiplicity": 1
+   },
+   {
+    "length": 1189,
+    "multiplicity": 1
+   },
+   {
+    "length": 5724,
+    "multiplicity": 1
+   }
+  ]
+ },
+ "ties_at_count_and_deviation": 1
+}

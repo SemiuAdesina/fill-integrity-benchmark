@@ -1,0 +1,59 @@
+[step 2] I'll start by exploring the projectstructure and reading the spec.
+
+[step 20] Now I have the full picture. Let me write the corrected `runtime
+
+[step 21] I'll write the new header in pieces, starting with the top half (Duty, awaiters).
+
+[step 22] Now the Conductor half of the header:
+
+[step 23] Now runtime.cpp, part 1 — frames, final suspend, child awaiter, park:
+
+[step 24] Now part 2 — the Conductor implementation:
+
+[step 26] Scenario output now matches the spec. Let me build the sanitizer version and start a broader test program:
+
+[step 27] ASAN is clean. Now let me write a thorough independent test suite in /tmp (not part of the deliverable):
+
+[step 30] Only 2 failures, both in my own test expectations (a job that posts to itself *while running* is correctly unbound per rule 10). Let me fix the test:
+
+[step 33] All 103 pass. Now a second round covering nested scheduling, teardown, and self-cancel edge cases:
+
+[step 36] Let me add the "next child" epoch-mismatch rejection and a couple more cases:
+
+[step 43] Let me harden slot-name lookups for frames that didn't come from an arena, then do a final review:
+
+[step 53] The segfault is an environment quirk — a trivial ASAN "hello world" segfaults the same way. Let me verify with file redirection and review the final source:
+
+[step 60] No real issue — a hello-world under ASAN segfaults more often than my tests. Now a final read-through of the implementation:
+
+[step 62] The implementation looks right. Let me add a randomized stress test that checks frame accounting against the arena:
+
+[step 67] 70k checks across 40 random schedules pass. Let me scale up and run under clang too:
+
+[step 68] Let me check actual coroutine frame sizes against the 512-byte block:
+
+[step 80] Both configurations build clean from scratch and the sanitizer run is silent. Here's what was wrong and what I changed in the two files.
+
+## The defects
+
+| Symptom | Cause |
+|---|---|
+| Cancelled job woken by an already-queued ticket | Tickets were bound to a bare `coroutine_handle` and delivered whenever the job existed and had *a* parked frame — no identity check |
+| Two outcomes / two reports for one job | `settle()` had no "already settled" guard; `cancel()` resumed with a flag whose throw made the job **Faulted**, then settled it again as Cancelled |
+| Storage never returned | Release was deferred to a single `pending_release_` slot (overwritten when several jobs settled in one step), and `ChildAwaiter` set `detached_ = true` on the fault path without destroying the child |
+| Parent saw a live child | `await_resume` read the result and recorded `ParentContinued` *before* the child frame was destroyed |
+| Wrong delivery order / clock | `step()` took `queue_.front()` and did `++tick_` |
+
+## The fix
+
+- **Frame identity.** A ticket queued while a job is parked captures that frame's `SlotId` (pool index **and** epoch) and is accepted only if the parked frame matches on **both** at delivery; a ticket queued when the job wasn't parked is bound to no frame and can never be delivered. Rejections resume and destroy nothing.
+- **Settle once.** `settle()` ignores any second call, records `JobSettled` (and `FaultReported` only for `Faulted`, so exactly one announcement), then queues the release. `flush_releases()` runs as soon as control leaves the resume that settled the job — so slots are back before `cancel()`/`step()`/`launch()` return, never at shutdown, and never on a frame that is mid-resume (`resume_depth_`/`RunGuard`).
+- **Cancellation.** `cancel()` records `CancelRequested` for every call (including unknown and settled ids), then either unwinds the parked frame now (raising `Abandoned`, so each frame runs its own cleanup, innermost first) or, if the job is already on the stack, parks nothing: the wait expression raises at the next `co_await park()`. `Abandoned` escaping the root settles as `Cancelled`, not `Faulted`.
+- **Children.** `ChildAwaiter::await_resume` destroys the child, marks `ChildDestroyed`, then records `ParentContinued` with the arena count at that instant, and only then returns the value or rethrows.
+- **Ordering/clock.** `step()` picks the minimum by (ready time, job id, queue sequence), moves the clock to that ready time at the start of the delivery (never backwards), and delivers exactly one ticket.
+
+## Verification
+
+Beyond the bundled demo (all four scenarios now correct: `live=0`, `double_reclaims=0`, slots reused), I wrote ~350k assertions in /tmp — hand-written cases for every rule plus 200 randomised schedules that check, after every operation, that the number of live `Duty` frames equals `arena().live_slots()`, that each job settles and releases exactly once, and that no lifecycle mark follows a job's `FrameReleased`. All pass under gcc and clang with ASan+UBSan+LSan, and both files compile warning-free with `-Wall -Wextra -Wpedantic -Werror` at `-O0/-O2/-O3`.
+
+One note: ASan binaries in this container segfault at exit intermittently — a hello-world does it too (8/20 runs), so I verified via repeated clean runs rather than exit codes.

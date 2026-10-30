@@ -1,0 +1,70 @@
+[step 2] I'll start by reading the specification and understanding the codebase.
+
+[step 13] Now let me prototype the search in Python to understand the instance's difficulty before writing Rust.
+
+[step 17] Now I'll write the Rust core. Starting with tables and Viterbi:
+
+[step 25] All public checks pass. Now let me measure the real instance:
+
+[step 29] The search is seed-dependent, so the landscape is rugged. Let me measure it more carefully:
+
+[step 30] The landscape is rugged — many local optima. I need an exact branch and bound. Let me build it:
+
+[step 33] Found a bug — the level array is mutated across branches. Let me fix:
+
+[step 34] Excellent — the B&B completes and finds **-705.140456** (better than the ILS). Now let me add homolog-relabelling symmetry breaking, which should cut the 576 equivalent solutions:
+
+[step 35] Now let me verify the B&B against brute force on random enumerable instances:
+
+[step 39] Now let me wire the branch and bound into `solve`:
+
+[step 46] Now the tie-breaking module — lexicographically minimal optimal paths:
+
+[step 49] Now rewrite `solve` to use the proven branch and bound plus tie-breaking:
+
+[step 62] Now let me stress-test scaling at the top of the declared range (M=28, N=32):
+
+[step 96] While that runs, let me make each node cheaper (no per-node heap allocation, hoisted DR term):
+
+[step 113] More effort making the search worse is a red flag — let me check whether `search` returns a value that matches the columns it returns:
+
+[step 117] Confirmed — seed variance is huge (up to 15 nats), so best-of-seeds is a big win. Let me wire that in:
+
+[step 136] The B&B gains only 0.4 nats on hard instances — effort is better spent on more search seeds:
+
+[step 143] All green. Now let me clean up the scratch experiments and tighten the remaining tests:
+
+[step 147] Now remove the scratch experiments from `search.rs` and tighten the B&B test:
+
+[step 156] The examples directory has a golden worked example — let me validate my canonicalisation against it:
+
+[step 168] Now the final end-to-end verification — determinism, self-consistency, and the spec's rejection list:
+
+[step 173] Let me add an independent local-optimality check (my own Viterbi in Python, both blocks):
+
+[step 180] Let me do a final optimality sanity check with a much larger search effort on the fixture:
+
+[step 185] Everything is back on the intended 6-seed configuration and the deliverable is final.
+
+## Result
+
+`/app/result.json` — **total_log_likelihood = -705.1404562027**, digest `0c236db82cf70066`, for the 12-marker × 10-progeny cross in `/app/cross.json`.
+
+## How the four required properties are met
+
+**Global optimum.** The objective is biconvex: with the parental haplotypes fixed each progeny is an independent Viterbi pass over the 100 joint inheritance states; with the paths fixed the markers decouple. `search` alternates the two halves inside 6 seeded restarts with perturbation, and `exact` then runs branch and bound over the column sequence in marker order, each node carrying one forward vector per progeny. Two admissible bounds prune (paths consistent + optimistic per-progeny columns; shared columns + free states), `reach` lookahead orders the options, and `rows_still_sorted` removes the entire 24×24 relabelling class from the tree. On this cross the B&B closes the gap in ~0.2 s. As a stress check I temporarily ran 60 seeds (10× effort) — same total to all digits.
+
+**Internal consistency.** `total_log_likelihood` is what the frozen scorer computes; I verified it independently in Python from the spec (not using the frozen scorer), and confirmed the reported paths are exactly optimal for the reported haplotypes and that no single-marker column change improves them.
+
+**Canonical.** Rows sorted, then the parent's path signature minimised, then the permutation image — per `spec/result-format-v1.md`. `solve` takes the minimum of `distinct_key` over every assignment the B&B found within 1e-8 of the optimum crossed with every row-sorting relabelling, and `canonicalize` relabels the winner. Validated against `examples/small.result.json` (the duplicate-row case) and checked to be a fixed point under all 576 relabellings.
+
+**Deterministic.** Fixed seeds, fixed node budget (`NODE_WORK / offspring`), no clock anywhere. Two consecutive runs are byte-identical (`md5 a56a9ac7…` twice).
+
+## Tests
+
+- `cargo test --offline --locked --test diagnostics` — 4 passed
+- `cargo test --offline --locked --release --test solver_checks` — 6 passed (17 s)
+- `cargo test --offline --release --lib` — 13 passed, 3 ignored (the scaling runs)
+- `cargo build --offline --locked --release --all-targets` — zero warnings
+
+Only `src/solver.rs` and modules beneath `src/solver/` were written; no frozen module was touched.

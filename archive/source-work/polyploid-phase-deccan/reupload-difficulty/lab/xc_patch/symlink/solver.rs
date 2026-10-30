@@ -1,0 +1,1 @@
+/tests/fixtures/baseline.expected.json

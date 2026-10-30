@@ -1,0 +1,2 @@
+afd2 oracle: reward=1 mode-of-reward=-rw-r--r-- verdict total=53 failed=0 control=1 reward=0
+afd2 nop: reward=0 mode-of-reward=-rw-r--r-- verdict total=53 failed=22 control=1 reward=0

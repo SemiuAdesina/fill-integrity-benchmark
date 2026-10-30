@@ -1,0 +1,188 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "ApaI",
+   "enzymes": [
+    "ApaI"
+   ],
+   "bands": [
+    {
+     "length": 6434,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ClaI",
+   "enzymes": [
+    "ClaI"
+   ],
+   "bands": [
+    {
+     "length": 1792,
+     "multiplicity": 1
+    },
+    {
+     "length": 4630,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "SspI",
+   "enzymes": [
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 278,
+     "multiplicity": 1
+    },
+    {
+     "length": 459,
+     "multiplicity": 1
+    },
+    {
+     "length": 801,
+     "multiplicity": 1
+    },
+    {
+     "length": 4750,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "XhoI",
+   "enzymes": [
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 6493,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ClaI+SspI",
+   "enzymes": [
+    "ClaI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 280,
+     "multiplicity": 1
+    },
+    {
+     "length": 470,
+     "multiplicity": 1
+    },
+    {
+     "length": 807,
+     "multiplicity": 1
+    },
+    {
+     "length": 859,
+     "multiplicity": 1
+    },
+    {
+     "length": 1782,
+     "multiplicity": 1
+    },
+    {
+     "length": 2137,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ClaI+XhoI",
+   "enzymes": [
+    "ClaI",
+    "XhoI"
+   ],
+   "bands": [
+    {
+     "length": 1757,
+     "multiplicity": 1
+    },
+    {
+     "length": 4737,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ApaI+ClaI",
+   "enzymes": [
+    "ApaI",
+    "ClaI"
+   ],
+   "bands": [
+    {
+     "length": 1765,
+     "multiplicity": 1
+    },
+    {
+     "length": 4741,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ApaI+SspI",
+   "enzymes": [
+    "ApaI",
+    "SspI"
+   ],
+   "bands": [
+    {
+     "length": 281,
+     "multiplicity": 1
+    },
+    {
+     "length": 465,
+     "multiplicity": 1
+    },
+    {
+     "length": 815,
+     "multiplicity": 1
+    },
+    {
+     "length": 2165,
+     "multiplicity": 1
+    },
+    {
+     "length": 2614,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "SspI+XhoI",
+   "enzymes": [
+    "SspI",
+    "XhoI"
+   ]
+  },
+  {
+   "id": "ApaI+XhoI",
+   "enzymes": [
+    "ApaI",
+    "XhoI"
+   ]
+  }
+ ]
+}

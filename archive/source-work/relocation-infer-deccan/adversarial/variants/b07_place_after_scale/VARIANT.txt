@@ -1,0 +1,3 @@
+b07_place_after_scale
+expression
+P is subtracted after the division by the scale

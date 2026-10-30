@@ -1,0 +1,277 @@
+[59]
+cat > /tmp/cmp.sh <<'EOF'
+#!/bin/bash
+out=/tmp/cmp_results.txt
+: > $out
+for cfg in "10 8 1.5" "12 8 1.5" "12 10 1.5" "12 12 1.5" "14 8 1.5" "14 10 1.5" "14 12 2.0" "16 8 1.5" "16 10 1.5" "18 8 1.5"; do
+  set -- $cfg
+  for s in 101 102 103; do
+    f=$(python3 /app/make_cross.py $((s+$1)) $1 $2 $3)
+    timeout 120 ./target/release/scratch $f cmp 1500000 2>&1 | grep -E "^(m=|  MISSED)" >> $out
+  done
+done
+echo DONE >> $out
+EOF
+chmod +x /tmp/cmp.sh; nohup /tmp/cmp.sh > /tmp/cmp.log 2>&1 &
+echo started
+
+[76]
+cat > /tmp/big.sh <<'EOF'
+#!/bin/bash
+for s in 7 8 9 13 14; do
+  for sl in 1.0 1.5 2.0; do
+    f=/tmp/gen${s}_28_32_${sl}.json
+    [ -f $f ] || python3 /app/make_cross.py $s 28 32 $sl >/dev/null
+    a=$(timeout 600 ./target/release/scratch $f best 28 40 2>&1 | grep stochastic)
+    b=$(timeout 900 ./target/release/scratch $f best 200 60 2>&1 | grep stochastic)
+    echo "$f prod=[$a] heavy=[$b]" >> /tmp/big_results.txt
+  done
+done
+echo DONE >> /tmp/big_results.txt
+EOF
+chmod +x /tmp/big.sh; nohup /tmp/big.sh > /tmp/big.log 2>&1 & echo started
+
+[97]
+cat > /tmp/beamtest.sh <<'EOF'
+#!/bin/bash
+for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json /tmp/gen13_28_32_1.5.json; do
+  [ -f $f ] || python3 /app/make_cross.py ${f#/tmp/gen} >/dev/null 2>&1
+  [ -f $f ] || continue
+  s=$( { /usr/bin/time -f "%e" ./target/release/scratch $f beam 2>&1; } | grep -E "beam|run=|MISSED|^[0-9.]+$" )
+  echo "$f :: $s" >> /tmp/beam_results.txt
+done
+echo DONE >> /tmp/beam_results.txt
+EOF
+python3 - <<'PYEOF'
+p='src/bin/scratch.rs'
+s=open(p).read()
+s=s.replace('''        other => panic!("unknown mode {other}"),''','''        "beam" => {
+            let relaxed = polyploid_phase::solver::relaxed::Relaxed::new(&ctx);
+            let w = polyploid_phase::solver::beam::width(&ctx);
+            let t0 = std::time::Instant::now();
+            let found = polyploid_phase::solver::beam::beam(&ctx, &relaxed, w, 8);
+            let tb = t0.elapsed();
+            println!("beam width={w} time={tb:?} best_raw={:.10}", found[0].0);
+            let mut best = f64::NEG_INFINITY;
+            for (_, ca, cb) in &found {
+                let mut a = ca.clone();
+                let mut b = cb.clone();
+                let v = local_search(&ctx, &mut a, &mut b);
+                if v > best {
+                    best = v;
+                }
+            }
+            println!("after local search = {best:.10}");
+            let outcome = search::run(&ctx);
+            println!("full run = {:.10}", outcome.value);
+        }
+        other => panic!("unknown mode {other}"),''')
+open(p,'w').write(s)
+PYEOF
+cargo build --release --bin scratch 2>&1 | grep -E "^error" -A5 | head; /tmp/beamtest.sh; cat /tmp/beam_results.txt
+
+[99]
+cat > /tmp/beamtest.sh <<'EOF'
+#!/bin/bash
+for f in /tmp/gen7_28_32_1.0.json /tmp/gen7_28_32_1.5.json /tmp/gen8_28_32_2.0.json /tmp/gen9_28_32_1.0.json; do
+  [ -f $f ] || continue
+  echo "== $f" >> /tmp/beam_results.txt
+  ./target/release/scratch $f beam 2>&1 | grep -E "beam width|after local|full run" >> /tmp/beam_results.txt
+done
+echo DONE >> /tmp/beam_results.txt
+EOF
+bash /tmp/beamtest.sh; cat /tmp/beam_results.txt
+
+[100]
+python3 - <<'PYEOF'
+p='src/solver/search.rs'
+s=open(p).read()
+s=s.replace("fn stochastic(\n    ctx: &Ctx,","pub fn stochastic(\n    ctx: &Ctx,")
+open(p,'w').write(s)
+p='src/bin/scratch.rs'
+s=open(p).read()
+s=s.replace('''        other => panic!("unknown mode {other}"),''','''        "tune" => {
+            let relaxed = polyploid_phase::solver::relaxed::Relaxed::new(&ctx);
+            let starts =
+                polyploid_phase::solver::beam::beam(&ctx, &relaxed, beam::width(&ctx), 8);
+            let kicks: usize = args.get(2).and_then(|a| a.parse().ok()).unwrap_or(40);
+            let restarts: usize = args.get(3).and_then(|a| a.parse().ok()).unwrap_or(25);
+            let t0 = std::time::Instant::now();
+            let outcome = search::stochastic(&ctx, &starts, restarts, kicks);
+            println!(
+                "tune r={restarts} k={kicks} value={:.10} time={:?}",
+                outcome.value,
+                t0.elapsed()
+            );
+        }
+        other => panic!("unknown mode {other}"),''')
+s=s.replace("use polyploid_phase::solver::search;","use polyploid_phase::solver::{beam, search};")
+open(p,'w').write(s)
+PYEOF
+cargo build --release --bin scratch 2>&1 | grep -E "^error" -A5|head; echo built
+cat > /tmp/tune.sh <<'EOF'
+#!/bin/bash
+: > /tmp/tune_results.txt
+for s in 7 9 13 14 21; do for sl in 1.0 1.5 2.0; do
+  f=/tmp/gen${s}_28_32_${sl}.json
+  [ -f $f ] || python3 /app/make_cross.py $s 28 32 $sl >/dev/null
+  for rk in "25 40" "25 150" "60 60"; do
+    set -- $rk
+    echo -n "$f r=$1 k=$2 :: " >> /tmp/tune_results.txt
+    timeout 900 ./target/release/scratch $f tune $2 $1 2>&1 | grep tune >> /tmp/tune_results.txt
+  done
+done; done
+echo DONE >> /tmp/tune_results.txt
+EOF
+nohup bash /tmp/tune.sh > /dev/null 2>&1 &
+nohup bash /tmp/cmp.sh > /dev/null 2>&1 &
+echo started
+
+[109]
+cat > /tmp/tune2.sh <<'EOF'
+#!/bin/bash
+: > /tmp/tune2.txt
+for s in 7 9 13 14 21 33; do for sl in 1.5; do
+  f=/tmp/gen${s}_28_32_${sl}.json
+  [ -f $f ] || python3 /app/make_cross.py $s 28 32 $sl >/dev/null
+done; done
+for s in 7 9 13 14 21 33; do
+  f=/tmp/gen${s}_28_32_1.5.json
+  for r in 0 8 25; do
+    ( echo -n "$f r=$r k=40 :: " >> /tmp/tune2.txt; ./target/release/scratch $f tune 40 $r 2>&1 | grep tune >> /tmp/tune2.txt ) &
+  done
+done
+wait
+echo DONE >> /tmp/tune2.txt
+EOF
+bash /tmp/tune2.sh; sort /tmp/tune2.txt
+
+[112]
+cat > /tmp/tune3.sh <<'EOF'
+#!/bin/bash
+: > /tmp/tune3.txt
+for s in 7 9 13 14 21 33; do
+  f=/tmp/gen${s}_28_32_1.5.json
+  for cfg in "8 80" "8 150" "8 40"; do
+    set -- $cfg
+    ( echo "$f r=$1 k=$2 :: $(./target/release/scratch $f tune $2 $1 2>&1 | grep tune)" >> /tmp/tune3.txt ) &
+  done
+done
+wait
+echo DONE >> /tmp/tune3.txt
+EOF
+nohup bash /tmp/tune3.sh > /dev/null 2>&1 & echo started
+
+[122]
+cat > /tmp/final_cmp.sh <<'EOF'
+#!/bin/bash
+: > /tmp/final_cmp.txt
+for spec in "51 16 16 1.5" "52 16 16 2.0" "53 20 20 1.5" "54 12 20 1.5" "55 16 8 1.2" "7 28 32 1.0" "13 28 32 1.5" "33 28 32 1.5"; do
+  set -- $spec
+  f=/tmp/gen$1_$2_$3_$4.json
+  [ -f $f ] || python3 /app/make_cross.py $1 $2 $3 $4 >/dev/null
+  ( v1=$(./target/release/phase $f /tmp/o_$1.json 2>&1 | grep total_log)
+    v2=$(./target/release/scratch $f best 300 150 2>&1 | grep stochastic)
+    echo "$f phase=[$v1] heavy=[$v2]" >> /tmp/final_cmp.txt ) &
+done
+wait
+echo DONE >> /tmp/final_cmp.txt
+EOF
+nohup bash /tmp/final_cmp.sh > /dev/null 2>&1 & echo started; sleep 5; ps aux | grep -c "[r]elease/"
+
+[126]
+python3 - <<'PYEOF'
+p='src/solver/search.rs'
+s=open(p).read()
+s=s.replace("            let width = 1 + rng.below(3);","            let width = 1 + rng.below(4);")
+open(p,'w').write(s)
+PYEOF
+cargo build --release --bin scratch 2>&1 | grep -E "^error" -A5 | head
+cat > /tmp/width.sh <<'EOF'
+#!/bin/bash
+: > /tmp/width.txt
+for s in 7 9 13 14 21 33; do
+  f=/tmp/gen${s}_28_32_1.5.json
+  ( echo "$f :: $(./target/release/scratch $f tune 80 8 2>&1 | grep tune)" >> /tmp/width.txt ) &
+done
+wait
+echo DONE >> /tmp/width.txt
+EOF
+bash /tmp/width.sh; sort /tmp/width.txt
+
+[138]
+cat > /tmp/nodes.sh <<'EOF'
+#!/bin/bash
+: > /tmp/nodes.txt
+for spec in "61 12 8 1.5" "62 12 16 1.5" "63 14 16 1.5" "64 16 8 1.5" "65 16 16 1.5" "66 16 32 1.5" "67 12 32 1.5" "68 18 8 1.5"; do
+  set -- $spec
+  f=/tmp/gen$1_$2_$3_$4.json
+  [ -f $f ] || python3 /app/make_cross.py $1 $2 $3 $4 >/dev/null
+  ( echo -n "$f " >> /tmp/nodes.txt; ./target/release/scratch $f inc 4000000 2>&1 | grep -E "inc" >> /tmp/nodes.txt ) &
+done
+wait
+echo DONE >> /tmp/nodes.txt
+EOF
+python3 - <<'PYEOF'
+p='src/bin/scratch.rs'
+s=open(p).read()
+s=s.replace('''        other => panic!("unknown mode {other}"),''','''        "inc" => {
+            use polyploid_phase::solver::beam;
+            use polyploid_phase::solver::exact::Exact;
+            use polyploid_phase::solver::relaxed::Relaxed;
+            let limit: u64 = args.get(2).and_then(|a| a.parse().ok()).unwrap_or(4_000_000);
+            let relaxed = Relaxed::new(&ctx);
+            let mut starts = beam::beam(&ctx, &relaxed, beam::width(&ctx), 8);
+            let mut incumbent = f64::NEG_INFINITY;
+            for (value, ca, cb) in starts.iter_mut() {
+                let mut a = ca.clone();
+                let mut b = cb.clone();
+                *value = local_search(&ctx, &mut a, &mut b);
+                *ca = a;
+                *cb = b;
+                if *value > incumbent {
+                    incumbent = *value;
+                }
+            }
+            let mut exact = Exact::new(&ctx, limit);
+            exact.seed(incumbent);
+            let complete = exact.run();
+            println!(
+                "inc m={} n={} beam={:.6} bnb={:.6} complete={} nodes={}",
+                ctx.m, ctx.n, incumbent, exact.best(), complete,
+                exact_nodes(&exact)
+            );
+        }
+        other => panic!("unknown mode {other}"),''')
+s=s.replace("fn main() {","""fn exact_nodes(e: &polyploid_phase::solver::exact::Exact) -> u64 {
+    e.nodes()
+}
+
+fn main() {""")
+open(p,'w').write(s)
+p='src/solver/exact.rs'
+s=open(p).read()
+s=s.replace("""    /// Searches. Returns whether the whole tree was closed""","""    /// How many assignments the search has examined.
+    pub fn nodes(&self) -> u64 {
+        self.nodes
+    }
+
+    /// Searches. Returns whether the whole tree was closed""")
+open(p,'w').write(s)
+PYEOF
+cargo build --release --bin scratch 2>&1 | grep -E "^error" -A6|head -20; echo built; bash /tmp/nodes.sh; cat /tmp/nodes.txt
+
+[146]
+cat > /tmp/last_cmp.sh <<'EOF'
+#!/bin/bash
+: > /tmp/last_cmp.txt
+for spec in "71 20 16 1.5" "72 22 12 1.5" "73 18 24 2.0" "74 24 10 1.5"; do
+  set -- $spec
+  f=/tmp/gen$1_$2_$3_$4.json
+  [ -f $f ] || python3 /app/make_cross.py $1 $2 $3 $4 >/dev/null
+  ( echo "$f phase=[$(./target/release/phase $f /tmp/oo_$1.json 2>&1|grep total_log)] heavy=[$(./target/release/scratch $f best 200 60 2>&1|grep stochastic)]" >> /tmp/last_cmp.txt ) &
+done
+wait
+echo DONE >> /tmp/last_cmp.txt
+EOF
+nohup bash /tmp/last_cmp.sh > /dev/null 2>&1 & echo started

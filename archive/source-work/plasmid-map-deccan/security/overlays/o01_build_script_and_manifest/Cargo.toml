@@ -1,0 +1,28 @@
+
+[package]
+name = "plasmid-map"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "plasmid_map"
+path = "src/lib.rs"
+
+[[bin]]
+name = "plasmid-map"
+path = "src/bin/plasmid_map.rs"
+
+# No third party crates. The project builds and tests with no network access,
+# and adding a dependency would break that.
+build = "build.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

@@ -1,0 +1,2 @@
+REJECTED h_sub_detection    attempt=0 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.74, "internal": 5, "deviation": 22766, "c": 4097, "L": 2061}}
+RETAINED h_sub_detection    seed=302 pEGFP-N1 V=4733 L=4839 e=2 D=250 enzymes=4 internal=3 (truth 3) dev=33441 ref=0.01s enum=ok py=0.4s ties=1 (7s)

@@ -1,0 +1,27 @@
+{
+ "fixture": "h_plan_key_canonical",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l03",
+    "l04"
+   ],
+   [
+    "l02"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 2084
+ },
+ "observables": {
+  "completion": 4,
+  "allocation": 0,
+  "total_bytes": 24,
+  "link_bytes": {
+   "l03": 8,
+   "l04": 8,
+   "l02": 8
+  }
+ }
+}

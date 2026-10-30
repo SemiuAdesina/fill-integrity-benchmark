@@ -1,0 +1,61 @@
+schema_version = "1.3"
+artifacts = ["/app"]
+
+[task]
+name = "bank-inference"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["cpp", "gpu", "shared-memory", "inference", "exact-search"]
+expert_time_estimate_hours = 3.0
+difficulty_explanation = """
+Recovery is global over incomplete traces. Exact word truncation, ordered XOR
+stages, lane rotation, broadcast grouping, and conflict accounting interact.
+The winning mapping is minimum-complexity with a deterministic canonical tie.
+Hidden replay cases combine word boundaries, broadcasts, multiple XOR stages,
+and lane rotation, so local or greedy fits do not suffice. This mirrors the
+work of GPU architecture, compiler, and performance-analysis engineers who
+infer undocumented shared-memory bank mappings from partial hardware traces:
+they distinguish address swizzles from lane permutations, combine broadcast
+and conflict evidence across experiments, and choose one reproducible
+minimum-complexity explanation rather than merely fitting a convenient trace.
+"""
+solution_explanation = """
+The reference solution enumerates the finite supplied grammar without repeating
+stages. It replays every candidate through the frozen model, rejects any revealed
+bank or conflict mismatch, and selects operation cost, stage count, then the
+canonical string. The launcher replaces only src/recover.cpp and builds offline.
+"""
+verification_explanation = """
+The separate verifier copies only the allow-listed recovery source, rejects a
+symlink, scrubs compiler and loader controls, and builds with its own pristine
+header, interpreter, tests, and CMake file. Twelve documented semantic groups
+cover identity, word boundaries, broadcasts, ordered XOR, global evidence,
+minimum canonical choice, a compound model-derived replay, and no-solution
+behavior. Grading is split across two verifier-owned
+processes. A probe links the candidate, runs one named group, and serializes the
+raw recovered values it observed, including the compound model-derived replay; it
+asserts nothing, and its stdout, stderr and exit status carry no grading
+authority. The judge links no candidate code, owns every expected value, and
+performs the authoritative comparisons. Reward and the CTRF report are written by
+the verifier from judge counts alone, so candidate output cannot determine
+reward. A verifier-owned negative control that corrupts exactly one expected
+value, and a verifier-owned probe wrong by construction that nonetheless emits
+confident success, together confirm the trust boundary holds. Reward begins at
+zero and becomes one only after every graded group passes.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

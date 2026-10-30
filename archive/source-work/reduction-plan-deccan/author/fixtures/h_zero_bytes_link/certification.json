@@ -1,0 +1,19 @@
+{
+ "status_a": "ok",
+ "status_b": "ok",
+ "agree": true,
+ "seconds_a": 0.003,
+ "seconds_b": 0.003,
+ "replays": 456,
+ "legal": 196,
+ "matching": 3,
+ "within_budget": true,
+ "fixture": "h_zero_bytes_link",
+ "seed": 801,
+ "separations": [
+  "zero_telemetry_ignored"
+ ],
+ "sources": 3,
+ "links": 16,
+ "switches": 3
+}

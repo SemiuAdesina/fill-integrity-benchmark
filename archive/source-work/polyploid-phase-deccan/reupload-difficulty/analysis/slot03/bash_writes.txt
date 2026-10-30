@@ -1,0 +1,286 @@
+[28]
+sed -i 's/^use solver::/use crate::solver::/; s/if solver::debug()/if crate::solver::debug()/' src/solver.rs && cargo build --release 2>&1 | grep -E "^(error|warning)" -A 8 | head -60
+
+[41]
+cat >> src/solver.rs <<'EOF'
+
+/// Whether the search should trace its branch and bound walk.
+pub fn trace() -> bool {
+    std::env::var("PHASE_TRACE").map(|v| v == "1").unwrap_or(false)
+}
+EOF
+cargo build --release 2>&1 | grep -E "^error" -A5 | head -20
+PHASE_TRACE=1 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>&1 | head -20
+echo "---- total trace lines:"; PHASE_TRACE=1 ./target/release/phase /tmp/flat12.json /tmp/x.json 2>&1 | grep -c depth
+
+[83]
+cat >> /app/tests/dual.rs <<'EOF'
+
+#[test]
+fn consensus_at_zero_prices() {
+    let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into());
+    let text = std::fs::read_to_string(&path).unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let model = Model::build(&cross);
+    let m = model.m;
+    let n = model.n;
+    let prices: Vec<Vec<Vec<f64>>> = (0..m)
+        .map(|mm| vec![vec![0.0f64; model.pairs[mm].len()]; n])
+        .collect();
+    let (relaxed, picks) = dual_value(&model, &prices, true);
+    let mut agree = 0;
+    for mm in 0..m {
+        let first = picks[0][mm];
+        agree += usize::from((0..n).all(|c| picks[c][mm] == first));
+    }
+    println!("relaxed {relaxed:.6}, markers where every progeny agrees: {agree}/{m}");
+    // Majority vote per marker, then the true objective of that shared choice.
+    let mut consensus = Vec::new();
+    for mm in 0..m {
+        let width = model.pairs[mm].len();
+        let mut count = vec![0u32; width];
+        for c in 0..n {
+            count[picks[c][mm]] += 1;
+        }
+        let best = (0..width).max_by_key(|&p| count[p]).unwrap();
+        let (a, b) = model.pairs[mm][best];
+        consensus.push((a, b));
+    }
+    println!("consensus total: {:.6}", total_all(&model, &consensus));
+}
+EOF
+timeout 300 cargo test --offline --locked --release --test dual -- --nocapture consensus 2>&1 | tail -6
+
+[84]
+cat >> /app/tests/dual.rs <<'EOF'
+
+#[test]
+fn line_search() {
+    let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into());
+    let text = std::fs::read_to_string(&path).unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let model = Model::build(&cross);
+    let m = model.m;
+    let n = model.n;
+    let zero: Vec<Vec<Vec<f64>>> = (0..m)
+        .map(|mm| vec![vec![0.0f64; model.pairs[mm].len()]; n])
+        .collect();
+    let (v0, picks) = dual_value(&model, &zero, true);
+    println!("D(0) = {v0:.6}");
+    let mut grad: Vec<Vec<Vec<f64>>> = (0..m)
+        .map(|mm| vec![vec![0.0f64; model.pairs[mm].len()]; n])
+        .collect();
+    let mut norm = 0.0;
+    for mm in 0..m {
+        let width = model.pairs[mm].len();
+        let mut count = vec![0u32; width];
+        for c in 0..n {
+            count[picks[c][mm]] += 1;
+        }
+        for c in 0..n {
+            for p in 0..width {
+                let g = if picks[c][mm] == p { 1.0 } else { 0.0 }
+                    - f64::from(count[p]) / n as f64;
+                grad[mm][c][p] = g;
+                norm += g * g;
+            }
+        }
+    }
+    println!("||g||^2 = {norm:.4}");
+    for t in [1e-4f64, 1e-3, 1e-2, 0.1, 0.5] {
+        let mut prices = zero.clone();
+        for mm in 0..m {
+            for c in 0..n {
+                for p in 0..model.pairs[mm].len() {
+                    prices[mm][c][p] -= t * grad[mm][c][p];
+                }
+            }
+        }
+        let (v, _) = dual_value(&model, &prices, false);
+        println!("t = {t}: D = {v:.6}  (change {:.6})", v - v0);
+    }
+}
+EOF
+timeout 300 cargo test --offline --locked --release --test dual -- --nocapture line_search 2>&1 | tail -10
+
+[85]
+cat >> /app/tests/dual.rs <<'EOF'
+
+#[test]
+fn gradient_sign() {
+    let path = std::env::var("PHASE_INSTANCE").unwrap_or_else(|_| "/tmp/big28.json".into());
+    let text = std::fs::read_to_string(&path).unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let model = Model::build(&cross);
+    let m = model.m;
+    let n = model.n;
+    let zero: Vec<Vec<Vec<f64>>> = (0..m)
+        .map(|mm| vec![vec![0.0f64; model.pairs[mm].len()]; n])
+        .collect();
+    let (v0, picks) = dual_value(&model, &zero, true);
+    for trial in 0..4 {
+        let mm = 3 + trial;
+        let c = trial;
+        let p = picks[c][mm];
+        let mut up = zero.clone();
+        up[mm][c][p] += 0.01;
+        let (vu, pu) = dual_value(&model, &up, true);
+        let mut down = zero.clone();
+        down[mm][c][p] -= 0.01;
+        let (vd, _) = dual_value(&model, &down, false);
+        println!(
+            "m={mm} c={c} pick={p}: D(+eps)-D(0) = {:.6}, D(-eps)-D(0) = {:.6}, pick now {}",
+            vu - v0,
+            vd - v0,
+            pu[c][mm]
+        );
+    }
+}
+EOF
+timeout 300 cargo test --offline --locked --release --test dual -- --nocapture gradient_sign 2>&1 | tail -8
+
+[87]
+cat >> /app/tests/dual.rs <<'EOF'
+
+/// Bound that keeps the columns shared but lets each progeny jump between
+/// states freely, paying the best transition an interval could ever give.
+fn marker_bound_root(model: &Model) -> f64 {
+    let m = model.m;
+    let n = model.n;
+    let mut total = 0.0f64;
+    for mm in 0..m {
+        let mut best_marker = f64::NEG_INFINITY;
+        for p in 0..model.pairs[mm].len() {
+            let row = &model.dose[mm][p];
+            let mut sum = 0.0f64;
+            for c in 0..n {
+                let gl = &model.gl[c][mm];
+                let mut best = f64::NEG_INFINITY;
+                for s in 0..100usize {
+                    let v = gl[usize::from(row[s])] + model.drj[mm][s];
+                    if v > best {
+                        best = v;
+                    }
+                }
+                sum += best;
+            }
+            if sum > best_marker {
+                best_marker = sum;
+            }
+        }
+        total += best_marker;
+    }
+    let mut tmax = 0.0f64;
+    for mm in 0..m - 1 {
+        for p in 0..2 {
+            let mut best = f64::NEG_INFINITY;
+            for a in 0..10usize {
+                for b in 0..10usize {
+                    if model.trans[p][mm][a][b] > best {
+                        best = model.trans[p][mm][a][b];
+                    }
+                }
+            }
+            tmax += best;
+        }
+    }
+    total + n as f64 * tmax
+}
+
+#[test]
+fn compare_root_bounds() {
+    for path in ["/tmp/big28.json", "/app/cross.json"] {
+        let text = std::fs::read_to_string(path).unwrap();
+        let cross = parse_cross(&text).unwrap();
+        let model = Model::build(&cross);
+        let zero: Vec<Vec<Vec<f64>>> = (0..model.m)
+            .map(|mm| vec![vec![0.0f64; model.pairs[mm].len()]; model.n])
+            .collect();
+        let (dual, _) = dual_value(&model, &zero, false);
+        println!(
+            "{path}: price bound {dual:.4}, marker bound {:.4}, all first columns {:.4}",
+            marker_bound_root(&model),
+            total_all(&model, &vec![(0usize, 0usize); model.m])
+        );
+    }
+}
+EOF
+timeout 300 cargo test --offline --locked --release --test dual -- --nocapture compare_root 2>&1 | tail -6
+
+[88]
+python3 - <<'EOF'
+import random, json, sys
+sys.path.insert(0,'tools')
+from gen import gen
+# regenerate with the same seed and recover the planted columns
+rng = random.Random(7)
+def cols(d): return [c for c in range(16) if bin(c).count('1')==d]
+dos_a = [rng.choice([0,1,2,2,2,3,4]) for _ in range(28)]
+dos_b = [rng.choice([0,1,2,2,2,3,4]) for _ in range(28)]
+ca = [rng.choice(cols(d)) for d in dos_a]
+cb = [rng.choice(cols(d)) for d in dos_b]
+json.dump({"A":ca,"B":cb}, open('/tmp/truth28.json','w'))
+print("planted A", ca[:8])
+print("planted B", cb[:8])
+EOF
+cat >> /app/tests/dual.rs <<'EOF'
+
+#[test]
+fn planted_truth_value() {
+    let text = std::fs::read_to_string("/tmp/big28.json").unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let model = Model::build(&cross);
+    let truth: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string("/tmp/truth28.json").unwrap()).unwrap();
+    let a: Vec<u8> = truth["A"].as_array().unwrap().iter().map(|x| x.as_u64().unwrap() as u8).collect();
+    let b: Vec<u8> = truth["B"].as_array().unwrap().iter().map(|x| x.as_u64().unwrap() as u8).collect();
+    let mut cols = Vec::new();
+    for mm in 0..model.m {
+        let ia = model.cols[0][mm].iter().position(|&x| x == a[mm]).unwrap();
+        let ib = model.cols[1][mm].iter().position(|&x| x == b[mm]).unwrap();
+        cols.push((ia, ib));
+    }
+    println!("planted truth total: {:.6}", total_all(&model, &cols));
+}
+EOF
+timeout 300 cargo test --offline --locked --release --test dual -- --nocapture planted 2>&1 | tail -5
+
+[118]
+cd /app; python3 - <<'PY'
+import json,sys
+sys.path.insert(0,'tools')
+import gen
+import random
+# replicate: same rng stream, capture ca/cb by monkeypatching? simpler: re-run with same seed and inspect
+src=open('tools/gen.py').read()
+ns={}
+exec(compile(src.replace('if __name__ == "__main__":','if False:'),'gen','exec'),ns)
+g=ns['gen']
+for M,N in [(12,8),(12,16),(16,16)]:
+    # instrument: rerun gen but capture ca/cb via a hook
+    import types
+    d=g(M*N,M,N,3.0,0.0)
+    print(M,N)
+PY
+echo "--- need ca/cb; patch gen to record"
+
+[137]
+cd /app; cat > /tmp/battery.sh <<'EOF'
+#!/bin/bash
+cd /app
+for spec in "12 8" "12 12" "12 16" "16 8" "16 16" "16 24" "20 8" "20 16" "24 8" "28 8" "28 16" "28 32"; do
+  set -- $spec; M=$1; N=$2
+  f=/tmp/d_${M}_${N}.json
+  if [ ! -f $f ]; then PHASE_GEN=1 python3 -c "
+import sys,json; sys.path.insert(0,'/app/tools'); import gen
+d=gen.gen($M*$N,$M,$N,3.0,0.0); json.dump(d,open('$f','w'))
+ca,cb=gen.LAST_TRUTH; json.dump({'A':ca,'B':cb},open('/tmp/dtruth_${M}_${N}.json','w'))
+"; fi
+  s=$(date +%s%N)
+  out=$(PHASE_DEBUG=1 timeout 40 ./target/release/phase $f /tmp/out_${M}_${N}.json 2>&1 | grep -E "markers=|optimum=" | tr '\n' ' ')
+  e=$(date +%s%N)
+  echo "M=$M N=$N $(( (e-s)/1000000 ))ms | $out"
+done
+EOF
+chmod +x /tmp/battery.sh; /tmp/battery.sh > /tmp/battery.log 2>&1 &
+echo started

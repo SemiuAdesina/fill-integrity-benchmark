@@ -1,0 +1,130 @@
+   Compiling polyploid-phase v1.0.0 (/Users/macbok/benchmark-suite-work/polyploid-phase-deccan/reupload-difficulty/lab/cand/v01_marker_wise)
+warning: unused import: `Search`
+  --> src/solver.rs:42:34
+   |
+42 | use search::{admissible_columns, Search};
+   |                                  ^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `bound` is never read
+  --> src/solver/bounds.rs:34:5
+   |
+33 | pub struct RemainingBound {
+   |            -------------- field in this struct
+34 |     bound: Vec<Vec<f64>>,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `at` is never used
+  --> src/solver/bounds.rs:87:12
+   |
+37 | impl RemainingBound {
+   | ------------------- method in this implementation
+...
+87 |     pub fn at(&self, marker: usize) -> &[f64] {
+   |            ^^
+
+warning: field `suffix` is never read
+  --> src/solver/bounds.rs:98:5
+   |
+97 | pub struct MarkerBound {
+   |            ----------- field in this struct
+98 |     suffix: Vec<f64>,
+   |     ^^^^^^
+
+warning: method `after` is never used
+   --> src/solver/bounds.rs:155:12
+    |
+101 | impl MarkerBound {
+    | ---------------- method in this implementation
+...
+155 |     pub fn after(&self, marker: usize) -> f64 {
+    |            ^^^^^
+
+warning: struct `RowOrder` is never constructed
+  --> src/solver/columns.rs:43:12
+   |
+43 | pub struct RowOrder(u8);
+   |            ^^^^^^^^
+
+warning: associated items `new` and `extend` are never used
+  --> src/solver/columns.rs:47:12
+   |
+45 | impl RowOrder {
+   | ------------- associated items in this implementation
+46 |     /// Before any marker is chosen, all three adjacent pairs are equal.
+47 |     pub fn new() -> RowOrder {
+   |            ^^^
+...
+55 |     pub fn extend(self, column: &Column) -> Option<RowOrder> {
+   |            ^^^^^^
+
+warning: method `advance` is never used
+   --> src/solver/progeny_dp.rs:110:12
+    |
+ 59 | impl StaticTerms {
+    | ---------------- method in this implementation
+...
+110 |     pub fn advance(&self, marker: usize, scores: &[f64], out: &mut [f64]) {
+    |            ^^^^^^^
+
+warning: field `total` is never read
+  --> src/solver/search.rs:28:9
+   |
+25 | pub struct BestAssignment {
+   |            -------------- field in this struct
+...
+28 |     pub total: f64,
+   |         ^^^^^
+
+warning: struct `Frontier` is never constructed
+  --> src/solver/search.rs:50:8
+   |
+50 | struct Frontier {
+   |        ^^^^^^^^
+
+warning: struct `Search` is never constructed
+  --> src/solver/search.rs:57:12
+   |
+57 | pub struct Search<'a> {
+   |            ^^^^^^
+
+warning: associated items `new`, `run`, `descend`, `advance_all`, `step`, and `record` are never used
+   --> src/solver/search.rs:71:12
+    |
+ 70 | impl<'a> Search<'a> {
+    | ------------------- associated items in this implementation
+ 71 |     pub fn new(
+    |            ^^^
+...
+ 98 |     pub fn run(mut self) -> BestAssignment {
+    |            ^^^
+...
+111 |     fn descend(&mut self, marker: usize, frontier: &Frontier, order_a: RowOrder, order_b: RowOrder) {
+    |        ^^^^^^^
+...
+178 |     fn advance_all(&self, marker: usize, frontier: &Frontier) -> Vec<Vec<f64>> {
+    |        ^^^^^^^^^^^
+...
+196 |     fn step(
+    |        ^^^^
+...
+259 |     fn record(&mut self, frontier: &Frontier) {
+    |        ^^^^^^
+
+warning: constant `TIE_TOLERANCE` is never used
+   --> src/solver/search.rs:289:7
+    |
+289 | const TIE_TOLERANCE: f64 = 1e-9;
+    |       ^^^^^^^^^^^^^
+
+warning: function `row_major_less` is never used
+   --> src/solver/search.rs:293:4
+    |
+293 | fn row_major_less(
+    |    ^^^^^^^^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 14 warnings (run `cargo fix --lib -p polyploid-phase` to apply 1 suggestion)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.06s

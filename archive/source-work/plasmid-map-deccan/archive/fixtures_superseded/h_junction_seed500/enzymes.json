@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "BspHI",
+   "site": "TCATGA",
+   "cut_offset": 1
+  },
+  {
+   "name": "BstBI",
+   "site": "TTCGAA",
+   "cut_offset": 2
+  },
+  {
+   "name": "DraI",
+   "site": "TTTAAA",
+   "cut_offset": 3
+  },
+  {
+   "name": "StuI",
+   "site": "AGGCCT",
+   "cut_offset": 3
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "PstI",
+   "position": 303
+  },
+  {
+   "enzyme": "NheI",
+   "position": 1588
+  },
+  {
+   "enzyme": "StuI",
+   "position": 2978
+  }
+ ]
+}

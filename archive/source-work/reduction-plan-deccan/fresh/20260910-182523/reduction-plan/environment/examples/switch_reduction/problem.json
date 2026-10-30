@@ -1,0 +1,53 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "b",
+   "node": "B",
+   "value": -50
+  },
+  {
+   "id": "a",
+   "node": "A",
+   "value": 90
+  }
+ ],
+ "switches": [
+  {
+   "id": "X",
+   "reduction_capable": true,
+   "accumulator_capacity": 16
+  }
+ ],
+ "links": [
+  {
+   "id": "a-x",
+   "from": "A",
+   "to": "X",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "b-x",
+   "from": "B",
+   "to": "X",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "x-s",
+   "from": "X",
+   "to": "S",
+   "rate": 8,
+   "latency": 1
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {
+   "x-s": 8
+  },
+  "completion": 4
+ }
+}

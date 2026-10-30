@@ -1,0 +1,1 @@
+/usr/bin/clang++ -O3 -DNDEBUG CMakeFiles/roundel_verifier.dir/verifier_driver.cpp.o -o roundel_verifier 

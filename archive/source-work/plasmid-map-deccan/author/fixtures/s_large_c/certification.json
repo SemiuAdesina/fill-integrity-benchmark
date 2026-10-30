@@ -1,0 +1,57 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 14.8,
+  "internal": 7,
+  "deviation": 18537,
+  "c": 4097,
+  "L": 4043
+ },
+ "enumeration_solver": {
+  "status": "timeout",
+  "seconds": 120.0
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 524.1,
+  "nodes": 1046931,
+  "ties_at_count_and_deviation": 4
+ },
+ "held_out": [
+  "FspI+SspI",
+  "BclI+SspI"
+ ],
+ "truth": {
+  "internal": 7,
+  "deviation": 25910,
+  "optimum_equals_truth": false
+ },
+ "fixture": "s_large_c",
+ "seed": 1101,
+ "description": "seven or more insert-region sites, sparse doubles",
+ "vector": "pGEX-2T",
+ "vector_header": "U13850.1 pGEX-2T cloning vector, complete sequence",
+ "source": "ecoli_lac_region",
+ "source_header": "U00096.3:360000-372000 Escherichia coli str. K-12 substr. MG1655, complete genome",
+ "fragment": {
+  "left_enzyme": "PvuII",
+  "left_cut": 2548,
+  "right_enzyme": "AflII",
+  "right_cut": 6560
+ },
+ "cloning_site": [
+  "EcoRV",
+  4097
+ ],
+ "insert_length": 4012,
+ "enzymes": [
+  "BclI",
+  "EcoRI",
+  "FspI",
+  "HpaI",
+  "SspI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 150,
+ "observed": 9
+}

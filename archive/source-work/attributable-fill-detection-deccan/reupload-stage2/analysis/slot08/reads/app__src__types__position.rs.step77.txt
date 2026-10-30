@@ -1,0 +1,64 @@
+2	use crate::types::ids::{StrategyId, Price, Qty};
+3	use crate::types::time::Timestamp;
+4	
+5	pub const EXIT_WINDOW_START_SECONDS: i64 = 60;
+6	pub const EXIT_WINDOW_END_SECONDS: i64 = 120;
+7	
+8	#[derive(Debug, Clone, PartialEq)]
+9	pub struct Position {
+10	    pub strategy_id: StrategyId,
+11	    pub size_north: Qty,
+12	    pub size_south: Qty,
+13	    pub entry_north_price: Price,
+14	    pub entry_south_price: Price,
+15	    pub pair_cost: Price,
+16	    pub total_notional_cost: Price,
+17	    pub expiry_time: Timestamp,
+18	    pub created_at: Timestamp,
+19	}
+20	
+21	impl Position {
+22	    #[allow(clippy::too_many_arguments)]
+23	    pub fn new(
+24	        strategy_id: StrategyId,
+25	        size_north: Qty,
+26	        size_south: Qty,
+27	        entry_north_price: Price,
+28	        entry_south_price: Price,
+29	        expiry_time: Timestamp,
+30	        created_at: Timestamp,
+31	    ) -> Self {
+32	        let pair_cost = entry_north_price + entry_south_price;
+33	        let total_notional_cost =
+34	            (entry_north_price * size_north as f64) + (entry_south_price * size_south as f64);
+35	        Self {
+36	            strategy_id,
+37	            size_north,
+38	            size_south,
+39	            entry_north_price,
+40	            entry_south_price,
+41	            pair_cost,
+42	            total_notional_cost,
+43	            expiry_time,
+44	            created_at,
+45	        }
+46	    }
+47	
+48	    pub fn seconds_until_expiry(&self, now: Timestamp) -> i64 {
+49	        (self.expiry_time - now).as_seconds()
+50	    }
+51	
+52	    pub fn should_exit_now(&self, now: Timestamp) -> bool {
+53	        let seconds_until_expiry = self.seconds_until_expiry(now);
+54	        (EXIT_WINDOW_START_SECONDS..=EXIT_WINDOW_END_SECONDS).contains(&seconds_until_expiry)
+55	    }
+56	
+57	    pub fn is_too_close_to_expiry(&self, now: Timestamp) -> bool {
+58	        self.seconds_until_expiry(now) < EXIT_WINDOW_START_SECONDS
+59	    }
+60	
+61	    pub fn is_expired(&self, now: Timestamp) -> bool {
+62	        now >= self.expiry_time
+63	    }
+64	}
+65

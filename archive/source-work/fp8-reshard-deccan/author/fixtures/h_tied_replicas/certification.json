@@ -1,0 +1,8 @@
+{
+ "fixture": "h_tied_replicas",
+ "expected_outcome": "accept",
+ "oracle_a": "accept",
+ "oracle_b": "accept",
+ "states": 26,
+ "retained": true
+}

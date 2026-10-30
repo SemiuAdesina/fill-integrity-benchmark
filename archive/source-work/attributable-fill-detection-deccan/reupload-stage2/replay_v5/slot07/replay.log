@@ -1,0 +1,81 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" | head -50; echo "---"; find /app -type f -name "*.rs" | head -80; ec :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[2] BASH rc=0 0.0s :: ls -la /app; echo "---"; find /app -type d | grep -v '^/app/target' | head -40 :: 57 target drwxr-xr-x 1 root root 286 Sep  9 01:57 tests --- /app /app/tests /app/tests/harness /app/spec /app/src /app/src/engine /app/src/ports /app/src/types 
+[3] BASH rc=0 0.0s :: wc -l /app/spec/*.md /app/src/**/*.rs /app/src/lib.rs /app/tests/*.rs /app/tests/harness/mod.rs 2>/d :: tests/neutralization_lifecycle.rs    124 /app/tests/observation_identity.rs    136 /app/tests/restart_recovery.rs   1192 /app/tests/harness/mod.rs   4269 total 
+[16] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[17] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[20] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 036 step20 45ef8b55fbbb
+[21] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 037 step21 558e53b446d0
+[22] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 038 step22 e55a68485b4a
+[23] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 039 step23 6d3ec3fdd313
+[24] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 040 step24 6210bb4879e2
+[25] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 041 step25 c49ffb6a8723
+[26] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 042 step26 973c92520c4f
+[27] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 043 step27 94b2d1c01abf
+[28] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 044 step28 aff15379162e
+[29] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 045 step29 494044b2fe57
+[30] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[31] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[32] BASH rc=1 0.0s :: cargo test --offline --test direct_progress progress_reported_only_by_the_live_list 2>&1 | grep -A6  :: ====== ====== 
+[33] BASH rc=1 0.0s :: cat > /tmp/dbg.rs <<'EOF' mod harness; use harness::*; #[test] fn dbg_residual() { let outcome = run :: 
+[34] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 050 step34 c7efd0996b17
+[35] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -3; for t in observation_identity direct_progress block_reconcilia :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[36] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 052 step36 0b7f76e6b4fb
+[37] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 053 step37 c86c14533da3
+[38] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 054 step38 0b4b730ba415
+[39] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 055 step39 f13a1a778e1b
+[40] BASH rc=0 0.0s :: grep -n "closing\|replaced\|place_leg\|attempted\|resting_at_venue" /app/src/engine/cycle.rs :: ().collect(), 519:            closing_orders: self.closing.iter().cloned().collect(), 520:            replaced_orders: self.replaced.iter().cloned().collect(), 
+[41] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 057 step41 87c10de3711d
+[42] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 058 step42 423fa1fa11a6
+[43] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 059 step43 348751ebc519
+[44] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 060 step44 4ad6bbcf2ca7
+[45] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 061 step45 1a4ae4f9693e
+[46] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 062 step46 e8936e2c0cca
+[47] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 063 step47 ed366811949f
+[48] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 064 step48 e573c05848cb
+[49] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 065 step49 90c4c0f0d25e
+[50] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 066 step50 7859bbb8331f
+[51] BASH rc=0 0.0s :: sed -i 's/use crate::types::snapshot::{NeutralizationRecord, Snapshot};/use crate::types::snapshot:: :: 
+    SNAPSHOT 067 step51 67d1432da590
+[52] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[53] BASH rc=0 0.0s :: cat > /app/tests/dbg.rs <<'EOF' mod harness; use harness::*; fn position_ids(outcome: &Outcome) -> V :: 
+[54] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='tests/dbg.rs' s=open(p).read() s=s.replace(''' assert_eq!(cancels_of_ :: 
+[57] BASH rc=0 0.0s :: cat > /app/tests/soak.rs <<'EOF' mod harness; use harness::*; /// Total base units the venue matched :: 
+[58] BASH rc=0 0.0s :: cat > /app/tests/dbg2.rs <<'EOF' mod harness; use harness::*; fn position_ids(o: &Outcome) -> Vec<St :: 
+[59] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 075 step59 2960772be3f9
+[60] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -3; for t in observation_identity direct_progress block_reconcilia :: _lifecycle     restart_recovery             cross_mandate_isolation      dbg                          dbg2                         soak                         
+[61] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -i warn | head; touch src/lib.rs; cargo build --offline 2>&1 | tai :: 
+[62] BASH rc=0 0.0s :: cargo clippy --offline --all-targets 2>&1 | grep -E "^(warning|error)" | sort | uniq -c | sort -rn | :: 
+[63] BASH rc=0 0.0s :: rm -f tests/dbg.rs && git status --short 2>/dev/null || ls tests/ :: reconciliation.rs cross_mandate_isolation.rs dbg2.rs direct_progress.rs harness neutralization_lifecycle.rs observation_identity.rs restart_recovery.rs soak.rs 
+[64] BASH rc=0 0.0s :: cat tests/dbg2.rs > /tmp/d2.rs && rm tests/dbg2.rs && head -8 /tmp/d2.rs ::  = o.positions.iter().map(|p| p.strategy_id.as_str().to_string()).collect();     ids.sort(); ids } fn taker_sizes(o: &Outcome, s: &str, v: Venue) -> Vec<Qty> { 
+[65] WRITE /app/tests/unacknowledged_recovery.rs -> W ok
+[67] BASH rc=1 0.0s :: python3 - <<'PY' p='/app/tests/soak.rs' s=open(p).read() s=s.replace('''mod harness; use harness::*; :: 
+[68] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -2; echo "--- suites ---"; for t in observation_identity direct_pr :: _lifecycle     restart_recovery             cross_mandate_isolation      unacknowledged_recovery      recycled_identity            soak                         
+[69] BASH rc=0 0.0s :: ls -la --time-style=+%H:%M src/types/*.rs src/ports/*.rs src/engine/*.rs | awk '{print $6, $7}' :: 7 src/types/mod.rs 01:57 src/types/pending_order.rs 01:57 src/types/position.rs 21:12 src/types/snapshot.rs 01:57 src/types/strategy.rs 01:57 src/types/time.rs 
+[72] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -2 && for t in observation_identity direct_progress block_reconcil :: 

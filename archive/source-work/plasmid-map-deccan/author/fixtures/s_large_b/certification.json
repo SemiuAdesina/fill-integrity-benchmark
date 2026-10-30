@@ -1,0 +1,57 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 3.03,
+  "internal": 7,
+  "deviation": 39257,
+  "c": 406,
+  "L": 3643
+ },
+ "enumeration_solver": {
+  "status": "timeout",
+  "seconds": 120.0
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 97.5,
+  "nodes": 188185,
+  "ties_at_count_and_deviation": 3
+ },
+ "held_out": [
+  "SphI+XbaI",
+  "BamHI+SspI"
+ ],
+ "truth": {
+  "internal": 7,
+  "deviation": 48097,
+  "optimum_equals_truth": false
+ },
+ "fixture": "s_large_b",
+ "seed": 1051,
+ "description": "seven or more insert-region sites at three percent",
+ "vector": "pUC19",
+ "vector_header": "L09137.2 Cloning vector pUC19c, complete sequence",
+ "source": "lambda",
+ "source_header": "J02459.1 Escherichia phage Lambda, complete genome",
+ "fragment": {
+  "left_enzyme": "BspEI",
+  "left_cut": 21226,
+  "right_enzyme": "EcoRI",
+  "right_cut": 24842
+ },
+ "cloning_site": [
+  "KpnI",
+  412
+ ],
+ "insert_length": 3616,
+ "enzymes": [
+  "BamHI",
+  "PvuII",
+  "SphI",
+  "SspI",
+  "XbaI"
+ ],
+ "error_percent": 3,
+ "detection_limit": 250,
+ "observed": 11
+}

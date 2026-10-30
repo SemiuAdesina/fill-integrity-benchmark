@@ -1,0 +1,3 @@
+b24_split_then_scale
+pairs
+the shared value is split before the division by the scale

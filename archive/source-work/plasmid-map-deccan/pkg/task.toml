@@ -1,0 +1,235 @@
+schema_version = "1.4"
+
+artifacts = ["/app"]
+
+[task]
+name = "benchmark-suite/plasmid-map"
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "Science"
+subcategory = "Genomics and Computational Biology"
+tags = [
+  "rust",
+  "molecular-biology",
+  "restriction-mapping",
+  "plasmid",
+  "cloning",
+  "gel-electrophoresis",
+  "branch-and-bound",
+  "least-squares",
+  "exact-search",
+]
+expert_time_estimate_hours = 4.0
+relevant_experience = "Rust scientific programming, molecular cloning and restriction mapping, gel band sizing and its error model, exact combinatorial search with branch and bound over interval domains, and least-squares fitting with integer variables."
+
+difficulty_explanation = """
+The persona is the bioinformatician of a cloning core who checks every new
+construct by restriction mapping before it is sent for sequencing. A known
+vector was opened at one of its cloning sites, an insert of unknown sequence
+and length went in, the construct was digested with a small enzyme panel
+alone and in pairs, and the fragments were sized on gels. From the vector's
+real sequence, the panel, the candidate cloning sites and the observed bands,
+the tool must recover the construct: the cloning site used, the insert length,
+and every cut position of every enzyme, so that every observed digest is
+reproduced within the gel's sizing error, and must predict the bands of the
+digests that were held back. The vectors are real GenBank records (pUC18,
+pUC19, pBR322, pACYC177, pACYC184, pBluescript II SK(+), pGEX-2T, pEGFP-N1)
+and the inserts are real restriction fragments of lambda, T7, phiX174,
+M13mp18 and the E. coli lac region; the gels are simulated from the true
+construct with comigration and sizing error.
+
+Every rule is public and the model is frozen code: how sites are found on a
+circle, which backbone sites survive the insertion and where they land, how a
+digest's fragments are formed, that fragments below the detection limit are
+unseen, that bands carry multiplicity, that matching pairs predicted and
+observed bands in ascending order within a ceiling tolerance, that deviation
+is the sum of squared differences, and that the answer is the least valid map
+under fewest insert-region sites, then least deviation, then position order.
+The difficulty is that the sizing error admits tens of millions of
+tolerance-consistent configurations for a single enzyme with three
+insert-region sites, so anything that enumerates configurations per enzyme
+and joins them does not finish, while the least map is decided by all
+digests together: a cut moves the fragments on both of its sides in every
+digest it appears in, the doubles couple enzymes, the insert length couples
+every fragment that reaches a moved backbone site, and counting sites before
+fitting means the answer can have fewer sites than the construct the gels
+came from. What the graded fabrics reward is an exact search whose
+relaxations are sound: interval domains for the length and the cuts,
+difference constraints from band windows, a lower bound on the deviation
+that survives an undetermined pairing, and branching on structure before
+bisection. Each plausible shortcut produces a confident wrong document: a
+floor tolerance, an open insert region, backbone windows torn by the insert
+kept as sites, sub-detection fragments counted, multiplicity ignored, the
+closest fit taken before the fewest sites, the first map found, one cloning
+site, or ties broken in the wrong order.
+
+Author-side evidence rather than a claim: seven solver snapshots mirroring a
+plausible development history are measured against the verifier, a
+population of exact designs and fourteen single-mistake variants are
+measured against it, and an enumeration solver that is exact on small
+constructs exhausts the probe budget on the large ones. A molecular biologist fluent in
+exact search: roughly four hours, most of it on making the search both exact
+and fast enough.
+"""
+
+solution_explanation = """
+The reference is ordinary Rust source under `solution/fixed/`, in the same
+relative structure as the crate:
+
+```
+solution/solve.sh
+solution/fixed/src/solver.rs
+solution/fixed/src/solver/bnb.rs
+```
+
+`solution/solve.sh` is a thin launcher: it installs `solver.rs` and the
+`solver/` module directory over the placeholder, builds offline in release and
+runs the `plasmid-map` binary. No frozen module is touched.
+
+The search is exact and proceeds in order of insert-region site count. Every
+way of distributing `I` sites over the panel is searched before any way of
+distributing `I + 1`, and the first level at which some valid map reproduces
+every observed digest holds the answer; within that level the least key wins.
+The least count a single digest admits is read off its band count, so the
+levels start where the gels say they can.
+
+One distribution at one cloning site is a box: an interval for the insert
+length and an interval for every insert-region position, kept in rank order
+within an enzyme, plus the cut-order relations and fragment windows a branch
+has fixed. Backbone sites below the opening are points; those at or above it
+are points that move with the length. A digest whose cuts the box orders has
+fragment length intervals, and from them the search draws three kinds of
+conclusion. Feasibility: a certainly visible fragment must reach some band
+within tolerance, the count of visible fragments must be attainable, and the
+k-th shortest fragment, which lies between the k-th smallest lower and upper
+bounds, must reach band k. Propagation: every window a fragment is held to,
+the rank order, the insert region and the visibility counts are difference
+constraints, and one shortest-path pass gives the tightest bounds or a
+negative cycle. Bounding: when the pairing of fragments to bands is fixed
+the digest's deviation is a convex quadratic, and a tangent plane at the
+box-projected coordinate-descent point bounds it from below over the whole
+box; when the box still admits a few pairings the least plane over them is
+taken, since the true pairing is one of them; otherwise the cheapest
+tolerance-respecting assignment and the order statistics bound it. Branching
+prefers structure: the widest fragment that could still pair with several
+bands is split over those bands and the sub-detection case; two narrow cuts
+of different enzymes that could still be either way round are split on their
+order, including coincidence; only then is the widest interval halved. A box
+of single points is a map, evaluated with the frozen matching rule and
+compared by the frozen key; nothing that could still tie the incumbent is
+discarded, so ties resolve by key.
+
+Exactness was cross-checked three ways: against exhaustive enumeration on
+four hundred and sixty synthetic constructs small enough to enumerate, against
+an independent enumeration solver on real-data instances of moderate size,
+and against an independently written Python branch and bound on every graded
+fixture. The reference answers every graded fixture in at most seven seconds
+on the author's machine and most in well under one.
+"""
+
+verification_explanation = """
+Verification runs in a separate verifier image built from `tests/Dockerfile`.
+The verifier owns its build configuration, its fixtures and its checks; none
+of the three is taken from the candidate. The agent image contains no hidden
+fixture, no certified answer and no reference solution, and its Dockerfile
+copies path by path rather than with a blanket `COPY .`.
+
+The trust boundary is a build boundary. The candidate's `solver.rs` and any
+`.rs` file beneath `src/solver/` are the only inputs consumed; a symlink under
+the candidate source tree, or a non-Rust file under `src/solver/`, fails the
+run. Those files are compiled into one binary, `probe`, in a sandbox built and
+executed as an unprivileged account that contains the frozen model, the
+problems and nothing else; the runner refuses to continue if a certified
+answer or any judge source is found there, and refuses to run at all if the
+unprivileged account is unavailable. The second binary, `judge`, is built
+root-only from a manifest with no probe target. The probe writes one map
+document per job and decides nothing; its output and exit status grade
+nothing. Certified answers are loaded only after the last probe has exited,
+and reach the judge on standard input. The reward file is written with a
+zero before anything runs and written again with a zero after the probe
+phase, so the only value that survives is one the runner writes after
+grading.
+
+Grading runs eighteen probe jobs over twelve hidden problems: the twelve as
+supplied, three of them a second time for the agreement check, and three
+with the backbone rotated to a new origin and the cloning sites moved along,
+which leaves the construct, the gels and the answer's count and deviation
+unchanged and defeats a memorised or constant map. Thirteen checks, A to M,
+each name one public behaviour: every document decodes and is physically
+valid; vector-region positions are the backbone's surviving sites; every
+observed digest is reproduced; every fixture yields the least map exactly;
+fewer insert-region sites come before a closer fit; fragments below the
+detection limit are unseen; bands carry multiplicity; the cloning site is
+chosen among all listed; ties resolve by position order and repeated runs
+agree; held-out digests are predicted within tolerance of what the construct
+produced; the three large constructs are recovered within budget; one
+percent sizing error is handled; and answers follow the supplied backbone.
+A negative control must fail; the runner scores zero if it ever passes.
+Reward is 1 only when all thirteen checks pass, the control fails, and no
+budget was exhausted.
+
+Every fixture is a real vector record and a real insert fragment, ligated at
+a real unique site of the vector, digested in silico with real enzymes, and
+sized with simulated comigration and error. A fixture is retained only when
+the reference answers within its cap, an independently written Python branch
+and bound agrees within its budget, the enumeration solver agrees whenever
+it finishes, and the least map's held-out predictions match the bands the
+true construct produced; the construct itself never ships. The three large
+fixtures have five enzymes and seven insert-region sites; on each, the
+enumeration solver that is exact on smaller constructs exhausts its cap.
+
+Budgets are verifier-owned and the run fails closed: 300 seconds per probe
+job, 1200 seconds for the probe phase, 600 seconds for the candidate-linked
+build and 30 seconds per judge check; a job that exhausts its budget stops
+all further candidate execution and the reward is held at 0.
+
+Measured author-side against this verifier: the untouched crate scores 0
+and passes 1 of 13 (only the document-validity check); the reference scores
+1, all thirteen checks with the control failing as required, and its probe
+phase takes 17 seconds for the eighteen jobs. A population of five exact
+designs scores 2 of 5: the reference and its bisection-only ancestor pass;
+the enumeration design, the branch and bound without the quadratic bound,
+and the branch and bound with interval propagation in place of shortest
+paths each exhaust the probe budget on a large fixture and fail closed.
+Fourteen single-mistake variants: ten score 0 (a floor tolerance, torn
+backbone windows kept, sub-detection fragments counted, multiplicity
+ignored, the least site count assumed, one cloning site, the first map
+found, the closest fit before the fewest sites, the wrap-around fragment
+dropped, held-out predictions unfiltered), and four cannot change any answer
+on this corpus and score 1 (an open insert region, since a least-squares map
+lands on a junction with negligible probability; a backbone site cut exactly
+at the opening, impossible with offsets inside the window; ties broken by
+site and length before positions, since every tie here is at one site and
+length; a box discarded at bound equality). Two ablations of the search that
+keep it exact and fast enough, without cut-order branching and without
+visibility windows, also score 1. Seven development snapshots: the
+placeholder, the enumeration design, the search without the quadratic
+bound and the search with interval propagation score 0; the bisection-only
+search, the search without cut-order branching and the final search score 1,
+which is what says the quadratic bound and shortest-path propagation are the
+load-bearing parts. Hostile controls run against the verifier
+leave the reward at 0: a reward written from the solver, the reward path
+replaced by a symlink, printed pass markers, attempts to read the certified
+answers and judge sources, exit without output, rewritten inputs plus a
+forked child that writes the reward later, a hang, a crash, an oversized
+document, forged held-out predictions, a valid map that is not the least, a
+macro bomb, a compile failure, an include of a fixture path, a candidate
+build script and manifest, a fake toolchain under /app, hostile environment
+variables, a reward file pre-written to 1, and a verifier whose graded
+account is missing, which fails closed before any candidate code runs.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 1800
+
+[agent]
+timeout_sec = 28800
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

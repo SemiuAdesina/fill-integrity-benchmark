@@ -1,0 +1,101 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 962,
+   "logical_end": 6000,
+   "history_length": 16,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 256,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 1307,
+   "history_length": 2,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 256,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 1307,
+   "logical_end": 2048,
+   "history_length": 1,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 2945,
+   "history_length": 1,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 962,
+   "history_length": 16,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.mlp.fc2.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 2945,
+   "logical_end": 6000,
+   "history_length": 16,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 256,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 872,
+   "history_length": 16,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.1.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 256,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 872,
+   "logical_end": 2048,
+   "history_length": 12,
+   "active": true
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+nocompile      rc=2 elapsed=2s reward=0  FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)|
+symlink        rc=2 elapsed=0s reward=0  FATAL candidate solver.rs missing or not regular|
+hangsolve      rc=0 elapsed=306s reward=0  probe baseline exceeded its budget; failing closed, no further candidate code is run|probe artifacts=0/19|reward reset to 0 after the probe phase|verdict passed=0/13 control=1 probe_failed_closed=1 reward=0|
+hangbuild      rc=2 elapsed=605s reward=0  FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)|
+ALL DIRECT CONTROLS DONE

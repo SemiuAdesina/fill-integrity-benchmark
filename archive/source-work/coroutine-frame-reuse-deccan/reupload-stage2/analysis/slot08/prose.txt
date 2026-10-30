@@ -1,0 +1,55 @@
+[step 2] I'll start by exploring the project structure and reading the spec.
+
+[step 7] Now I have the full picture. Let me build first to see the baseline, and simultaneously start writing the fix.
+
+[step 11] Fresh build dir works. Now let me write the corrected header.
+
+[step 15] The demo is fully correct now. Let me write a thorough test suite of my own covering the spec's rules.
+
+[step 18] Two test-expectation bugs on my side. Let me fix them.
+
+[step 20] All 229 checks pass. Now under sanitizers:
+
+[step 21] No leaks, no UB, `-Werror` clean. Let me probe more edge cases.
+
+[step 24] Both are bugs in my test file (wrong job-id assumptions). Let me fix them.
+
+[step 38] A plain ASan hello-world also segfaults ~30% of the time here — this is an environment issue, not my code. Let me confirm:
+
+[step 40] ASan in this sandbox is unreliable even for hello-world (14/40 vs my 6-8/40). Let me check for *real* findings in the successful runs:
+
+[step 41] Sanitizer findings: zero across 60 successful runs. Let me add tests for deep fault unwinding.
+
+[step 43] Let me review the final source once more.
+
+[step 44] Let me write a randomized stress test to shake out anything remaining.
+
+[step 51] Let me do a final review of both deliverable files.
+
+[step 55] Let me verify LeakSanitizer is actually active here (so "no leaks" means something):
+
+[step 57] Let me verify one more explicitly-specified case: an unbound ticket can never be delivered even after the job parks.
+
+[step 58] Done. Here's what was wrong and what I changed.
+
+## Root causes
+
+**Frame identity.** `Pending::target` held a raw `coroutine_handle` — an address. Once a slot was recycled, that address named a different frame, so a ticket woke whatever now lived there. Tickets now carry the `(index, epoch)` pair captured at queue time plus a `bound` flag; delivery compares **both** numbers against the frame the job is parked in, and a ticket queued for an unparked job is bound to nothing and can never be accepted.
+
+**Cancellation.** `cancel` flagged the parked frame and resumed it so `await_resume` would throw. That resumes a frame, lets a job that catches `Abandoned` carry on, and re-enters frames whose slots may be gone. Cancel now destroys the frame stack directly (innermost first), which also runs the frames' cleanup and returns storage at once. A request made from *inside* the job is recorded and acted on at the checkpoint after the resume returns — the frames can't be destroyed while they're on the stack.
+
+**Frame ownership.** The child's frame was owned inconsistently: leaked on the success path, destroyed-without-detaching on the fault path. The conductor now owns every frame of a job in a stack; `ChildAwaiter::await_resume` destroys the child and records `ChildDestroyed` *before* `ParentContinued` (so the arena count on `ParentContinued` is taken after the slot went back), on both the value and failure paths.
+
+**Settling and release.** `settle()` had no once-guard (two `JobSettled`, two `FaultReported`), release used a single `pending_release_` field that got overwritten (frames left alive), and `cancel` re-settled an already-settled job. `settle` now returns early if the job has settled, `FaultReported` is recorded exactly once at settle, and release is queued per job and run to a fixpoint right after each resume. `CancelRequested` is recorded once per call, including for unknown and already-settled jobs.
+
+**Ordering and the clock.** `step` delivered `queue_.front()` and did `++tick_`. It now picks the minimum by (ready time, job id, queue sequence) and moves the clock only to the delivered ticket's ready time.
+
+## Verification
+
+- The four demo scenarios now report correctly (slot released at cancel and reused with a new epoch; one settle; `ChildDestroyed`/`ParentContinued` with the child already gone; `live=0` at the end, `double_reclaims=0`).
+- Four hand-written harnesses (317 assertions) plus a randomized stress harness: **653k invariant checks over 400 runs**, zero failures — settle-once, release-once, `JobSettled` before `FrameReleased`, no double reclaim, clock monotonic, `live <= capacity`.
+- Zero ASan/UBSan findings and no leaks (LeakSanitizer confirmed active), clean under `-Wall -Wextra -Wpedantic -Werror` with both GCC 12 and Clang 17.
+
+One caveat worth flagging: ASan in this sandbox segfaults intermittently even for a hello-world binary (14/40 runs, vs 6-8/40 for the runtime binaries) — that's environmental, not a finding in the code; every run that completes is clean.
+
+Only `/app/include/roundel/runtime.hpp` and `/app/src/runtime.cpp` were touched.

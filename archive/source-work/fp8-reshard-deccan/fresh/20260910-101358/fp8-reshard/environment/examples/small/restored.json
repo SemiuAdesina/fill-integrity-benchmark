@@ -1,0 +1,9 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "states": [
+  {"tensor": "decoder.layers.0.mlp.fc1.weight", "role": "forward", "stage": 1, "shard": 0, "global_block": 1, "scale": 65536, "inverse_scale": 256, "amax_history": [0, 0, 0, 250, 90, 40], "cursor": 0},
+  {"tensor": "decoder.layers.0.mlp.fc1.weight", "role": "forward", "stage": 1, "shard": 0, "global_block": 2, "scale": 32768, "inverse_scale": 512, "amax_history": [0, 0, 0, 3, 500, 12], "cursor": 0},
+  {"tensor": "decoder.layers.0.mlp.fc1.weight", "role": "backward", "stage": 0, "shard": 0, "global_block": 0, "scale": 16384, "inverse_scale": 1024, "amax_history": [1000], "cursor": 0}
+ ]
+}

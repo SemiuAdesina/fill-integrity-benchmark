@@ -1,0 +1,161 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 359,
+   "logical_end": 1255,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 2,
+   "logical_begin": 772,
+   "logical_end": 2001,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 78,
+   "history_length": 3,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 78,
+   "logical_end": 1209,
+   "history_length": 3,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 455,
+   "history_length": 3,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 895,
+   "history_length": 3,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 359,
+   "history_length": 5,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 2,
+   "logical_begin": 1209,
+   "logical_end": 2001,
+   "history_length": 3,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 455,
+   "logical_end": 772,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 2,
+   "logical_begin": 1255,
+   "logical_end": 3000,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 2,
+   "logical_begin": 1407,
+   "logical_end": 3000,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 895,
+   "logical_end": 1407,
+   "history_length": 7,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.7.attn.qkv.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1000,
+   "stage": 0,
+   "shard": 3,
+   "logical_begin": 1254,
+   "logical_end": 1255,
+   "history_length": 7,
+   "active": true
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+b02_ring_taken_as_stored
+cursor
+uses the ring in storage order without rotating

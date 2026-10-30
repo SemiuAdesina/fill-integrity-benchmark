@@ -1,0 +1,73 @@
+schema_version = "1.3"
+
+artifacts = ["/app"]
+
+[metadata]
+author_name = "Semiu Adesina"
+author_email = "sadesina893@stu.ui.edu.ng"
+category = "debugging"
+tags = ["rust", "bluetooth", "channel-sounding", "fixed-point", "global-search"]
+expert_time_estimate_hours = 3.0
+
+difficulty_explanation = """
+The broken calibrator looks plausible because RTT alone identifies many visible
+examples, but the frozen contract couples RTT to wrapped PBR phases across
+multiple frequencies and antenna paths. Correctness requires exact half-open
+phase wrapping, integer rational propagation, inclusive candidate boundaries,
+canonical channel ordering, and a global deterministic tie rule. A compound
+case puts a phase exactly at the modulo boundary while clock bias leaves two
+RTT-equivalent distances and two antenna paths carry opposing phase biases.
+A second compound case admits no exact fit at all, so the residual tuple must
+be compared in full: both antenna paths carry two frequencies each and also
+appear in the RTT stream, the summed phase and summed timing residuals tie
+across several parameter choices and only the two maximum components separate
+them, the winning maxima are not the numerically smallest available, a nearer
+distance carries a clock candidate that compensates its propagation exactly,
+one path retains two bias values tied on every score component so only the
+canonical parameter order decides, and every grid and both observation lists
+are supplied out of canonical order. Fitting each observation independently,
+sharing one bias across paths, scoring one modality, comparing only the sums,
+truncating instead of rounding, or stopping at the first minimum all select a
+different answer. Hidden predictions are derived by running the supplied model.
+This mirrors the work of wireless-localization and Bluetooth ranging engineers
+who calibrate Channel Sounding measurements by jointly reconciling wrapped
+phase, round-trip timing, antenna-path bias, and the exact fixed-point
+conventions a hardware measurement report is specified in.
+"""
+
+solution_explanation = """
+The reference implementation enumerates the bounded candidate product, predicts
+every PBR and RTT observation with the documented integer model, compares the
+complete global residual tuple, and applies the canonical parameter tie. It
+returns biases in path order and predictions in canonical observation order.
+The thin solution launcher replaces only src/lib.rs and builds offline.
+"""
+
+verification_explanation = """
+The separate verifier accepts only the candidate library source, supplies its
+own manifest and tests, scrubs Cargo and compiler redirection variables, and
+builds offline with a trusted cargo path. Semantic groups cover exact model
+arithmetic, wrapping endpoints, joint RTT/PBR recovery, path identity, shuffled
+observations, inclusive bounds, deterministic ties, and two compound cases, the
+second of which compares the whole returned calibration rather than its shape,
+so recovering the right parameters with the wrong predictions still fails.
+Sixteen cases are graded, including one that refuses a named antenna path whose
+bias grid is present but empty rather than reading it as a zero bias. A negative
+control proves the pipeline observes an
+injected defect, and a regression proves success-looking process output cannot
+determine reward. Reward starts at zero and becomes one only after every real
+test.
+"""
+
+[verifier]
+environment_mode = "separate"
+timeout_sec = 900
+
+[agent]
+timeout_sec = 7000
+
+[environment]
+memory_mb = 4096
+cpus = 2
+storage_mb = 10240
+build_timeout_sec = 900

@@ -1,0 +1,61 @@
+[50]
+cd /tmp && python3 - <<'EOF'
+import re
+p='/tmp/t.cpp'
+s=open(p).read()
+s=s.replace("    t_cancel_during_delivery();","    t_cancel_during_delivery();\n    t_fault_after();\n    t_value_after_caught_fault();")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/t.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/t 2>&1|head -5; timeout 120 ./t > /tmp/o.txt 2>/tmp/e.txt; echo "exit=$?"; grep -E "FAIL" /tmp/o.txt; tail -2 /tmp/o.txt; head -20 /tmp/e.txt
+
+[56]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/fuzz.cpp'
+s=open(p).read()
+s=s.replace("switch (kind % 9) {","switch (kind % 10) {")
+s=s.replace("        default: return poster();","        case 9: return self_cancel();\n        default: return poster();")
+s=s.replace("c.launch(make(static_cast<int>(rng() % 9)))","c.launch(make(static_cast<int>(rng() % 10)))")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/fuzz.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/fz 2>&1|head -10; timeout 300 ./fz > /tmp/fz.txt 2>/tmp/fze.txt; echo "exit=$?"; tail -5 /tmp/fz.txt; head -40 /tmp/fze.txt
+
+[57]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/fuzz.cpp'
+s=open(p).read()
+s=s.replace("""            g_self = static_cast<JobId>(ids.size() + 1);
+            const JobId id = c.launch(make(static_cast<int>(rng() % 10)));
+            ids.push_back(id);""",
+"""            g_self = static_cast<JobId>(ids.size() + 1);
+            try {
+                const JobId id = c.launch(make(static_cast<int>(rng() % 10)));
+                ids.push_back(id);
+            } catch (const std::bad_alloc&) {
+                // the pool is full: reported, not ignored
+            }""")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/fuzz.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/fz 2>&1|head -10; timeout 600 ./fz > /tmp/fz.txt 2>/tmp/fze.txt; echo "exit=$?"; tail -5 /tmp/fz.txt; head -40 /tmp/fze.txt
+
+[58]
+cd /tmp && python3 - <<'EOF'
+p='/tmp/fuzz.cpp'
+s=open(p).read()
+s=s.replace("""    // Journal invariants.""",
+"""    // Bring everything down the way a caller would.
+    for (JobId id : ids) {
+        c.cancel(id);
+    }
+    c.drain();
+    for (JobId id : ids) {
+        c.cancel(id);
+    }
+    c.drain();
+
+    // Journal invariants.""")
+s=s.replace("""        CHECK(release_at.count(id) == 1, "every settled job released");""",
+"""        CHECK(counts[static_cast<int>(Mark::JobSettled)][id] == 1, "every job settled");
+            CHECK(release_at.count(id) == 1, "every settled job released");""")
+open(p,'w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -Werror -I/app/include /tmp/fuzz.cpp /app/src/runtime.cpp /app/src/arena.cpp /app/src/journal.cpp -fsanitize=address,undefined -o /tmp/fz 2>&1|head -10; timeout 900 ./fz > /tmp/fz.txt 2>/tmp/fze.txt; echo "exit=$?"; tail -5 /tmp/fz.txt; head -40 /tmp/fze.txt

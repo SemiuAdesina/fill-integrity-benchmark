@@ -1,0 +1,4 @@
+MODE=patched LABEL=v6-slot07 REWARD=1 RC=0 ELAPSED=2s TOTAL 53 FAILED 0
+FAILS: <none>
+RUNLOG: CONTROL ok timing runner_build=1 runner_execution=0 judge=0 verdict total=53 failed=0 control=1 reward=0 
+WORKDIR: /tmp/afd-G5Gh5W

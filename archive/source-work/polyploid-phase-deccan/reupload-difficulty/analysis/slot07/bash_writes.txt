@@ -1,0 +1,365 @@
+[68]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// How the search grows with the cross.
+#[test]
+fn search_scales() {
+    use crate::solver::search::Search;
+    for &(markers, offspring) in &[(12usize, 8usize), (16, 16), (20, 24), (28, 32)] {
+        let free: Vec<usize> = (0..markers).collect();
+        let cross = random_cross(markers, offspring, &free, 7);
+        let model = Model::new(&cross);
+        let (z, value) = local::search_local(&model, 64, 0x2545F4914F6CDD1D);
+        let start = std::time::Instant::now();
+        let mut search = Search::new(&model, 1e-8);
+        let complete = search.run(value, z, 20_000_000);
+        println!(
+            "{markers}x{offspring}: space {:.2e} complete {complete} nodes {} elapsed {:?}",
+            space_size(&model) as f64,
+            search.nodes,
+            start.elapsed()
+        );
+    }
+}
+EOF
+timeout 1800 cargo test --release --offline --locked --lib search_scales -- --nocapture 2>&1 | grep -E "^[0-9]+x|panick|^error" -A3 | head -20
+
+[84]
+cat > /tmp/gen.py <<'EOF'
+import json, random, sys
+from math import comb
+
+def gen(M, N, slope, seed, weak_dosage=True):
+    rnd = random.Random(seed)
+    def peaked(truth, slope):
+        return [-slope*abs(d-truth) - 0.01*d for d in range(5)]
+    colsA, colsB = [], []
+    dA, dB = [], []
+    for m in range(M):
+        for who in (0,1):
+            d = rnd.choice([1,2,3,2,3,1]) if weak_dosage else rnd.choice([0,1,2,3,4])
+            bits = rnd.sample(range(4), d)
+            col = [1 if h in bits else 0 for h in range(4)]
+            (dA if who==0 else dB).append(d)
+            (colsA if who==0 else colsB).append(col)
+    # planted paths: a slow random walk over the 10 states
+    states = [(a,b) for a in range(4) for b in range(a,4)]
+    pa = [[] for _ in range(N)]; pb = [[] for _ in range(N)]
+    for c in range(N):
+        sa = rnd.randrange(10); sb = rnd.randrange(10)
+        for m in range(M):
+            pa[c].append(sa); pb[c].append(sb)
+            if rnd.random() < 0.25: sa = rnd.randrange(10)
+            if rnd.random() < 0.25: sb = rnd.randrange(10)
+    LOW=[0,0,0,0,1,1,1,2,2,3]; HIGH=[0,1,2,3,1,2,3,2,3,3]
+    gl=[]
+    for c in range(N):
+        rows=[]
+        for m in range(M):
+            sa=pa[c][m]; sb=pb[c][m]
+            dose = colsA[m][LOW[sa]]+colsA[m][HIGH[sa]]+colsB[m][LOW[sb]]+colsB[m][HIGH[sb]]
+            rows.append(peaked(dose, slope))
+        gl.append(rows)
+    recA=[round(rnd.uniform(0.03,0.25),4) for _ in range(M-1)]
+    recB=[round(rnd.uniform(0.03,0.25),4) for _ in range(M-1)]
+    aa=[rnd.random()<0.4 for _ in range(M)]; ab=[rnd.random()<0.4 for _ in range(M)]
+    qa=[round(rnd.uniform(0.1,0.4),4) if aa[m] else 0.0 for m in range(M)]
+    qb=[round(rnd.uniform(0.1,0.4),4) if ab[m] else 0.0 for m in range(M)]
+    return {"format_version":1,"markers":M,"offspring":N,
+            "parent_dosage":{"A":dA,"B":dB},"child_gl":gl,
+            "recombination":{"A":recA,"B":recB},
+            "double_reduction":{"A":{"allowed":aa,"rate":qa},"B":{"allowed":ab,"rate":qb}}}
+
+if __name__ == "__main__":
+    M,N,slope,seed = int(sys.argv[1]),int(sys.argv[2]),float(sys.argv[3]),int(sys.argv[4])
+    out = sys.argv[5]
+    d = gen(M,N,slope,seed)
+    zc=1
+    for m in range(M): zc *= comb(4,d['parent_dosage']['A'][m])*comb(4,d['parent_dosage']['B'][m])
+    json.dump(d, open(out,'w'))
+    print(out, "space %.2e"%zc)
+EOF
+python3 /tmp/gen.py 12 8 1.1 1 /tmp/h12x8.json
+python3 /tmp/gen.py 16 16 1.1 2 /tmp/h16x16.json
+python3 /tmp/gen.py 20 24 1.1 3 /tmp/h20x24.json
+python3 /tmp/gen.py 28 32 1.1 4 /tmp/h28x32.json
+python3 /tmp/gen.py 16 8 0.5 5 /tmp/w16x8.json
+python3 /tmp/gen.py 12 8 0.3 6 /tmp/w12x8.json
+
+[87]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Nodes and time for one cross on disk.
+#[test]
+fn profile_file() {
+    use crate::solver::search::Search;
+    let Ok(path) = std::env::var("SOLVER_FILE") else { return };
+    let text = std::fs::read_to_string(&path).expect("read");
+    let cross = parse_cross(&text).expect("valid cross");
+    let model = Model::new(&cross);
+    let budget: u64 = std::env::var("SOLVER_BUDGET")
+        .ok()
+        .and_then(|x| x.parse().ok())
+        .unwrap_or(40_000_000);
+    let start = std::time::Instant::now();
+    let (z, value) = local::search_local(&model, 128, 0x9E3779B97F4A7C15);
+    let local_time = start.elapsed();
+    let start = std::time::Instant::now();
+    let mut search = Search::new(&model, 1e-8);
+    let complete = search.run(value, z, budget);
+    println!(
+        "{path}: local {value:.4} in {local_time:?}; search {:.4} complete {complete} nodes {} in {:?} ({:.0} nodes/s)",
+        search.best,
+        search.nodes,
+        start.elapsed(),
+        search.nodes as f64 / start.elapsed().as_secs_f64()
+    );
+}
+EOF
+for f in h12x8; do SOLVER_FILE=/tmp/$f.json timeout 300 cargo test --release --offline --locked --lib profile_file -- --nocapture 2>&1 | grep -E "^/tmp|panick" ; done
+
+[88]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Does the consensus dual actually tighten the single bound anywhere?
+#[test]
+fn dual_probe() {
+    let path = std::env::var("SOLVER_FILE").unwrap_or_else(|_| "/tmp/free5.json".to_string());
+    let text = std::fs::read_to_string(&path).expect("read");
+    let cross = parse_cross(&text).expect("valid cross");
+    let model = Model::new(&cross);
+    let optimum = brute_force(&model);
+    let mut lag = crate::solver::lagrange::Lagrange::new(&model);
+    let mut picks = vec![vec![0usize; model.markers]; model.offspring];
+    let single = lag.evaluate(&model, &mut picks);
+    println!("{path}: optimum {optimum:.4} single {single:.4} gap {:.4}", single - optimum);
+    let mut best = single;
+    for scale in [2.0f64, 1.0, 0.4, 0.15, 0.05, 0.015, 0.005] {
+        for _ in 0..300 {
+            let value = lag.evaluate(&model, &mut picks);
+            if value < best {
+                best = value;
+            }
+            let gap = (value - optimum).max(0.001);
+            let mut norm = 0.0f64;
+            let mut moves = Vec::new();
+            for m in 0..model.markers {
+                // Consensus: the cheapest column, and among ties the one most
+                // progeny picked, which is the steepest descent available.
+                let mut low = f64::INFINITY;
+                for v in 0..model.zcount[m] {
+                    let sum: f64 = (0..model.offspring).map(|c| lag.lambda[c][m][v]).sum();
+                    if sum < low {
+                        low = sum;
+                    }
+                }
+                let mut shared = 0usize;
+                let mut votes = 0usize;
+                for v in 0..model.zcount[m] {
+                    let sum: f64 = (0..model.offspring).map(|c| lag.lambda[c][m][v]).sum();
+                    if sum < low + 1e-12 {
+                        let count = (0..model.offspring).filter(|c| picks[*c][m] == v).count();
+                        if count > votes {
+                            votes = count;
+                            shared = v;
+                        }
+                    }
+                }
+                for c in 0..model.offspring {
+                    if picks[c][m] != shared {
+                        norm += 2.0;
+                        moves.push((c, m, picks[c][m], shared));
+                    }
+                }
+            }
+            if norm == 0.0 {
+                break;
+            }
+            let step = scale * gap / norm;
+            for (c, m, mine, shared) in moves {
+                lag.lambda[c][m][mine] -= step;
+                lag.lambda[c][m][shared] += step;
+            }
+        }
+        println!("  scale {scale}: best dual {best:.4} (gap {:.4})", best - optimum);
+    }
+}
+EOF
+SOLVER_FILE=/tmp/free5.json timeout 600 cargo test --release --offline --locked --lib dual_probe -- --nocapture 2>&1 | grep -E "optimum|scale|panick"
+
+[105]
+python3 - <<'EOF'
+import re
+for path, subs in [
+    ("src/solver.rs", [
+        ("let complete = search.run(value, z, 5_000_000);",
+         "let complete = search.run(value, z, 5_000_000, deadline());"),
+        ("let complete = search.run(value, z, 3_000_000);",
+         "let complete = search.run(value, z, 3_000_000, deadline());"),
+    ]),
+    ("src/solver/dev.rs", [
+        ("let complete = search.run(value, z, 500_000);",
+         "let complete = search.run(value, z, 500_000, deadline());"),
+        ("let complete = search.run(value, z, budget);",
+         "let complete = search.run(value, z, budget, deadline());"),
+    ]),
+]:
+    text = open(path).read()
+    for a, b in subs:
+        assert a in text, (path, a)
+        text = text.replace(a, b)
+    open(path, "w").write(text)
+EOF
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Generous deadline for the dev harness: these runs are meant to finish.
+pub fn deadline() -> std::time::Instant {
+    std::time::Instant::now() + std::time::Duration::from_secs(600)
+}
+EOF
+python3 - <<'EOF'
+text = open("/app/src/solver.rs").read()
+text = text.replace("""    #[test]
+    fn measure_root_bounds""", """    /// Generous deadline for the dev harness: these runs are meant to finish.
+    fn deadline() -> std::time::Instant {
+        std::time::Instant::now() + std::time::Duration::from_secs(600)
+    }
+
+    #[test]
+    fn measure_root_bounds""", 1)
+open("/app/src/solver.rs","w").write(text)
+EOF
+cargo build --release --offline --locked 2>&1 | grep -E "^(error|warning: unused)" | head; echo BUILD_DONE
+
+[108]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Root bound against the optimum, and where in the tree the nodes are.
+#[test]
+fn gap_and_depth() {
+    use crate::solver::bounds::Bounds;
+    use crate::solver::search::Search;
+    let path = std::env::var("SOLVER_FILE").unwrap_or_else(|_| "/tmp/h12x8.json".to_string());
+    let text = std::fs::read_to_string(&path).expect("read");
+    let cross = parse_cross(&text).expect("valid cross");
+    let model = Model::new(&cross);
+    let empty: Vec<[f64; crate::solver::model::NJ]> =
+        vec![[0.0f64; crate::solver::model::NJ]; model.offspring];
+    let single = Bounds::new(&model, false).bound_single_at(0, &empty);
+    let (z, value) = local::search_local(&model, 128, 0x9E3779B97F4A7C15);
+    let mut search = Search::new(&model, 1e-8);
+    let complete = search.run(value, z, 40_000_000, deadline());
+    println!(
+        "{path}: space {:.2e} single {single:.4} best {:.4} gap {:.4} complete {complete} nodes {}",
+        space_size(&model) as f64,
+        search.best,
+        single - search.best,
+        search.nodes
+    );
+}
+EOF
+for f in /tmp/h12x8.json /tmp/w12x8.json; do SOLVER_FILE=$f timeout 900 cargo test --offline --locked --release --lib gap_and_depth -- --nocapture 2>&1 | grep -E "space|panic"; done
+
+[109]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// How close the local search gets to the proven optimum.
+#[test]
+fn incumbent_quality() {
+    use crate::solver::search::Search;
+    for path in std::env::var("SOLVER_FILES")
+        .unwrap_or_default()
+        .split(',')
+        .filter(|s| !s.is_empty())
+    {
+        let text = std::fs::read_to_string(path).expect("read");
+        let cross = parse_cross(&text).expect("valid cross");
+        let model = Model::new(&cross);
+        let start = std::time::Instant::now();
+        let (z, value) = local::search_local(&model, 512, 0x9E3779B97F4A7C15);
+        let taken = start.elapsed();
+        let mut search = Search::new(&model, 1e-8);
+        let complete = search.run(value, z, 3_000_000, deadline());
+        println!(
+            "{path}: local {value:.6} in {taken:?} -> best {:.6} complete {complete} nodes {}",
+            search.best, search.nodes
+        );
+    }
+}
+EOF
+SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/w16x8.json timeout 1200 cargo test --offline --locked --release --lib incumbent_quality -- --nocapture 2>&1 | grep -E "local|panic"
+
+[110]
+cat > /tmp/loc.rs <<'EOF'
+EOF
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Cost of the local search across the declared range.
+#[test]
+fn local_cost() {
+    for path in std::env::var("SOLVER_FILES")
+        .unwrap_or_default()
+        .split(',')
+        .filter(|s| !s.is_empty())
+    {
+        let text = std::fs::read_to_string(path).expect("read");
+        let cross = parse_cross(&text).expect("valid cross");
+        let model = Model::new(&cross);
+        for restarts in [64usize, 512] {
+            let start = std::time::Instant::now();
+            let (_, value) = local::search_local(&model, restarts, 0x9E3779B97F4A7C15);
+            println!(
+                "{path}: {restarts} restarts -> {value:.4} in {:?} (space {:.1e})",
+                start.elapsed(),
+                space_size(&model) as f64
+            );
+        }
+    }
+}
+EOF
+SOLVER_FILES=/tmp/h28x32.json,/tmp/h20x24.json,/tmp/h16x16.json timeout 1200 cargo test --offline --locked --release --lib local_cost -- --nocapture 2>&1 | grep -E "restarts|panic"
+
+[112]
+cat >> /app/src/solver/dev.rs <<'EOF'
+
+/// Why more restarts can come out worse: split `search_local` into its stages.
+#[test]
+fn local_stages() {
+    for path in std::env::var("SOLVER_FILES")
+        .unwrap_or_default()
+        .split(',')
+        .filter(|s| !s.is_empty())
+    {
+        let text = std::fs::read_to_string(path).expect("read");
+        let cross = parse_cross(&text).expect("valid cross");
+        let model = Model::new(&cross);
+        let mut rng = local::Rng::new(0x9E3779B97F4A7C15);
+        let mut best = f64::NEG_INFINITY;
+        let mut best_z = vec![0usize; model.markers];
+        let mut z = vec![0usize; model.markers];
+        let value = refine(&model, &mut z);
+        if value > best {
+            best = value;
+            best_z.copy_from_slice(&z);
+        }
+        for round in 0..512 {
+            let mut z: Vec<usize> = (0..model.markers).map(|m| rng.below(model.zcount[m])).collect();
+            let value = refine(&model, &mut z);
+            if value > best {
+                best = value;
+                best_z.copy_from_slice(&z);
+            }
+            if round + 1 == 64 || round + 1 == 512 {
+                let mut z = best_z.clone();
+                let polished = local::polish(&model, &mut z, best);
+                println!(
+                    "{path}: after {} restarts refine {best:.6} polish {polished:.6} value(z) {:.6}",
+                    round + 1,
+                    model.value(&z)
+                );
+            }
+        }
+    }
+}
+EOF
+SOLVER_FILES=/tmp/h20x24.json timeout 1200 cargo test --offline --locked --release --lib local_stages -- --nocapture 2>&1 | grep -E "restarts|panic"

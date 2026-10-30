@@ -1,0 +1,3 @@
+b17_tie_by_document_position
+link model
+serializes equal-ready payloads by the origin's document position (no observable effect by construction)

@@ -1,0 +1,4 @@
+BUILD FAILED
+/app2/include/roundel/runtime.hpp:13:2: error: unterminated conditional directive
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:259:5: error: no template named 'pair'; did you mean '::std::pair'?
+/usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/algorithmfwd.h:264:5: error: no template named 'pair'; did you mean '::std::pair'?

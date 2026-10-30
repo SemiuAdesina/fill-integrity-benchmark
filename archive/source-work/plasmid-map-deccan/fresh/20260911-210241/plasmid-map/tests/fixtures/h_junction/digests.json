@@ -1,0 +1,176 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "AatII",
+   "enzymes": [
+    "AatII"
+   ],
+   "bands": [
+    {
+     "length": 696,
+     "multiplicity": 1
+    },
+    {
+     "length": 3359,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "KpnI",
+   "enzymes": [
+    "KpnI"
+   ],
+   "bands": [
+    {
+     "length": 1168,
+     "multiplicity": 1
+    },
+    {
+     "length": 2926,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuII",
+   "enzymes": [
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 784,
+     "multiplicity": 1
+    },
+    {
+     "length": 3280,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "ScaI",
+   "enzymes": [
+    "ScaI"
+   ],
+   "bands": [
+    {
+     "length": 4136,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+PvuII",
+   "enzymes": [
+    "AatII",
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 327,
+     "multiplicity": 1
+    },
+    {
+     "length": 376,
+     "multiplicity": 1
+    },
+    {
+     "length": 459,
+     "multiplicity": 1
+    },
+    {
+     "length": 2930,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "KpnI+ScaI",
+   "enzymes": [
+    "KpnI",
+    "ScaI"
+   ],
+   "bands": [
+    {
+     "length": 959,
+     "multiplicity": 1
+    },
+    {
+     "length": 1168,
+     "multiplicity": 1
+    },
+    {
+     "length": 1960,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "KpnI+PvuII",
+   "enzymes": [
+    "KpnI",
+    "PvuII"
+   ],
+   "bands": [
+    {
+     "length": 528,
+     "multiplicity": 1
+    },
+    {
+     "length": 659,
+     "multiplicity": 1
+    },
+    {
+     "length": 2764,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "AatII+ScaI",
+   "enzymes": [
+    "AatII",
+    "ScaI"
+   ],
+   "bands": [
+    {
+     "length": 443,
+     "multiplicity": 1
+    },
+    {
+     "length": 691,
+     "multiplicity": 1
+    },
+    {
+     "length": 2930,
+     "multiplicity": 1
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "AatII+KpnI",
+   "enzymes": [
+    "AatII",
+    "KpnI"
+   ]
+  },
+  {
+   "id": "PvuII+ScaI",
+   "enzymes": [
+    "PvuII",
+    "ScaI"
+   ]
+  }
+ ]
+}

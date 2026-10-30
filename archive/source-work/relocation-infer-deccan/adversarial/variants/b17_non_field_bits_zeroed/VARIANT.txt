@@ -1,0 +1,3 @@
+b17_non_field_bits_zeroed
+fields
+the container word is rebuilt from the field alone; other bits are zeroed

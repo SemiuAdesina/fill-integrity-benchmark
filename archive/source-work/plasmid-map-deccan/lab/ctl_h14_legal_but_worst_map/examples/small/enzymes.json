@@ -1,0 +1,30 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "FspI",
+   "site": "TGCGCA",
+   "cut_offset": 3
+  },
+  {
+   "name": "PvuII",
+   "site": "CAGCTG",
+   "cut_offset": 3
+  },
+  {
+   "name": "SbfI",
+   "site": "CCTGCAGG",
+   "cut_offset": 6
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "SalI",
+   "position": 429
+  },
+  {
+   "enzyme": "ScaI",
+   "position": 2179
+  }
+ ]
+}

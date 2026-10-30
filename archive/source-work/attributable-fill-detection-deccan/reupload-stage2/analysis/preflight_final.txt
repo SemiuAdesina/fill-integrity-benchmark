@@ -1,0 +1,31 @@
+PASS  required files checked
+PASS  schema_version 1.4
+PASS  name benchmark-suite/attributable-fill-detection
+PASS  category Software
+PASS  subcategory Systems
+PASS  expert time 3.0
+PASS  separate verifier environment
+PASS  no allow_internet
+PASS  task.toml parses
+PASS  canary on every non-record file
+PASS  old canary absent
+PASS  instruction.md uses absolute paths
+PASS  instruction.md references /app
+PASS  no symlinks
+PASS  no junk
+PASS  environment/Dockerfile digest-pinned
+PASS  environment/Dockerfile no network fetch
+PASS  tests/Dockerfile digest-pinned
+PASS  tests/Dockerfile no network fetch
+PASS  cases.txt lists 53 cases
+PASS  53 expected records
+PASS  graded.rs defines 37 tests
+PASS  test.sh/judge.sh expect 53
+PASS  test.sh trust-boundary and budget hardening present
+PASS  six diagnostic suites
+PASS  no reproducer binary
+PASS  old rule-naming diagnostics removed
+PASS  instruction.md hint phrases checked
+PASS  package leakage phrases checked
+      instruction.md words: 436
+preflight failures: 0

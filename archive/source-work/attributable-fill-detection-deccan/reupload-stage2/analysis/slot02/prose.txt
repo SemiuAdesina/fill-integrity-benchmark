@@ -1,0 +1,303 @@
+[step 2] I'll start by reading the specification documents, which are the authority here.
+
+[step 7] Now let me read the source tree.
+
+[step 22] Now the diagnostics and reproducer, which encode expectations about timing:
+
+[step 25] Now I have the full picture. Let me record my analysis of the defects before writing code.
+
+[step 29] 11 diagnostics fail. Now let me write the corrected attribution ledger.
+
+[step 30] Now the cycle, which holds the residual, closure-sequence and submission-outcome rules:
+
+[step 34] The one failure is a conflict: the diagnostic expects a later block to allocate to orders an earlier block already closed, but the spec's block-finality rule explicitly says a finalized order "contributes no outstanding quantity to a later block's basis". Let me verify that reading before deciding.
+
+[step 35] The spec is explicit and self-consistent (both documents, plus the task statement). The diagnostic's second block matches orders the first block already closed — which the venue itself says cannot happen. I'll follow the spec and rewrite that check so it still tests the underlying rule.
+
+[step 37] All 21 pass. Now let me add cycle-level checks for the rules I changed that had no coverage — the closure sequence, rejected submissions, and venue-closed legs.
+
+[step 42] The fake gateway records rejected attempts too, so my assertion was wrong. Let me fix the check to observe what the engine commits to:
+
+[step 46] Now fix the rejected-submission check to look at committed state rather than raw attempts:
+
+[step 48] Both aids pass. Now let me probe the combinations most likely in the graded suite — restarts reopening windows, and re-neutralization after a restart.
+
+[step 51] The window start is preserved, but my assertion was wrong — the north leg legitimately filled 10 *before* the restart, so 10 is the correct surviving value. Let me make the test actually distinguish:
+
+[step 54] Let me harden one edge case — a block naming the same order twice in `covers` — and verify my assumption that blocks must *not* be filtered by instrument/venue:
+
+[step 55] Confirmed — fixtures name south-leg orders in blocks tagged `North`/`"I"`, so identity resolution must never filter on instrument or venue. My implementation resolves purely by `client_ref`/`order_id`, which is correct. Now the duplicate-cover guard:
+
+[step 57] Both aids pass. Now let me get independent adversarial reviews against the spec while I re-read the code myself.
+
+[step 59] I'll start by reading all the specified files completely.
+
+[step 65] I'll start by reading the specification files and the code under audit.
+
+[step 69] While those run, let me verify I haven't touched any frozen surface, and check for warnings.
+
+[step 72] Frozen surface is untouched (only the two engine files changed), build is warning-free. While the audits run, let me add block coverage to the reproducer, which currently exercises none:
+
+[step 79] Let me add one more diagnostic for a documented rule with no coverage: a failed `open_orders` call must not be read as proof anything is gone.
+
+[step 82] 28 diagnostics pass. Let me check on the audits.
+
+[step 83] Now let me survey the rest of the project for context on how this ledger is used.
+
+[step 101] Now let me build a differential fuzz harness in a scratch copy (leaving `/app` untouched) to test the ledger against a spec-derived reference model.
+
+[step 102] Now let me empirically probe suspected divergences with a scratch program (kept outside `/app` so no project file is touched).
+
+[step 105] Let me add a determinism check — the block outcome must not depend on the order of `covers`:
+
+[step 111] Let me do my own final read of the ledger while the audits finish.
+
+[step 118] Let me fix my probe (two test bugs of my own) and add boundary/edge probes.
+
+[step 126] All 27 diagnostics and all 17 reproducer checks pass, so the divergences are not visible to them. I traced concrete numeric scenarios through `run_cycle` with fakes compiled outside `/app` (no project file touched). Here is what I found.
+
+---
+
+# Audit: `src/engine/cycle.rs` vs `spec/reconciliation-contract.md`
+
+## Rule 1 — Residual exposure: **no divergence found**
+
+I checked the formula line by line against the spec and confirmed it numerically.
+
+- `residual_for` (cycle.rs:354-360) is `leg.size - acquired_for(leg) - Σ working_in(records)` — exactly the three terms, with "required quantity" = `leg.size` ✓.
+- `acquired_for` (cycle.rs:310-316) **adds** the resting order's attributed quantity and every neutralization's attributed quantity for the same `strategy_id` + `venue` (`records_for`, cycle.rs:318-323) ✓. Because the ledger resolves by `client_ref` first (`fill_classifier.rs:200`), a neutralization fill lands on the neutralization's record and is never double-counted as a fill of the resting order ✓.
+- `working_in` (cycle.rs:336-349): finalized → `0`; `order_id.is_none()` → full `record.size`; otherwise `size - attributed`, floored at 0 ✓ — the three bullets in the spec, in the right order.
+- "Neutralize only a strictly positive residual": `plan_neutralization` returns `None` for `remaining_size <= 0` (`neutralization.rs:27`), and everything is `Qty = i64` ✓.
+
+Numeric confirmations (10-unit legs, north fills 10):
+
+| scenario | corrective sizes sent | verdict |
+|---|---|---|
+| venue lists cancelled leg with `filled_qty=4` | `[6]` | ✓ residual recomputed |
+| in-flight fill of 6 lands after the cancel | `[4]` | ✓ |
+| accepted IOC that never fills, 8 cycles | `[10]` | ✓ not sent twice |
+| IOC fills 4 then a block finalizes it | `[10, 6]` | ✓ finalized contributes nothing |
+| IOC fills 6, second IOC ack-lost | `[10, 6]` then no more | ✓ full size counted as working |
+
+## Rule 2 — Visibility and the closure sequence: **no divergence found**
+
+`visibility` (cycle.rs:368-381) implements the three states plus the settled `Closed` reading; `close_gap` (cycle.rs:423-447) returns immediately after the cancel on the first cycle and only falls through on a later cycle. Confirmed by trace:
+
+- Leg absent from `open_orders` and never cancelled → nothing sent, **nothing cancelled**, for as long as it stays absent ✓ ("An unconfirmed leg is never neutralized against", "an unconfirmed order is not something to cancel").
+- Leg resting when the gap appears → cycle N cancels only; cycle N+1 sends ✓ (closure first, corrective afterwards, later cycle).
+- Venue still lists the cancelled leg on cycle N+1 → the corrective is issued in N+1, sized off the residual read in that same cycle's `sync_observations` ✓.
+- Leg re-listed after being absent → cancel, then corrective on the following cycle ✓.
+- Cancellation state (`closing`/`replaced`) survives a restart, so the corrective is issued without a second cancel ✓.
+
+## Rule 5 — Determinism: **no divergence found**
+
+All containers used for quantity decisions are ordered: `neutralizations: Vec` (insertion order, cycle.rs:55), `BTreeSet`s for `attempted`/`closing`/`replaced`/`resting_at_venue`, `PendingOrderManager` is a `BTreeMap`. Sums are order-independent; there is no `HashMap` and no float in any quantity path. The one float comparison, `notional > available_cash` (cycle.rs:258), is an affordability gate, not a quantity decision, and `venue-semantics.md` explicitly permits it: "Prices remain real numbers. Notional cost is therefore still floating point. Nothing that decides whether an order filled is."
+
+## Rule 4 — What must survive a restart: **no divergence found**
+
+`persist` (cycle.rs:541-555) writes every field `Snapshot` has, and `ensure_loaded` (cycle.rs:132-152) restores all ten: positions, pending orders, `attempted`, `client_seq`, fill cursor, submissions (which carry the **original** `window_start`, `direct_filled`/`block_filled`, `finalized`, `order_id`, `venue_seq`), absorbed `block_ref`s, `closing_orders`, `replaced_orders`, and neutralizations including unacknowledged ones with the `client_ref` a retry depends on. `resting_at_venue` is deliberately not durable and is re-read before any decision each cycle (cycle.rs:158-167), including the first cycle after a restart. Custody inventory is never used for attribution, so pre-existing inventory cannot be reinterpreted as fills.
+
+---
+
+# Confirmed defects
+
+## 1. A `Rejected`/`Transport` **retry** of a committed neutralization is not unwound — wrong corrective size and over-acquisition
+
+**Location:** `src/engine/cycle.rs:201-219`, specifically **line 203**:
+
+```rust
+for record in unconfirmed {
+    let request = Self::neutralization_request(&record);
+    if let Ok(accepted) = self.gateway.submit(&request) {   // <-- Err(_) silently ignored
+```
+
+`close_gap` handles all three outcomes correctly (cycle.rs:481-509 — on `Rejected`/`Transport` it drops the record; on `AcknowledgementLost` it keeps it). `reconcile_neutralizations` handles only the `Ok` and `AcknowledgementLost` cases. A retry that comes back `Rejected` or `Transport` leaves a dead record in place: it keeps contributing its **full size** as "still working", and it is re-submitted at its **stale, committed size** instead of the recomputed residual.
+
+**Spec sentence violated** (`reconciliation-contract.md`, Submission outcomes):
+
+> **Rejected** or **Transport.** No economic order was created by that attempt. The exposure is still open, and a later cycle may recompute the residual and try again. A mandate must not be latched shut by one failed attempt.
+
+and (Residual exposure):
+
+> one whose acknowledgement was lost contributes its **full size**, because the venue may have created it and the engine cannot yet see it;
+
+— full size is correct only *while the acknowledgement is unresolved*. Once a submission under that `client_ref` comes back `Rejected`/`Transport`, the venue's idempotency key has been proven dead (a retry of an order that exists returns the same `OrderAccepted`, per `venue-semantics.md`: "`client_ref` is the idempotency key. Submitting twice with the same `client_ref` returns the same `OrderAccepted`"). Nothing is working, so it must contribute nothing.
+
+**Concrete cycle sequence** (default `EngineConfig`, prefix `pex`, both legs size 10, expiry 10 000, clock starts at 1 000):
+
+1. **Cycle 1** — submits `pex-1` (north, `V-101`) and `pex-2` (south, `V-102`). `open_orders = [V-102]`.
+2. **Cycle 2** (t=1060) — feed delivers `FillEvent{V-101, pex-1, cumulative 10, at 1000}`: north complete. South is resting → `gateway.cancel(V-102)`, no corrective.
+3. **Cycle 3** (t=1120) — south withdrawn, residual 10 → IOC `pex-3` size 10 → **`AcknowledgementLost`** → record `{pex-3, order_id: None, size: 10}` retained (correct so far).
+4. **Cycle 4** (t=1180) — two things happen: the feed delivers the cancelled resting order's in-flight fill `FillEvent{V-102, pex-2, cumulative 6, at 1100}`, so the leg now has 6 attributed; *and* the retry of `pex-3` (size 10) returns **`Rejected`**.
+   - Code: the dead record survives → `working_in = 10` → `residual = 10 − 6 − 10 = −6` → no fresh order is sized.
+5. **Cycle 5** (t=1240) — `reconcile_neutralizations` retries `pex-3` again at the **stale size 10**; the venue accepts (`V-103`).
+
+**Observed:** `corrective_refs = [pex-3, pex-3, pex-3]`, `corrective_sizes = [10, 10, 10]`; the south leg ends up acquiring 6 (resting) + 10 (IOC) = **16 units for a 10-unit leg**.
+
+**Correct behaviour:** on the `Rejected` retry in cycle 4, drop the record (as `close_gap` does at cycle.rs:505-508) and let a later cycle recompute: `residual = 10 − 6 = 4` → a **4-unit** IOC under a freshly minted reference → `corrective_sizes = [10, 4]`, `corrective_refs = [pex-3, pex-4]`, and the leg acquires exactly 10.
+
+The asymmetry pins it: when the **first** submission is `Rejected`, the engine does the right thing — same rig, `fail_on(3, Rejected)`, 6-unit fill landing later gives `corrective = [("pex-3",10), ("pex-4",4)]`. Only the retry path gets it wrong.
+
+The same omission makes the mandate un-repairable in the `Transport` case: with `fail_on(4, Transport)`, the record is retried every cycle under `pex-3` at size 10 forever, and `snapshot.neutralizations` still holds `{pex-3, size 10}` with no order — i.e. the exposure is never re-sized, contrary to "a later cycle may recompute the residual and try again".
+
+## 2. Entry-leg submissions: a failed leg is dropped entirely and the mandate is latched shut
+
+**Location:** `src/engine/cycle.rs:261` and `src/engine/cycle.rs:280-301`.
+
+```rust
+self.attempted.insert(candidate.strategy_id.clone());   // line 261 — before the attempt
+self.place_leg(&candidate, Venue::North, north_size, now);
+self.place_leg(&candidate, Venue::South, south_size, now);
+```
+```rust
+if let Ok(accepted) = self.gateway.submit(&request) {   // line 280 — no Err arm at all
+    ...
+}                                                       // line 301: failure is a no-op
+```
+
+On any `SubmitError` the leg is not tracked in the ledger, no `PendingOrder` is created, no retry is attempted under the retained `client_ref`, and — because `attempted` was populated first — `enter_new_strategies` skips the candidate on every later cycle, while `reconcile_open_strategies` (cycle.rs:388-395) does `continue` because one leg is missing. The mandate can never be completed or repaired.
+
+**Spec sentences violated:**
+
+> **AcknowledgementLost.** The venue may or may not have created the order, and its identifier is unknown. The `client_ref` is retained, the order is treated as potentially working, and any retry uses the **same** `client_ref`, so the venue's idempotency resolves it onto the original order. A retry under a freshly minted reference places the same economic exposure a second time. Identity is recovered when a later observation carries that `client_ref`.
+
+> **Rejected** or **Transport.** No economic order was created by that attempt. The exposure is still open, and a later cycle may recompute the residual and try again. **A mandate must not be latched shut by one failed attempt.**
+
+**Concrete cycle sequence A — `AcknowledgementLost` on an entry leg (the venue does hold the order):**
+
+1. **Cycle 1** — `submit` #1 (north, `pex-1`) returns `AcknowledgementLost`; `submit` #2 (south, `pex-2`) is accepted as `V-102`. `place_leg` records nothing for `pex-1`.
+2. **Cycle 2** — `open_orders = [V-101/pex-1 filled_qty 10, V-102/pex-2 filled_qty 0]`: the venue is reporting that the north leg acquired 10 of 10.
+3. **Cycles 2-4** — nothing happens. `pending_orders() = 1`, `positions() = 0`, no corrective.
+
+The ledger has no submission for `pex-1`, so `resolve` (fill_classifier.rs:200) misses on `client_ref` and `locate_by_order(V-101)` finds no tracked record: a genuine 10-unit acquisition is attributed to **nothing**, exactly the "identity is recovered when a later observation carries that client_ref" path the spec requires and the code cannot perform. A fill event under `pex-1` is likewise dropped. The venue is left resting an order the engine has forgotten.
+
+**Concrete cycle sequence B — `Rejected`/`Transport` on an entry leg:** `fail_on(1, Rejected)` → `resting = [("pex-1",10), ("pex-2",10)]`, `pending_orders() = 1`, `positions() = 0`, and across three further cycles `pex-1` is never retried. Same result with `fail_on(2, Transport)`. The mandate is latched shut by one failed attempt.
+
+**Correct behaviour:** retain and track the `client_ref` for a leg whose acknowledgement was lost (treat it as potentially working, retry under the **same** `client_ref`, and let a later `open_orders`/fill observation carrying that `client_ref` establish its identity and attribution); on `Rejected`/`Transport`, leave the mandate open so a later cycle places the missing leg (a fresh reference is correct there — nothing was created to deduplicate onto).
+
+## 3. (lesser) The retry loop never re-evaluates what it is retrying
+
+**Location:** `src/engine/cycle.rs:195-219`.
+
+The loop re-sends every record with `order_id == None` at its committed `size`, every cycle, with no reference to the leg it belongs to and no re-check that the residual still justifies it. Two consequences beyond defect 1:
+
+- It keeps submitting economic orders for a mandate that no longer has a leg. Trace: IOC `pex-3` ack-lost on cycle 3; advance the clock to t=9800 so `retire_stale_orders` (cycle.rs:532-539) cancels the leg and removes it — `pending_orders() = 0` — yet cycles at t=9900 and t=9950 each submit `pex-3` again: `corrective = [("pex-3",10), ("pex-3",10)]`.
+- It never re-sizes: the record is submitted at the size decided when it was committed, not at the residual of the cycle that sends it (this is the size error quantified in defect 1).
+
+**Spec sentence violated:** "The exposure is still open, and a later cycle may **recompute the residual** and try again." A retry that cannot recompute the residual cannot honour "Neutralize only a strictly positive residual."
+
+---
+
+## Ranked list of confirmed defects
+
+| # | Severity | Location | Rule | Wrong observable outcome |
+|---|---|---|---|---|
+| 1 | **High** | cycle.rs:203 (loop 201-219) | 3, and 1 via the size | A `Rejected`/`Transport` retry leaves a dead record contributing full size as "working" and re-submits the stale committed size. Corrective sizes `[10, 10, 10]` instead of `[10, 4]`; the leg acquires 16 units for a 10-unit requirement. |
+| 2 | **High** | cycle.rs:261 and cycle.rs:280-301 | 3 | An entry leg whose submission fails is never tracked, never retried under its `client_ref`, and the mandate is latched in `attempted` before the attempt. A genuine 10-of-10 acquisition reported under `pex-1` records no pairing (`positions() = 0`) and is attributed to nothing; an orphan order stays at the venue. |
+| 3 | Medium | cycle.rs:195-219 | 3 | The retry loop re-sends the committed size every cycle without recomputing the residual, including after `retire_stale_orders` has cancelled the leg and dropped it from `pending_orders()`. |
+
+## Noted, not reported as defects
+
+- `retire_stale_orders` (cycle.rs:532-539) cancels an order `close_gap` already cancelled, producing a duplicate entry in the venue's cancel log (`["V-102", "V-101", "V-102"]` in one trace), and cancels the completed leg too. Observable but harmless and not contradicted by any spec sentence.
+- A `Rejected`/`Transport` neutralization leaves its `SubmissionRecord` in the ledger (cycle.rs:477). Nothing observable resolves to it, since no order exists under that reference.
+
+[step 134] The audit found a real bug I missed. On a *retry* of an unacknowledged neutralization, if the venue answers `Rejected`/`Transport`, the dead record keeps contributing its full size as "still working" and blocks the exposure forever. Let me fix that:
+
+[step 139] 30 diagnostics and 17 reproducer checks pass. Let me await the ledger audit.
+
+[step 143] I have everything I need. Let me verify the scratch work left `/app` untouched.
+
+[step 146] I left `/app` untouched (all probe work was done in a scratch copy at `/tmp/audit_app`, verified byte-identical to the current `/app/src/engine/fill_classifier.rs`, md5 `66854a50…`).
+
+# Audit: `src/engine/fill_classifier.rs` against the two specs
+
+**Method.** Read both specs and the frozen types, then differential-fuzzed the ledger against a model written directly from the spec text (20 000 randomized scenarios: 2–5 orders across 3 disjoint window buckets with recycled `order_id`s, boundary-biased timestamps at `start-1 / start / start+1 / start+899 / start+900 / start+901`, mixed fill events / open-order entries / blocks with duplicate covers and repeated `block_ref`s), plus targeted probes for every rule, a `covers`-permutation determinism test (5 000 × 3 permutations), and a conservation test (2 000 block shapes: total placed must equal `min(block_qty, basis)`).
+
+## Rules where I found no divergence
+
+- **Rule 1 (half-open window, tested against `at`, never against `OpenOrder`).** `in_window` (227–229) is `at >= start && at < start + ATTRIBUTION_WINDOW` — correct at both ends. It is applied to `FillEvent::at` (258) and to `BlockFill::at` via `claimant_index` (367), and `absorb_open_orders` passes `None` (397) so no window is tested against open-order entries. Boundary probes for **blocks** at `start`, `start+899`, `start+900`, `start+901`, `start-1` all behave correctly (including "outside but still finalizes").
+- **Rule 2 (direct progress is one cumulative high-water mark).** Both sources write the *same* field with a strict `>` (262–263, 405–406), so neither redelivery nor the two sources adding on top of each other can inflate an order. Confirmed by fuzz.
+- **Rule 3 (block progress additive, idempotent by `block_ref`).** `block_filled +=` (312) behind `absorbed_blocks.insert` (278). Two blocks with the same `block_ref` in one batch count once; two identical blocks under different refs each count (correctly: different match).
+- **Rule 4 (block division).** Eligible set, the `(window_start, venue_seq, order_id)` ordering, `basis`, `q = min(block_qty, basis)`, truncated shares, and the first-`r`-orders remainder are all exactly as specified — including the third tie-break (`order_id` lexicographic, with `venue_seq` tied because it is shared per venue tick), the dedup of a label repeated in `covers` (basis counts the order once), `q` capping at `basis`, and empty `E` allocating nothing. Every base unit of `q` is conserved.
+- **Rule 5 (block finality).** `finalize` (377–383) closes *every* tracked record carrying a covered label — including ones skipped for being outside the window or having no outstanding quantity — and a finalized record is excluded from a later basis. Correct. (The flip side of finality is defect 2 below.)
+- **Rule 7 (determinism).** No floating point, no epsilon (`Qty`/`i64` only; `Price` is never touched in this file); division goes through `proportional_share`; all tie-breaks are total and keyed on record state; permutation of `covers` and of insertion order never changed an outcome.
+
+## Defect 1 — an observation outside the window still binds the venue's label to the record (rule 6)
+
+**Location:** `resolve`, `src/engine/fill_classifier.rs:200–204` (reached from `absorb_event:255`, before the window test at 258).
+
+```rust
+if let Some(index) = self.index_by_client_ref.get(client_ref).copied() {
+    if self.submissions[index].order_id.is_none() {
+        self.submissions[index].order_id = Some(order_id.clone());   // <-- unconditional
+    }
+    return Some(index);
+}
+```
+
+**Spec violated** (`venue-semantics.md`, "The attribution window"):
+
+> "The venue recycles order identifiers. Once an order's window has closed, the venue is free to hand the same `order_id` to an unrelated order, and the feed replays for far longer than a window lasts. **An observation timestamped outside an order's window therefore names an identifier that is no longer the order the engine tracked, and counting it is a misattribution rather than a rounding matter.**"
+
+The quantity is correctly *not* credited (line 258), but the identifier is. The client_ref path is the only leak: the order_id fallback (`locate_by_order`, 210–219) correctly filters by window, and `absorb_open_orders` correctly passes `None` (no timestamp). The affected population is exactly the one the contract cares about — orders with no venue id yet, i.e. `AcknowledgementLost` orders — since the bind only happens when `order_id.is_none()`.
+
+**Trace A — closes a live order it does not own.** One record: `client_ref "c1"`, `order_id None`, `size 10`, `window_start = 1000 s` (window `[1000, 1900)`).
+
+1. `FillEvent { order_id: "X", client_ref: "c1", cumulative_filled_qty: 6, at: 6000 s }` → the code sets `c1.order_id = Some("X")` and then drops the fill (correct: no quantity).
+2. `BlockFill { block_ref: "b1", covers: ["X"], block_qty: 10, at: 6100 s }` → `claimant_index("X", 6100)` rejects `c1` (out of window), then `finalize(["X"])` finds `c1` by the mis-bound label and sets `finalized = true`.
+
+Observed: `is_finalized("c1") == true`, `outstanding_for("c1") == 0`, `attributed_for("c1") == 0`.
+Correct: the block names no order this engine is tracking. `c1` stays unfinalized with `outstanding_for == 10` and `order_for("c1") == None`. Downstream in `cycle.rs` the record now reads `LegVisibility::Closed`, so the engine covers a residual against an order the venue never closed — an economic order sent on the strength of a replay.
+
+**Trace B — invents base units.** Same step 1; then `BlockFill { block_ref "b2", covers ["X"], block_qty 6, at: 1200 s }` (inside `c1`'s window). `c1` is in-window, unfinalized, outstanding 10 → `E = {c1}`, `basis = 10`, `q = 6`, so `block_filled = 6`.
+Observed: `attributed_for("c1") == 6`. Correct: `0` — the only evidence that `"X"` is `c1`'s label is an observation the spec says is about a different order, so `E` is empty and the block attributes nothing. As a neutralization this shrinks `working_in` from 10 to 4 and leaves 6 units of real exposure uncovered; as a leg it over-states `acquired_for`.
+
+**Correct behaviour:** bind the venue label only from an observation that is actually about the order — i.e. one carrying no timestamp (open-order entries) or one whose `at` is inside the record's window. Practically: test the window *before* the bind in `resolve` (or stamp only after `absorb_event` has accepted the event), so "identity is recovered when a later observation carries that `client_ref`" (`reconciliation-contract.md`, Submission outcomes) never fires on an out-of-window observation.
+
+## Defect 2 — a finalized order keeps acquiring base units (rule 5 / block finality)
+
+**Location:** `absorb_event:254–265` and `absorb_open_orders:394–409` — neither consults `record.finalized`, although `outstanding_for` (139–145) and `claimant_index` (362–370) both do.
+
+**Spec violated** (`venue-semantics.md`, "Block fills"):
+
+> "A block is final for every order it covers — **every** order, not only the ones the division allocated something to. **Once a block naming an order has been observed, that order will never acquire another base unit**; the venue has closed it."
+
+and (`reconciliation-contract.md`, "Block finality"):
+
+> "Finalization is a statement about the venue rather than about the arithmetic: the venue has closed the order and cancelled whatever part of the block did not fill. **A finalized order will never acquire another base unit, is not live**, and is not still working."
+
+`absorb_open_orders` also contradicts its own doc comment (385–393): an entry whose identifier "is live is by definition still the order the engine tracked" — a finalized order is not live, and `venue-semantics.md` states "**a covered order never appears in `open_orders` afterwards**".
+
+**Trace.** Record `c1`: `order_id "o1"`, `size 10`, window `[1000, 1900)`.
+
+1. `BlockFill { block_ref "b1", covers ["o1"], block_qty 4, at: 1010 s }` → `block_filled = 4`, `finalized = true`. `attributed_for = 4` ✓.
+2. A later cycle, the feed replays: `FillEvent { order_id "o1", client_ref "c1", cumulative_filled_qty: 10, at: 1005 s }` → in-window, so `direct_filled = 10`.
+
+Observed: `attributed_for("c1") == 14` for an order of size 10. Correct: `4`.
+The same leak via `OpenOrder { order_id "o1", client_ref "c1", filled_qty: 9 }` after the block: observed `13`, correct `4`.
+
+**Consequence.** With `14 >= size 10`, `leg_is_complete` (`acquired_for >= leg.size`) returns true and the engine opens a position for a leg that acquired 4 units; for a neutralization, `working_in` collapses to 0 and the residual is recomputed as if nothing were committed. This is the "neutralizing quantity the desk already owns doubles the exposure" failure the contract warns about, in reverse.
+
+**Correct behaviour:** once `finalized` is set, no later observation may raise `direct_filled` (or `block_filled`); the high-water mark stops at the moment of finalization. Note the ledger already processes events before blocks within a batch (237–242), so a legitimate pre-block fill in the *same* batch is still credited — that ordering is right and must be kept.
+
+## Under-determined / ambiguous (no defect claimed, but each can decide a base unit)
+
+- **`venue_seq: None` in the block ordering** (`Claimant.venue_seq`, 44; sort at 345–350). `Option::cmp` puts `None` before every `Some(_)`, so an order whose `venue_seq` is unknown sorts first among orders sharing a window start and takes a remainder unit ahead of them. A record can hold `order_id = Some(..)` with `venue_seq = None`, because `resolve` (201–203) learns a label from a fill event but nothing ever fills in `venue_seq` there. Concrete: two orders tracked in the same cycle — an `AcknowledgementLost` neutralization that later learned its id from a fill event, and an acknowledged order with `venue_seq 5` — plus a block of 1 over both: the unit goes to the `None` record. The spec says only "the order's `venue_seq`"; any fixed choice is defensible, but the choice should be made explicitly rather than inherited from `Option`'s `Ord`.
+- **`absorb_batch` returns `batch.events.len()`** (236), so `Engine::observed_fill_events` counts events the ledger discarded (untracked orders, out-of-window replays). Neither spec document defines this counter, so I record no divergence — but "events observed" and "events attributed" are different numbers and the name suggests the latter.
+- Two tracked records carrying the same label *with overlapping windows* (which the recycling rule excludes) make `claimant_index` pick one (max `(window_start, index)`) and silently drop the other from `E`; should the venue ever do this, `E` is under-determined.
+
+## Ranked list of confirmed defects
+
+1. **Out-of-window observations bind the venue's `order_id` to the record** — `resolve`, lines 200–204. Misattribution in both directions: it lets a later block *close* an order it does not name (trace A) and *attribute invented base units* to it (trace B). Fires on the ordinary "feed replays for far longer than a window lasts" case, on exactly the orders (`AcknowledgementLost`) whose identity the contract is most careful about.
+2. **Finalized orders keep acquiring base units** — `absorb_event:254–265` and `absorb_open_orders:394–409`. Violates "A finalized order will never acquire another base unit"; inflates a 4-unit order to 14 and can complete a leg that never filled. Requires an observation the venue model says it will not emit, so it is a finality-enforcement gap rather than an every-cycle failure — but finality is the ledger's to enforce, and both other finality consumers in the file (`outstanding_for`, `claimant_index`) do honour it.
+3. *(under-determined, not a confirmed defect)* `venue_seq = None` sorts first in the block ordering and can decide a remainder unit.
+
+[step 170] The ledger audit came back with two confirmed divergences from the spec; both are now fixed in `src/engine/fill_classifier.rs`, with three new diagnostics pinning them down.
+
+**1. An out-of-window observation no longer binds the venue's label** (`resolve`). The quantity was already dropped by the window test, but the `order_id` stuck — so a replayed fill taught the ledger that a recycled identifier belonged to an order the venue had since released it from. A later block naming that id would finalize the order (making it look venue-closed, and so coverable) or allocate it invented base units. Now only an observation that is actually about the order — one carrying no timestamp, i.e. an `open_orders` entry, or one whose `at` the order's own window contains — may teach it the label.
+
+**2. A finalized order never acquires another base unit** (`absorb_event`, `absorb_open_orders`). Both raised `direct_filled` without consulting `finalized`, although `outstanding_for` and `claimant_index` both honour it. A block allocating 4 of 10 followed by a replayed cumulative reading of 10 produced 14 units attributed to a 10-unit order — enough to complete a leg that never filled, or to collapse a committed neutralization's working quantity and leave real exposure uncovered. Finalization now freezes the high-water mark where the block left it. Events are still folded before blocks within a batch, so a fill the venue genuinely reported before its block still counts (new diagnostic for that too).
+
+I also made the one under-determined choice explicit rather than inherited: an order with no known `venue_seq` sorts ahead of one with a known sequence in the block ordering. The documents say nothing about a missing sequence, so the tie-break is now stated in the code instead of falling out of `Option`'s `Ord`.
+
+State: `cargo build --offline` clean, `cargo test --offline` → 33 passed / 0 failed, `cargo run --offline --bin reproduce` → 17 passed / 0 failed. `src/ports/` and `src/types/` (apart from `snapshot.rs`) remain untouched, and custody inventory is still read only for affordability — never for attribution.

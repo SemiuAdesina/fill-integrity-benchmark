@@ -1,0 +1,164 @@
+    SNAPSHOT 000 stepstart 041e166dc075
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" | head -50; echo "---"; find /app -type f -name "*.rs" | head -80; ec :: age] name = "pairing_engine" version = "0.1.0" edition = "2021" publish = false  [workspace]  [lib] name = "pairing_engine" path = "src/lib.rs"  [dependencies] 
+[3] BASH rc=0 0.0s :: wc -l spec/*.md src/**/*.rs src/*.rs tests/*.rs tests/harness/*.rs 2>/dev/null :: ress.rs    200 tests/neutralization_lifecycle.rs    124 tests/observation_identity.rs    136 tests/restart_recovery.rs   1192 tests/harness/mod.rs   4269 total 
+[18] BASH rc=0 0.0s :: cat src/lib.rs src/engine/mod.rs src/engine/config.rs src/types/mod.rs src/types/strategy.rs src/typ ::       }     } }  impl fmt::Display for Timestamp {     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {         write!(f, "t{}", self.millis)     } } 
+[31] WRITE /app/src/types/snapshot.rs -> W ok
+    SNAPSHOT 029 step31 362978594f76
+[34] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 032 step34 b32c607f4348
+[37] WRITE /app/src/engine/cycle.rs -> W ok
+    SNAPSHOT 035 step37 adf563c9c17f
+[38] BASH rc=0 0.0s :: sed -i 's/^use crate::types::ids::{ClientRef, OrderId, StrategyId, Venue};$/use crate::types::ids::{ :: 
+    SNAPSHOT 036 step38 a2667f1233b5
+[39] BASH rc=0 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[40] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 038 step40 e21f7510dcc9
+[41] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 039 step41 4ac87d9dc69f
+[42] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 040 step42 a9de249d13b8
+[43] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 041 step43 f1982bd4b4ab
+[44] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -20 && for t in observation_identity direct_progress block_reconci :: ion_identity === === direct_progress === === block_reconciliation === === neutralization_lifecycle === === restart_recovery === === cross_mandate_isolation === 
+[45] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 043 step45 7a31f07440f8
+[46] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 044 step46 76801392a31a
+[47] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 045 step47 1fd14de28242
+[48] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -20 && for t in observation_identity direct_progress block_reconci :: 
+[57] BASH rc=0 0.0s :: find /app/src /app/tests -type f -name "*.rs" | head -50; echo "---"; ls /app :: mod.rs /app/tests/neutralization_lifecycle.rs /app/tests/observation_identity.rs /app/tests/restart_recovery.rs --- Cargo.lock Cargo.toml spec src target tests 
+[60] WRITE /app/tests/extra_contract.rs -> W ok
+[61] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -vE "^(warning|note|help|\s*\||\s*=|-->|\d+ \ :: 
+[62] EDIT /app/tests/harness/mod.rs -> E ok
+[63] BASH rc=0 0.0s :: cargo test 2>&1 | tail -60 :: 
+[64] BASH rc=0 0.0s :: python3 - <<'PY' import re p='tests/harness/mod.rs' s=open(p).read() # 1. add field to WorldState s  :: ok done 
+[65] BASH rc=0 0.0s :: wc -l tests/harness/mod.rs && grep -n "venue_log" -r tests src | head -30 && sed -n '1050,1110p' tes ::  /// A two-legged strategy candidate: the instrument and price it takes on the /// north venue, the one it rests on the south venue, and the depth available on 
+[66] BASH rc=0 0.0s :: grep -n "cancelled_order_ids: world" -A6 tests/harness/mod.rs :: positions, 1101-        pending_orders, 1102-        snapshot: world.saved(), 1103-        cycle_errors, 1104-        inventory: world.inventory(), 1105-    }; 
+[67] BASH rc=0 0.0s :: git status 2>&1 | head -20; md5sum tests/harness/mod.rs; sed -n '340,400p' tests/harness/mod.rs ::   }      /// Taker orders on one instrument across all strategies and venues.     pub fn takers_on_instrument(&self, instrument_id: &str) -> Vec<&VenueOrder> { 
+[69] EDIT /app/tests/harness/mod.rs -> E ok
+[70] BASH rc=0 0.0s :: wc -l src/engine/*.rs src/types/*.rs src/ports/mod.rs; echo "---"; grep -n "VenueEvent" -A 20 tests/ :: lures: usize, 479-    cancel_failures: usize, 480-    taker_rejections: usize, 481-    taker_autofill: bool, 482-    next_order_id: u64, 483-    next_seq: u64, 
+[71] BASH rc=1 0.0s :: cargo build --offline --tests 2>&1 | grep -E "^(error|warning: unused)" | head; for t in observation :: 
+[72] EDIT /app/tests/extra_contract.rs -> E ok
+[73] EDIT /app/tests/extra_contract.rs -> E ok
+[74] EDIT /app/tests/extra_contract.rs -> E ok
+[75] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -vE "^(warning|note|help|\s*\||\s*=|-->|\d+ \ :: 
+[76] EDIT /app/tests/extra_contract.rs -> E ok
+[77] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -E "^(test |test result|thread|the same|asser :: 
+[78] BASH rc=0 0.0s :: grep -n "in_window\|remainder\|finalize\|divisible\|working_for\|visibility\|resting_at_venue" src/e :: .rs:404:    fn finalize(&mut self, covers: &[OrderId], at: Timestamp) { src/engine/fill_classifier.rs:414:            self.submissions[index].finalized = true; 
+[79] WRITE /app/tests/fuzz_invariants.rs -> W ok
+[80] BASH rc=0 0.0s :: rm -rf /tmp/probe && mkdir -p /tmp/probe && cp -r /app/src /app/tests /app/Cargo.toml /app/Cargo.loc :: push(VenueEvent::Submitted { 930:        state.venue_log.push(VenueEvent::Cancelled { order_id: order_id.clone() }); 1100:        venue_log: world.venue_log(), 
+[81] BASH rc=0 0.0s :: sed -n '1090,1105p' /app/tests/harness/mod.rs; echo "=== md5"; md5sum /app/tests/harness/mod.rs /tmp :: probe/tests/harness/mod.rs === mtime 2026-09-10 21:12:42.538881908 +0000 /app/tests/harness/mod.rs 2026-09-10 21:12:41.913430919 +0000 /app/src/engine/cycle.rs 
+[83] BASH rc=0 0.0s :: cargo test --offline --test fuzz_invariants 2>&1 | grep -vE "^(warning|note|help|\s*\||\s*=|-->|\d+  :: 
+[85] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "warning|error" -A4 | head -40; echo "--- clippy-ish: dead code :: --- clippy-ish: dead code in lib --- 
+[86] BASH rc=0 0.0s :: grep -rn "PendingOrderManager" src/ | head :: truct PendingOrderManager { src/engine/managers.rs:14:impl PendingOrderManager { src/engine/mod.rs:13:pub use managers::{PendingOrderManager, PositionManager}; 
+[87] BASH rc=0 0.0s :: python3 - <<'PY' p='src/engine/managers.rs' s=open(p).read() start=s.index('#[derive(Debug, Clone, D :: ok BUILD_DONE 
+    SNAPSHOT 094 step87 692b2fc8a53a
+[88] BASH rc=0 0.0s :: sed -i '/^use crate::types::time::Timestamp;$/d' src/engine/managers.rs && cargo build --offline --t :: BUILD_DONE 
+    SNAPSHOT 095 step88 5e5b7cbdc842
+[89] BASH rc=1 0.0s :: for t in observation_identity direct_progress block_reconciliation neutralization_lifecycle restart_ :: alization_lifecycle         restart_recovery                 cross_mandate_isolation          extra_contract                   fuzz_invariants                  
+[90] BASH rc=0 0.0s :: grep -rn "NeutralizationRecord" src/ tests/ 2>/dev/null; echo "---"; cargo test --offline 2>&1 | gre :: --- OK 
+[91] BASH rc=0 0.0s :: head -20 /app/tests/block_reconciliation.rs; echo "==="; grep -n "^fn \|^#\[test\]" /app/tests/*.rs  :: s/neutralization_lifecycle.rs:52:#[test] /app/tests/neutralization_lifecycle.rs:53:fn quantity_already_working_in_a_corrective_order_is_not_corrected_again() { 
+[92] BASH rc=0 0.0s :: ls -la /app/tests/; stat -c '%y %n' /app/tests/*; echo "==="; wc -l /app/tests/*.rs :: tests/fuzz_invariants.rs   200 /app/tests/neutralization_lifecycle.rs   124 /app/tests/observation_identity.rs   136 /app/tests/restart_recovery.rs  1351 total 
+[93] BASH rc=0 0.0s :: git status --short 2>/dev/null | head -20; echo "--- diff stat ---"; git diff --stat 2>/dev/null | t :: --- diff stat --- 
+[96] BASH rc=0 0.0s :: cd /tmp/probe && rm -rf tests && cp -r /app/tests . && cargo test 2>&1 | tail -80 :: 
+[97] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 104 step97 4651f9bdaaeb
+[98] BASH rc=1 0.0s :: cargo build --offline 2>&1|tail -2; for t in observation_identity direct_progress block_reconciliati :: alization_lifecycle         restart_recovery                 cross_mandate_isolation          extra_contract                   fuzz_invariants                  
+[101] EDIT /app/tests/extra_contract.rs -> E ok
+[102] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -E "^(test |test result|thread|a block)" | he :: 
+[103] BASH rc=1 0.0s :: cargo test --offline --test extra_contract the_documented 2>&1 | grep -A4 "panicked" :: 
+[104] WRITE /tmp/probe/tests/probe.rs -> W ok
+[105] EDIT /app/tests/extra_contract.rs -> E ok
+[106] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -E "^(test result|thread|assertion|a block)"  :: 
+[107] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 115 step107 f83fc5bce5bc
+[108] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 116 step108 999f7405cb5b
+[109] BASH rc=1 0.0s :: cargo build --offline 2>&1|tail -2; for t in observation_identity direct_progress block_reconciliati :: alization_lifecycle         restart_recovery                 cross_mandate_isolation          extra_contract                   fuzz_invariants                  
+[110] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe 2>&1 | tail -70 :: 
+[111] EDIT /tmp/probe/tests/probe.rs -> E ok
+[113] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe p4 2>&1 | tail -25 :: 
+[115] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -2; echo "--- all tests ---"; cargo test --offline 2>&1 | grep -E  :: --- all tests --- 
+[116] WRITE /tmp/probe/tests/probe2.rs -> W ok
+[117] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe2 -- --nocapture 2>&1 | tail -60 :: 
+[119] BASH rc=0 0.0s :: ls -a && git status --short 2>&1 | head -20 :: . .. Cargo.lock Cargo.toml spec src target tests bash: line 1: git: command not found 
+[121] BASH rc=1 0.0s :: grep -n "unwrap()\|expect(\|panic!\|unreachable!\|\[0\]\|last()\|first()" src/engine/*.rs src/types/ :: 
+[122] BASH rc=0 0.0s :: grep -n " / \| % \|checked_div\|checked_sub" src/engine/*.rs src/types/*.rs :: s `(total * weight) / basis` evaluated in integer arithmetic src/types/ids.rs:108:    (total * weight) / basis src/types/time.rs:26:        self.millis / 1_000 
+[124] BASH rc=0 0.0s :: sleep 0; echo waited :: waited 
+[125] WRITE /tmp/probe/tests/probe3.rs -> W ok
+[126] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe3 -- --nocapture 2>&1 | tail -40 :: 
+[127] BASH rc=0 0.0s :: sleep 0; echo waited :: waited 
+[128] WRITE /tmp/probe/tests/probe4.rs -> W ok
+[129] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe4 -- --nocapture 2>&1 | tail -20 :: 
+[130] BASH rc=0 0.0s :: cd /tmp/probe && python3 - <<'EOF' import re p='tests/probe4.rs' s=open(p).read() s=s.replace(""" .s :: 
+[131] WRITE /tmp/probe/tests/probe5.rs -> W ok
+[132] BASH rc=0 0.0s :: cd /tmp/probe && cargo test --test probe5 -- --nocapture 2>&1 | tail -25 :: 
+[136] BASH rc=0 0.0s :: grep -n "fn poll\|next_cursor\|Cursor\|RedeliverAll\|blocks" /app/tests/harness/mod.rs | head -60 :: locks 1012:            .chain(state.blocks.iter().map(|block| block.seq)) 1022:            blocks, 1023:            next_cursor: Cursor::new(next.to_string()), 
+[138] BASH rc=0 0.0s :: grep -rn "observed_fill_events" /app/tests /app/src | grep -v "^/app/src/engine/cycle.rs"; echo "--- ::  **same** `client_ref`, so the venue's idempotency resolves it onto the original 125-  order. A retry under a freshly minted reference places the same economic 
+[140] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 147 step140 d30e846791b9
+[141] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 148 step141 999f7405cb5b
+[142] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 149 step142 58b311ba88b1
+[143] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 150 step143 e5f09355bf39
+[144] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 151 step144 80f5eacef223
+[146] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 153 step146 0058a1ca9cac
+[147] EDIT /app/src/types/snapshot.rs -> E ok
+    SNAPSHOT 154 step147 dac59e4c1ee3
+[148] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 155 step148 8a88357e8d44
+[149] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 156 step149 16f854947c96
+[150] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 157 step150 4e4a5d2c2404
+[151] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 158 step151 6fbc719e5791
+[152] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 159 step152 0a7b338ec381
+[153] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 160 step153 c4bae25f58f1
+[154] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 161 step154 f8dc7d1724c7
+[155] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 162 step155 e6f9ddf80ec9
+[156] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 163 step156 c6e93f8c19c3
+[157] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 164 step157 d80522ed96d0
+[158] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 165 step158 e840e552ab08
+[159] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 166 step159 75d3bff34f62
+[160] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 167 step160 ba0649ab18e3
+[161] BASH rc=0 0.0s :: cargo build --offline 2>&1 | grep -E "^(error|warning)" -A 8 | head -60 :: 
+[162] BASH rc=0 0.1s :: cargo test --offline 2>&1 | grep -E "^(test result|error|failures:|---- )" | head -30 :: 
+[163] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | sed -n '/a_block_entirely_outside/,/^failures:/p'  :: 
+[165] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 172 step165 a8bac71dee28
+[166] BASH rc=0 0.0s :: cargo test --offline 2>&1 | grep -E "^(test result|error|failures:|---- )" | head -30 :: 
+[167] BASH rc=0 0.0s :: grep -n "RecycleClosedOrderId" -A 25 /app/tests/harness/mod.rs | head -45; echo "=== OrderRef ===";  :: gle named order. Quantities on the 191-    /// wire are cumulative, so repeating this action does not double-count. 192-    Fill { order: OrderRef, qty: Qty }, 
+[168] BASH rc=0 0.0s :: grep -n "pub fn takers_for\|pub fn taker_orders\|pub cancelled_order_ids\|pub positions\|pub attempt ::      self.taker_orders() 404-            .into_iter() 405-            .filter(|order| order.instrument_id.as_str() == instrument_id) 406-            .collect() 
+[170] BASH rc=0 0.0s :: tail -5 /app/tests/extra_contract.rs; echo "=== count ==="; grep -c "^fn \|^#\[test\]" /app/tests/ex ::         vec!["zi".to_string(), "zj".to_string()],         "positions {:?}",         position_ids(&outcome)     ); } === count === 23 
+[171] BASH rc=0 0.0s :: cat >> /app/tests/extra_contract.rs <<'EOF' /// A withdrawn order keeps the identifier the venue gav :: 
+[172] EDIT /app/tests/extra_contract.rs -> E ok
+[173] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | grep -E "^(test |test result|error)" | head -30 :: 
+[174] BASH rc=0 0.0s :: cargo test --offline --test extra_contract 2>&1 | sed -n '/^failures:/,$p' | head -40; echo "=== act ::     LoseNextAcknowledgementOn { venue: Venue }, 258:    SetBestAsk { instrument: InstrumentId, price: Price }, 266:    RecycleClosedOrderId { from: OrderRef }, 
+[175] BASH rc=0 0.0s :: sed -n '189,270p' /app/tests/harness/mod.rs :: e clock first.     RecycleClosedOrderId { from: OrderRef }, }  /// One cycle of the run: the actions the world performs before the engine's /// cycle executes. 
+[176] EDIT /app/tests/extra_contract.rs -> E ok
+[177] BASH rc=0 0.0s :: python3 - <<'PY' import re p='tests/extra_contract.rs' s=open(p).read() start=s.index('/// Both legs :: d the corrective order in full and closed it, so the mandate is \          complete; the positions recorded are {:?}",         position_ids(&outcome)     ); }  
+[178] BASH rc=1 0.0s :: cp src/engine/cycle.rs /tmp/cycle.bak && cp src/engine/fill_classifier.rs /tmp/fc.bak && python3 - < :: 
+    SNAPSHOT 185 step178 222ff2b121b4
+[179] BASH rc=1 0.0s :: cp /tmp/cycle.bak src/engine/cycle.rs && python3 - <<'PY' p='src/engine/fill_classifier.rs' s=open(p :: 
+    SNAPSHOT 186 step179 ec1990665980
+[180] BASH rc=1 0.0s :: cp /tmp/fc.bak src/engine/fill_classifier.rs && cargo test --offline 2>&1 | grep -E "^(test result|e :: 
+    SNAPSHOT 187 step180 a8bac71dee28
+[181] BASH rc=1 0.0s :: cat >> /app/tests/extra_contract.rs <<'EOF' /// A block closes every order it names, including one o :: 
+[182] BASH rc=0 0.0s :: python3 - <<'PY' p='src/engine/cycle.rs' s=open(p).read() s=s.replace(""" // An order the venue has  :: 
+[183] BASH rc=1 0.0s :: cargo build --offline 2>&1 | tail -3; echo "=== all ==="; cargo test --offline 2>&1 | grep -E "^(tes :: === all === 
+[186] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -2; for s in observation_identity direct_progress block_reconcilia :: conciliation        neutralization_lifecycle    restart_recovery            cross_mandate_isolation     extra_contract              fuzz_invariants             

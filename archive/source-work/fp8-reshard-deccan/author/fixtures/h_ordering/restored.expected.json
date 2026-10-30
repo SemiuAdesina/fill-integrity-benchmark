@@ -1,0 +1,30 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "states": [
+  {"tensor": "Zeta.weight", "role": "forward", "stage": 2, "shard": 0, "global_block": 0, "scale": 32, "inverse_scale": 524288, "amax_history": [2571, 520368, 1746, 63531], "cursor": 0},
+  {"tensor": "Zeta.weight", "role": "forward", "stage": 2, "shard": 0, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [2843, 2841, 0, 1807], "cursor": 0},
+  {"tensor": "Zeta.weight", "role": "forward", "stage": 11, "shard": 9, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [2843, 2841, 0, 1807], "cursor": 0},
+  {"tensor": "Zeta.weight", "role": "backward", "stage": 10, "shard": 9, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [3531, 2674, 1, 3947], "cursor": 0},
+  {"tensor": "Zeta.weight", "role": "backward", "stage": 11, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 1867, 1245, 0], "cursor": 0},
+  {"tensor": "Zeta.weight", "role": "backward", "stage": 11, "shard": 0, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [3531, 2674, 1, 3947], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "forward", "stage": 2, "shard": 9, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [1159, 0, 0, 2722], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "forward", "stage": 2, "shard": 9, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [3666, 3914, 0, 2786], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "forward", "stage": 10, "shard": 0, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [1159, 0, 0, 2722], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "backward", "stage": 10, "shard": 9, "global_block": 0, "scale": 256, "inverse_scale": 65536, "amax_history": [4050, 43622, 2506, 342], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "backward", "stage": 10, "shard": 9, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 152, 4073, 0], "cursor": 0},
+  {"tensor": "alpha.weight", "role": "backward", "stage": 11, "shard": 0, "global_block": 0, "scale": 256, "inverse_scale": 65536, "amax_history": [4050, 43622, 2506, 342], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "forward", "stage": 2, "shard": 9, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 2021, 806389, 298510], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "forward", "stage": 2, "shard": 9, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 1899, 987976, 0], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "forward", "stage": 11, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [0, 2021, 806389, 298510], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "backward", "stage": 10, "shard": 0, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [56, 0, 2601, 3434], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "backward", "stage": 10, "shard": 9, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [56, 0, 2601, 3434], "cursor": 0},
+  {"tensor": "layer.10.weight", "role": "backward", "stage": 10, "shard": 9, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 3941, 941, 333], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "forward", "stage": 10, "shard": 0, "global_block": 0, "scale": 16, "inverse_scale": 1048576, "amax_history": [3672, 1047342, 1874, 685206], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "forward", "stage": 10, "shard": 0, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [843733, 311, 0, 320], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "forward", "stage": 11, "shard": 9, "global_block": 1, "scale": 16, "inverse_scale": 1048576, "amax_history": [843733, 311, 0, 320], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "backward", "stage": 2, "shard": 0, "global_block": 0, "scale": 4096, "inverse_scale": 4096, "amax_history": [3962, 2898, 3396, 0], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "backward", "stage": 2, "shard": 0, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 731, 355, 3728], "cursor": 0},
+  {"tensor": "layer.2.weight", "role": "backward", "stage": 2, "shard": 9, "global_block": 1, "scale": 4096, "inverse_scale": 4096, "amax_history": [0, 731, 355, 3728], "cursor": 0}
+ ]
+}

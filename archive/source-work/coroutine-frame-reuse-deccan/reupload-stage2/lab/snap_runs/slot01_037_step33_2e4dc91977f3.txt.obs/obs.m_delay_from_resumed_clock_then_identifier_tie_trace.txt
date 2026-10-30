@@ -1,0 +1,11 @@
+OBS 0 B 4:true
+OBS 1 B 4:true
+OBS 2 B 4:true
+OBS 3 B 4:true
+OBS 4 E 29:A1@5;S1=D;A2@6;S2=D;A3@6;S3=D
+OBS 5 E 2:10
+OBS 6 E 2:11
+OBS 7 E 2:30
+OBS 8 E 1:6
+OBS 9 E 1:0
+END 10 0

@@ -25,7 +25,6 @@ container, and will not select the category or language on your behalf.
 | 3 | Task category | — | **UNRESOLVED** |
 | 4 | Subcategory | — | **UNRESOLVED** |
 | 5 | ZIP file | `/Users/macbok/Downloads/attributable-fill-detection-v1.zip` | Not yet built |
-| 6 | `canary_string` | the private accepted-proposal value | Ready, never printed here |
 
 ### 3 — Task category — UNRESOLVED
 
@@ -47,7 +46,6 @@ Note deliberately: **subcategory is not being added to `task.toml`** merely beca
 local checker requests it. It is a website field. Whether it *also* belongs in `task.toml` is
 a question the Official Contributor Guidelines answer, and they have not been read.
 
-### 6 — `canary_string`
 
 Two destinations, both required:
 
@@ -96,7 +94,6 @@ Do not upload until every line is true:
 - [ ] ZIP built at `/Users/macbok/Downloads/attributable-fill-detection-v1.zip`
 - [ ] Original repository re-verified against baselines, unchanged
 - [ ] Task category and Subcategory resolved from the live dropdowns
-- [ ] `canary_string` field located on the platform
 
 ## Current state
 

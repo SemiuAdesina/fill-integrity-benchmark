@@ -1,0 +1,132 @@
+150	    /// assumed live from it.
+151	    fn sync_observations(&mut self) {
+152	        match self.gateway.open_orders() {
+153	            Ok(open) => {
+154	                self.ledger.absorb_open_orders(&open);
+155	                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();
+156	            }
+157	            Err(_) => {
+158	                self.resting_at_venue.clear();
+159	            }
+160	        }
+161	        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {
+162	            self.observed_fill_events += self.ledger.absorb_batch(batch);
+163	        }
+164	    }
+165	
+166	    /// Match up corrective orders whose fate was unknown when they were sent.
+167	    ///
+168	    /// A record without an `order_id` is one the venue never acknowledged. The
+169	    /// client reference is the venue's idempotency key, so resubmitting under it
+170	    /// returns the original order rather than creating a second one, and a retry
+171	    /// under a freshly minted reference would ask for the exposure twice.
+172	    fn reconcile_neutralizations(&mut self, now: Timestamp) {
+173	        // Identity is recovered when a later observation carries the reference.
+174	        let mut recovered: Vec<(ClientRef, OrderId)> = Vec::new();
+175	        for record in self.neutralizations.iter() {
+176	            if record.order_id.is_some() {
+177	                continue;
+178	            }
+179	            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {
+180	                recovered.push((record.client_ref.clone(), order_id));
+181	            }
+182	        }
+183	        for (client_ref, order_id) in recovered {
+184	            if let Some(slot) = self
+185	                .neutralizations
+186	                .iter_mut()
+187	                .find(|slot| slot.client_ref == client_ref)
+188	            {
+189	                slot.order_id = Some(order_id);
+190	            }
+191	        }
+192	
+193	        let unconfirmed: Vec<NeutralizationRecord> = self
+194	            .neutralizations
+195	            .iter()
+196	            .filter(|record| record.order_id.is_none())
+197	            .cloned()
+198	            .collect();
+199	        for record in unconfirmed {
+200	            let request = Self::neutralization_request(&record);
+201	            match self.gateway.submit(&request) {
+202	                Ok(accepted) => {
+203	                    self.ledger.track(
+204	                        record.client_ref.clone(),
+205	                        Some(accepted.order_id.clone()),
+206	                        Some(accepted.venue_seq),
+207	                        record.size,
+208	                        now,
+209	                    );
+210	                    if let Some(slot) = self
+211	                        .neutralizations
+212	                        .iter_mut()
+213	                        .find(|slot| slot.client_ref == record.client_ref)
+214	                    {
+215	                        slot.order_id = Some(accepted.order_id);
+216	                    }
+217	                }
+218	                // The venue may have created it. Keep the record and the
+219	                // reference and try again on a later cycle.
+220	                Err(SubmitError::AcknowledgementLost) => {}
+221	                // Nothing was created by this attempt, so there is nothing to
+222	                // keep: drop the commitment and let a later cycle recompute the
+223	                // residual and try again.
+224	                Err(_) => {
+225	                    self.neutralizations
+226	                        .retain(|slot| slot.client_ref != record.client_ref);
+227	                    self.ledger.discard(&record.client_ref);
+228	                }
+229	            }
+230	        }
+231	    }
+232	
+233	    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {
+234	        OrderRequest {
+235	            strategy_id: record.strategy_id.clone(),
+236	            instrument_id: record.instrument_id.clone(),
+237	            venue: record.venue,
+238	            kind: OrderKind::ImmediateOrCancel,
+239	            limit_price: record.limit_price,
+240	            size: record.size,
+241	            client_ref: record.client_ref.clone(),
+242	            expiry_time: record.expiry_time,
+243	        }
+244	    }
+245	
+246	    fn enter_new_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {
+247	        let available_cash = self.inventory.settlement_balance()?;
+248	        let candidates = self.strategies.candidates()?;
+249	        for candidate in candidates {
+250	            if self.positions.has(&candidate.strategy_id) {
+251	                continue;
+252	            }
+253	            if self.attempted.contains(&candidate.strategy_id) {
+254	                continue;
+255	            }
+256	            if candidate.pair_cost() > self.config.max_pair_cost {
+257	                continue;
+258	            }
+259	            if now >= candidate.expiry_time {
+260	                continue;
+261	            }
+262	            let north_size = leg_size(candidate.north_depth, self.config.max_leg_size);
+263	            let south_size = leg_size(candidate.south_depth, self.config.max_leg_size);
+264	            if north_size < self.config.min_leg_size || south_size < self.config.min_leg_size {
+265	                continue;
+266	            }
+267	            let notional = (candidate.north_price * north_size as f64)
+268	                + (candidate.south_price * south_size as f64);
+269	            if notional > available_cash {
+270	                continue;
+271	            }
+272	            self.attempted.insert(candidate.strategy_id.clone());
+273	            self.place_leg(&candidate, Venue::North, north_size, now);
+274	            self.place_leg(&candidate, Venue::South, south_size, now);
+275	        }
+276	        Ok(())
+277	    }
+278	
+279	    fn place_leg(&mut self, candidate: &StrategyCandidate, venue: Venue, size: Qty, now: Timestamp) {
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "    /// assumed live from it.\n    fn sync_observations(&mut self) {\n        match self.gateway.open_orders() {\n            Ok(open) => {\n                self.ledger.absorb_open_orders(&open);\n                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();\n            }\n            Err(_) => {\n                self.resting_at_venue.clear();\n            }\n        }\n        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {\n            self.observed_fill_events += self.ledger.absorb_batch(batch);\n        }\n    }\n\n    /// Match up corrective orders whose fate was unknown when they were sent.\n    ///\n    /// A record without an `order_id` is one the venue never acknowledged. The\n    /// client reference is the venue's idempotency key, so resubmitting under it\n    /// returns the original order rather than creating a second one, and a retry\n    /// under a freshly minted reference would ask for the exposure twice.\n    fn reconcile_neutralizations(&mut self, now: Timestamp) {\n        // Identity is recovered when a later observation carries the reference.\n        let mut recovered: Vec<(ClientRef, OrderId)> = Vec::new();\n        for record in self.neutralizations.iter() {\n            if record.order_id.is_some() {\n                continue;\n            }\n            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {\n                recovered.push((record.client_ref.clone(), order_id));\n            }\n        }\n        for (client_ref, order_id) in recovered {\n            if let Some(slot) = self\n                .neutralizations\n                .iter_mut()\n                .find(|slot| slot.client_ref == client_ref)\n            {\n                slot.order_id = Some(order_id);\n            }\n        }\n\n        let unconfirmed: Vec<NeutralizationRecord> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .cloned()\n            .collect();\n        for record in unconfirmed {\n            let request = Self::neutralization_request(&record);\n            match self.gateway.submit(&request) {\n                Ok(accepted) => {\n                    self.ledger.track(\n                        record.client_ref.clone(),\n                        Some(accepted.order_id.clone()),\n                        Some(accepted.venue_seq),\n                        record.size,\n                        now,\n                    );\n                    if let Some(slot) = self\n                        .neutralizations\n                        .iter_mut()\n                        .find(|slot| slot.client_ref == record.client_ref)\n                    {\n                        slot.order_id = Some(accepted.order_id);\n                    }\n                }\n                // The venue may have created it. Keep the record and the\n                // reference and try again on a later cycle.\n                Err(SubmitError::AcknowledgementLost) => {}\n                // Nothing was created by this attempt, so there is nothing to\n                // keep: drop the commitment and let a later cycle recompute the\n                // residual and try again.\n                Err(_) => {\n                    self.neutralizations\n                        .retain(|slot| slot.client_ref != record.client_ref);\n                    self.ledger.discard(&record.client_ref);\n                }\n            }\n        }\n    }\n\n    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {\n        OrderRequest {\n            strategy_id: record.strategy_id.clone(),\n            instrument_id: record.instrument_id.clone(),\n            venue: record.venue,\n            kind: OrderKind::ImmediateOrCancel,\n            limit_price: record.limit_price,\n            size: record.size,\n            client_ref: record.client_ref.clone(),\n            expiry_time: record.expiry_time,\n        }\n    }\n\n    fn enter_new_strategies(&mut self, now: Timestamp) -> Result<(), PortError> {\n        let available_cash = self.inventory.settlement_balance()?;\n        let candidates = self.strategies.candidates()?;\n        for candidate in candidates {\n            if self.positions.has(&candidate.strategy_id) {\n                continue;\n            }\n            if self.attempted.contains(&candidate.strategy_id) {\n                continue;\n            }\n            if candidate.pair_cost() > self.config.max_pair_cost {\n                continue;\n            }\n            if now >= candidate.expiry_time {\n                continue;\n            }\n            let north_size = leg_size(candidate.north_depth, self.config.max_leg_size);\n            let south_size = leg_size(candidate.south_depth, self.config.max_leg_size);\n            if north_size < self.config.min_leg_size || south_size < self.config.min_leg_size {\n                continue;\n            }\n            let notional = (candidate.north_price * north_size as f64)\n                + (candidate.south_price * south_size as f64);\n            if notional > available_cash {\n                continue;\n            }\n            self.attempted.insert(candidate.strategy_id.clone());\n            self.place_leg(&candidate, Venue::North, north_size, now);\n            self.place_leg(&candidate, Venue::South, south_size, now);\n        }\n        Ok(())\n    }\n\n    fn place_leg(&mut self, candidate: &StrategyCandidate, venue: Venue, size: Qty, now: Timestamp) {", "numLines": 130, "startLine": 150, "totalLines": 573}}

@@ -1,0 +1,3 @@
+b13_zero_length_only_checked_when_active
+targets
+ignores a zero history length on an inactive target

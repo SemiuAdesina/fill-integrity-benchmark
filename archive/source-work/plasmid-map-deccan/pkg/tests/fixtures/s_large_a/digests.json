@@ -1,0 +1,285 @@
+{
+ "format_version": 1,
+ "error_percent": 2,
+ "detection_limit": 200,
+ "insert_length": {
+  "min": 500,
+  "max": 6000
+ },
+ "max_internal_sites": 3,
+ "observed": [
+  {
+   "id": "DraI",
+   "enzymes": [
+    "DraI"
+   ],
+   "bands": [
+    {
+     "length": 700,
+     "multiplicity": 1
+    },
+    {
+     "length": 5904,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRV",
+   "enzymes": [
+    "EcoRV"
+   ],
+   "bands": [
+    {
+     "length": 1359,
+     "multiplicity": 1
+    },
+    {
+     "length": 5202,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI",
+   "enzymes": [
+    "FspI"
+   ],
+   "bands": [
+    {
+     "length": 564,
+     "multiplicity": 1
+    },
+    {
+     "length": 984,
+     "multiplicity": 1
+    },
+    {
+     "length": 1045,
+     "multiplicity": 1
+    },
+    {
+     "length": 1169,
+     "multiplicity": 1
+    },
+    {
+     "length": 2777,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PstI",
+   "enzymes": [
+    "PstI"
+   ],
+   "bands": [
+    {
+     "length": 2346,
+     "multiplicity": 1
+    },
+    {
+     "length": 4217,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "PvuI",
+   "enzymes": [
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 1056,
+     "multiplicity": 1
+    },
+    {
+     "length": 1270,
+     "multiplicity": 1
+    },
+    {
+     "length": 1899,
+     "multiplicity": 1
+    },
+    {
+     "length": 2384,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI+PstI",
+   "enzymes": [
+    "DraI",
+    "PstI"
+   ],
+   "bands": [
+    {
+     "length": 684,
+     "multiplicity": 1
+    },
+    {
+     "length": 1202,
+     "multiplicity": 1
+    },
+    {
+     "length": 2270,
+     "multiplicity": 1
+    },
+    {
+     "length": 2347,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI+PvuI",
+   "enzymes": [
+    "FspI",
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 546,
+     "multiplicity": 1
+    },
+    {
+     "length": 563,
+     "multiplicity": 1
+    },
+    {
+     "length": 907,
+     "multiplicity": 1
+    },
+    {
+     "length": 994,
+     "multiplicity": 1
+    },
+    {
+     "length": 1023,
+     "multiplicity": 1
+    },
+    {
+     "length": 2216,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "EcoRV+PvuI",
+   "enzymes": [
+    "EcoRV",
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 535,
+     "multiplicity": 1
+    },
+    {
+     "length": 672,
+     "multiplicity": 1
+    },
+    {
+     "length": 720,
+     "multiplicity": 1
+    },
+    {
+     "length": 1040,
+     "multiplicity": 1
+    },
+    {
+     "length": 1716,
+     "multiplicity": 1
+    },
+    {
+     "length": 1895,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "FspI+PstI",
+   "enzymes": [
+    "FspI",
+    "PstI"
+   ],
+   "bands": [
+    {
+     "length": 497,
+     "multiplicity": 1
+    },
+    {
+     "length": 542,
+     "multiplicity": 1
+    },
+    {
+     "length": 559,
+     "multiplicity": 1
+    },
+    {
+     "length": 996,
+     "multiplicity": 1
+    },
+    {
+     "length": 1185,
+     "multiplicity": 1
+    },
+    {
+     "length": 1224,
+     "multiplicity": 1
+    },
+    {
+     "length": 1580,
+     "multiplicity": 1
+    }
+   ]
+  },
+  {
+   "id": "DraI+PvuI",
+   "enzymes": [
+    "DraI",
+    "PvuI"
+   ],
+   "bands": [
+    {
+     "length": 210,
+     "multiplicity": 1
+    },
+    {
+     "length": 485,
+     "multiplicity": 1
+    },
+    {
+     "length": 828,
+     "multiplicity": 1
+    },
+    {
+     "length": 1268,
+     "multiplicity": 1
+    },
+    {
+     "length": 1898,
+     "multiplicity": 2
+    }
+   ]
+  }
+ ],
+ "held_out": [
+  {
+   "id": "EcoRV+PstI",
+   "enzymes": [
+    "EcoRV",
+    "PstI"
+   ]
+  },
+  {
+   "id": "PstI+PvuI",
+   "enzymes": [
+    "PstI",
+    "PvuI"
+   ]
+  }
+ ]
+}

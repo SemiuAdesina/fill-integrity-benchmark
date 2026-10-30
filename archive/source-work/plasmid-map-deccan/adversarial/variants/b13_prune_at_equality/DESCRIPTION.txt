@@ -1,0 +1,1 @@
+a box whose bound equals the incumbent is discarded

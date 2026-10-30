@@ -1,0 +1,21 @@
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==1010==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000010 (pc 0xaaaaeacb9c30 bp 0xfffff1ec0740 sp 0xfffff1ec04c0 T0)
+==1010==The signal is caused by a READ memory access.
+==1010==Hint: address points to the zero page.
+    #0 0xaaaaeacb9c30 in roundel::Duty::ChildAwaiter::await_resume() /b/runtime.cpp:85:23
+    #1 0xaaaaeac50b34 in (anonymous namespace)::parks_then_awaits_parking_child(int) (.resume) /s/scenario.cpp:275:28
+    #2 0xaaaaeacc684c in std::__n4861::coroutine_handle<roundel::Duty::promise_type>::resume() const /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/coroutine:244:29
+    #3 0xaaaaeacc1d20 in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:438:11
+    #4 0xaaaaeacc2554 in roundel::Conductor::step() /b/runtime.cpp:459:5
+    #5 0xaaaaeac1bd4c in (anonymous namespace)::Tracer::step() /s/scenario.cpp:332:30
+    #6 0xaaaaeabfd56c in m_outer_ticket_rejected_while_inner_parked_trace() /s/scenario.cpp:2072:5
+    #7 0xaaaaeac6f0c8 in harness::main_impl(int, char**) /h/harness.hpp:100:13
+    #8 0xaaaaeac07490 in main /s/scenario.cpp:2423:42
+    #9 0xffffa8c07740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #10 0xffffa8c07814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #11 0xaaaaeaaee12c in _start (/b/cand+0x7e12c) (BuildId: f2f19a13bf61d5fb9122d29792d3fdb1bc409fef)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /b/runtime.cpp:85:23 in roundel::Duty::ChildAwaiter::await_resume()
+==1010==ABORTING

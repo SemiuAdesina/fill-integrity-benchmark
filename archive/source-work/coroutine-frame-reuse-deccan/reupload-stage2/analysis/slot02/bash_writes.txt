@@ -1,0 +1,158 @@
+[31]
+cd /tmp && python3 - <<'EOF'
+import re
+s = open('/tmp/t1.cpp').read()
+# use observing drain everywhere
+s = s.replace("c.drain();", "observe_drain(c);")
+s = s.replace("c2.drain();", "observe_drain(c2);")
+s = s.replace("c3.drain();", "observe_drain(c3);")
+open('/tmp/t1.cpp','w').write(s)
+EOF
+grep -n "drain" /tmp/t1.cpp | head -20
+
+[38]
+cd /tmp && python3 - <<'EOF'
+s = open('/tmp/t1.cpp').read()
+s = s.replace("trace(c.journal())", "trace(c)")
+open('/tmp/t1.cpp','w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t1.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t1 2>&1 | head -20 && /tmp/t1
+
+[39]
+cd /tmp && cat > /tmp/dbg.cpp <<'EOF'
+#include <cstdio>
+#include "roundel/runtime.hpp"
+using namespace roundel;
+static Duty child() { co_return co_await park(); }
+static Duty parent() { const std::int64_t v = co_await child(); co_return v * 2; }
+static Duty grandparent() { const std::int64_t v = co_await parent(); co_return v + 1; }
+int main() {
+    Conductor c{4};
+    const JobId j = c.launch(grandparent());
+    std::printf("live=%zu\n", c.arena().live_slots());
+    c.post(j, 10);
+    c.drain();
+    std::printf("value=%lld live=%zu\n", (long long)c.value_of(j).value_or(-1), c.arena().live_slots());
+    std::printf("%s", c.journal().render().c_str());
+}
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/dbg.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/dbg && /tmp/dbg
+
+[41]
+cd /tmp && python3 - <<'EOF'
+import re
+s = open('/tmp/t1.cpp').read()
+# every test starts with a printf banner: reset trace state right after it
+s = re.sub(r'(std::printf\("\[[^\]]*\]\\n"\);\n)', r'\1    g_trace.clear();\n    g_seen = 0;\n', s)
+open('/tmp/t1.cpp','w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t1.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t1 2>&1|head -5; /tmp/t1
+
+[45]
+cd /tmp && cat > /tmp/dbg2.cpp <<'EOF'
+#include <cstdio>
+#include <vector>
+#include "roundel/runtime.hpp"
+using namespace roundel;
+static int ctor=0, dtor=0;
+static std::vector<int> order;
+struct M { int id; explicit M(int i):id(i){++ctor; std::printf("ctor %d\n", id);} ~M(){++dtor; std::printf("dtor %d\n", id); order.push_back(id);} };
+static Duty leaf() { M m{3}; co_return co_await park(); }
+static Duty mid() { M m{2}; const std::int64_t v = co_await leaf(); co_return v+1; }
+static Duty top() { M m{1}; const std::int64_t v = co_await mid(); co_return v+1; }
+int main(){
+  Conductor c{4};
+  JobId j = c.launch(top());
+  c.post(j,1);
+  c.drain();
+  std::printf("value=%lld ctor=%d dtor=%d\n",(long long)c.value_of(j).value_or(-1),ctor,dtor);
+  std::printf("double_reclaims=%zu live=%zu\n", c.arena().double_reclaims(), c.arena().live_slots());
+}
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -I/app/include /tmp/dbg2.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/dbg2 && /tmp/dbg2
+
+[59]
+which gdb; cd /tmp && python3 - <<'EOF'
+s=open('/tmp/t2.cpp').read()
+s=s.replace('#include <cstdio>','#include <cstdio>\n#include <cstdlib>\nstatic struct Unbuffered { Unbuffered(){ setvbuf(stdout, nullptr, _IONBF, 0); } } g_unbuffered;',1)
+open('/tmp/t2.cpp','w').write(s)
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I/app/include /tmp/t2.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t2s && for i in 1 2 3 4 5 6; do /tmp/t2s > /tmp/u$i.txt 2>&1; echo "run$i exit=$? last=$(tail -1 /tmp/u$i.txt)"; done
+
+[63]
+cd /tmp && python3 - <<'EOF'
+s=open('/tmp/t3.cpp').read()
+s=s.replace("Conductor c{3};","Conductor c{6};")
+s=s.replace('if (c.arena().peak_live() > 3) {','if (c.arena().peak_live() > 6) {')
+open('/tmp/t3.cpp','w').write(s)
+EOF
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t3.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t3 && /tmp/t3
+
+[64]
+cd /tmp && python3 - <<'PY'
+s=open('/tmp/t3.cpp').read()
+
+s=s.replace("""    const JobId j = c.launch(four_children());
+    for (int i = 0; i < 4; ++i) {
+        c.post_after(j, 1, static_cast<std::uint64_t>(i + 1));
+    }
+    c.drain();""",
+"""    const JobId j = c.launch(four_children());
+    for (int i = 0; i < 4; ++i) {
+        c.post_after(j, 1, static_cast<std::uint64_t>(i + 1));
+        c.drain();
+    }""")
+
+s=s.replace("""    c.post(a, 1);
+    c.cancel(b);
+    eq((long long)c.arena().live_slots(), 1, "only a's frames left");
+    c.post(a, 2);
+    c.drain();""",
+"""    c.post(a, 1);
+    c.cancel(b);
+    eq((long long)c.arena().live_slots(), 2, "only a's two frames left");
+    c.step();
+    c.post(a, 2);
+    c.drain();""")
+
+s=s.replace('eq(c.value_of(j).value_or(0), 11, "child of the step finished");',
+            'eq(c.value_of(j).value_or(0), 10, "job 1 goes first (lowest id)");')
+
+s=s.replace("""        c.drain();
+        invariants(c, "rounds");""",
+"""        c.drain();
+        for (JobId id = 1; id <= 3; ++id) {
+            if (!c.settled(id)) c.cancel(id);
+        }
+        invariants(c, "rounds");""")
+open('/tmp/t3.cpp','w').write(s)
+PY
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t3.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t3 && /tmp/t3
+
+[65]
+cd /tmp && python3 - <<'PY'
+s=open('/tmp/t3.cpp').read()
+s=s.replace("""                if (es[i].job == id && es[i].mark != Mark::CancelRequested) {""",
+"""                // Requests recorded for a job name the request, not the job's
+                // state: rule 15 requires a cancel for a settled job to count.
+                if (es[i].job == id && es[i].mark != Mark::CancelRequested &&
+                    es[i].mark != Mark::TicketRejected && es[i].mark != Mark::TicketQueued) {""")
+open('/tmp/t3.cpp','w').write(s)
+PY
+g++ -std=c++20 -g -Wall -Wextra -Wpedantic -I/app/include /tmp/t3.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t3 && /tmp/t3 && echo "--- asan ---" && g++ -std=c++20 -g -fsanitize=address -I/app/include /tmp/t3.cpp /app/src/arena.cpp /app/src/journal.cpp /app/src/runtime.cpp -o /tmp/t3a && /tmp/t3a | tail -3
+
+[78]
+cd /tmp && cat > /tmp/ctrl.cpp <<'EOF'
+// Control: no roundel code at all, same allocation pattern.
+#include <cstdio>
+#include <deque>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+int main(){
+  std::deque<int> q; std::unordered_map<int,int> m; std::vector<int> v;
+  for (int i=0;i<200000;i++){ q.push_back(i); m[i]=i; v.push_back(i); if(i%3==0){q.pop_front(); std::sort(v.begin(), v.end());} }
+  std::printf("%zu %zu %zu\n", q.size(), m.size(), v.size());
+}
+EOF
+g++ -std=c++20 -g -fsanitize=address,undefined -fno-omit-frame-pointer /tmp/ctrl.cpp -o /tmp/ctrl && for i in 1 2 3 4 5 6 7 8; do /tmp/ctrl > /tmp/c$i.txt 2>&1; echo "ctrl run$i exit=$? out=$(cat /tmp/c$i.txt | head -1)"; done

@@ -1,0 +1,39 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "ApaI",
+   "site": "GGGCCC",
+   "cut_offset": 5
+  },
+  {
+   "name": "ClaI",
+   "site": "ATCGAT",
+   "cut_offset": 2
+  },
+  {
+   "name": "SspI",
+   "site": "AATATT",
+   "cut_offset": 3
+  },
+  {
+   "name": "XhoI",
+   "site": "CTCGAG",
+   "cut_offset": 1
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "KpnI",
+   "position": 657
+  },
+  {
+   "enzyme": "SmaI",
+   "position": 715
+  },
+  {
+   "enzyme": "SpeI",
+   "position": 725
+  }
+ ]
+}

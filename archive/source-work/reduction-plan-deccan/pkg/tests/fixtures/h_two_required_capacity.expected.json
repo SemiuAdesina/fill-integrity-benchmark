@@ -1,0 +1,35 @@
+{
+ "fixture": "h_two_required_capacity",
+ "status": "ok",
+ "plan": {
+  "paths": [
+   [
+    "l04"
+   ],
+   [
+    "l17"
+   ],
+   [
+    "l06",
+    "l16",
+    "l13",
+    "l14"
+   ]
+  ],
+  "combine": [],
+  "sink_value": 2760
+ },
+ "observables": {
+  "completion": 13,
+  "allocation": 0,
+  "total_bytes": 48,
+  "link_bytes": {
+   "l04": 8,
+   "l17": 8,
+   "l06": 8,
+   "l16": 8,
+   "l13": 8,
+   "l14": 8
+  }
+ }
+}

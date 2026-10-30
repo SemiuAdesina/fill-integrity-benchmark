@@ -1,0 +1,60 @@
+=================================================================
+==84==ERROR: AddressSanitizer: use-after-poison on address 0x5160000003c0 at pc 0xaaaac38cba50 bp 0xffffe7b59040 sp 0xffffe7b59038
+READ of size 8 at 0x5160000003c0 thread T0
+    #0 0xaaaac38cba4c in std::__exception_ptr::exception_ptr::swap(std::__exception_ptr::exception_ptr&) /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/exception_ptr.h:217:37
+    #1 0xaaaac38cb670 in std::__exception_ptr::exception_ptr::operator=(std::__exception_ptr::exception_ptr&&) /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/exception_ptr.h:135:58
+    #2 0xaaaac38fb628 in roundel::Conductor::deliver(roundel::Conductor::Pending const&) /b/runtime.cpp:283:31
+    #3 0xaaaac38fbcd4 in roundel::Conductor::step() /b/runtime.cpp:302:5
+    #4 0xaaaac3876470 in (anonymous namespace)::Tracer::step() /s/scenario.cpp:332:30
+    #5 0xaaaac386d028 in n5_fault_into_child_caught_then_root_ticket_trace() /s/scenario.cpp:720:5
+    #6 0xaaaac38b5014 in harness::main_impl(int, char**) /h/harness.hpp:89:13
+    #7 0xaaaac387481c in main /s/scenario.cpp:845:42
+    #8 0xffffa5c87740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #9 0xffffa5c87814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #10 0xaaaac378662c in _start (/b/cand+0x6662c) (BuildId: 28f23f12a8f723280fefbeea8997a8bee9dc6922)
+
+0x5160000003c0 is located 64 bytes inside of 528-byte region [0x516000000380,0x516000000590)
+allocated by thread T0 here:
+    #0 0xaaaac3860f7c in operator new(unsigned long) (/b/cand+0x140f7c) (BuildId: 28f23f12a8f723280fefbeea8997a8bee9dc6922)
+    #1 0xaaaac38e2db4 in roundel::FrameArena::FrameArena(unsigned long, unsigned long) /frozen/src/arena.cpp:44:55
+    #2 0xaaaac38f7878 in roundel::Conductor::Conductor(unsigned long) /b/runtime.cpp:123:46
+    #3 0xaaaac386c784 in n5_fault_into_child_caught_then_root_ticket_trace() /s/scenario.cpp:704:15
+    #4 0xaaaac38b5014 in harness::main_impl(int, char**) /h/harness.hpp:89:13
+    #5 0xaaaac387481c in main /s/scenario.cpp:845:42
+    #6 0xffffa5c87740  (/lib/aarch64-linux-gnu/libc.so.6+0x27740) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #7 0xffffa5c87814 in __libc_start_main (/lib/aarch64-linux-gnu/libc.so.6+0x27814) (BuildId: 6f268ff546c56d7f14e9501a55698cc2d0ab4732)
+    #8 0xaaaac378662c in _start (/b/cand+0x6662c) (BuildId: 28f23f12a8f723280fefbeea8997a8bee9dc6922)
+
+SUMMARY: AddressSanitizer: use-after-poison /usr/bin/../lib/gcc/aarch64-linux-gnu/12/../../../../include/c++/12/bits/exception_ptr.h:217:37 in std::__exception_ptr::exception_ptr::swap(std::__exception_ptr::exception_ptr&)
+Shadow bytes around the buggy address:
+  0x516000000100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x516000000280: 00 00 fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x516000000300: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x516000000380: 00 00 f7 f7 f7 f7 f7 f7[f7]f7 f7 f7 f7 f7 f7 f7
+  0x516000000400: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000480: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000500: f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7 f7
+  0x516000000580: f7 f7 fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x516000000600: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==84==ABORTING

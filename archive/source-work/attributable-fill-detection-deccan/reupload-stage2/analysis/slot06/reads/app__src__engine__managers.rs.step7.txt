@@ -1,0 +1,124 @@
+2	use std::collections::BTreeMap;
+3	
+4	use crate::types::ids::{StrategyId, OrderId, Venue};
+5	use crate::types::pending_order::PendingOrder;
+6	use crate::types::position::Position;
+7	use crate::types::time::Timestamp;
+8	
+9	#[derive(Debug, Clone, Default)]
+10	pub struct PendingOrderManager {
+11	    orders: BTreeMap<OrderId, PendingOrder>,
+12	}
+13	
+14	impl PendingOrderManager {
+15	    pub fn new() -> Self {
+16	        Self {
+17	            orders: BTreeMap::new(),
+18	        }
+19	    }
+20	
+21	    pub fn from_orders(orders: Vec<PendingOrder>) -> Self {
+22	        let mut manager = Self::new();
+23	        for order in orders {
+24	            manager.insert(order);
+25	        }
+26	        manager
+27	    }
+28	
+29	    pub fn insert(&mut self, order: PendingOrder) {
+30	        self.orders.insert(order.order_id.clone(), order);
+31	    }
+32	
+33	    pub fn remove(&mut self, order_id: &OrderId) -> Option<PendingOrder> {
+34	        self.orders.remove(order_id)
+35	    }
+36	
+37	    pub fn get(&self, order_id: &OrderId) -> Option<&PendingOrder> {
+38	        self.orders.get(order_id)
+39	    }
+40	
+41	    pub fn leg(&self, strategy_id: &StrategyId, venue: Venue) -> Option<&PendingOrder> {
+42	        self.orders
+43	            .values()
+44	            .find(|order| &order.strategy_id == strategy_id && order.venue == venue)
+45	    }
+46	
+47	    pub fn strategy_ids(&self) -> Vec<StrategyId> {
+48	        let mut ids: Vec<StrategyId> = self
+49	            .orders
+50	            .values()
+51	            .map(|order| order.strategy_id.clone())
+52	            .collect();
+53	        ids.sort();
+54	        ids.dedup();
+55	        ids
+56	    }
+57	
+58	    pub fn expiring(&self, now: Timestamp) -> Vec<OrderId> {
+59	        self.orders
+60	            .values()
+61	            .filter(|order| order.should_cancel(now))
+62	            .map(|order| order.order_id.clone())
+63	            .collect()
+64	    }
+65	
+66	    pub fn all(&self) -> Vec<PendingOrder> {
+67	        self.orders.values().cloned().collect()
+68	    }
+69	
+70	    pub fn len(&self) -> usize {
+71	        self.orders.len()
+72	    }
+73	
+74	    pub fn is_empty(&self) -> bool {
+75	        self.orders.is_empty()
+76	    }
+77	}
+78	
+79	#[derive(Debug, Clone, Default)]
+80	pub struct PositionManager {
+81	    positions: BTreeMap<StrategyId, Position>,
+82	}
+83	
+84	impl PositionManager {
+85	    pub fn new() -> Self {
+86	        Self {
+87	            positions: BTreeMap::new(),
+88	        }
+89	    }
+90	
+91	    pub fn from_positions(positions: Vec<Position>) -> Self {
+92	        let mut manager = Self::new();
+93	        for position in positions {
+94	            manager.insert(position);
+95	        }
+96	        manager
+97	    }
+98	
+99	    pub fn insert(&mut self, position: Position) {
+100	        self.positions
+101	            .insert(position.strategy_id.clone(), position);
+102	    }
+103	
+104	    pub fn get(&self, strategy_id: &StrategyId) -> Option<&Position> {
+105	        self.positions.get(strategy_id)
+106	    }
+107	
+108	    pub fn has(&self, strategy_id: &StrategyId) -> bool {
+109	        self.positions.contains_key(strategy_id)
+110	    }
+111	
+112	    pub fn all(&self) -> Vec<Position> {
+113	        self.positions.values().cloned().collect()
+114	    }
+115	
+116	    pub fn len(&self) -> usize {
+117	        self.positions.len()
+118	    }
+119	
+120	    pub fn is_empty(&self) -> bool {
+121	        self.positions.is_empty()
+122	    }
+123	}
+124
+

@@ -1,0 +1,168 @@
+{
+ "format_version": 1,
+ "payload_bytes": 8,
+ "sink": "S",
+ "sources": [
+  {
+   "id": "c",
+   "node": "E0",
+   "value": 1448
+  },
+  {
+   "id": "a",
+   "node": "E1",
+   "value": 783
+  },
+  {
+   "id": "b",
+   "node": "E2",
+   "value": -3969
+  }
+ ],
+ "switches": [
+  {
+   "id": "R0",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  },
+  {
+   "id": "R1",
+   "reduction_capable": true,
+   "accumulator_capacity": 8
+  },
+  {
+   "id": "R2",
+   "reduction_capable": true,
+   "accumulator_capacity": 7
+  }
+ ],
+ "links": [
+  {
+   "id": "l01",
+   "from": "E0",
+   "to": "R0",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "l02",
+   "from": "E0",
+   "to": "R2",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "l03",
+   "from": "E1",
+   "to": "R0",
+   "rate": 4,
+   "latency": 1
+  },
+  {
+   "id": "l04",
+   "from": "E1",
+   "to": "R1",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l05",
+   "from": "E1",
+   "to": "R2",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "l06",
+   "from": "E2",
+   "to": "R2",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l07",
+   "from": "E2",
+   "to": "R0",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l08",
+   "from": "E2",
+   "to": "R1",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l09",
+   "from": "R0",
+   "to": "S",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l10",
+   "from": "R0",
+   "to": "R1",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "l11",
+   "from": "R0",
+   "to": "R2",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "l12",
+   "from": "R1",
+   "to": "S",
+   "rate": 16,
+   "latency": 0
+  },
+  {
+   "id": "l13",
+   "from": "R1",
+   "to": "R0",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "l14",
+   "from": "R1",
+   "to": "R2",
+   "rate": 8,
+   "latency": 1
+  },
+  {
+   "id": "l15",
+   "from": "R2",
+   "to": "S",
+   "rate": 4,
+   "latency": 0
+  },
+  {
+   "id": "l16",
+   "from": "R2",
+   "to": "R1",
+   "rate": 8,
+   "latency": 0
+  },
+  {
+   "id": "l17",
+   "from": "R2",
+   "to": "R0",
+   "rate": 8,
+   "latency": 0
+  }
+ ],
+ "telemetry": {
+  "link_bytes": {
+   "l03": 8,
+   "l05": 0,
+   "l07": 0,
+   "l09": 0
+  }
+ }
+}

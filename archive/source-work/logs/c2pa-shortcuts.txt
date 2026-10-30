@@ -1,0 +1,29 @@
+LABEL=c2pa-first_error_greedy_repair POPULATION=22 TOTAL=22 FAILED=3 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL minimum_subset_ignores_valid_decoys expected a repair, recorded a rejection
+FAIL compound_label_parent_hash_and_order_repair expected a repair, recorded a rejection
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [Delete { target: "r2" }, Delete { target: "tail" }, ReplaceAction { target: "act", value: "edited" }, ReplaceRelationship { target: "ing", relationship: "parent" }]
+LABEL=c2pa-first_valid_repair POPULATION=22 TOTAL=22 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL equal_cardinality_repairs_use_edit_key repair chose [Delete { target: "b" }], not the lexically smallest tie
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [ReplaceAction { target: "act", value: "edited" }, ReplaceRelationship { target: "ing", relationship: "parent" }, ReplaceHashedUri { target: "r2", url: "asset://asset-7", hash: "hash-7", target_label: "c2pa.metadata" }]
+LABEL=c2pa-ignore_minimum_cardinality POPULATION=22 TOTAL=22 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [Delete { target: "r2" }, Delete { target: "tail" }, ReplaceAction { target: "act", value: "edited" }, ReplaceRelationship { target: "ing", relationship: "parent" }]
+LABEL=c2pa-wrong_equal_cardinality_tie POPULATION=22 TOTAL=22 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL equal_cardinality_repairs_use_edit_key repair chose [Delete { target: "b" }], not the lexically smallest tie
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [ReplaceAction { target: "act", value: "edited" }, ReplaceRelationship { target: "ing", relationship: "parent" }, ReplaceHashedUri { target: "r2", url: "asset://asset-7", hash: "hash-7", target_label: "c2pa.metadata" }]
+LABEL=c2pa-independent_edit_validation POPULATION=22 TOTAL=22 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_label_parent_hash_and_order_repair expected a repair, recorded a rejection
+FAIL compound_second_uri_order_cardinality_and_tie expected a repair, recorded a rejection
+LABEL=c2pa-index_based_delete POPULATION=22 TOTAL=22 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL stable_ids_survive_earlier_deletion surviving assertion order is ["act", "d2", "meta", "ref"]
+LABEL=c2pa-index_based_retargeting POPULATION=22 TOTAL=22 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL delete_then_edit_same_stable_id_fails_sequence expected a rejection, recorded an applied manifest
+FAIL stable_ids_survive_earlier_deletion surviving assertion order is ["act", "d2", "meta", "ref"]
+LABEL=c2pa-first_hashed_uri_only POPULATION=22 TOTAL=22 FAILED=1 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [ReplaceAction { target: "act", value: "edited" }, ReplaceRelationship { target: "ing", relationship: "parent" }]
+LABEL=c2pa-require_intermediate_valid POPULATION=22 TOTAL=22 FAILED=2 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL compound_label_parent_hash_and_order_repair expected a repair, recorded a rejection
+FAIL compound_second_uri_order_cardinality_and_tie expected a repair, recorded a rejection
+LABEL=c2pa-skip_final_global_validation POPULATION=22 TOTAL=22 FAILED=3 CONTROL=1 REGRESSION=1 REWARD=0
+FAIL minimum_subset_ignores_valid_decoys repair chose [Delete { target: "ref" }], not the single action replacement
+FAIL compound_label_parent_hash_and_order_repair minimum repair is [Delete { target: "meta" }]
+FAIL compound_second_uri_order_cardinality_and_tie minimum repair is [Delete { target: "r2" }]

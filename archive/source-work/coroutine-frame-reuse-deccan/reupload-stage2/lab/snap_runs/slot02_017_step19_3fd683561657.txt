@@ -1,0 +1,7 @@
+/b/runtime.cpp:95:19: error: return type of out-of-line definition of 'roundel::ParkAwaiter::await_suspend' differs from that in the declaration
+   95 | void ParkAwaiter::await_suspend(Duty::handle_type me) noexcept {
+      | ~~~~              ^
+/b/include/roundel/runtime.hpp:171:10: note: previous declaration is here
+  171 |     bool await_suspend(Duty::handle_type me) noexcept;
+      |     ~~~~ ^
+1 error generated.

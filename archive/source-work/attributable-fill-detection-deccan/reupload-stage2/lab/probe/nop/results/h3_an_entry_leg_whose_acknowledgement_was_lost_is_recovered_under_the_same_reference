@@ -1,0 +1,9 @@
+OUTCOME
+attempt|ref=0|strategy=ca|instrument=nA|venue=North|kind=RestingLimit|price=0.450000000000|size=30|result=accepted
+attempt|ref=1|strategy=ca|instrument=tA|venue=South|kind=RestingLimit|price=0.520000000000|size=30|result=acknowledgement-lost
+venue-order|ref=0|strategy=ca|instrument=nA|venue=North|kind=RestingLimit|price=0.450000000000|size=30|filled=0|live=true|cancelled=false
+venue-order|ref=1|strategy=ca|instrument=tA|venue=South|kind=RestingLimit|price=0.520000000000|size=30|filled=30|live=false|cancelled=false
+cancelled-count=0
+pending|ref=0|strategy=ca|instrument=nA|venue=North|price=0.450000000000|size=30|expiry=1086400000|created=1000000000
+inventory|instrument=tA|qty=30
+END

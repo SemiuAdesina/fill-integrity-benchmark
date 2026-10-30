@@ -1,0 +1,8 @@
+variant                              reward  passed failing_checks
+v01_marker_wise                      0       5/13   a e h i j k l m 
+v02_fixed_guess                      0       5/13   a e h i j k l m 
+v22_nosym_full_canonical             0       5/13   a e h i j k l m 
+v06b_nosym_backward_traceback        0       5/13   a e h i j k l m 
+v07b_nosym_rows_only_canonical       0       5/13   a e h i j k l m 
+v10b_nosym_interleaved_path_order    0       5/13   a e h i j k l m 
+v11b_nosym_no_canonical              0       3/13   a e f g h i j k l m 

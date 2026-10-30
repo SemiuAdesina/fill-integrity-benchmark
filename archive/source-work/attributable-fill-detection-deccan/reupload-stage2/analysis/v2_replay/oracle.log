@@ -1,0 +1,4 @@
+SOLVE FAILED
+docker: Error response from daemon: create pkg/solution: "pkg/solution" includes invalid characters for a local volume name, only "[a-zA-Z0-9][a-zA-Z0-9_.-]" are allowed. If you intended to pass a host directory, use absolute path
+
+Run 'docker run --help' for more information

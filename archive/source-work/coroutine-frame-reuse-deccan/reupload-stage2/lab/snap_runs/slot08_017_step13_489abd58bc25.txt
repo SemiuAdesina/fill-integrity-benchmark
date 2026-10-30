@@ -1,0 +1,4 @@
+/b/runtime.cpp:91:35: error: assigning to 'bool' from incompatible type 'void'
+   91 |         detached_ = cp.conductor->push_frame(cp.job, child_);
+      |                     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

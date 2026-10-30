@@ -1,0 +1,3 @@
+b09_scale_operands_first
+arithmetic
+each operand is divided by the scale before the expression is evaluated

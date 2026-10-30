@@ -1,0 +1,29 @@
+2	use crate::types::ids::{Price, Qty};
+3	
+4	pub const MAX_TAKER_PRICE: Price = 0.99;
+5	
+6	/// Leg size in whole base units: available depth capped at the configured
+7	/// maximum. Quantities are already integral, so there is nothing to round.
+8	pub fn leg_size(depth: Qty, max_leg_size: Qty) -> Qty {
+9	    let bounded = if depth < max_leg_size {
+10	        depth
+11	    } else {
+12	        max_leg_size
+13	    };
+14	    if bounded <= 0 {
+15	        0
+16	    } else {
+17	        bounded
+18	    }
+19	}
+20	
+21	pub fn neutralization_limit_price(best_offer: Price, slippage: Price) -> Price {
+22	    let raw = best_offer * (1.0 + slippage);
+23	    let capped = if raw > MAX_TAKER_PRICE {
+24	        MAX_TAKER_PRICE
+25	    } else {
+26	        raw
+27	    };
+28	    (capped * 1000.0).round() / 1000.0
+29	}
+30

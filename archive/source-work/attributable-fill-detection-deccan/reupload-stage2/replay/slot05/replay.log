@@ -1,0 +1,48 @@
+    SNAPSHOT 000 stepstart ed2ac9061e16
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.md" -o -name "*.toml" -o -name "*.rs" | head -50 && echo "---" && ls -la  ::  150 Sep  5 01:27 spec drwxr-xr-x 1 root root  50 Aug 12 15:43 src drwxr-xr-x 1 root root  72 Sep  5 01:27 target drwxr-xr-x 1 root root  42 Sep  5 01:27 tests 
+[10] BASH rc=0 0.0s :: for f in src/lib.rs src/types/mod.rs src/types/ids.rs src/types/time.rs src/types/pending_order.rs s ::  match venue {     61	            Venue::North => self.north_depth,     62	            Venue::South => self.south_depth,     63	        }     64	    }     65	} 
+[11] BASH rc=0 0.0s :: for f in src/engine/mod.rs src/engine/config.rs src/engine/managers.rs src/engine/neutralization.rs  ::  > MAX_TAKER_PRICE {     24	        MAX_TAKER_PRICE     25	    } else {     26	        raw     27	    };     28	    (capped * 1000.0).round() / 1000.0     29	} 
+[15] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -5 && echo "=== TESTS ===" && cargo test --offline --test diagnost :: === TESTS === 
+[16] WRITE /app/src/engine/fill_classifier.rs -> W ok
+    SNAPSHOT 015 step16 282c54b5b1b5
+[17] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 016 step17 785f12dacdfa
+[18] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 017 step18 0da0777f5230
+[19] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 018 step19 4aeb7ddea951
+[20] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 019 step20 d7209c3566e6
+[21] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 020 step21 83e8b4de59b2
+[22] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 021 step22 05cc5b31f946
+[23] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 022 step23 81ffc8ac6a44
+[24] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 023 step24 6a786b077ab6
+[25] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 024 step25 51d5af2a1040
+[26] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 025 step26 37842c2e7b75
+[27] EDIT /app/src/engine/cycle.rs -> E ok
+    SNAPSHOT 026 step27 06750af16175
+[28] BASH rc=0 0.0s :: cargo build --offline 2>&1 | tail -20 :: 
+[29] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -40 :: 
+[31] EDIT /app/tests/diagnostics.rs -> E ok
+[32] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -30 :: 
+[33] BASH rc=0 0.0s :: cargo run --offline --bin reproduce 2>&1 | tail -50 :: 
+[34] EDIT /app/tests/diagnostics.rs -> E ok
+[35] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -35 :: 
+[36] EDIT /app/tests/diagnostics.rs -> E ok
+[37] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -15 :: 
+[38] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 037 step38 65dff99970c0
+[39] EDIT /app/src/engine/fill_classifier.rs -> E ok
+    SNAPSHOT 038 step39 004aba74aad9
+[40] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | tail -6 && cargo run --offline --bin reproduce 2>&1 | :: 
+[42] BASH rc=0 0.0s :: touch src/lib.rs && cargo build --offline 2>&1 | grep -E "warning|error" | head -20; echo "--- build :: --- build clean check done --- 
+[44] EDIT /app/tests/diagnostics.rs -> E ok
+[45] BASH rc=0 0.0s :: cargo test --offline --test diagnostics 2>&1 | grep -E "^test |test result" | tail -30 :: 
+[46] BASH rc=0 0.0s :: echo "=== FILES MODIFIED (newer than spec/) ===" && find src tests -name "*.rs" -newer spec/venue-se :: /types/pending_order.rs Aug 11 23:00 src/types/position.rs Aug 11 23:00 src/types/snapshot.rs Aug 11 23:00 src/types/strategy.rs Aug 11 23:00 src/types/time.rs 
+[47] BASH rc=1 0.0s :: echo "### cargo build --offline" && cargo build --offline 2>&1 | tail -3 && echo && echo "### cargo  :: ### cargo build --offline  ### cargo test --offline --test diagnostics 

@@ -1,0 +1,7 @@
+{
+ "format_version": 1,
+ "status": "ok",
+ "paths": [["l03", "l10", "l12"], ["l06", "l15"], ["l02", "l15"]],
+ "combine": [],
+ "sink_value": -1738
+}

@@ -1,0 +1,6 @@
+
+running 1 test
+test h4_a_block_that_closes_a_resting_leg_leaves_a_real_gap_to_cover ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.00s
+

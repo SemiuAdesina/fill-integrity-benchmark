@@ -1,0 +1,3 @@
+MODE=oracle LABEL=base REWARD=1 RC=0 ELAPSED=7s
+RUNLOG: CONTROL ok verdict passed=14/14 control=1 probe_failed_closed=0 reward=0  FAILS: none
+WORKDIR: /tmp/rcf-StSFFy

@@ -1,0 +1,53 @@
+{
+ "format_version": 1,
+ "targets": [
+  {
+   "tensor": "decoder.layers.5.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 2948,
+   "logical_end": 4096,
+   "history_length": 6,
+   "active": false
+  },
+  {
+   "tensor": "decoder.layers.5.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 1,
+   "logical_begin": 3374,
+   "logical_end": 4096,
+   "history_length": 6,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.5.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "forward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 2948,
+   "history_length": 6,
+   "active": true
+  },
+  {
+   "tensor": "decoder.layers.5.mlp.fc1.weight",
+   "tie_group": null,
+   "role": "backward",
+   "block_size": 1024,
+   "stage": 0,
+   "shard": 0,
+   "logical_begin": 0,
+   "logical_end": 3374,
+   "history_length": 6,
+   "active": true
+  }
+ ]
+}

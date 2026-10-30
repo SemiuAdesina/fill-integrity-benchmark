@@ -1,0 +1,3 @@
+p04_per_source_shortest_paths
+04 routing
+each source takes its fastest idle-link path consistent with the tree so far; only the combine subset is searched

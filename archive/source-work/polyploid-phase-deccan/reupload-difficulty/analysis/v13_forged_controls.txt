@@ -1,0 +1,3 @@
+forgeddoc      rc=0 elapsed=4s reward=0  probe artifacts=19/19|reward reset to 0 after the probe phase|verdict passed=0/13 control=1 probe_failed_closed=0 reward=0|
+malformeddoc   rc=0 elapsed=4s reward=0  probe artifacts=19/19|reward reset to 0 after the probe phase|verdict passed=0/13 control=1 probe_failed_closed=0 reward=0|
+ALL FORGED CONTROLS DONE

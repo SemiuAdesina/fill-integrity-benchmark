@@ -1,0 +1,14 @@
+REJECTED h_parsimony        attempt=0 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.72, "internal": 5, "deviation": 18220, "c": 423, "L": 4093}}
+REJECTED h_parsimony        attempt=1 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.08, "internal": 2, "deviation": 111690, "c": 4288, "L": 4930}}
+REJECTED h_parsimony        attempt=2 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.69, "internal": 5, "deviation": 22071, "c": 2597, "L": 3412}}
+REJECTED h_parsimony        attempt=3 family property does not hold on the optimum (61s) {"reference": {"status": "ok", "seconds": 1.28, "internal": 5, "deviation": 58569, "c": 4288, "L": 4823}}
+REJECTED h_parsimony        attempt=4 family property does not hold on the optimum (60s) {"reference": {"status": "ok", "seconds": 0.05, "internal": 4, "deviation": 29043, "c": 2597, "L": 2543}}
+REJECTED h_parsimony        attempt=5 family property does not hold on the optimum (60s) {"reference": {"status": "ok", "seconds": 0.03, "internal": 4, "deviation": 40376, "c": 638, "L": 4287}}
+REJECTED h_parsimony        attempt=6 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.96, "internal": 6, "deviation": 82304, "c": 412, "L": 5432}}
+REJECTED h_parsimony        attempt=7 family property does not hold on the optimum (63s) {"reference": {"status": "ok", "seconds": 3.28, "internal": 3, "deviation": 25214, "c": 663, "L": 3483}}
+REJECTED h_parsimony        attempt=8 family property does not hold on the optimum (60s) {"reference": {"status": "ok", "seconds": 0.1, "internal": 4, "deviation": 15437, "c": 867, "L": 2713}}
+REJECTED h_parsimony        attempt=9 held-out bands of the optimum do not match the true construct (1s) {"reference": {"status": "ok", "seconds": 1.68, "internal": 6, "deviation": 14065, "c": 412, "L": 2605}}
+REJECTED h_parsimony        attempt=10 reference timeout (30s) {"reference": {"status": "timeout", "seconds": 30.0}}
+REJECTED h_parsimony        attempt=11 family property does not hold on the optimum (60s) {"reference": {"status": "ok", "seconds": 0.03, "internal": 2, "deviation": 15241, "c": 465, "L": 2555}}
+REJECTED h_parsimony        attempt=12 held-out bands of the optimum do not match the true construct (0s) {"reference": {"status": "ok", "seconds": 0.05, "internal": 3, "deviation": 61962, "c": 666, "L": 2933}}
+REJECTED h_parsimony        attempt=13 held-out bands of the optimum do not match the true construct (12s) {"reference": {"status": "ok", "seconds": 12.66, "internal": 5, "deviation": 55071, "c": 596, "L": 5140}}

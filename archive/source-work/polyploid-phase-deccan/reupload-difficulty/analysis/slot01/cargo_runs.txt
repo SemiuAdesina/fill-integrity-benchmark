@@ -1,0 +1,2270 @@
+[23] CMD: cat > src/solver.rs <<'EOF' pub mod local; pub mod tables; pub mod viterbi; use crate::cross_input::Cross; use crate::cross_model::{Haplotypes, Parent, ProgenyPath, Reconstruction, State}; use crate::solver::local::{Loca
+--- obs tail ---
+/bin/bash: line 211: cargo: command not found
+
+[stdout]
+/bin/bash: line 211: cargo: command not found
+[metadata] {"noOutputExpected": false}
+
+[24] CMD: ls ~/.cargo/bin 2>/dev/null; which rustc; ls /usr/local/cargo/bin 2>/dev/null; find / -name "cargo" -maxdepth 4 -type f 2>/dev/null | head
+--- obs tail ---
+cargo
+cargo-clippy
+cargo-fmt
+cargo-miri
+clippy-driver
+rls
+rust-analyzer
+rust-gdb
+rust-gdbgui
+rust-lldb
+rustc
+rustdoc
+rustfmt
+rustup
+
+[stdout]
+cargo
+cargo-clippy
+cargo-fmt
+cargo-miri
+clippy-driver
+rls
+rust-analyzer
+rust-gdb
+rust-gdbgui
+rust-lldb
+rustc
+rustdoc
+rustfmt
+rustup
+[metadata] {"noOutputExpected": false}
+
+[25] CMD: export PATH="$HOME/.cargo/bin:$PATH"; cargo build --release --offline 2>&1 | tail -25
+--- obs tail ---
+/bin/bash: line 1: cargo: command not found
+
+[stdout]
+/bin/bash: line 1: cargo: command not found
+[metadata] {"noOutputExpected": false}
+
+[26] CMD: echo $HOME; ls -la ~/.cargo/bin/cargo; ls -la /root/.cargo/bin/cargo 2>/dev/null; echo "---"; ls -d /root/.cargo 2>/dev/null; whoami
+--- obs tail ---
+/root
+ls: cannot access '/root/.cargo/bin/cargo': No such file or directory
+---
+root
+
+[stdout]
+/root
+ls: cannot access '/root/.cargo/bin/cargo': No such file or directory
+---
+root
+[metadata] {"noOutputExpected": false}
+
+[27] CMD: ls -la ~/ | head -20; echo "---"; ls ~/.cargo 2>&1; echo "--- find"; find / -maxdepth 6 -name "cargo" -type f 2>/dev/null | head; echo "--- env"; env | grep -i -E "cargo|rust|path"
+--- obs tail ---
+t 4096 Sep  7 17:58 .claude
+-rw------- 1 root root  517 Sep  7 17:58 .claude.json
+drwxr-xr-x 5 root root 4096 Sep  7 17:58 .local
+drwxr-xr-x 3 root root 4096 Sep  7 17:58 .npm
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+---
+ls: cannot access '/root/.cargo': No such file or directory
+--- find
+/usr/local/cargo/bin/cargo
+--- env
+CARGO_NET_OFFLINE=true
+NoDefaultCurrentDirectoryInExePath=1
+CARGO_HOME=/usr/local/cargo
+RUSTUP_HOME=/usr/local/rustup
+RUST_VERSION=1.83.0
+CLAUDE_CODE_EXECPATH=/root/.local/share/claude/versions/2.1.258
+PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[stdout]
+total 40
+drwx------ 1 root root 4096 Sep  7 17:58 .
+drwxr-xr-x 1 root root 4096 Sep  7 17:56 ..
+-rw-r--r-- 1 root root  608 Sep  7 17:58 .bashrc
+drwxr-xr-x 3 root root 4096 Sep  7 17:58 .cache
+drwxr-xr-x 5 root root 4096 Sep  7 17:58 .claude
+-rw------- 1 root root  517 Sep  7 17:58 .claude.json
+drwxr-xr-x 5 root root 4096 Sep  7 17:58 .local
+drwxr-xr-x 3 root root 4096 Sep  7 17:58 .npm
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+---
+ls: cannot access '/root/.cargo': No such file or directory
+--- find
+/usr/local/cargo/bin/cargo
+--- env
+CARGO_NET_OFFLINE=true
+NoDefaultCurrentDirectoryInExePath=1
+CARGO_HOME=/usr/local/cargo
+RUSTUP_HOME=/usr/local/rustup
+RUST_VERSION=1.83.0
+CLAUDE_CODE_EXECPATH=/root/.local/share/claude/versions/2.1.258
+PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+[metadata] {"noOutputExpected": false}
+
+[28] CMD: export PATH="/usr/local/cargo/bin:$PATH"; cargo build --release --offline 2>&1 | tail -25
+--- obs tail ---
+
+warning: variable `best_picks` is assigned to, but never used
+  --> src/bin/scratch.rs:19:13
+   |
+19 |     let mut best_picks: Vec<(usize, usize)> = Vec::new();
+   |             ^^^^^^^^^^
+   |
+   = note: consider using `_best_picks` instead
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: value assigned to `best_picks` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.07s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+warning: variable `best_picks` is assigned to, but never used
+  --> src/bin/scratch.rs:19:13
+   |
+19 |     let mut best_picks: Vec<(usize, usize)> = Vec::new();
+   |             ^^^^^^^^^^
+   |
+   = note: consider using `_best_picks` instead
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: value assigned to `best_picks` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.07s
+[metadata] {"noOutputExpected": false}
+
+[29] CMD: export PATH="/usr/local/cargo/bin:$PATH"; time ./target/release/scratch /app/cross.json 20
+--- obs tail ---
+markers=12 offspring=10
+root bound = -684.719049
+incumbent  = -705.327536   (20 restarts, 56.72295ms)
+gap        = 20.608487
+solve score= -705.327536
+
+real	0m0.078s
+user	0m0.077s
+sys	0m0.001s
+
+[stdout]
+markers=12 offspring=10
+root bound = -684.719049
+incumbent  = -705.327536   (20 restarts, 56.72295ms)
+gap        = 20.608487
+solve score= -705.327536
+
+real	0m0.078s
+user	0m0.077s
+sys	0m0.001s
+[metadata] {"noOutputExpected": false}
+
+[31] CMD: python3 - <<'EOF' import re p='src/solver/bb.rs' s=open(p).read() s=s.replace(""" best_score: f64, candidates: Vec<Candidate>,""",""" best_score: f64, candidates: Vec<Candidate>, /// `[progeny]` largest the progeny after
+--- obs tail ---
+warning: unused import: `polyploid_phase::scoring::score`
+ --> src/bin/scratch.rs:2:5
+  |
+2 | use polyploid_phase::scoring::score;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+--
+warning: unused import: `polyploid_phase::solver::solve`
+ --> src/bin/scratch.rs:6:5
+  |
+6 | use polyploid_phase::solver::solve;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+markers=12 offspring=10
+root bound = -684.719049
+incumbent  = -705.327536   (20 restarts, 57.581351ms)
+gap        = 20.608487
+bb: nodes=9 leaves=0 time=63.694µs best=-705.327536 candidates=0
+
+real	0m0.059s
+user	0m0.058s
+sys	0m0.001s
+
+[stdout]
+warning: unused import: `polyploid_phase::scoring::score`
+ --> src/bin/scratch.rs:2:5
+  |
+2 | use polyploid_phase::scoring::score;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+--
+warning: unused import: `polyploid_phase::solver::solve`
+ --> src/bin/scratch.rs:6:5
+  |
+6 | use polyploid_phase::solver::solve;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+markers=12 offspring=10
+root bound = -684.719049
+incumbent  = -705.327536   (20 restarts, 57.581351ms)
+gap        = 20.608487
+bb: nodes=9 leaves=0 time=63.694µs best=-705.327536 candidates=0
+
+real	0m0.059s
+user	0m0.058s
+sys	0m0.001s
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: python3 - <<'EOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace(""" let mut search = polyploid_phase::solver::bb::Search::new(&cross, &tables, &bounds);""",""" let mut search = polyploid_phase::solver::bb::Search::
+--- obs tail ---
+=6
+  marker=5 ia=0 ib=1 exhausted=false bound=-695.2945411439891
+node marker=6 state_a=3 state_b=7
+  marker=6 ia=1 ib=0 exhausted=false bound=-698.4168873477927
+node marker=7 state_a=7 state_b=7
+  marker=7 ia=0 ib=0 exhausted=false bound=-705.0137878116105
+node marker=8 state_a=7 state_b=7
+  marker=8 ia=0 ib=0 exhausted=true bound=-500.3428293081383
+  marker=8 ia=0 ib=1 exhausted=true bound=-422.40440015073887
+  marker=8 ia=0 ib=2 exhausted=true bound=-422.51088492059085
+  marker=8 ia=0 ib=3 exhausted=true bound=-562.0115746060862
+  marker=8 ia=1 ib=0 exhausted=true bound=-423.52653556717286
+  marker=8 ia=1 ib=1 exhausted=true bound=-426.1353589976022
+  marker=8 ia=1 ib=2 exhausted=true bound=-425.9234577674543
+  marker=8 ia=1 ib=3 exhausted=true bound=-500.04635689498724
+  marker=8 ia=2 ib=0 exhausted=true bound=-423.3277078133103
+  marker=8 ia=2 ib=1 exhausted=true bound=-424.72989353362084
+  marker=8 ia=2 ib=2 exhausted=true bound=-424.51799230347285
+  marker=8 ia=2 ib=3 exhausted=true bound=-500.33618117099127
+  marker=8 ia=3 ib=0 exhausted=true bound=-422.31037889938784
+  marker=8 ia=3 ib=1 exhausted=true bound=-424.1626110698028
+  marker=8 ia=3 ib=2 exhausted=true bound=-424.2690958396548
+  marker=8 ia=3 ib=3 exhausted=true bound=-500.05971543100577
+  marker=7 ia=1 ib=0 exhausted=true bound=-239.23516420628903
+  marker=7 ia=2 ib=0 exhausted=true bound=-239.37676594627447
+  marker=7 ia=3 ib=0 exhausted=true bound=-239.23516420628903
+[metadata] {"noOutputExpected": false}
+
+[33] CMD: python3 - <<'EOF' p='src/solver/bb.rs' s=open(p).read() s=s.replace(""" if best == f64::NEG_INFINITY { exhausted = true; break; }""",""" if best == f64::NEG_INFINITY { if trace { let finite_in = into.iter().filter(|v| v.
+--- obs tail ---
+62.0115746060862
+  marker=8 ia=1 ib=0 exhausted=true bound=-423.52653556717286
+  marker=8 ia=1 ib=1 exhausted=true bound=-426.1353589976022
+  marker=8 ia=1 ib=2 exhausted=true bound=-425.9234577674543
+  marker=8 ia=1 ib=3 exhausted=true bound=-500.04635689498724
+  marker=8 ia=2 ib=0 exhausted=true bound=-423.3277078133103
+
+[stdout]
+  marker=2 ia=2 ib=0 exhausted=false bound=-688.3147599240327
+node marker=3 state_a=3 state_b=2
+  marker=3 ia=0 ib=1 exhausted=false bound=-690.6043619240327
+node marker=4 state_a=3 state_b=6
+  marker=4 ia=0 ib=0 exhausted=false bound=-695.294541143989
+node marker=5 state_a=3 state_b=6
+  marker=5 ia=0 ib=1 exhausted=false bound=-695.2945411439891
+node marker=6 state_a=3 state_b=7
+  marker=6 ia=1 ib=0 exhausted=false bound=-698.4168873477927
+node marker=7 state_a=7 state_b=7
+  marker=7 ia=0 ib=0 exhausted=false bound=-705.0137878116105
+node marker=8 state_a=7 state_b=7
+  marker=8 ia=0 ib=0 exhausted=true bound=-500.3428293081383
+  marker=8 ia=0 ib=1 exhausted=true bound=-422.40440015073887
+  marker=8 ia=0 ib=2 exhausted=true bound=-422.51088492059085
+  marker=8 ia=0 ib=3 exhausted=true bound=-562.0115746060862
+  marker=8 ia=1 ib=0 exhausted=true bound=-423.52653556717286
+  marker=8 ia=1 ib=1 exhausted=true bound=-426.1353589976022
+  marker=8 ia=1 ib=2 exhausted=true bound=-425.9234577674543
+  marker=8 ia=1 ib=3 exhausted=true bound=-500.04635689498724
+  marker=8 ia=2 ib=0 exhausted=true bound=-423.3277078133103
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: cat > src/bin/scratch2.rs <<'EOF' use polyploid_phase::cross_input::parse_cross; use polyploid_phase::solver::local::{Local, Rng}; use polyploid_phase::solver::tables::Tables; use polyploid_phase::solver::viterbi::{Chain
+--- obs tail ---
+s.iter().enumerate() { best_picks[m].p = *idx; }
+   |                                                                      ^ unknown field
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 4 previous errors
+
+[stdout]
+error[E0609]: no field `p` on type `(usize, usize)`
+  --> src/bin/scratch2.rs:27:56
+   |
+27 |             let mask = tables.cols[p][m][best_picks[m].p];
+   |                                                        ^ unknown field
+
+error[E0609]: no field `p` on type `(usize, usize)`
+  --> src/bin/scratch2.rs:49:53
+   |
+49 |                 if (tables.cols[p][m][best_picks[m].p] >> h) & 1 == 1 { mask |= 1 << newidx; }
+   |                                                     ^ unknown field
+
+error[E0609]: no field `p` on type `(usize, usize)`
+  --> src/bin/scratch2.rs:67:51
+   |
+67 |         for m in 0..cross.markers { best_picks[m].p = new_picks[m]; let _ = m; }
+   |                                                   ^ unknown field
+
+error[E0609]: no field `p` on type `(usize, usize)`
+  --> src/bin/scratch2.rs:69:70
+   |
+69 |         for (m, idx) in new_picks.iter().enumerate() { best_picks[m].p = *idx; }
+   |                                                                      ^ unknown field
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 4 previous errors
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: python3 - <<'EOF' p='src/bin/scratch2.rs' s=open(p).read() s=s.replace("best_picks[m].p","best_picks[m].0" if False else "pick(best_picks[m], P)") s=s.replace("let p in 0..2","P in 0..2") s=s.replace("for p in 0..2 {","f
+--- obs tail ---
+n/scratch2.rs:73:79
+   |
+73 |         for (m, idx) in new_picks.iter().enumerate() { pick(best_picks[m], P) = *idx; }
+   |                                                        ---------------------- ^
+   |                                                        |
+   |                                                        cannot assign to this expression
+
+For more information about this error, try `rustc --explain E0070`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 2 previous errors
+
+[stdout]
+error[E0070]: invalid left-hand side of assignment
+  --> src/bin/scratch2.rs:71:60
+   |
+71 |         for m in 0..cross.markers { pick(best_picks[m], P) = new_picks[m]; let _ = m; }
+   |                                     ---------------------- ^
+   |                                     |
+   |                                     cannot assign to this expression
+
+error[E0070]: invalid left-hand side of assignment
+  --> src/bin/scratch2.rs:73:79
+   |
+73 |         for (m, idx) in new_picks.iter().enumerate() { pick(best_picks[m], P) = *idx; }
+   |                                                        ---------------------- ^
+   |                                                        |
+   |                                                        cannot assign to this expression
+
+For more information about this error, try `rustc --explain E0070`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 2 previous errors
+[metadata] {"noOutputExpected": false}
+
+[36] CMD: python3 - <<'EOF' p='src/bin/scratch2.rs' s=open(p).read() s=s.replace(""" for m in 0..cross.markers { pick(best_picks[m], P) = new_picks[m]; let _ = m; } // apply per marker """,""" // apply per marker """) s=s.replace(
+--- obs tail ---
+incumbent -705.140456203
+thread 'main' panicked at src/bin/scratch2.rs:31:43:
+attempt to shift left with overflow
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+[stdout]
+incumbent -705.140456203
+thread 'main' panicked at src/bin/scratch2.rs:31:43:
+attempt to shift left with overflow
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: python3 - <<'EOF' p='src/solver/bb.rs' s=open(p).read() s=s.replace(""" /// Viterbi step into the marker being branched on, per progeny. into: Vec<[f64; JOINTS]>,""",""" /// Viterbi step into a marker, `[marker][progeny]
+--- obs tail ---
+marker=8 ia=2 ib=1 exhausted=true bound=-562.7782950299514
+  marker=8 ia=2 ib=2 exhausted=true bound=-499.41252865639365
+  marker=8 ia=2 ib=3 exhausted=true bound=-562.7832258255294
+  marker=8 ia=3 ib=0 exhausted=true bound=-422.53596683954214
+  marker=8 ia=3 ib=1 exhausted=true bound=-562.2382261368294
+  marker=8 ia=3 ib=2 exhausted=true bound=-499.81364150325703
+  marker=8 ia=3 ib=3 exhausted=true bound=-421.9322222011685
+bb: nodes=4077 leaves=1 time=458.517786ms best=-705.140456 candidates=1
+
+[stdout]
+  marker=8 ia=2 ib=1 exhausted=true bound=-562.7782950299514
+  marker=8 ia=2 ib=2 exhausted=true bound=-499.41252865639365
+  marker=8 ia=2 ib=3 exhausted=true bound=-562.7832258255294
+  marker=8 ia=3 ib=0 exhausted=true bound=-422.53596683954214
+  marker=8 ia=3 ib=1 exhausted=true bound=-562.2382261368294
+  marker=8 ia=3 ib=2 exhausted=true bound=-499.81364150325703
+  marker=8 ia=3 ib=3 exhausted=true bound=-421.9322222011685
+bb: nodes=4077 leaves=1 time=458.517786ms best=-705.140456 candidates=1
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: export PATH="/usr/local/cargo/bin:$PATH"; python3 - <<'EOF' p='src/bin/scratch.rs' s=open(p).read() s=s.replace("search.trace = true;","") s=s.replace("let cands = search.run(best);","let floor = std::env::args().nth(3).
+--- obs tail ---
+incumbent  = -705.327536   (30 restarts, 94.277324ms)
+gap        = 20.608487
+bb: nodes=4077 leaves=1 time=82.455291ms best=-705.140456 candidates=1
+incumbent  = -705.140456   (100 restarts, 312.508221ms)
+gap        = 20.421407
+bb: nodes=3959 leaves=1 time=76.107064ms best=-705.140456 candidates=1
+=== no floor
+incumbent  = -705.140456   (100 restarts, 314.482425ms)
+gap        = 20.421407
+bb: nodes=9288 leaves=38 time=223.868165ms best=-705.140456 candidates=1
+
+[stdout]
+incumbent  = -705.327536   (30 restarts, 94.277324ms)
+gap        = 20.608487
+bb: nodes=4077 leaves=1 time=82.455291ms best=-705.140456 candidates=1
+incumbent  = -705.140456   (100 restarts, 312.508221ms)
+gap        = 20.421407
+bb: nodes=3959 leaves=1 time=76.107064ms best=-705.140456 candidates=1
+=== no floor
+incumbent  = -705.140456   (100 restarts, 314.482425ms)
+gap        = 20.421407
+bb: nodes=9288 leaves=38 time=223.868165ms best=-705.140456 candidates=1
+[metadata] {"noOutputExpected": false}
+
+[43] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -20
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.72s
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.72s
+[metadata] {"noOutputExpected": false}
+
+[44] CMD: export PATH="/usr/local/cargo/bin:$PATH" && ./target/release/scratch2 random 30 12 8 2 2>&1 | tail -40
+--- obs tail ---
+thread 'main' panicked at src/bin/scratch2.rs:226:44:
+generated cross must be valid: CrossError("malformed JSON: trailing content after JSON value at byte 11059")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+[stdout]
+thread 'main' panicked at src/bin/scratch2.rs:226:44:
+generated cross must be valid: CrossError("malformed JSON: trailing content after JSON value at byte 11059")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[metadata] {"noOutputExpected": false}
+
+[45] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/dump.rs <<'EOF' EOF grep -n "double_reduction" /app/src/bin/scratch2.rs
+--- obs tail ---
+140:            "\"recombination\":{rec},\"double_reduction\":{dr}}}"
+
+[stdout]
+140:            "\"recombination\":{rec},\"double_reduction\":{dr}}}"
+[metadata] {"noOutputExpected": false}
+
+[47] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -3 && ./target/release/scratch2 random 1 12 8 2 2>&1 | tail -3; tail -c 200 /tmp/gen_cross.json; echo; head 
+--- obs tail ---
+yte 11059")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+08885501478278131,0.4236315357921993,0.40738586187957354,0.41082076257702854,0.3452210565804152,0.14261600973931599,0.06694585751874174,0.24187874191075248,0.37876183378287015,0.06562070447944773]}}}}
+{"format_version":1,"markers":12,"offspring":8,"parent_dosage":{"A":[0, 0, 4, 4, 2, 2, 4, 4, 0, 0, 4, 4],"B":[4, 2, 4, 0, 4, 4, 4, 4, 0, 4, 1, 4]},"child_gl":[[[-3.4439654769235104,-1.7285051315356639,-0.0483936986234118,-1.7333192871486458,-3.4117351679824974],[-1.7250214346976651,-0.04576625592295
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.71s
+thread 'main' panicked at src/bin/scratch2.rs:227:44:
+generated cross must be valid: CrossError("malformed JSON: trailing content after JSON value at byte 11059")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+08885501478278131,0.4236315357921993,0.40738586187957354,0.41082076257702854,0.3452210565804152,0.14261600973931599,0.06694585751874174,0.24187874191075248,0.37876183378287015,0.06562070447944773]}}}}
+{"format_version":1,"markers":12,"offspring":8,"parent_dosage":{"A":[0, 0, 4, 4, 2, 2, 4, 4, 0, 0, 4, 4],"B":[4, 2, 4, 0, 4, 4, 4, 4, 0, 4, 1, 4]},"child_gl":[[[-3.4439654769235104,-1.7285051315356639,-0.0483936986234118,-1.7333192871486458,-3.4117351679824974],[-1.7250214346976651,-0.04576625592295
+[metadata] {"noOutputExpected": false}
+
+[49] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -3 && ./target/release/scratch2 random 30 12 8 2 2>&1 | tail -40
+--- obs tail ---
+Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.72s
+thread 'main' panicked at src/bin/scratch2.rs:227:44:
+generated cross must be valid: CrossError("double_reduction is not allowed but its rate is non-zero")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.72s
+thread 'main' panicked at src/bin/scratch2.rs:227:44:
+generated cross must be valid: CrossError("double_reduction is not allowed but its rate is non-zero")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[metadata] {"noOutputExpected": false}
+
+[51] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -3 && ./target/release/scratch2 random 30 12 8 2 2>&1 | tail -40
+--- obs tail ---
+8.904023689 bb=-138.904023689 ok=true nodes=12 leaves=1 cands=1 t=16.342477ms
+seed 16: brute=-138.904023689 bb=-138.904023689 ok=true nodes=12 leaves=1 cands=1 t=16.309541ms
+seed 17: brute=-152.945904894 bb=-152.945904894 ok=true nodes=14 leaves=2 cands=2 t=23.993872ms
+seed 18: brute=-152.945904894 bb=-152.945904894 ok=true nodes=14 leaves=2 cands=2 t=24.116387ms
+seed 19: brute=-134.793195464 bb=-134.793195464 ok=true nodes=14 leaves=1 cands=1 t=23.967162ms
+seed 20: brute=-134.793195464 bb=-134.793195464 ok=true nodes=14 leaves=1 cands=1 t=24.330156ms
+seed 21: brute=-166.854959269 bb=-166.854959269 ok=true nodes=12 leaves=1 cands=1 t=16.150656ms
+seed 22: brute=-166.854959269 bb=-166.854959269 ok=true nodes=12 leaves=1 cands=1 t=16.613735ms
+seed 23: brute=-153.584143287 bb=-153.584143287 ok=true nodes=12 leaves=1 cands=1 t=36.411205ms
+seed 24: brute=-153.584143287 bb=-153.584143287 ok=true nodes=12 leaves=1 cands=1 t=36.464005ms
+seed 25: brute=-156.383708613 bb=-156.383708613 ok=true nodes=15 leaves=1 cands=1 t=24.199506ms
+seed 26: brute=-156.383708613 bb=-156.383708613 ok=true nodes=15 leaves=1 cands=1 t=24.160579ms
+seed 27: brute=-166.154124728 bb=-166.154124728 ok=true nodes=16 leaves=2 cands=2 t=16.005126ms
+seed 28: brute=-166.154124728 bb=-166.154124728 ok=true nodes=16 leaves=2 cands=2 t=17.070835ms
+seed 29: brute=-136.936430786 bb=-136.936430786 ok=true nodes=16 leaves=2 cands=2 t=24.141416ms
+worst discrepancy 8.526512829121202e-14
+[metadata] {"noOutputExpected": false}
+
+[53] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -3 && echo "--- free=3" && ./target/release/scratch2 random 24 12 8 3 2>&1 | tail -26
+--- obs tail ---
+b=-155.768897833 ok=true nodes=16 leaves=2 cands=2 t=255.692542ms
+seed 10: brute=-155.768897833 bb=-155.768897833 ok=true nodes=16 leaves=2 cands=2 t=255.60656ms
+seed 11: brute=-147.046772983 bb=-147.046772983 ok=true nodes=38 leaves=1 cands=1 t=862.708716ms
+seed 12: brute=-147.046772983 bb=-147.046772983 ok=true nodes=38 leaves=1 cands=1 t=880.535507ms
+seed 13: brute=-141.228106311 bb=-141.228106311 ok=true nodes=20 leaves=3 cands=3 t=380.684887ms
+seed 14: brute=-141.228106311 bb=-141.228106311 ok=true nodes=20 leaves=3 cands=3 t=379.717834ms
+seed 15: brute=-150.444940651 bb=-150.444940651 ok=true nodes=18 leaves=1 cands=1 t=255.269074ms
+seed 16: brute=-150.444940651 bb=-150.444940651 ok=true nodes=18 leaves=1 cands=1 t=255.800498ms
+seed 17: brute=-158.156706110 bb=-158.156706110 ok=true nodes=26 leaves=1 cands=1 t=383.08782ms
+seed 18: brute=-158.156706110 bb=-158.156706110 ok=true nodes=26 leaves=1 cands=1 t=383.163049ms
+seed 19: brute=-149.338683244 bb=-149.338683244 ok=true nodes=31 leaves=1 cands=1 t=577.677184ms
+seed 20: brute=-149.338683244 bb=-149.338683244 ok=true nodes=31 leaves=1 cands=1 t=582.843468ms
+seed 21: brute=-139.358326606 bb=-139.358326606 ok=true nodes=40 leaves=1 cands=1 t=582.432806ms
+seed 22: brute=-139.358326606 bb=-139.358326606 ok=true nodes=40 leaves=1 cands=1 t=583.916445ms
+seed 23: brute=-190.407167760 bb=-190.407167760 ok=true nodes=17 leaves=1 cands=1 t=385.754489ms
+worst discrepancy 2.842170943040401e-14
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -2 && ./target/release/scratch2 random 6 12 8 3 2>&1
+--- obs tail ---
+ brute=-142.581876346 bb=-142.581876346 ok=true nodes=13 leaves=1 cands=1 t=258.107745ms
+seed 1 len=10892: brute=-140.172075230 bb=-140.172075230 ok=true nodes=20 leaves=3 cands=3 t=854.611654ms
+seed 2 len=10892: brute=-140.172075230 bb=-140.172075230 ok=true nodes=20 leaves=3 cands=3 t=852.878636ms
+seed 3 len=10873: brute=-151.931558708 bb=-151.931558708 ok=true nodes=16 leaves=1 cands=1 t=251.616444ms
+seed 4 len=10873: brute=-151.931558708 bb=-151.931558708 ok=true nodes=16 leaves=1 cands=1 t=251.934097ms
+seed 5 len=11023: brute=-162.532694727 bb=-162.532694727 ok=true nodes=22 leaves=1 cands=1 t=386.435291ms
+worst discrepancy 2.842170943040401e-14
+
+[stdout]
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.72s
+seed 0 len=10978: brute=-142.581876346 bb=-142.581876346 ok=true nodes=13 leaves=1 cands=1 t=258.107745ms
+seed 1 len=10892: brute=-140.172075230 bb=-140.172075230 ok=true nodes=20 leaves=3 cands=3 t=854.611654ms
+seed 2 len=10892: brute=-140.172075230 bb=-140.172075230 ok=true nodes=20 leaves=3 cands=3 t=852.878636ms
+seed 3 len=10873: brute=-151.931558708 bb=-151.931558708 ok=true nodes=16 leaves=1 cands=1 t=251.616444ms
+seed 4 len=10873: brute=-151.931558708 bb=-151.931558708 ok=true nodes=16 leaves=1 cands=1 t=251.934097ms
+seed 5 len=11023: brute=-162.532694727 bb=-162.532694727 ok=true nodes=22 leaves=1 cands=1 t=386.435291ms
+worst discrepancy 2.842170943040401e-14
+[metadata] {"noOutputExpected": false}
+
+[59] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | tail -2 && ./target/release/scratch2 random 40 12 8 4 2>&1 | tail -8 && echo "=== flat" && ./target/release/scrat
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: byvfedynn). Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/byvfedynn.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "byvfedynn", "timedOutAfterMs": 120000}
+
+[73] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | tail -30
+--- obs tail ---
+` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 4 warnings (run `cargo fix --bin "scratch"` to apply 2 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.35s
+
+[stdout]
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `polyploid_phase::solver::solve`
+ --> src/bin/scratch.rs:6:5
+  |
+6 | use polyploid_phase::solver::solve;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `best_picks` is assigned to, but never used
+  --> src/bin/scratch.rs:19:13
+   |
+19 |     let mut best_picks: Vec<(usize, usize)> = Vec::new();
+   |             ^^^^^^^^^^
+   |
+   = note: consider using `_best_picks` instead
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: value assigned to `best_picks` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 4 warnings (run `cargo fix --bin "scratch"` to apply 2 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 4.35s
+[metadata] {"noOutputExpected": false}
+
+[74] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | grep -E "^(warning|error)" | sort | uniq -c | head; echo "=== solver_checks"; timeout 900 cargo test --offline --locked --releas
+--- obs tail ---
+e`
+ --> src/bin/scratch.rs:6:5
+  |
+6 | use polyploid_phase::solver::solve;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `best_picks` is assigned to, but never used
+  --> src/bin/scratch.rs:19:13
+   |
+19 |     let mut best_picks: Vec<(usize, usize)> = Vec::new();
+   |             ^^^^^^^^^^
+   |
+   = note: consider using `_best_picks` instead
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: value assigned to `best_picks` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 4 warnings (run `cargo fix --bin "scratch"` to apply 2 suggestions)
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.71s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-0fa3256ea95cce88)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.44s
+[metadata] {"noOutputExpected": false}
+
+[75] CMD: export PATH="/usr/local/cargo/bin:$PATH" && time ./target/release/phase && echo "---" && head -c 400 /app/result.json && echo && echo "---" && cargo test --offline --locked --test diagnostics 2>&1 | tail -25
+--- obs tail ---
+e /app/result.json
+
+real	0m0.270s
+user	0m0.265s
+sys	0m0.003s
+---
+{"canonical_digest":"0c236db82cf70066","format_version":1,"haplotypes":{"A":[[0,0,1,1,0,1,1,1,1,1,0,1],[0,1,0,1,1,1,1,1,1,1,1,0],[0,1,1,1,0,1,1,1,0,1,1,0],[0,1,1,1,1,1,0,0,1,0,1,0]],"B":[[0,0,0,1,1,0,1,0,1,0,1,1],[0,0,1,0,1,1,1,0,1,1,0,0],[0,1,0,1,1,0,1,0,0,0,1,1],[0,1,1,1,1,0,1,0,1,0,0,0]]},"paths":[{"A":[[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]],"B":[[2,3],[2,3],[2
+---
+   |
+   = note: consider using `_best_picks` instead
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: value assigned to `best_picks` is never read
+  --> src/bin/scratch.rs:35:13
+   |
+35 |             best_picks = picks;
+   |             ^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` on by default
+
+warning: `polyploid-phase` (bin "scratch") generated 4 warnings (run `cargo fix --bin "scratch"` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.61s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-7ca3a1f2ff250454)
+
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[76] CMD: python3 -c " import json d=json.load(open('result.json')) for i,p in enumerate(d['paths']): print(i, 'A', ''.join('%d%d'%tuple(x) for x in p['A']), 'B', ''.join('%d%d'%tuple(x) for x in p['B'])) print('total', d['total_l
+--- obs tail ---
+0 A 232323232323232323232323 B 232323232323232323232323
+1 A 010101010101010101010101 B 020202020202020202020201
+2 A 030303030303030303030303 B 020202020201010101010101
+3 A 232323231212121213131313 B 131313131313131313131313
+4 A 020202020202020202020202 B 131313131313132323232323
+5 A 020202020202020202020202 B 232323232323232323232323
+6 A 020202020223232323232323 B 121212121223232323232323
+7 A 030303030303030303030303 B 131313131313131313131313
+8 A 232323232323232323232323 B 030303030303030303030303
+9 A 131313130303030303030303 B 030303030303030303030303
+total -705.1404562027437 digest 0c236db82cf70066
+
+[stdout]
+0 A 232323232323232323232323 B 232323232323232323232323
+1 A 010101010101010101010101 B 020202020202020202020201
+2 A 030303030303030303030303 B 020202020201010101010101
+3 A 232323231212121213131313 B 131313131313131313131313
+4 A 020202020202020202020202 B 131313131313132323232323
+5 A 020202020202020202020202 B 232323232323232323232323
+6 A 020202020223232323232323 B 121212121223232323232323
+7 A 030303030303030303030303 B 131313131313131313131313
+8 A 232323232323232323232323 B 030303030303030303030303
+9 A 131313130303030303030303 B 030303030303030303030303
+total -705.1404562027437 digest 0c236db82cf70066
+[metadata] {"noOutputExpected": false}
+
+[79] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | grep -E "^(error|warning: unused)" -A 6 | head -40
+--- obs tail ---
+warning: unused import: `State`
+  --> src/solver/canon.rs:28:38
+   |
+28 |     Haplotypes, Parent, ProgenyPath, State, ALL_STATES, HOMOLOGS, STATES,
+   |                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+--
+error[E0412]: cannot find type `State` in this scope
+   --> src/bin/scratch2.rs:528:19
+    |
+528 |     let _: Option<State> = None;
+    |                   ^^^^^ not found in this scope
+    |
+help: consider importing this struct
+--
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+
+[stdout]
+warning: unused import: `State`
+  --> src/solver/canon.rs:28:38
+   |
+28 |     Haplotypes, Parent, ProgenyPath, State, ALL_STATES, HOMOLOGS, STATES,
+   |                                      ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+--
+error[E0412]: cannot find type `State` in this scope
+   --> src/bin/scratch2.rs:528:19
+    |
+528 |     let _: Option<State> = None;
+    |                   ^^^^^ not found in this scope
+    |
+help: consider importing this struct
+--
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[80] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' import re p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(' let _: Option<State> = None;\n','') open(p,'w').write(s) p='/app/src/solver/canon.rs' s=
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"noOutputExpected": false}
+
+[81] CMD: export PATH="/usr/local/cargo/bin:$PATH" && timeout 600 ./target/release/scratch2 verify 25 12 8 2 flat 2>&1 | tail -30
+--- obs tail ---
+seed 0: ok
+seed 1: ok
+seed 2: ok
+seed 3: ok
+seed 4: ok
+seed 5: ok
+seed 6: ok
+seed 7: ok
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+seed 12: ok
+seed 13: ok
+seed 14: ok
+seed 15: ok
+seed 16: ok
+seed 17: ok
+seed 18: ok
+seed 19: ok
+seed 20: ok
+seed 21: ok
+seed 22: ok
+seed 23: ok
+seed 24: ok
+
+[stdout]
+seed 0: ok
+seed 1: ok
+seed 2: ok
+seed 3: ok
+seed 4: ok
+seed 5: ok
+seed 6: ok
+seed 7: ok
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+seed 12: ok
+seed 13: ok
+seed 14: ok
+seed 15: ok
+seed 16: ok
+seed 17: ok
+seed 18: ok
+seed 19: ok
+seed 20: ok
+seed 21: ok
+seed 22: ok
+seed 23: ok
+seed 24: ok
+[metadata] {"noOutputExpected": false}
+
+[82] CMD: export PATH="/usr/local/cargo/bin:$PATH" && (timeout 1500 ./target/release/scratch2 verify 20 12 8 3 flat > /tmp/verify_f3.log 2>&1; echo "exit=$?" >> /tmp/verify_f3.log) & sleep 2; echo started
+--- obs tail ---
+started
+
+[stdout]
+started
+[metadata] {"noOutputExpected": false}
+
+[83] CMD: cat > /tmp/gen_large.rs <<'EOF' EOF export PATH="/usr/local/cargo/bin:$PATH" && cargo run --release --offline --quiet --bin scratch2 -- random 1 28 32 28 2>&1 | tail -2; cp /tmp/gen_cross.json /tmp/large_cross.json; ls -
+--- obs tail ---
+Command did not complete within its 120s timeout and was moved to the background (ID: bbvgomn7a). Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/bbvgomn7a.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bbvgomn7a", "timedOutAfterMs": 120000}
+
+[86] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | grep -E "^error" -A5 | head -20; for s in 1 2 3; do ./target/release/scratch2 make $s 28 32 28 nonflat /tmp/large
+--- obs tail ---
+wrote /tmp/large_1.json (28 markers, 32 progeny)
+wrote /tmp/large_2.json (28 markers, 32 progeny)
+wrote /tmp/large_3.json (28 markers, 32 progeny)
+
+[stdout]
+wrote /tmp/large_1.json (28 markers, 32 progeny)
+wrote /tmp/large_2.json (28 markers, 32 progeny)
+wrote /tmp/large_3.json (28 markers, 32 progeny)
+[metadata] {"noOutputExpected": false}
+
+[87] CMD: export PATH="/usr/local/cargo/bin:$PATH" && for s in 1 2 3; do echo -n "seed $s: "; timeout 900 ./target/release/scratch2 time /tmp/large_$s.json; echo " (exit $?)"; done
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+seed 1:
+
+[error] tool reported failure
+
+[89] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/bb.rs' s=open(p).read() s=s.replace(""" /// Print the bound at every node, for diagnostics. pub trace: bool,""",""" /// Print the bound at 
+--- obs tail ---
+local: 8 restarts in 614.651015ms, floor -1760.589452
+  nodes=200000 leaves=0 best=-1760.589452 marker=17
+  nodes=400000 leaves=0 best=-1760.589452 marker=17
+  nodes=600000 leaves=0 best=-1760.589452 marker=17
+  nodes=800000 leaves=0 best=-1760.589452 marker=17
+  nodes=1000000 leaves=0 best=-1760.589452 marker=17
+  nodes=1200000 leaves=0 best=-1760.589452 marker=17
+
+[stdout]
+local: 8 restarts in 614.651015ms, floor -1760.589452
+  nodes=200000 leaves=0 best=-1760.589452 marker=17
+  nodes=400000 leaves=0 best=-1760.589452 marker=17
+  nodes=600000 leaves=0 best=-1760.589452 marker=17
+  nodes=800000 leaves=0 best=-1760.589452 marker=17
+  nodes=1000000 leaves=0 best=-1760.589452 marker=17
+  nodes=1200000 leaves=0 best=-1760.589452 marker=17
+[metadata] {"noOutputExpected": false}
+
+[90] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 -c " import json d=json.load(open('/app/cross.json')) print('M',d['markers'],'N',d['offspring']) for p in 'AB': print(p, d['parent_dosage'][p]) print(' free (1..3):', s
+--- obs tail ---
+d about canonical form. It is not a
+test of a search: an exhaustive enumeration solves it, and passing it says
+nothing about whether a solver scales.
+
+## What it exercises
+
+| Property | Where to see it |
+|---|---|
+| Dosage constrains the allele columns | `parent_dosage.A` is `[3, 2, 3, 4, 1]`; marker 3 admits one column, marker 1 admits six |
+| Double reduction legality is per parent and per marker | `double_reduction.*.allowed` is false at markers 1 and 2, true elsewhere, and `rate` is 0 exactly where it is false |
+| Recombination couples adjacent markers | progeny 0 changes its parent B state between markers 1 and 2 |
+| Homolog labels are arbitrary | parent A's rows 1 and 2 are identical, so several relabellings give the same reconstruction |
+
+That last row is the one worth dwelling on. When two homolog rows are equal, the
+relabellings that swap them leave the haplotypes untouched but rewrite the
+inheritance states, so more than one state path describes the same biology.
+Canonical form has to pick one of them, and `spec/result-format-v1.md` says
+which.
+
+## Using it
+
+This five-marker illustration is intentionally below the accepted 12-marker
+task floor, and the frozen input reader therefore rejects it as an executable
+task input. Read `small.cross.json` beside `small.result.json` field by field to
+check the formats and canonical ordering: the haplotype rows, every progeny's
+two state paths, `total_log_likelihood` and `canonical_digest`.
+[metadata] {"noOutputExpected": false}
+
+[91] CMD: export PATH="/usr/local/cargo/bin:$PATH" && for m in 16 20 24; do ./target/release/scratch2 make 7 $m 32 $((m*3/4)) nonflat /tmp/mid_$m.json >/dev/null; done; for m in 16 20 24; do echo "=== M=$m"; timeout 100 ./target/r
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+=== M=16
+local: 16 restarts in 455.593556ms, floor -1047.631082
+exit=0
+=== M=20
+
+[error] tool reported failure
+
+[93] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | grep -E "^error" -A5 | head; echo "--- fixture"; ./target/release/scratch2 profile /app/cross.json 16 0 2>&1 | he
+--- obs tail ---
+--- fixture
+local: 16 restarts in 54.215931ms, floor -705.140456
+root bound -684.719049, gap 20.421407
+bb: 71.356655ms nodes=3959 leaves=1 cands=1 best=-705.140456 root=-684.719049
+--- M=16 N=32
+local: 16 restarts in 401.561227ms, floor -1047.631082
+root bound -919.241466, gap 128.389616
+
+[stdout]
+--- fixture
+local: 16 restarts in 54.215931ms, floor -705.140456
+root bound -684.719049, gap 20.421407
+bb: 71.356655ms nodes=3959 leaves=1 cands=1 best=-705.140456 root=-684.719049
+--- M=16 N=32
+local: 16 restarts in 401.561227ms, floor -1047.631082
+root bound -919.241466, gap 128.389616
+[metadata] {"noOutputExpected": false}
+
+[94] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/tables.rs' s=open(p).read() s=s.replace(""" /// `[progeny][marker][joint]` largest emission any admissible column pair /// can reach at tha
+--- obs tail ---
+59:    pub u_sum: Vec<Vec<[u8; JOINTS]>>,
+177:        let mut u_sum = Vec::with_capacity(markers);
+196:            u_sum.push(pairs);
+252:            u_sum,
+
+[stdout]
+59:    pub u_sum: Vec<Vec<[u8; JOINTS]>>,
+177:        let mut u_sum = Vec::with_capacity(markers);
+196:            u_sum.push(pairs);
+252:            u_sum,
+[metadata] {"noOutputExpected": false}
+
+[95] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/viterbi.rs' s=open(p).read() s=s.replace("""pub struct SuffixBounds { /// `[progeny][marker][joint]` best continuation from `marker` onward
+--- obs tail ---
+18:/// `out[s'][t'] = max over (s, t) of fwd[s][t] + ta[s][s'] + tb[t][t']`, where
+21:    fwd: &[f64; JOINTS],
+34:                let v = fwd[base + t] + tb[t * STATES + tp];
+58:    fwd: &[f64; JOINTS],
+72:                let v = fwd[base + t] + tb[t * STATES + tp];
+144:    /// Forward vectors: `fwd[m][j]` is the best score of markers `0..=m` for a
+287:pub struct SuffixBounds {
+291:    pub fwd: Vec<Vec<[f64; JOINTS]>>,
+301:impl SuffixBounds {
+305:    pub fn build(cross: &Cross, tables: &Tables, ub: &[Vec<[f64; JOINTS]>]) -> SuffixBounds {
+309:        let mut fwd = Vec::with_capacity(cross.offspring);
+360:            fwd.push(front);
+362:        SuffixBounds { fwd, back, cont, total }
+
+[stdout]
+18:/// `out[s'][t'] = max over (s, t) of fwd[s][t] + ta[s][s'] + tb[t][t']`, where
+21:    fwd: &[f64; JOINTS],
+34:                let v = fwd[base + t] + tb[t * STATES + tp];
+58:    fwd: &[f64; JOINTS],
+72:                let v = fwd[base + t] + tb[t * STATES + tp];
+144:    /// Forward vectors: `fwd[m][j]` is the best score of markers `0..=m` for a
+287:pub struct SuffixBounds {
+291:    pub fwd: Vec<Vec<[f64; JOINTS]>>,
+301:impl SuffixBounds {
+305:    pub fn build(cross: &Cross, tables: &Tables, ub: &[Vec<[f64; JOINTS]>]) -> SuffixBounds {
+309:        let mut fwd = Vec::with_capacity(cross.offspring);
+360:            fwd.push(front);
+362:        SuffixBounds { fwd, back, cont, total }
+[metadata] {"noOutputExpected": false}
+
+[98] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/bb.rs' s=open(p).read() s=s.replace("""use crate::solver::tables::{Tables, JOINTS}; use crate::solver::viterbi::{maxplus, Chain, SuffixBoun
+--- obs tail ---
+10://!   a chain run against the largest admissible emission at each later marker
+39:    reduced: &'a Reduced,
+65:        reduced: &'a Reduced,
+78:            reduced,
+159:        let choices = &self.reduced.pairs[marker];
+174:                let u_row = &self.tables.u_sum[marker][ia * width + ib];
+
+[stdout]
+10://!   a chain run against the largest admissible emission at each later marker
+39:    reduced: &'a Reduced,
+65:        reduced: &'a Reduced,
+78:            reduced,
+159:        let choices = &self.reduced.pairs[marker];
+174:                let u_row = &self.tables.u_sum[marker][ia * width + ib];
+[metadata] {"noOutputExpected": false}
+
+[99] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --lib 2>&1 | grep -E "^(error|warning: unused)" -A 8 | head -60
+--- obs tail ---
+e` (lib) due to 3 previous errors; 2 warnings emitted
+
+[stdout]
+error[E0432]: unresolved import `crate::solver::reduce`
+  --> src/solver/bb.rs:22:20
+   |
+22 | use crate::solver::reduce::Reduced;
+   |                    ^^^^^^ could not find `reduce` in `solver`
+
+warning: unused import: `crate::cross_model::STATES`
+  --> src/solver/bb.rs:21:5
+   |
+21 | use crate::cross_model::STATES;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `Chain`
+  --> src/solver/bb.rs:24:39
+   |
+24 | use crate::solver::viterbi::{maxplus, Chain, SuffixBounds};
+   |                                       ^^^^^
+
+error[E0061]: this function takes 3 arguments but 2 arguments were supplied
+   --> src/solver.rs:21:18
+    |
+21  |     let bounds = SuffixBounds::build(cross, &tables);
+    |                  ^^^^^^^^^^^^^^^^^^^---------------- argument #3 of type `&[Vec<[f64; 100]>]` is missing
+    |
+note: associated function defined here
+   --> src/solver/viterbi.rs:305:12
+    |
+--
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+  --> src/solver.rs:42:22
+   |
+42 |     let mut search = Search::new(cross, &tables, &bounds);
+   |                      ^^^^^^^^^^^------------------------- argument #4 is missing
+   |
+note: associated function defined here
+  --> src/solver/bb.rs:61:12
+   |
+--
+error: could not compile `polyploid-phase` (lib) due to 3 previous errors; 2 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[101] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace("use polyploid_phase::solver::viterbi::{Chain, SuffixBounds};","use polyploid_phase::solver::reduce:
+--- obs tail ---
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+   --> src/bin/scratch2.rs:588:22
+    |
+588 |     let mut search = Search::new(&cross, &tables, &bounds);
+    |                      ^^^^^^^^^^^-------------------------- argument #4 of type `&Reduced` is missing
+    |
+note: associated function defined here
+   --> /app/src/solver/bb.rs:61:12
+    |
+--
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+
+[stdout]
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+   --> src/bin/scratch2.rs:588:22
+    |
+588 |     let mut search = Search::new(&cross, &tables, &bounds);
+    |                      ^^^^^^^^^^^-------------------------- argument #4 of type `&Reduced` is missing
+    |
+note: associated function defined here
+   --> /app/src/solver/bb.rs:61:12
+    |
+--
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+[metadata] {"noOutputExpected": false}
+
+[104] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked --bin scratch2 2>&1 | grep -E "^error" -A 8 | head -30; echo "=== fixture"; ./target/release/scratch2 profile /app/cross.json 16 0 2>&1
+--- obs tail ---
+=== fixture
+local: 16 restarts in 55.010575ms, floor -705.140456
+root bound -684.719049, gap 20.421407
+reduce: 712.445µs, pairs per marker [1, 24, 24, 4, 6, 4, 4, 4, 16, 16, 24, 24]
+reduced root bound -684.719049
+bb: 74.031284ms nodes=3959 leaves=1 cands=1 best=-705.140456 root=-684.719049
+
+[stdout]
+=== fixture
+local: 16 restarts in 55.010575ms, floor -705.140456
+root bound -684.719049, gap 20.421407
+reduce: 712.445µs, pairs per marker [1, 24, 24, 4, 6, 4, 4, 4, 16, 16, 24, 24]
+reduced root bound -684.719049
+bb: 74.031284ms nodes=3959 leaves=1 cands=1 best=-705.140456 root=-684.719049
+[metadata] {"noOutputExpected": false}
+
+[105] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace('rec.push_str(&format!("{:?}", 0.02 + 0.45 * g.float()));','rec.push_str(&format!("{:?}", 0.02 + 0.2
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+=== M=16 N=32
+local: 16 restarts in 350.495576ms, floor -713.979675
+root bound -476.599355, gap 237.380320
+reduce: 3.366341ms, pairs per marker [24, 6, 4, 24, 24, 4, 1, 4, 24, 16, 6, 36, 6, 24, 24, 24]
+reduced root bound -476.599355
+=== M=20 N=32
+local: 16 restarts in 473.115451ms, floor -985.555441
+root bound -692.763665, gap 292.791776
+reduce: 4.153597ms, pairs per marker [24, 24, 16, 1, 4, 24, 6, 16, 1, 6, 24, 24, 6, 6, 16, 16, 36, 24, 24, 6]
+reduced root bound -692.763665
+
+[error] tool reported failure
+
+[106] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -n "pub struct\|pub fn\|pub [a-z_]*:" /app/src/cross_input.rs | head -40; echo ===; cat /app/examples/small.cross.json
+--- obs tail ---
+6:    pub markers: usize,
+37:    pub offspring: usize,
+41:    pub child_gl: Vec<Vec<[f64; 5]>>,
+45:    pub fn params(&self, parent: Parent) -> &ParentParams {
+54:pub struct CrossError(String);
+79:pub fn parse_cross(text: &str) -> Result<Cross, CrossError> {
+===
+{"child_gl":[[[-19.560115,-6.735368,-3.465736,-1.505525,-0.101014],[-11.776474,-4.643431,-3.465736,-3.597463,-7.884654],[-7.904857,-3.898568,-4.158883,-5.990505,-15.688497],[-31.296184,-10.776589,-5.545177,-2.408841,-0.161622],[-0.080811,-1.20442,-2.772589,-5.388295,-15.648092]],[[-3.992834,-2.551494,-3.465736,-5.6894,-15.668295],[-23.512543,-8.684652,-5.545177,-4.500778,-7.945262],[-15.648092,-5.388295,-2.772589,-1.20442,-0.080811],[-23.472138,-8.082442,-4.158883,-1.806631,-0.121216],[-7.904857,-3.898568,-4.158883,-5.990505,-15.688497]],[[-3.992834,-2.551494,-3.465736,-5.6894,-15.668295],[-31.296184,-10.776589,-5.545177,-2.408841,-0.161622],[-7.904857,-3.898568,-4.158883,-5.990505,-15.688497],[-11.736069,-4.041221,-2.079442,-0.903315,-0.060608],[-15.728903,-6.592715,-5.545177,-6.592715,-15.728903]]],"double_reduction":{"A":{"allowed":[true,false,false,true,true],"rate":[0.067313,0,0,0.082293,0.064935]},"B":{"allowed":[true,false,false,true,true],"rate":[0.067204,0,0,0.083478,0.071541]}},"format_version":1,"markers":5,"offspring":3,"parent_dosage":{"A":[3,2,3,4,1],"B":[2,3,1,3,2]},"recombination":{"A":[0.093262,0.161002,0.249886,0.296554],"B":[0.075803,0.238089,0.15008,0.131845]}}
+[metadata] {"noOutputExpected": false}
+
+[108] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -n 15,60p /app/src/cross_input.rs; echo === ; cat /app/examples/small.result.json
+--- obs tail ---
+rval, length `markers - 1`.
+    pub recombination: Vec<f64>,
+    /// Whether the double reduction state is legal, length `markers`.
+    pub dr_allowed: Vec<bool>,
+    /// Double reduction rate, length `markers`. Zero exactly where not allowed.
+    pub dr_rate: Vec<f64>,
+}
+
+/// A validated cross.
+#[derive(Clone, Debug)]
+pub struct Cross {
+    pub markers: usize,
+    pub offspring: usize,
+    params_a: ParentParams,
+    params_b: ParentParams,
+    /// Indexed `[progeny][marker][dosage]`, natural log likelihoods.
+    pub child_gl: Vec<Vec<[f64; 5]>>,
+}
+
+impl Cross {
+    pub fn params(&self, parent: Parent) -> &ParentParams {
+        match parent {
+            Parent::A => &self.params_a,
+            Parent::B => &self.params_b,
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct CrossError(String);
+
+impl std::fmt::Display for CrossError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "invalid cross document: {}", self.0)
+    }
+}
+===
+{"canonical_digest":"490465b2cc1d08ce","format_version":1,"haplotypes":{"A":[[0,1,1,1,1],[1,0,1,1,0],[1,0,1,1,0],[1,1,0,1,0]],"B":[[0,1,0,1,0],[0,1,1,1,1],[1,0,0,0,1],[1,1,0,1,0]]},"paths":[{"A":[[1,3],[1,3],[1,3],[1,3],[1,3]],"B":[[2,3],[2,3],[0,3],[0,3],[0,3]]},{"A":[[0,1],[0,1],[0,1],[0,1],[0,1]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]},{"A":[[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]}],"total_log_likelihood":-44.65149744151981}
+[metadata] {"noOutputExpected": false}
+
+[109] CMD: export PATH="/usr/local/cargo/bin:$PATH" && wc -l /app/tests/*.rs && grep -n "fn \|examples/\|small" /app/tests/diagnostics.rs | head -40
+--- obs tail ---
+79 /app/tests/diagnostics.rs
+  738 /app/tests/solver_checks.rs
+  817 total
+15:fn tiny_reconstruction() -> Reconstruction {
+39:fn inheritance_states_are_unordered_and_complete() {
+51:fn switch_counts_use_multiset_semantics() {
+59:fn relabelling_resorts_the_unordered_pair() {
+66:fn result_encoding_round_trips_and_digest_is_deterministic() {
+
+[stdout]
+   79 /app/tests/diagnostics.rs
+  738 /app/tests/solver_checks.rs
+  817 total
+15:fn tiny_reconstruction() -> Reconstruction {
+39:fn inheritance_states_are_unordered_and_complete() {
+51:fn switch_counts_use_multiset_semantics() {
+59:fn relabelling_resorts_the_unordered_pair() {
+66:fn result_encoding_round_trips_and_digest_is_deterministic() {
+[metadata] {"noOutputExpected": false}
+
+[110] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -n "^fn \|^#\[test\]\|^ //\|fn [a-z_]*(" /app/tests/solver_checks.rs | head -60
+--- obs tail ---
+walk(
+253:fn exhaustive_optimum(cross: &Cross) -> f64 {
+274:fn permutations() -> Vec<[u8; HOMOLOGS]> {
+295:fn relabel_key(answer: &Reconstruction, parent: Parent, p: &[u8; HOMOLOGS]) -> (Vec<Vec<u8>>, Vec<u8>, [u8; HOMOLOGS]) {
+313:fn canonical_defect(answer: &Reconstruction) -> Option<String> {
+336:fn distinct_key(answer: &Reconstruction) -> Vec<u8> {
+354:fn solve_and_score(cross: &Cross) -> (Reconstruction, f64) {
+370:fn coupled_cross() -> CrossSpec {
+405:fn double_reduction_cross() -> CrossSpec {
+455:fn repeated_homolog_cross() -> CrossSpec {
+509:fn symmetric_cross() -> CrossSpec {
+553:fn coupled_ties_cross() -> CrossSpec {
+571:fn every_cross() -> Vec<(&'static str, CrossSpec)> {
+585:#[test]
+586:fn diagnostic_crosses_are_valid_inputs() {
+594:#[test]
+595:fn search_reaches_the_enumerated_optimum() {
+607:#[test]
+608:fn double_reduction_appears_only_where_allowed() {
+630:#[test]
+631:fn answers_are_in_canonical_form() {
+641:#[test]
+642:fn equally_scoring_answers_resolve_to_the_documented_representative() {
+646:    // A tie among optima is only meaningful once the answer is an optimum: a
+647:    // suboptimal answer rarely has an equally scoring neighbour, and would pass
+648:    // the scan below without saying anything.
+655:    // Pairs of adjacent markers, so a tie that is coupled across an interval is
+656:    // seen as well as one confined to a single marker.
+715:#[test]
+716:fn repeated_runs_agree_and_the_document_is_self_consistent() {
+[metadata] {"noOutputExpected": false}
+
+[111] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -n "fn main\|match\|=> \|\"verify\"\|\"make\"\|\"profile\"\|\"time\"\|\"random\"" /app/src/bin/scratch2.rs | sed -n 1,60p
+--- obs tail ---
+351:    let total = match score(cross, &answer) {
+352:        Ok(v) => v,
+353:        Err(e) => return vec![format!("the scorer rejects the answer: {e}")],
+403:                    let states = match parent {
+404:                        Parent::A => &mut variant.paths[c].from_a,
+405:                        Parent::B => &mut variant.paths[c].from_b,
+418:                        let states = match parent {
+419:                            Parent::A => &mut variant.paths[c].from_a,
+420:                            Parent::B => &mut variant.paths[c].from_b,
+444:fn main() {
+447:    if mode == "verify" {
+472:    if mode == "make" {
+485:    if mode == "profile" {
+531:    if mode == "time" {
+543:    if mode == "random" {
+
+[stdout]
+351:    let total = match score(cross, &answer) {
+352:        Ok(v) => v,
+353:        Err(e) => return vec![format!("the scorer rejects the answer: {e}")],
+403:                    let states = match parent {
+404:                        Parent::A => &mut variant.paths[c].from_a,
+405:                        Parent::B => &mut variant.paths[c].from_b,
+418:                        let states = match parent {
+419:                            Parent::A => &mut variant.paths[c].from_a,
+420:                            Parent::B => &mut variant.paths[c].from_b,
+444:fn main() {
+447:    if mode == "verify" {
+472:    if mode == "make" {
+485:    if mode == "profile" {
+531:    if mode == "time" {
+543:    if mode == "random" {
+[metadata] {"noOutputExpected": false}
+
+[112] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -n 440,600p /app/src/bin/scratch2.rs
+--- obs tail ---
+() < 1e-8;
+            println!(
+                "seed {seed} len={}: brute={brute:.9} bb={found:.9} ok={ok} nodes={} leaves={} cands={} t={:?}",
+                text.len(), search.nodes, search.leaves, cands.len(), t0.elapsed()
+            );
+            worst = worst.max((found - brute).abs());
+            if !ok {
+                std::fs::write("/tmp/failing_cross.json", &text).unwrap();
+                println!("  wrote /tmp/failing_cross.json");
+                break;
+            }
+        }
+        println!("worst discrepancy {worst:e}");
+        return;
+    }
+
+    // Otherwise: run on a file and report.
+    let path = args.get(1).cloned().unwrap_or_else(|| "/app/cross.json".to_string());
+    let text = std::fs::read_to_string(&path).unwrap();
+    let cross = parse_cross(&text).unwrap();
+    let tables = Tables::build(&cross);
+    let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+    let (inc, picks) = incumbent_of(&cross, &tables, 60);
+    println!("incumbent {inc:.9}");
+    let reduced = reduce(&cross, &tables, inc);
+    let bounds = SuffixBounds::build(&cross, &tables, &reduced.ub);
+    let mut search = Search::new(&cross, &tables, &bounds, &reduced);
+    let t0 = std::time::Instant::now();
+    let cands = search.run(inc);
+    println!(
+        "bb best={:.9} nodes={} leaves={} cands={} t={:?}",
+        search.best_score(),
+        search.nodes,
+        search.leaves,
+        cands.len(),
+        t0.elapsed()
+    );
+[metadata] {"noOutputExpected": false}
+
+[113] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | tail -3
+--- obs tail ---
+warning: `polyploid-phase` (bin "scratch") generated 2 warnings
+error: could not compile `polyploid-phase` (bin "scratch") due to 2 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+
+[stdout]
+warning: `polyploid-phase` (bin "scratch") generated 2 warnings
+error: could not compile `polyploid-phase` (bin "scratch") due to 2 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+[metadata] {"noOutputExpected": false}
+
+[114] CMD: export PATH="/usr/local/cargo/bin:$PATH" && rm -f /app/src/bin/scratch.rs && cargo build --release --offline --locked 2>&1 | tail -3
+--- obs tail ---
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[115] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/grid.sh <<'EOF' #!/bin/sh export PATH="/usr/local/cargo/bin:$PATH" cd /app for m in 12 16 20 24 28; do for n in 8 12 16 24 32; do f=/tmp/g_${m}_${n}.json ./target/re
+--- obs tail ---
+Command running in background with ID: b8m3jhi0p. Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/b8m3jhi0p.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b8m3jhi0p"}
+
+[117] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat /app/src/solver/local.rs
+--- obs tail ---
+             let mut best_value = current;
+                let mut best_pair = picks[m];
+                for ia in 0..na {
+                    for ib in 0..nb {
+                        if (ia, ib) == best_pair {
+                            continue;
+                        }
+                        let v = self.marker_total(m, ia, ib);
+                        if v > best_value + 1e-12 {
+                            best_value = v;
+                            best_pair = (ia, ib);
+                        }
+                    }
+                }
+                if best_pair != picks[m] {
+                    picks[m] = best_pair;
+                    current = best_value;
+                    improved = true;
+                    self.refresh(picks);
+                }
+            }
+        }
+        current
+    }
+}
+
+/// Deterministic pseudo random source, so restarts are reproducible.
+pub struct Rng(u64);
+
+impl Rng {
+    pub fn new(seed: u64) -> Rng {
+        Rng(seed | 1)
+    }
+
+    pub fn next(&mut self) -> u64 {
+        // xorshift64*
+        let mut x = self.0;
+        x ^= x >> 12;
+        x ^= x << 25;
+        x ^= x >> 27;
+        self.0 = x;
+        x.wrapping_mul(0x2545_F491_4F6C_DD1D)
+    }
+
+    pub fn below(&mut self, n: usize) -> usize {
+        (self.next() % (n as u64)) as usize
+    }
+}
+
+/// Splits a joint state index into its two parent states.
+pub fn split(joint: usize) -> (usize, usize) {
+    (joint / STATES, joint % STATES)
+}
+[metadata] {"noOutputExpected": false}
+
+[130] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | grep -E "^(error|warning: unused|warning: unre)" -A 5 | head -40; echo "build rc=$?"; tail -4 /tmp/grid.out
+--- obs tail ---
+ver/bb.rs:21:5
+   |
+21 | use crate::cross_model::STATES;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+--
+warning: unused import: `Chain`
+  --> src/solver/bb.rs:24:39
+   |
+24 | use crate::solver::viterbi::{maxplus, Chain, SuffixBounds};
+   |                                       ^^^^^
+
+--
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+   --> src/bin/scratch2.rs:519:28
+    |
+519 |         let cands = search.run(floor);
+    |                            ^^^------- argument #2 of type `&[(usize, usize)]` is missing
+    |
+--
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+   --> src/bin/scratch2.rs:561:32
+    |
+561 |             let cands = search.run(inc);
+    |                                ^^^----- argument #2 of type `&[(usize, usize)]` is missing
+    |
+--
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+   --> src/bin/scratch2.rs:592:24
+    |
+592 |     let cands = search.run(inc);
+    |                        ^^^----- argument #2 of type `&[(usize, usize)]` is missing
+    |
+--
+error: could not compile `polyploid-phase` (bin "scratch2") due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+build rc=0
+local: 32 restarts in 1.536576927s, floor -1149.703538
+root bound -802.389320, gap 347.314218
+reduce: 4.709236ms, pairs per marker [6, 4, 6, 4, 4, 16, 24, 4, 4, 24, 16, 24, 16, 4, 6, 16, 4, 16, 24, 16, 4, 24, 6, 24]
+reduced root bound -802.389320
+[metadata] {"noOutputExpected": false}
+
+[131] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -n 495,525p /app/src/bin/scratch2.rs; echo ---; sed -n 550,600p /app/src/bin/scratch2.rs; echo ---; sed -n 330,360p /app/src/bin/scratch2.rs
+--- obs tail ---
+et cands = search.run(inc);
+    println!(
+        "bb best={:.9} nodes={} leaves={} cands={} t={:?}",
+        search.best_score(),
+        search.nodes,
+        search.leaves,
+        cands.len(),
+        t0.elapsed()
+    );
+---
+            let ha = haplotypes_of(tables, picks, Parent::A);
+            let hb = haplotypes_of(tables, picks, Parent::B);
+            out.push((total, sorted_flat(&ha), sorted_flat(&hb), picks.to_vec()));
+            return;
+        }
+        for ia in 0..tables.cols[0][depth].len() {
+            for ib in 0..tables.cols[1][depth].len() {
+                picks[depth] = (ia, ib);
+                walk(cross, tables, chain, depth + 1, picks, out);
+            }
+        }
+    }
+    walk(cross, tables, &chain, 0, &mut picks, &mut out);
+    out
+}
+
+/// Holds one answer to everything the specification asks of it that can be
+/// checked without knowing the answer in advance.
+fn verify(cross: &Cross, tables: &Tables) -> Vec<String> {
+    let mut problems = Vec::new();
+    let answer = solve(cross);
+    let total = match score(cross, &answer) {
+        Ok(v) => v,
+        Err(e) => return vec![format!("the scorer rejects the answer: {e}")],
+    };
+
+    let everything = all_assignments_with_totals(cross, tables);
+    let optimum = everything.iter().map(|e| e.0).fold(f64::NEG_INFINITY, f64::max);
+    if (total - optimum).abs() > 1e-8 {
+        problems.push(format!("score {total:.9} is not the optimum {optimum:.9}"));
+    }
+[metadata] {"noOutputExpected": false}
+
+[132] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' import re p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(""" let v = local.ascend(&mut picks); if v > floor { floor = v; } }""",""" let v = local.a
+--- obs tail ---
+520:        let cands = search.run(floor, &best_picks);
+562:            let cands = search.run(inc, &inc_picks);
+593:    let cands = search.run(inc, &inc_picks);
+494:        let mut floor = f64::NEG_INFINITY;
+
+[stdout]
+520:        let cands = search.run(floor, &best_picks);
+562:            let cands = search.run(inc, &inc_picks);
+593:    let cands = search.run(inc, &inc_picks);
+494:        let mut floor = f64::NEG_INFINITY;
+[metadata] {"noOutputExpected": false}
+
+[133] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -n "best_picks" /app/src/bin/scratch2.rs; sed -n 590,596p /app/src/bin/scratch2.rs
+--- obs tail ---
+207:    let mut best_picks: Vec<(usize, usize)> = Vec::new();
+215:            best_picks = picks;
+218:    (best, best_picks)
+503:                best_picks = picks.clone();
+520:        let cands = search.run(floor, &best_picks);
+    let bounds = SuffixBounds::build(&cross, &tables, &reduced.ub);
+    let mut search = Search::new(&cross, &tables, &bounds, &reduced);
+    let t0 = std::time::Instant::now();
+    let cands = search.run(inc, &inc_picks);
+    println!(
+        "bb best={:.9} nodes={} leaves={} cands={} t={:?}",
+        search.best_score(),
+
+[stdout]
+207:    let mut best_picks: Vec<(usize, usize)> = Vec::new();
+215:            best_picks = picks;
+218:    (best, best_picks)
+503:                best_picks = picks.clone();
+520:        let cands = search.run(floor, &best_picks);
+    let bounds = SuffixBounds::build(&cross, &tables, &reduced.ub);
+    let mut search = Search::new(&cross, &tables, &bounds, &reduced);
+    let t0 = std::time::Instant::now();
+    let cands = search.run(inc, &inc_picks);
+    println!(
+        "bb best={:.9} nodes={} leaves={} cands={} t={:?}",
+        search.best_score(),
+[metadata] {"noOutputExpected": false}
+
+[134] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -n 488,505p /app/src/bin/scratch2.rs
+--- obs tail ---
+ss);
+        let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+        let mut rng = Rng::new(0xabcdef);
+        let mut local = Local::new(&cross, &tables);
+        let mut floor = f64::NEG_INFINITY;
+        let t0 = std::time::Instant::now();
+        for _ in 0..restarts {
+            let mut picks: Vec<(usize, usize)> = (0..cross.markers)
+                .map(|m| (rng.below(tables.cols[0][m].len()), rng.below(tables.cols[1][m].len())))
+                .collect();
+            let v = local.ascend(&mut picks);
+            if v > floor {
+                floor = v;
+                best_picks = picks.clone();
+            }
+        }
+
+[stdout]
+        let text = std::fs::read_to_string(&path).unwrap();
+        let cross = parse_cross(&text).unwrap();
+        let tables = Tables::build(&cross);
+        let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+        let mut rng = Rng::new(0xabcdef);
+        let mut local = Local::new(&cross, &tables);
+        let mut floor = f64::NEG_INFINITY;
+        let t0 = std::time::Instant::now();
+        for _ in 0..restarts {
+            let mut picks: Vec<(usize, usize)> = (0..cross.markers)
+                .map(|m| (rng.below(tables.cols[0][m].len()), rng.below(tables.cols[1][m].len())))
+                .collect();
+            let v = local.ascend(&mut picks);
+            if v > floor {
+                floor = v;
+                best_picks = picks.clone();
+            }
+        }
+[metadata] {"noOutputExpected": false}
+
+[135] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(""" let mut local = Local::new(&cross, &tables); let mut floor = f64::NEG_INFINITY; let t0 = std::ti
+--- obs tail ---
+error[E0425]: cannot find value `inc_picks` in this scope
+   --> src/bin/scratch2.rs:594:34
+    |
+594 |     let cands = search.run(inc, &inc_picks);
+    |                                  ^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+done
+
+[stdout]
+error[E0425]: cannot find value `inc_picks` in this scope
+   --> src/bin/scratch2.rs:594:34
+    |
+594 |     let cands = search.run(inc, &inc_picks);
+    |                                  ^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `polyploid-phase` (bin "scratch2") due to 1 previous error
+done
+[metadata] {"noOutputExpected": false}
+
+[136] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(""" let (inc, picks) = incumbent_of(&cross, &tables, 60); println!("incumbent {inc:.9}");""",""" let
+--- obs tail ---
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[137] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/bb.rs' s=open(p).read() s=s.replace("use crate::cross_model::STATES;\n","") s=s.replace("use crate::solver::viterbi::{maxplus, Chain, Suffi
+--- obs tail ---
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 5.73s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.513s
+user	0m0.505s
+sys	0m0.003s
+-rw-r--r-- 1 root root 1925 Sep  7 19:26 /app/result.json
+{"canonical_digest":"0c236db82cf70066","format_version":1,"haplotypes":{"A":[[0,0,1,1,0,1,1,1,1,1,0,1],[0,1,0,1,1,1,1,1,1,1,1,0],[0,1,1,1,0,1,1,1,0,1,1,0],[0,1,1,1,1,1,0,0,1,0,1,0]],"B":[[0,0,0,1,1,0,
+
+[stdout]
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 5.73s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.513s
+user	0m0.505s
+sys	0m0.003s
+-rw-r--r-- 1 root root 1925 Sep  7 19:26 /app/result.json
+{"canonical_digest":"0c236db82cf70066","format_version":1,"haplotypes":{"A":[[0,0,1,1,0,1,1,1,1,1,0,1],[0,1,0,1,1,1,1,1,1,1,1,0],[0,1,1,1,0,1,1,1,0,1,1,0],[0,1,1,1,1,1,0,0,1,0,1,0]],"B":[[0,0,0,1,1,0,
+[metadata] {"noOutputExpected": false}
+
+[138] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo test --offline --locked --test diagnostics 2>&1 | tail -8 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -12
+--- obs tail ---
+cs ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+---- answers_are_in_canonical_form stdout ----
+thread 'answers_are_in_canonical_form' panicked at tests/solver_checks.rs:636:13:
+double_reduction: parent A rows are not in ascending order
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    answers_are_in_canonical_form
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.91s
+
+error: test failed, to rerun pass `--test solver_checks`
+
+[stdout]
+running 4 tests
+test inheritance_states_are_unordered_and_complete ... ok
+test relabelling_resorts_the_unordered_pair ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+---- answers_are_in_canonical_form stdout ----
+thread 'answers_are_in_canonical_form' panicked at tests/solver_checks.rs:636:13:
+double_reduction: parent A rows are not in ascending order
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    answers_are_in_canonical_form
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.91s
+
+error: test failed, to rerun pass `--test solver_checks`
+[metadata] {"noOutputExpected": false}
+
+[139] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat /app/spec/result-format-v1.md
+--- obs tail ---
+n the ASCII digit for `b`;
+   - then one ASCII `';'` after that progeny's two parents.
+3. One final ASCII `'#'`.
+
+The score is deliberately not part of the digest. The score is checked
+separately against a tolerance; the digest covers the discrete structure only, so
+that it is exactly reproducible.
+
+A helper implementing this hash ships with the project. What it hashes is your
+canonical reconstruction, so the helper being supplied does not make the digest
+free: an answer that is optimal but not canonical, or canonical but not optimal,
+produces a digest that does not match.
+
+## Rejection
+
+The result is rejected, and no partial credit is given, when any of the
+following holds.
+
+- The document is absent, is not valid JSON, or has a `format_version` other
+  than `1`.
+- A required field is missing or has the wrong shape or length.
+- A haplotype value is not `0` or `1`, or a parent's rows do not sum to
+  `parent_dosage` at some marker.
+- A state pair is out of range or is written with `a > b`.
+- A state is a double reduction form at a marker where that parent does not
+  allow it.
+- The reconstruction is not in canonical form.
+- `total_log_likelihood` disagrees with the scorer's value for the reported
+  haplotypes and paths by more than `1e-8`.
+- The score is below the global optimum by more than `1e-8`.
+- `canonical_digest` is not sixteen lowercase hexadecimal characters, or does
+  not match the digest of the reported canonical reconstruction.
+[metadata] {"noOutputExpected": false}
+
+[141] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver.rs' s=open(p).read() s=s.replace("use crate::solver::canon::{flat_rows, haplotypes_of, Picker};", "use crate::solver::canon::{flat_rows, ha
+--- obs tail ---
+yploid-phase` (bin "scratch2") generated 2 warnings
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.64s
+
+[stdout]
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:557:17
+    |
+557 |             let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+    |                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_bounds`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+--
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:587:9
+    |
+587 |     let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+    |         ^^^^^^ help: if this is intentional, prefix it with an underscore: `_bounds`
+
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.64s
+[metadata] {"noOutputExpected": false}
+
+[142] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -c "===" /tmp/grid.out; tail -12 /tmp/grid.out
+--- obs tail ---
+25
+  TIMED OUT after 40s
+=== M=28 N=24
+local: 32 restarts in 1.449440041s, floor -1117.120959
+root bound -811.379222, gap 305.741737
+reduce: 8.814834ms, pairs per marker [6, 6, 24, 24, 24, 6, 36, 16, 24, 24, 24, 36, 4, 1, 1, 4, 24, 16, 16, 1, 16, 6, 16, 16, 4, 6, 16, 16]
+reduced root bound -811.379222
+bb: 27.950920835s nodes=833478 leaves=0 cands=1 best=-1117.120959 root=-811.379222
+=== M=28 N=32
+local: 32 restarts in 2.230328116s, floor -1437.932230
+root bound -1024.476116, gap 413.456114
+reduce: 45.528405ms, pairs per marker [6, 36, 36, 4, 36, 6, 24, 16, 16, 4, 16, 16, 1, 36, 24, 24, 6, 24, 4, 16, 24, 4, 24, 1, 4, 6, 24, 4]
+reduced root bound -1024.476116
+
+[stdout]
+25
+  TIMED OUT after 40s
+=== M=28 N=24
+local: 32 restarts in 1.449440041s, floor -1117.120959
+root bound -811.379222, gap 305.741737
+reduce: 8.814834ms, pairs per marker [6, 6, 24, 24, 24, 6, 36, 16, 24, 24, 24, 36, 4, 1, 1, 4, 24, 16, 16, 1, 16, 6, 16, 16, 4, 6, 16, 16]
+reduced root bound -811.379222
+bb: 27.950920835s nodes=833478 leaves=0 cands=1 best=-1117.120959 root=-811.379222
+=== M=28 N=32
+local: 32 restarts in 2.230328116s, floor -1437.932230
+root bound -1024.476116, gap 413.456114
+reduce: 45.528405ms, pairs per marker [6, 36, 36, 4, 36, 6, 24, 16, 16, 4, 16, 16, 1, 36, 24, 24, 6, 24, 4, 16, 24, 4, 24, 1, 4, 6, 24, 4]
+reduced root bound -1024.476116
+[metadata] {"noOutputExpected": false}
+
+[148] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver.rs' s=open(p).read() s=s.replace("let mut search = Search::new(cross, &tables, &bounds, &reduced);", "let mut search = Search::new(cross, &
+--- obs tail ---
+/app/src/solver.rs:74:    let mut search = Search::new(cross, &tables, &bounds, &reduced, &best_picks);
+/app/src/bin/scratch2.rs:519:        let mut search = Search::new(&cross, &tables, &bounds, &reduced, &best_picks);
+/app/src/bin/scratch2.rs:561:            let mut search = Search::new(&cross, &tables, &bounds2, &reduced, &inc_picks);
+/app/src/bin/scratch2.rs:593:    let mut search = Search::new(&cross, &tables, &bounds, &reduced, &best_picks);
+
+[stdout]
+/app/src/solver.rs:74:    let mut search = Search::new(cross, &tables, &bounds, &reduced, &best_picks);
+/app/src/bin/scratch2.rs:519:        let mut search = Search::new(&cross, &tables, &bounds, &reduced, &best_picks);
+/app/src/bin/scratch2.rs:561:            let mut search = Search::new(&cross, &tables, &bounds2, &reduced, &inc_picks);
+/app/src/bin/scratch2.rs:593:    let mut search = Search::new(&cross, &tables, &bounds, &reduced, &best_picks);
+[metadata] {"noOutputExpected": false}
+
+[149] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(""" let mut search = Search::new(&cross, &tables, &bounds, &reduced, &best_picks); let t0 = std::tim
+--- obs tail ---
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+warning: `polyploid-phase` (bin "scratch2") generated 2 warnings
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[150] CMD: export PATH="/usr/local/cargo/bin:$PATH" && time ./target/release/phase && cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -4
+--- obs tail ---
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.477s
+user	0m0.476s
+sys	0m0.001s
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.07s
+
+[stdout]
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m0.477s
+user	0m0.476s
+sys	0m0.001s
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.07s
+[metadata] {"noOutputExpected": false}
+
+[151] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/hard.sh <<'EOF' #!/bin/sh export PATH="/usr/local/cargo/bin:$PATH" cd /app for f in /tmp/g_12_16.json /tmp/g_16_8.json /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_24
+--- obs tail ---
+Command running in background with ID: buj6jdpjw. Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/buj6jdpjw.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "buj6jdpjw"}
+
+[152] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat /app/src/main.rs 2>/dev/null | head -60; ls /app/src /app/src/bin
+--- obs tail ---
+/app/src:
+bin
+cross_input.rs
+cross_model.rs
+digest.rs
+json.rs
+lib.rs
+result_output.rs
+scoring.rs
+solver
+solver.rs
+
+/app/src/bin:
+phase.rs
+scratch2.rs
+
+[stdout]
+/app/src:
+bin
+cross_input.rs
+cross_model.rs
+digest.rs
+json.rs
+lib.rs
+result_output.rs
+scoring.rs
+solver
+solver.rs
+
+/app/src/bin:
+phase.rs
+scratch2.rs
+[metadata] {"noOutputExpected": false}
+
+[153] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat /app/src/bin/phase.rs
+--- obs tail ---
+tra instances of your own.
+
+use std::process::ExitCode;
+
+use polyploid_phase::cross_input::parse_cross;
+use polyploid_phase::result_output::encode;
+use polyploid_phase::scoring::score;
+use polyploid_phase::solver::solve;
+
+fn main() -> ExitCode {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let input = args.first().map(String::as_str).unwrap_or("/app/cross.json");
+    let output = args.get(1).map(String::as_str).unwrap_or("/app/result.json");
+
+    let text = match std::fs::read_to_string(input) {
+        Ok(text) => text,
+        Err(e) => {
+            eprintln!("cannot read {input}: {e}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    let cross = match parse_cross(&text) {
+        Ok(cross) => cross,
+        Err(e) => {
+            eprintln!("{e}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    let answer = solve(&cross);
+    let total = match score(&cross, &answer) {
+        Ok(total) => total,
+        Err(e) => {
+            eprintln!("the search produced a reconstruction the scorer rejects: {e}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    if let Err(e) = std::fs::write(output, encode(&answer, total)) {
+        eprintln!("cannot write {output}: {e}");
+        return ExitCode::FAILURE;
+    }
+
+    println!("markers={} offspring={}", cross.markers, cross.offspring);
+    println!("total_log_likelihood={total:.10}");
+    println!("wrote {output}");
+    ExitCode::SUCCESS
+}
+[metadata] {"noOutputExpected": false}
+
+[154] CMD: export PATH="/usr/local/cargo/bin:$PATH" && (./target/release/scratch2 verify 15 12 8 2 flat; echo ---; ./target/release/scratch2 verify 12 12 8 3 nonflat) > /tmp/verify.out 2>&1; tail -20 /tmp/verify.out
+--- obs tail ---
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+seed 12: ok
+seed 13: ok
+seed 14: ok
+---
+seed 0: ok
+seed 1: ok
+seed 2: ok
+seed 3: ok
+seed 4: ok
+seed 5: ok
+seed 6: ok
+seed 7: ok
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+
+[stdout]
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+seed 12: ok
+seed 13: ok
+seed 14: ok
+---
+seed 0: ok
+seed 1: ok
+seed 2: ok
+seed 3: ok
+seed 4: ok
+seed 5: ok
+seed 6: ok
+seed 7: ok
+seed 8: ok
+seed 9: ok
+seed 10: ok
+seed 11: ok
+[metadata] {"noOutputExpected": false}
+
+[159] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/bin/scratch2.rs' s=open(p).read() s=s.replace(''' if mode == "profile" {''',''' if mode == "climb" { let path = args.get(2).cloned().unwrap_or_els
+--- obs tail ---
+10:use polyploid_phase::solver::bb::Search;
+11:use polyploid_phase::solver::canon::haplotypes_of;
+12:use polyploid_phase::solver::local::{Local, Rng};
+13:use polyploid_phase::solver::tables::Tables;
+14:use polyploid_phase::solver::reduce::reduce;
+15:use polyploid_phase::solver::viterbi::{Chain, SuffixBounds};
+16:use polyploid_phase::solver::solve;
+550:        let best_picks = sorted_picks(&tables, &best_picks);
+
+[stdout]
+10:use polyploid_phase::solver::bb::Search;
+11:use polyploid_phase::solver::canon::haplotypes_of;
+12:use polyploid_phase::solver::local::{Local, Rng};
+13:use polyploid_phase::solver::tables::Tables;
+14:use polyploid_phase::solver::reduce::reduce;
+15:use polyploid_phase::solver::viterbi::{Chain, SuffixBounds};
+16:use polyploid_phase::solver::solve;
+550:        let best_picks = sorted_picks(&tables, &best_picks);
+[metadata] {"noOutputExpected": false}
+
+[160] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -i 's/use polyploid_phase::solver::canon::haplotypes_of;/use polyploid_phase::solver::canon::{haplotypes_of, sorted_picks};/' /app/src/bin/scratch2.rs && cargo build --rele
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[161] CMD: export PATH="/usr/local/cargo/bin:$PATH" && for f in /tmp/g_16_8.json /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_32.json; do for rs in "32 0" "64 96" "256 512" "512 1024"; do timeout 300 ./target/release/scratch2 climb 
+--- obs tail ---
+Command running in background with ID: bxr73y3z1. Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/bxr73y3z1.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "bxr73y3z1"}
+
+[165] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver.rs' s=open(p).read() s=s.replace("""/// How many coordinate ascents to run before the exact pass. A good floor both /// prunes the search a
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.762s
+user	0m1.758s
+sys	0m0.004s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+real	0m1.762s
+user	0m1.758s
+sys	0m0.004s
+[metadata] {"noOutputExpected": false}
+
+[166] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -3 && ./target/release/scratch2 veri
+--- obs tail ---
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.27s
+
+seed 7: ok
+seed 8: ok
+seed 9: ok
+
+[stdout]
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.27s
+
+seed 7: ok
+seed 8: ok
+seed 9: ok
+[metadata] {"noOutputExpected": false}
+
+[167] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cat > /tmp/hard2.sh <<'EOF' #!/bin/sh export PATH="/usr/local/cargo/bin:$PATH" cd /app for f in /tmp/g_12_16.json /tmp/g_16_8.json /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_8
+--- obs tail ---
+Command running in background with ID: be5br6p44. Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/be5br6p44.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "be5br6p44"}
+
+[173] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | grep -E "^error" -A 6 | head -20; for f in /tmp/g_20_8.json /tmp/g_24_8.json /tmp/g_28_8.json /tmp/g_28_24.json /tmp/g_28_32.jso
+--- obs tail ---
+Exit code 143
+Command timed out after 2m 0s
+/tmp/g_20_8.json solve took 31.388214636s, score -230.305840193
+/tmp/g_24_8.json solve took 21.113757947s, score -270.934442496
+/tmp/g_28_8.json solve took 16.191919889s, score -317.980478432
+/tmp/g_28_24.json solve took 37.298097941s, score -1108.371174303
+/tmp/g_28_32.json
+
+[error] tool reported failure
+
+[174] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver.rs' s=open(p).read() s=s.replace(""" // // Half the kicks move two neighbouring markers. A sweep that re-optimises one // marker at a time 
+--- obs tail ---
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:600:17
+    |
+600 |             let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+    |                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_bounds`
+    |
+--
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:630:9
+    |
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+solve took 36.029981848s, score -1108.302552081
+
+[stdout]
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:600:17
+    |
+600 |             let bounds = SuffixBounds::build(&cross, &tables, &tables.ub);
+    |                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_bounds`
+    |
+--
+warning: unused variable: `bounds`
+   --> src/bin/scratch2.rs:630:9
+    |
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+solve took 36.029981848s, score -1108.302552081
+[metadata] {"noOutputExpected": false}
+
+[175] CMD: export PATH="/usr/local/cargo/bin:$PATH" && (echo "--- A"; ./target/release/scratch2 verify 12 12 8 3 nonflat; echo "--- B"; ./target/release/scratch2 verify 12 12 10 3 flat; echo "--- C"; ./target/release/scratch2 verif
+--- obs tail ---
+Command running in background with ID: b5lcljxx4. Output is being written to: /tmp/claude-0/-app/421a0055-0c78-4c2c-a6c3-d9108787ddc5/tasks/b5lcljxx4.output. You will be notified when it completes. To check interim output, use Read on that file path.
+
+[metadata] {"noOutputExpected": false, "backgroundTaskId": "b5lcljxx4"}
+
+[178] CMD: export PATH="/usr/local/cargo/bin:$PATH" && sed -n 1,70p /app/src/solver.rs
+--- obs tail ---
+;
+            best_picks = picks;
+        }
+    }
+
+    // Fresh starts stop helping once the cross is large: most markers of a good
+    // assignment are already right, so moving a few of them and ascending again
+    // searches the neighbourhood of the best assignment instead of starting over.
+    for round in 0..shakes {
+        let mut picks = best_picks.clone();
+        let kicks = KICKS + round % 3;
+        for _ in 0..kicks {
+            let m = rng.below(cross.markers);
+            picks[m] = random_pair(&tables, m, &mut rng);
+        }
+        let value = local.ascend(&mut picks);
+        if value > floor {
+            floor = value;
+            best_picks = picks;
+        }
+    }
+
+    // Strike out every column pair that cannot reach the floor, then search what
+    // is left. The reduction is what makes a large cross tractable: it works
+    // from the same relaxed bound the search uses, but applies it to one marker
+    // at a time instead of to the whole tree.
+    // The local search does not keep the homologs in any particular order, and
+    // the canonical form requires their rows ascending.
+    let best_picks = sorted_picks(&tables, &best_picks);
+
+    let reduced = reduce(cross, &tables, floor);
+    let bounds = SuffixBounds::build(cross, &tables, &reduced.ub);
+    let mut search = Search::new(cross, &tables, &bounds, &reduced, &best_picks);
+    let candidates = search.run(floor, &best_picks);
+
+    let winner = candidates
+[metadata] {"noOutputExpected": false}
+
+[181] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | grep -E "^(error|warning)" | grep -v scratch2 | head; cat /tmp/verify2.out | grep -v ": ok" | head
+--- obs tail ---
+warning: unused variable: `bounds`
+warning: unused variable: `bounds`
+--- A
+--- B
+--- C
+
+[stdout]
+warning: unused variable: `bounds`
+warning: unused variable: `bounds`
+--- A
+--- B
+--- C
+[metadata] {"noOutputExpected": false}
+
+[183] CMD: export PATH="/usr/local/cargo/bin:$PATH" && grep -c ": ok" /tmp/verify2.out; ps aux | grep -c "[s]cratch2"
+--- obs tail ---
+32
+0
+
+[stdout]
+32
+0
+[metadata] {"returnCodeInterpretation": "No matches found", "noOutputExpected": false}
+
+[184] CMD: export PATH="/usr/local/cargo/bin:$PATH" && rm -f /app/src/bin/scratch2.rs && cargo build --release --offline --locked 2>&1 | tail -3 && cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --off
+--- obs tail ---
+Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.65s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.65s
+[metadata] {"noOutputExpected": false}
+
+[185] CMD: export PATH="/usr/local/cargo/bin:$PATH" && ./target/release/phase && md5sum /app/result.json && cp /app/result.json /tmp/first.json && ./target/release/phase >/dev/null && md5sum /app/result.json && diff -q /tmp/first.j
+--- obs tail ---
+:[[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]],"B":[[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,1]]},{"A":[[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[0,2],[0,2],[0,2],[0,2],[0,2],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]]},{"A":[[2,3],[2,3],[2,3],[2,3],[1,2],[1,2],[1,2],[1,2],[1,3],[1,3],[1,3],[1,3]],"B":[[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3]]},{"A":[[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2]],"B":[[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[2,3],[2,3],[2,3],[2,3],[2,3]]},{"A":[[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2],[0,2]],"B":[[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]]},{"A":[[0,2],[0,2],[0,2],[0,2],[0,2],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]],"B":[[1,2],[1,2],[1,2],[1,2],[1,2],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]]},{"A":[[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3],[1,3]]},{"A":[[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]],"B":[[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3]]},{"A":[[1,3],[1,3],[1,3],[1,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3],[0,3]]}],"total_log_likelihood":-705.1404562027437}
+[metadata] {"noOutputExpected": false}
+
+[186] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'EOF' p='/app/src/solver/bb.rs' s=open(p).read() s=s.replace(""" /// Count of nodes expanded, for diagnostics. pub nodes: u64, /// Count of leaves scored, for diagn
+--- obs tail ---
+51:    /// How many nodes to expand before giving up. Reaching it leaves the search
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.10s
+
+[stdout]
+51:    /// How many nodes to expand before giving up. Reaching it leaves the search
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.10s
+[metadata] {"noOutputExpected": false}
+
+[187] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo build --release --offline --locked 2>&1 | grep -i warning | head; ./target/release/phase && cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test 
+--- obs tail ---
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.53s
+
+[stdout]
+markers=12 offspring=10
+total_log_likelihood=-705.1404562027
+wrote /app/result.json
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.53s
+[metadata] {"noOutputExpected": false}
+
+[190] CMD: export PATH="/usr/local/cargo/bin:$PATH" && python3 - <<'PYEOF' p='/app/src/solver/bb.rs' s=open(p).read() old_doc = s[s.index("//! Exact search over parental allele columns."):s.index("use crate::cross_input::Cross;")] 
+--- obs tail ---
+       let drj = &self.tables.drj[marker];
+        let legal = &self.tables.legj[marker];
+        let choices = &self.reduced.pairs[marker];
+        let width = self.tables.cols[1][marker].len();
+
+        for choice in 0..choices.len() {
+            let (ia, ib) = choices[self.order[marker][choice]];
+            let mask_a = self.tables.cols[0][marker][ia];
+            let next_a = match Search::row_state(mask_a, state_a) {
+                Some(s) => s,
+                None => continue,
+            };
+            let mask_b = self.tables.cols[1][marker][ib];
+            let next_b = match Search::row_state(mask_b, state_b) {
+                Some(s) => s,
+                None => continue,
+            };
+            let u_row = &self.tables.u_sum[marker][ia * width + ib];
+
+            let mut bound = 0.0f64;
+            let mut exhausted = false;
+            for c in 0..self.cross.offspring {
+                let gl = self.cross.child_gl[c][marker];
+                let into = &self.into[marker][c];
+                let out = &mut self.forward[c][marker];
+                let cont = if last {
+                    None
+                } else {
+                    Some(&self.bounds.cont[c][marker + 1])
+                };
+                let mut best = f64::NEG_INFINITY;
+                for j in 0..JOINTS {
+                    if !legal[j] {
+                        out[j] = f64::NEG_INFINITY;
+                        continue;
+                    }
+[metadata] {"noOutputExpected": false}
+
+[193] CMD: export PATH="/usr/local/cargo/bin:$PATH" && cargo fmt -- --check 2>&1 | head -20; cargo build --release --offline --locked 2>&1 | grep -E "^(error|warning)" -A 5 | head -20; cargo build --release --offline --locked 2>&1 
+--- obs tail ---
+error: 'cargo-fmt' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+To install, run `rustup component add rustfmt`
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+
+[stdout]
+error: 'cargo-fmt' is not installed for the toolchain '1.83.0-x86_64-unknown-linux-gnu'.
+To install, run `rustup component add rustfmt`
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[194] CMD: export PATH="/usr/local/cargo/bin:$PATH" && ./target/release/phase && cargo test --offline --locked --test diagnostics 2>&1 | tail -3 && cargo test --offline --locked --release --test solver_checks 2>&1 | tail -3 && md5s
+--- obs tail ---
+

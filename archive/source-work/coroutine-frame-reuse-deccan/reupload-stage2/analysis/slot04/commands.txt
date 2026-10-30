@@ -1,0 +1,11 @@
+[2] BASH find /app -type f -not -path "*/.git/*" | head -50 && echo "---" && ls -la /app
+[3] Read {"file_path": "/app/spec/protocol.md"}
+[4] Read {"file_path": "/app/include/roundel/runtime.hpp"}
+[5] Read {"file_path": "/app/include/roundel/arena.hpp"}
+[6] Read {"file_path": "/app/include/roundel/journal.hpp"}
+[7] Read {"file_path": "/app/src/runtime.cpp"}
+[8] Read {"file_path": "/app/src/arena.cpp"}
+[9] Read {"file_path": "/app/examples/demo.cpp"}
+[10] Read {"file_path": "/app/CMakeLists.txt"}
+[11] Read {"file_path": "/app/README.md"}
+[12] Read {"file_path": "/app/src/journal.cpp"}

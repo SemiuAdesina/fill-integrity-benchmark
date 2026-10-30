@@ -1,0 +1,8 @@
+S0_starter                         PASS       PASS       PASS       PASS       PASS       PASS       
+S1_replay_without_serialization    PASS       PASS       PASS       PASS       PASS       FAIL       
+S2_serialized_replay               PASS       PASS       PASS       PASS       PASS       FAIL       
+S3_per_source_routes_no_combine    PASS       PASS       PASS       PASS       PASS       FAIL       
+S4_combine_search                  PASS       PASS       PASS       PASS       PASS       FAIL       
+S5_telemetry_completion_only       PASS       PASS       PASS       PASS       PASS       PASS       
+S6_objective_without_key           PASS       PASS       PASS       PASS       PASS       PASS       
+S7_final                           PASS       PASS       PASS       PASS       PASS       PASS       

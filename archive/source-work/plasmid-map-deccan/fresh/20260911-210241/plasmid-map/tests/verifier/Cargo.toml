@@ -1,0 +1,40 @@
+#
+# The verifier's own crate. Never present in the agent image.
+#
+# It carries its own copy of the frozen model, so the candidate cannot change
+# what counts as a correct answer by editing the modules it was given. Only
+# `src/bin/probe/solver.rs` and `src/bin/probe/solver/` are taken from the
+# candidate, and the verifier owns this manifest and every build flag.
+#
+# Two binaries, and the split between them is a security boundary. `probe` is
+# the only target the candidate's solver is compiled into; it runs one job and
+# writes one artifact. `judge` holds the certified answers and links no
+# candidate code at all.
+
+[package]
+name = "plasmid-map-verifier"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "verifier_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "probe"
+path = "src/bin/probe/main.rs"
+
+[[bin]]
+name = "judge"
+path = "src/bin/judge/main.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

@@ -1,0 +1,3 @@
+p06_adjusted_split
+06 pair-naive
+splits the shared value RISC-V style: signed low half and a rounded high half

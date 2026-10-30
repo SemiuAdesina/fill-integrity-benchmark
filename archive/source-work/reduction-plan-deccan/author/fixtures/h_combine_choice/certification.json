@@ -1,0 +1,20 @@
+{
+ "status_a": "ok",
+ "status_b": "ok",
+ "agree": true,
+ "seconds_a": 0.007,
+ "seconds_b": 0.006,
+ "replays": 1054,
+ "legal": 351,
+ "matching": 6,
+ "within_budget": true,
+ "fixture": "h_combine_choice",
+ "seed": 601,
+ "separations": [
+  "never_combine",
+  "combine_all_visited"
+ ],
+ "sources": 3,
+ "links": 16,
+ "switches": 3
+}

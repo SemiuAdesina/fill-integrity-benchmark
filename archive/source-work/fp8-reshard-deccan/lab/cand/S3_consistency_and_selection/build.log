@@ -1,0 +1,4 @@
+/Users/macbok/benchmark-suite-work/fp8-reshard-deccan/lab/cand/S3_consistency_and_selection/src/restore.cpp:79:24: warning: unused variable 't' [-Wunused-variable]
+   79 |     for (const Target& t : targets)
+      |                        ^
+1 warning generated.

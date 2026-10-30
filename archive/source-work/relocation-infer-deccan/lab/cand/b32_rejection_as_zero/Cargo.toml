@@ -1,0 +1,29 @@
+[package]
+name = "reloc-recover"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.83"
+publish = false
+
+[workspace]
+
+[lib]
+name = "reloc_recover"
+path = "src/lib.rs"
+
+[[bin]]
+name = "reloc-recover"
+path = "src/bin/reloc-recover.rs"
+
+[[bin]]
+name = "reloc-diag"
+path = "src/bin/reloc-diag.rs"
+
+# No third-party crates: the environment has no network access and the
+# verifier builds the crate offline from its own manifest.
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = true
+overflow-checks = true

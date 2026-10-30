@@ -1,0 +1,44 @@
+{
+ "format_version": 1,
+ "enzymes": [
+  {
+   "name": "DraI",
+   "site": "TTTAAA",
+   "cut_offset": 3
+  },
+  {
+   "name": "EcoRV",
+   "site": "GATATC",
+   "cut_offset": 3
+  },
+  {
+   "name": "FspI",
+   "site": "TGCGCA",
+   "cut_offset": 3
+  },
+  {
+   "name": "PstI",
+   "site": "CTGCAG",
+   "cut_offset": 5
+  },
+  {
+   "name": "PvuI",
+   "site": "CGATCG",
+   "cut_offset": 4
+  }
+ ],
+ "cloning_sites": [
+  {
+   "enzyme": "ApaI",
+   "position": 663
+  },
+  {
+   "enzyme": "HindIII",
+   "position": 689
+  },
+  {
+   "enzyme": "EagI",
+   "position": 738
+  }
+ ]
+}

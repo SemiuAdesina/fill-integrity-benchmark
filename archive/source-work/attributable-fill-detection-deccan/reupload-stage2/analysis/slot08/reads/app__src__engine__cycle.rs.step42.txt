@@ -1,0 +1,152 @@
+330	                    created_at: now,
+331	                });
+332	            }
+333	        }
+334	    }
+335	
+336	    /// Re-enter legs the venue never confirmed, under the reference they were
+337	    /// first sent under.
+338	    ///
+339	    /// A leg is recovered either by identity — an observation has since carried
+340	    /// the `client_ref` back, which is what makes an unacknowledged order
+341	    /// visible again — or by resubmitting under that same reference, which the
+342	    /// venue deduplicates onto the original order. Nothing here mints a new
+343	    /// reference, and a leg that is already tracked is left alone.
+344	    fn retry_unconfirmed_legs(&mut self, now: Timestamp) {
+345	        if self.leg_attempts.is_empty() {
+346	            return;
+347	        }
+348	        let attempts = std::mem::take(&mut self.leg_attempts);
+349	        let mut still_unconfirmed: Vec<LegAttempt> = Vec::new();
+350	        for attempt in attempts {
+351	            // Too close to expiry to work a new order.
+352	            if now + CANCEL_LEAD >= attempt.expiry_time {
+353	                continue;
+354	            }
+355	            if self.pending.leg(&attempt.strategy_id, attempt.venue).is_some() {
+356	                continue;
+357	            }
+358	            if let Some(order_id) = self.ledger.order_for(&attempt.client_ref) {
+359	                let venue_seq = self.ledger.venue_seq_for(&attempt.client_ref).unwrap_or(0);
+360	                self.pending.insert(PendingOrder::new(
+361	                    attempt.strategy_id.clone(),
+362	                    attempt.instrument_id.clone(),
+363	                    attempt.venue,
+364	                    order_id,
+365	                    attempt.client_ref.clone(),
+366	                    venue_seq,
+367	                    attempt.limit_price,
+368	                    attempt.size,
+369	                    attempt.expiry_time,
+370	                    attempt.created_at,
+371	                ));
+372	                continue;
+373	            }
+374	            let request = OrderRequest {
+375	                strategy_id: attempt.strategy_id.clone(),
+376	                instrument_id: attempt.instrument_id.clone(),
+377	                venue: attempt.venue,
+378	                kind: OrderKind::RestingLimit,
+379	                limit_price: attempt.limit_price,
+380	                size: attempt.size,
+381	                client_ref: attempt.client_ref.clone(),
+382	                expiry_time: attempt.expiry_time,
+383	            };
+384	            match self.gateway.submit(&request) {
+385	                Ok(accepted) => {
+386	                    self.resting_at_venue.insert(accepted.order_id.clone());
+387	                    self.ledger.track(
+388	                        attempt.client_ref.clone(),
+389	                        Some(accepted.order_id.clone()),
+390	                        Some(accepted.venue_seq),
+391	                        attempt.size,
+392	                        attempt.created_at,
+393	                    );
+394	                    self.pending.insert(PendingOrder::new(
+395	                        attempt.strategy_id.clone(),
+396	                        attempt.instrument_id.clone(),
+397	                        attempt.venue,
+398	                        accepted.order_id,
+399	                        attempt.client_ref.clone(),
+400	                        accepted.venue_seq,
+401	                        attempt.limit_price,
+402	                        attempt.size,
+403	                        attempt.expiry_time,
+404	                        attempt.created_at,
+405	                    ));
+406	                }
+407	                Err(_) => still_unconfirmed.push(attempt),
+408	            }
+409	        }
+410	        self.leg_attempts = still_unconfirmed;
+411	    }
+412	
+413	    /// Quantity attributable to this leg: the resting order itself, plus every
+414	    /// corrective order this engine sent for the same mandate and venue.
+415	    fn acquired_for(&self, leg: &PendingOrder) -> Qty {
+416	        let mut total = self.ledger.attributed_for(&leg.client_ref);
+417	        for record in self.records_for(leg) {
+418	            total += self.ledger.attributed_for(&record.client_ref);
+419	        }
+420	        total
+421	    }
+422	
+423	    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {
+424	        self.neutralizations
+425	            .iter()
+426	            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)
+427	            .collect()
+428	    }
+429	
+430	    /// Exact integer comparison. There is no tolerance: a leg short by one base
+431	    /// unit is short.
+432	    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {
+433	        self.acquired_for(leg) >= leg.size
+434	    }
+435	
+436	    /// Quantity already working on corrective orders this engine has committed
+437	    /// to for this leg.
+438	    ///
+439	    /// This is the term that stops consecutive cycles sending the same exposure
+440	    /// twice:
+441	    ///
+442	    /// - one the venue acknowledged is working for its own outstanding quantity;
+443	    /// - one whose acknowledgement was lost is working for its full size, since
+444	    ///   the venue may have created it and this engine cannot see it;
+445	    /// - one the venue has finalized is working for nothing at all, whatever it
+446	    ///   managed to fill, because the gap it leaves behind is real.
+447	    fn working_for(&self, leg: &PendingOrder) -> Qty {
+448	        self.records_for(leg)
+449	            .iter()
+450	            .map(|record| self.working_in(record))
+451	            .sum()
+452	    }
+453	
+454	    fn working_in(&self, record: &NeutralizationRecord) -> Qty {
+455	        if record.order_id.is_none() {
+456	            return record.size;
+457	        }
+458	        if !self.ledger.knows(&record.client_ref) {
+459	            return record.size;
+460	        }
+461	        self.ledger.outstanding_for(&record.client_ref)
+462	    }
+463	
+464	    /// The exposure on this leg that is not yet resolved: what the leg needs,
+465	    /// less what is already attributed to it, less what is still working in
+466	    /// corrective orders already committed to.
+467	    fn residual_for(&self, leg: &PendingOrder) -> Qty {
+468	        leg.size - self.acquired_for(leg) - self.working_for(leg)
+469	    }
+470	
+471	    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {
+472	        if self.resting_at_venue.contains(&leg.order_id) {
+473	            LegVisibility::Resting
+474	        } else if self.ledger.is_finalized(&leg.client_ref) {
+475	            // A block named this order, so the venue has closed it and
+476	            // cancelled the rest: what it is short is known, not in flight.
+477	            LegVisibility::Closed
+478	        } else if self.replaced.contains(&leg.order_id) {
+479	            LegVisibility::Withdrawn
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "                    created_at: now,\n                });\n            }\n        }\n    }\n\n    /// Re-enter legs the venue never confirmed, under the reference they were\n    /// first sent under.\n    ///\n    /// A leg is recovered either by identity — an observation has since carried\n    /// the `client_ref` back, which is what makes an unacknowledged order\n    /// visible again — or by resubmitting under that same reference, which the\n    /// venue deduplicates onto the original order. Nothing here mints a new\n    /// reference, and a leg that is already tracked is left alone.\n    fn retry_unconfirmed_legs(&mut self, now: Timestamp) {\n        if self.leg_attempts.is_empty() {\n            return;\n        }\n        let attempts = std::mem::take(&mut self.leg_attempts);\n        let mut still_unconfirmed: Vec<LegAttempt> = Vec::new();\n        for attempt in attempts {\n            // Too close to expiry to work a new order.\n            if now + CANCEL_LEAD >= attempt.expiry_time {\n                continue;\n            }\n            if self.pending.leg(&attempt.strategy_id, attempt.venue).is_some() {\n                continue;\n            }\n            if let Some(order_id) = self.ledger.order_for(&attempt.client_ref) {\n                let venue_seq = self.ledger.venue_seq_for(&attempt.client_ref).unwrap_or(0);\n                self.pending.insert(PendingOrder::new(\n                    attempt.strategy_id.clone(),\n                    attempt.instrument_id.clone(),\n                    attempt.venue,\n                    order_id,\n                    attempt.client_ref.clone(),\n                    venue_seq,\n                    attempt.limit_price,\n                    attempt.size,\n                    attempt.expiry_time,\n                    attempt.created_at,\n                ));\n                continue;\n            }\n            let request = OrderRequest {\n                strategy_id: attempt.strategy_id.clone(),\n                instrument_id: attempt.instrument_id.clone(),\n                venue: attempt.venue,\n                kind: OrderKind::RestingLimit,\n                limit_price: attempt.limit_price,\n                size: attempt.size,\n                client_ref: attempt.client_ref.clone(),\n                expiry_time: attempt.expiry_time,\n            };\n            match self.gateway.submit(&request) {\n                Ok(accepted) => {\n                    self.resting_at_venue.insert(accepted.order_id.clone());\n                    self.ledger.track(\n                        attempt.client_ref.clone(),\n                        Some(accepted.order_id.clone()),\n                        Some(accepted.venue_seq),\n                        attempt.size,\n                        attempt.created_at,\n                    );\n                    self.pending.insert(PendingOrder::new(\n                        attempt.strategy_id.clone(),\n                        attempt.instrument_id.clone(),\n                        attempt.venue,\n                        accepted.order_id,\n                        attempt.client_ref.clone(),\n                        accepted.venue_seq,\n                        attempt.limit_price,\n                        attempt.size,\n                        attempt.expiry_time,\n                        attempt.created_at,\n                    ));\n                }\n                Err(_) => still_unconfirmed.push(attempt),\n            }\n        }\n        self.leg_attempts = still_unconfirmed;\n    }\n\n    /// Quantity attributable to this leg: the resting order itself, plus every\n    /// corrective order this engine sent for the same mandate and venue.\n    fn acquired_for(&self, leg: &PendingOrder) -> Qty {\n        let mut total = self.ledger.attributed_for(&leg.client_ref);\n        for record in self.records_for(leg) {\n            total += self.ledger.attributed_for(&record.client_ref);\n        }\n        total\n    }\n\n    fn records_for(&self, leg: &PendingOrder) -> Vec<&NeutralizationRecord> {\n        self.neutralizations\n            .iter()\n            .filter(|record| record.strategy_id == leg.strategy_id && record.venue == leg.venue)\n            .collect()\n    }\n\n    /// Exact integer comparison. There is no tolerance: a leg short by one base\n    /// unit is short.\n    fn leg_is_complete(&self, leg: &PendingOrder) -> bool {\n        self.acquired_for(leg) >= leg.size\n    }\n\n    /// Quantity already working on corrective orders this engine has committed\n    /// to for this leg.\n    ///\n    /// This is the term that stops consecutive cycles sending the same exposure\n    /// twice:\n    ///\n    /// - one the venue acknowledged is working for its own outstanding quantity;\n    /// - one whose acknowledgement was lost is working for its full size, since\n    ///   the venue may have created it and this engine cannot see it;\n    /// - one the venue has finalized is working for nothing at all, whatever it\n    ///   managed to fill, because the gap it leaves behind is real.\n    fn working_for(&self, leg: &PendingOrder) -> Qty {\n        self.records_for(leg)\n            .iter()\n            .map(|record| self.working_in(record))\n            .sum()\n    }\n\n    fn working_in(&self, record: &NeutralizationRecord) -> Qty {\n        if record.order_id.is_none() {\n            return record.size;\n        }\n        if !self.ledger.knows(&record.client_ref) {\n            return record.size;\n        }\n        self.ledger.outstanding_for(&record.client_ref)\n    }\n\n    /// The exposure on this leg that is not yet resolved: what the leg needs,\n    /// less what is already attributed to it, less what is still working in\n    /// corrective orders already committed to.\n    fn residual_for(&self, leg: &PendingOrder) -> Qty {\n        leg.size - self.acquired_for(leg) - self.working_for(leg)\n    }\n\n    fn visibility(&self, leg: &PendingOrder) -> LegVisibility {\n        if self.resting_at_venue.contains(&leg.order_id) {\n            LegVisibility::Resting\n        } else if self.ledger.is_finalized(&leg.client_ref) {\n            // A block named this order, so the venue has closed it and\n            // cancelled the rest: what it is short is known, not in flight.\n            LegVisibility::Closed\n        } else if self.replaced.contains(&leg.order_id) {\n            LegVisibility::Withdrawn", "numLines": 150, "startLine": 330, "totalLines": 656}}

@@ -1,0 +1,279 @@
+[35]
+cat >> /app/tests/diagnostics.rs <<'EOF'
+
+// ---------------------------------------------------------------------------
+// Interactions: two or three rules at once, driven through `run_cycle`.
+// ---------------------------------------------------------------------------
+
+/// A block closes the leg it names, so the leg's state is known exactly even
+/// though it is gone from `open_orders`: the residual is covered, and the
+/// momentarily-unknown rule does not apply to it.
+#[test]
+fn a_block_closed_leg_is_neutralized_for_what_it_missed() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(
+            vec![event("V-101", "pex-1", 10, at(OPEN))],
+            vec![block("b1", &["V-102"], 4, at(OPEN))],
+            "k1",
+        ),
+    ]);
+    let mut engine = rig.engine();
+
+    engine.run_cycle().expect("cycle 1");
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![6],
+        "FAILED: a block finalizes the order it names, so its state is known - the \
+         corrective covers the residual (10 - 4), and the unconfirmed rule does \
+         not block it"
+    );
+}
+
+/// A corrective a block has finalized contributes nothing as still working, so
+/// the gap it leaves behind is covered again - and only the gap.
+#[test]
+fn a_finalized_corrective_leaves_a_gap_that_is_covered_again() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(vec![event("V-101", "pex-1", 10, at(OPEN))], vec![], "k1"),
+        batch(vec![], vec![], "k2"),
+        // The corrective is the third submission, accepted in cycle three, so its
+        // window opens at OPEN + 120 and this match is inside it.
+        batch(vec![], vec![block("b1", &["V-103"], 4, at(OPEN + 180))], "k3"),
+    ]);
+    let mut engine = rig.engine();
+
+    rig.gateway
+        .set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    engine.run_cycle().expect("cycle 1");
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+    rig.clock.set(at(OPEN + 120));
+    engine.run_cycle().expect("cycle 3");
+    rig.gateway.set_open(vec![]);
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: the first corrective covers the whole residual"
+    );
+
+    rig.clock.set(at(OPEN + 180));
+    engine.run_cycle().expect("cycle 4");
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10, 6],
+        "FAILED: a finalized corrective contributes nothing as still working, \
+         whatever it filled - the gap it leaves behind is real, and is covered \
+         once and only once"
+    );
+}
+
+/// A rejection creates nothing, so the exposure stays open and a later cycle
+/// tries again rather than latching the mandate shut.
+#[test]
+fn a_rejected_corrective_does_not_latch_the_mandate() {
+    let rig = Rig::new(north_filled());
+    rig.gateway
+        .fail_on(3, SubmitError::Rejected(String::from("no depth")));
+    let mut engine = rig.engine();
+    engine_after_first_corrective(&rig, &mut engine);
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: the rejected attempt created no economic order, so nothing is \
+         covered by it"
+    );
+
+    rig.clock.set(at(OPEN + 180));
+    engine.run_cycle().expect("cycle 4");
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10, 10],
+        "FAILED: a rejection creates nothing and leaves the exposure open to a \
+         later attempt - a mandate must not be latched shut by one failure"
+    );
+}
+
+/// Custody inventory aggregates across mandates, runs and dead orders, so it
+/// cannot prove that one particular order filled.
+#[test]
+fn pre_existing_custody_inventory_is_not_a_fill() {
+    let rig = Rig::new(vec![batch(vec![], vec![], "k0")]);
+    rig.inventory.hold(InstrumentId::new("m1-N"), 30);
+    let mut engine = rig.engine();
+
+    engine.run_cycle().expect("cycle 1");
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+
+    assert!(
+        engine.positions().is_empty(),
+        "FAILED: custody inventory held before an order was submitted proves \
+         nothing about that order"
+    );
+    assert!(
+        rig.gateway.corrective_sizes().is_empty(),
+        "FAILED: no leg filled, so there is no exposure to correct"
+    );
+    assert_eq!(
+        engine.pending_orders().len(),
+        2,
+        "FAILED: both legs are live and remain tracked"
+    );
+}
+
+/// Two mandates naming one instrument. Quantity acquired by one must not
+/// complete a leg of the other.
+#[test]
+fn two_mandates_sharing_an_instrument_do_not_cross_attribute() {
+    let rig = Rig::with(
+        vec![
+            candidate_on("m1", "shared-N", "m1-S", 10, at(10_000)),
+            candidate_on("m2", "shared-N", "m2-S", 10, at(10_000)),
+        ],
+        vec![
+            batch(vec![], vec![], "k0"),
+            // m1's north leg is the first submission: V-101 under pex-1.
+            batch(vec![event("V-101", "pex-1", 10, at(OPEN))], vec![], "k1"),
+        ],
+    );
+    let mut engine = rig.engine();
+    rig.inventory.hold(InstrumentId::new("shared-N"), 10);
+
+    engine.run_cycle().expect("cycle 1");
+    rig.gateway
+        .set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+    rig.clock.set(at(OPEN + 120));
+    engine.run_cycle().expect("cycle 3");
+
+    let m2_attempts = rig
+        .gateway
+        .submitted
+        .borrow()
+        .iter()
+        .filter(|request| request.strategy_id.as_str() == "m2")
+        .count();
+    assert_eq!(
+        m2_attempts, 2,
+        "FAILED: mandate m2 sent only the two legs it was entered with - m1's \
+         fill on the shared instrument is not m2's"
+    );
+    assert!(
+        rig.store
+            .snapshot()
+            .positions
+            .iter()
+            .all(|position| position.strategy_id.as_str() != "m2")
+
+[39]
+cat >> /app/tests/diagnostics.rs <<'EOF'
+
+/// An unacknowledged corrective whose fill arrives before any retry: the fill
+/// event carries the client reference, so the engine recovers the order's
+/// identity, counts the fill against the leg, and never places a second order.
+#[test]
+fn a_lost_corrective_is_identified_by_its_fill_and_not_resent() {
+    let rig = Rig::new(vec![
+        batch(vec![], vec![], "k0"),
+        batch(vec![event("V-101", "pex-1", 10, at(OPEN))], vec![], "k1"),
+        batch(vec![], vec![], "k2"),
+        // The corrective is the third submission; its acknowledgement was lost,
+        // but the venue matched it and the feed names its client reference.
+        batch(vec![event("V-103", "pex-3", 10, at(OPEN + 180))], vec![], "k3"),
+    ]);
+    rig.gateway.fail_on(3, SubmitError::AcknowledgementLost);
+    let mut engine = rig.engine();
+
+    rig.gateway
+        .set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+    engine.run_cycle().expect("cycle 1");
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+    rig.clock.set(at(OPEN + 120));
+    engine.run_cycle().expect("cycle 3");
+    rig.gateway.set_open(vec![]);
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: the lost acknowledgement is one attempt at one economic order"
+    );
+
+    rig.clock.set(at(OPEN + 180));
+    engine.run_cycle().expect("cycle 4");
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: identity is recovered when a later observation carries the client \
+         reference, so the corrective is not submitted a second time"
+    );
+    let positions = engine.positions();
+    assert_eq!(
+        positions.len(),
+        1,
+        "FAILED: a neutralization fill resolves the exposure it was sent for, so \
+         the mandate pairs"
+    );
+    assert_eq!(
+        (positions[0].size_north, positions[0].size_south),
+        (10, 10),
+        "FAILED: quantity attributed to a neutralization is counted once, against \
+         the leg it was sent for and not also as a fill of the resting order"
+    );
+}
+
+/// A failed `open_orders` call says nothing about the venue, so no order is
+/// treated as withdrawn and no exposure is covered on the strength of it.
+#[test]
+fn an_unavailable_open_order_list_concludes_nothing() {
+    let rig = Rig::new(north_filled());
+    let mut engine = rig.engine();
+    rig.gateway
+        .set_open(vec![open_order("V-102", "pex-2", 102, 10, 0)]);
+
+    engine.run_cycle().expect("cycle 1");
+    rig.gateway.open_fails.set(true);
+    rig.clock.set(at(OPEN + 60));
+    engine.run_cycle().expect("cycle 2");
+
+    assert!(
+        rig.gateway.corrective_sizes().is_empty(),
+        "FAILED: a failed open_orders call proves nothing about the venue, so no \
+         leg may be treated as withdrawn because of it"
+    );
+    assert!(
+        rig.gateway.cancelled.borrow().is_empty(),
+        "FAILED: nothing is cancelled on the strength of a failed read"
+    );
+
+    // The venue answers again, and the correction proceeds from there.
+    rig.gateway.open_fails.set(false);
+    rig.clock.set(at(OPEN + 120));
+    engine.run_cycle().expect("cycle 3");
+    rig.clock.set(at(OPEN + 180));
+    engine.run_cycle().expect("cycle 4");
+
+    assert_eq!(
+        rig.gateway.corrective_sizes(),
+        vec![10],
+        "FAILED: once the venue answers, the resting leg is closed and the \
+         residual covered once"
+    );
+    assert!(
+        rig.gateway.logged_at("cancel:V-102") < rig.gateway.logged_at("submit:V-104"),
+        "FAILED: closure of the resting order comes before the corrective order"
+    );
+}
+EOF
+cargo test --offline --test diagnostics 2>&1 | tail -20

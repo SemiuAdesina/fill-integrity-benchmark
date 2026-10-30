@@ -1,0 +1,3 @@
+b11_overlap_not_detected
+targets
+detects duplicate placements but not overlapping intervals

@@ -1,0 +1,3 @@
+MODE=nop LABEL=base REWARD=0 RC=0 ELAPSED=2s
+RUNLOG: CONTROL ok verdict passed=2/14 control=1 probe_failed_closed=0 reward=0  FAILS: invalid_problems_reported,plans_legal_and_reproduce_telemetry,canonical_plans_recovered_exactly,pipelined_link_serialization,suffix_consistent_tree,capacity_and_combine_choice,saturating_fold_value,telemetry_zero_links_and_optional_completion,objective_order_and_plan_key,public_capture,graded_fabrics_recovered_within_budget,deterministic_output,
+WORKDIR: /tmp/rcf-Lfqa3R

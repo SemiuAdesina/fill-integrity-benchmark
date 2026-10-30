@@ -1,0 +1,1083 @@
+[19] CMD: cargo build --release --offline --locked 2>&1 | tail -5 && time ./target/release/phase && cargo test --offline --locked --test diagnostics 2>&1 | tail -15
+--- obs tail ---
+ profile [optimized + debuginfo] target(s) in 0.01s
+markers=12 offspring=10
+total_log_likelihood=-725.2001583337
+wrote /app/result.json
+
+real	0m0.019s
+user	0m0.018s
+sys	0m0.001s
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test relabelling_resorts_the_unordered_pair ... ok
+test inheritance_states_are_unordered_and_complete ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[stdout]
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.01s
+markers=12 offspring=10
+total_log_likelihood=-725.2001583337
+wrote /app/result.json
+
+real	0m0.019s
+user	0m0.018s
+sys	0m0.001s
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-e7cdbb1e1e47d3b0)
+
+running 4 tests
+test relabelling_resorts_the_unordered_pair ... ok
+test inheritance_states_are_unordered_and_complete ... ok
+test switch_counts_use_multiset_semantics ... ok
+test result_encoding_round_trips_and_digest_is_deterministic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+[metadata] {"noOutputExpected": false}
+
+[25] CMD: cargo test --offline --locked --lib -- --nocapture 2>&1 | tail -20
+--- obs tail ---
+est cross_model::tests::state_is_unordered ... ok
+test cross_model::tests::switch_count_treats_states_as_multisets ... ok
+test digest::tests::digest_hex_is_zero_padded ... ok
+test json::tests::rejects_trailing_content_and_duplicate_keys ... ok
+test digest::tests::matches_the_published_reference_vectors ... ok
+test json::tests::round_trips_a_nested_document ... ok
+local best = -706.3946897454796
+test solver::dev::viterbi_matches_the_scorer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s
+
+[stdout]
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: `polyploid-phase` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running unittests src/lib.rs (target/debug/deps/polyploid_phase-5988f2d56536b91f)
+
+running 8 tests
+test cross_model::tests::all_states_are_in_canonical_index_order ... ok
+test cross_model::tests::state_is_unordered ... ok
+test cross_model::tests::switch_count_treats_states_as_multisets ... ok
+test digest::tests::digest_hex_is_zero_padded ... ok
+test json::tests::rejects_trailing_content_and_duplicate_keys ... ok
+test digest::tests::matches_the_published_reference_vectors ... ok
+test json::tests::round_trips_a_nested_document ... ok
+local best = -706.3946897454796
+test solver::dev::viterbi_matches_the_scorer ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s
+[metadata] {"noOutputExpected": false}
+
+[30] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod local;\nmod model;","mod bounds;\nmod local;\nmod model;") s=s.replace(""" #[test] fn viterbi_matches_the_scorer() {""",""" #[test] fn measure_root_bo
+--- obs tail ---
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0308, E0369.
+For more information about an error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 9 warnings
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 9 warnings emitted
+
+[stdout]
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0308, E0369.
+For more information about an error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 9 warnings
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 9 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[31] CMD: cargo test --offline --locked --release --lib -- --nocapture measure 2>&1 | grep -E "^error|-->|expected|note: expected" | head -30
+--- obs tail ---
+-> src/solver/bounds.rs:267:32
+error[E0369]: cannot add `f64` to `[f64; 100]`
+   --> src/solver/bounds.rs:280:30
+error[E0308]: mismatched types
+   --> src/solver.rs:110:53
+    |                                                |    expected `[f64; 100]`, found `f64`
+   --> src/solver.rs:110:48
+   --> /rustc/90b35a6239c3d8bdabc530a6a0816f7ff89a0aaf/library/alloc/src/vec/mod.rs:3154:8
+  --> src/solver/bounds.rs:46:17
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 9 warnings emitted
+
+[stdout]
+   --> src/solver/bounds.rs:141:47
+   --> src/solver/bounds.rs:146:40
+   --> src/solver/bounds.rs:157:52
+   --> src/solver/bounds.rs:163:40
+   --> src/solver/bounds.rs:174:52
+   --> src/solver/bounds.rs:180:40
+   --> src/solver/bounds.rs:192:52
+   --> src/solver/bounds.rs:198:41
+error[E0369]: cannot add `f64` to `[f64; 100]`
+   --> src/solver/bounds.rs:239:30
+error[E0369]: cannot add `[f64; 100]` to `[f64; 100]`
+   --> src/solver/bounds.rs:267:32
+error[E0369]: cannot add `f64` to `[f64; 100]`
+   --> src/solver/bounds.rs:280:30
+error[E0308]: mismatched types
+   --> src/solver.rs:110:53
+    |                                                |    expected `[f64; 100]`, found `f64`
+   --> src/solver.rs:110:48
+   --> /rustc/90b35a6239c3d8bdabc530a6a0816f7ff89a0aaf/library/alloc/src/vec/mod.rs:3154:8
+  --> src/solver/bounds.rs:46:17
+error: could not compile `polyploid-phase` (lib test) due to 4 previous errors; 9 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[32] CMD: python3 - <<'EOF' p='src/solver/bounds.rs' s=open(p).read() s=s.replace("fwd: &[Vec<[f64; NJ]>]","fwd: &[[f64; NJ]]") open(p,'w').write(s) p='src/solver.rs' s=open(p).read() s=s.replace("let empty: Vec<Vec<[f64; 100]>> =
+--- obs tail ---
+warning: `polyploid-phase` (lib test) generated 11 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.65s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+local   = -707.7305125625453
+single  = -684.7190488782894
+pair    = -685.6186188782889
+test solver::dev::measure_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.09s
+
+[stdout]
+warning: `polyploid-phase` (lib test) generated 11 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.65s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+local   = -707.7305125625453
+single  = -684.7190488782894
+pair    = -685.6186188782889
+test solver::dev::measure_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.09s
+[metadata] {"noOutputExpected": false}
+
+[34] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod bounds;\nmod local;\nmod model;","#[cfg(test)]\nmod dev;\nmod bounds;\nmod local;\nmod model;") open(p,'w').write(s) EOF cargo test --offline --locked
+--- obs tail ---
+erscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0277, E0428.
+For more information about an error, try `rustc --explain E0277`.
+warning: `polyploid-phase` (lib test) generated 9 warnings
+error: could not compile `polyploid-phase` (lib test) due to 6 previous errors; 9 warnings emitted
+
+[stdout]
+   |                                                           ^^^ the trait `From<usize>` is not implemented for `f64`
+   |
+   = help: the following other types implement trait `From<T>`:
+             `f64` implements `From<bool>`
+             `f64` implements `From<f16>`
+             `f64` implements `From<f32>`
+             `f64` implements `From<i16>`
+             `f64` implements `From<i32>`
+             `f64` implements `From<i8>`
+             `f64` implements `From<u16>`
+             `f64` implements `From<u32>`
+             `f64` implements `From<u8>`
+
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0277, E0428.
+For more information about an error, try `rustc --explain E0277`.
+warning: `polyploid-phase` (lib test) generated 9 warnings
+error: could not compile `polyploid-phase` (lib test) due to 6 previous errors; 9 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[35] CMD: cargo test --offline --locked --release --lib -- --nocapture 2>&1 | grep -E "^error" -A 6 | head -40
+--- obs tail ---
+revious definition of the module `dev` here
+...
+98 | mod dev {
+--
+error[E0277]: the trait bound `f64: From<usize>` is not satisfied
+  --> src/solver/dev.rs:41:27
+   |
+41 |                 row[d] = -f64::from(rng.below(400)) / 100.0;
+   |                           ^^^ the trait `From<usize>` is not implemented for `f64`
+   |
+   = help: the following other types implement trait `From<T>`:
+--
+error[E0277]: the trait bound `f64: From<usize>` is not satisfied
+  --> src/solver/dev.rs:54:31
+   |
+54 |             rate_a[m] = 0.1 + f64::from(rng.below(30)) / 100.0;
+   |                               ^^^ the trait `From<usize>` is not implemented for `f64`
+   |
+   = help: the following other types implement trait `From<T>`:
+--
+error[E0277]: the trait bound `f64: From<usize>` is not satisfied
+  --> src/solver/dev.rs:58:31
+   |
+58 |             rate_b[m] = 0.1 + f64::from(rng.below(30)) / 100.0;
+   |                               ^^^ the trait `From<usize>` is not implemented for `f64`
+   |
+   = help: the following other types implement trait `From<T>`:
+--
+error[E0277]: the trait bound `f64: From<usize>` is not satisfied
+  --> src/solver/dev.rs:61:59
+   |
+61 |     let rec_a: Vec<f64> = (0..markers - 1).map(|_| 0.02 + f64::from(rng.below(45)) / 100.0).collect();
+   |                                                           ^^^ the trait `From<usize>` is not implemented for `f64`
+   |
+   = help: the following other types implement trait `From<T>`:
+--
+[metadata] {"noOutputExpected": false}
+
+[36] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("f64::from(rng.below(","(rng.below(") s=s.replace("-f64::from(rng.below(400))","-(rng.below(400) as f64)") s=s.replace("f64::from(rng.below(30))","rng.
+--- obs tail ---
+ (rng.below(30)) / 100.0;
+56:        if rng.below(3) == 0 {
+58:            rate_b[m] = 0.1 + (rng.below(30)) / 100.0;
+61:    let rec_a: Vec<f64> = (0..markers - 1).map(|_| 0.02 + (rng.below(45)) / 100.0).collect();
+62:    let rec_b: Vec<f64> = (0..markers - 1).map(|_| 0.02 + (rng.below(45)) / 100.0).collect();
+  --> src/solver/dev.rs:62:75
+   |
+62 |     let rec_b: Vec<f64> = (0..markers - 1).map(|_| 0.02 + (rng.below(45)) / 100.0).collect();
+   |                                                                           ^ no implementation for `usize / {float}`
+   |
+   = help: the trait `Div<{float}>` is not implemented for `usize`
+   = help: the following other types implement trait `Div<Rhs>`:
+             `&usize` implements `Div<usize>`
+             `&usize` implements `Div`
+             `usize` implements `Div<&usize>`
+             `usize` implements `Div<NonZero<usize>>`
+             `usize` implements `Div`
+
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+Some errors have detailed explanations: E0277, E0600.
+For more information about an error, try `rustc --explain E0277`.
+warning: `polyploid-phase` (lib test) generated 9 warnings
+error: could not compile `polyploid-phase` (lib test) due to 6 previous errors; 9 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[37] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("row[d] = -(rng.below(400)) / 100.0;","row[d] = -(rng.below(400) as f64) / 100.0;") s=s.replace("rate_a[m] = 0.1 + (rng.below(30)) / 100.0;","rate_a[m]
+--- obs tail ---
+ailures:
+    solver::dev::bounds_are_admissible
+    solver::dev::local_search_hits_enumeration_on_small_crosses
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+
+[stdout]
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib test) generated 11 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.95s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+thread 'solver::dev::bounds_are_admissible' panicked at src/solver/dev.rs:65:41:
+generated cross is valid: CrossError("offspring 4 outside the supported range")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+thread 'solver::dev::local_search_hits_enumeration_on_small_crosses' panicked at src/solver/dev.rs:65:41:
+generated cross is valid: CrossError("offspring 4 outside the supported range")
+test solver::dev::bounds_are_admissible ... FAILED
+test solver::dev::local_search_hits_enumeration_on_small_crosses ... FAILED
+
+failures:
+
+failures:
+    solver::dev::bounds_are_admissible
+    solver::dev::local_search_hits_enumeration_on_small_crosses
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
+[metadata] {"noOutputExpected": false}
+
+[38] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace(""" let pick = |rng: &mut local::Rng| -> u8 { match rng.below(5) { 0 => 1, 1 => 3, _ => 2, } }; """,""" let pick = |rng: &mut local::Rng| -> u8 { match
+--- obs tail ---
+::dev::local_search_hits_enumeration_on_small_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.33s
+
+[stdout]
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib test) generated 11 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.95s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+seed 1: optimum -296.4337 single -295.6335 pair -296.0435
+seed 1: brute -296.433664 local -296.433664 slack 0.000000
+seed 2: optimum -294.7399 single -294.7399 pair -294.7399
+seed 2: brute -294.739861 local -294.739861 slack 0.000000
+seed 3: optimum -294.7399 single -294.7399 pair -294.7399
+seed 4: optimum -311.9850 single -311.5795 pair -311.5795
+seed 3: brute -294.739861 local -294.739861 slack 0.000000
+seed 5: optimum -311.9850 single -311.5795 pair -311.5795
+test solver::dev::bounds_are_admissible ... ok
+seed 4: brute -311.984963 local -311.984963 slack 0.000000
+seed 5: brute -311.984963 local -311.984963 slack 0.000000
+seed 6: brute -307.951206 local -307.951206 slack 0.000000
+seed 7: brute -307.951206 local -307.951206 slack 0.000000
+test solver::dev::local_search_hits_enumeration_on_small_crosses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.33s
+[metadata] {"noOutputExpected": false}
+
+[44] CMD: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -5; cargo test --release --offline --locked --lib measure_root_bounds -- --nocapture 2>&1 | tail -30
+--- obs tail ---
+2892
+lag*    = -684.7190488782892
+lag suf = -684.7190488782894
+test solver::smoke::measure_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.20s
+
+[stdout]
+    answers_are_in_canonical_form
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.16s
+
+error: test failed, to rerun pass `--test solver_checks`
+...
+226 |     pub fn bound_single(&self, depth: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^^^
+...
+251 |     pub fn bound_pair(&self, depth: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:138:10
+    |
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib test) generated 12 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.16s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 1 test
+local   = -707.7305125625453
+single  = -684.7190488782894
+pair    = -685.6186188782889
+lag@0   = -684.7190488782892
+lag*    = -684.7190488782892
+lag suf = -684.7190488782894
+test solver::smoke::measure_root_bounds ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.20s
+[metadata] {"noOutputExpected": false}
+
+[47] CMD: cargo test --release --offline --locked --lib lagrange_trace -- --nocapture 2>&1 | grep -E "round|agree|error" | head -30
+--- obs tail ---
+ index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+round    0 L = -684.719049
+round   40 L = -684.184568
+round   80 L = -684.113250
+round  120 L = -684.107655
+round  160 L = -684.138352
+round  200 L = -684.156367
+round  240 L = -684.149166
+round  280 L = -684.119012
+round  320 L = -684.141466
+round  360 L = -684.139220
+round  400 L = -684.172533
+round  440 L = -684.117556
+round  480 L = -684.118066
+round  520 L = -684.129684
+round  560 L = -684.139492
+round  600 L = -684.124795
+
+[stdout]
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+warning: unnecessary parentheses around index expression
+round    0 L = -684.719049
+round   40 L = -684.184568
+round   80 L = -684.113250
+round  120 L = -684.107655
+round  160 L = -684.138352
+round  200 L = -684.156367
+round  240 L = -684.149166
+round  280 L = -684.119012
+round  320 L = -684.141466
+round  360 L = -684.139220
+round  400 L = -684.172533
+round  440 L = -684.117556
+round  480 L = -684.118066
+round  520 L = -684.129684
+round  560 L = -684.139492
+round  600 L = -684.124795
+[metadata] {"noOutputExpected": false}
+
+[50] CMD: cargo test --release --offline --locked --lib local_search_on_a_real_prefix -- --nocapture 2>&1 | grep -E "space|brute|panick|error\[" | head -20
+--- obs tail ---
+thread 'solver::dev::local_search_on_a_real_prefix' panicked at src/solver/dev.rs:184:40:
+
+[stdout]
+thread 'solver::dev::local_search_on_a_real_prefix' panicked at src/solver/dev.rs:184:40:
+[metadata] {"noOutputExpected": false}
+
+[55] CMD: python3 - <<'EOF' import re p='src/solver/dev.rs' s=open(p).read() s=s.replace('["/tmp/cross6.json", "/tmp/cross7.json"]','["/tmp/free4.json", "/tmp/free5.json"]') open(p,'w').write(s) EOF cargo test --release --offline 
+--- obs tail ---
+/tmp/free5.json: space 13824 brute -1259.596287 local -1259.596287
+
+[stdout]
+/tmp/free5.json: space 13824 brute -1259.596287 local -1259.596287
+[metadata] {"noOutputExpected": false}
+
+[57] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("use crate::solver::local;","use crate::solver::local::{self, refine};") open(p,'w').write(s) EOF cargo test --release --offline --locked --lib incumbe
+--- obs tail ---
+--> src/solver/bounds.rs:46:17
+  --> src/solver/lagrange.rs:40:19
+distinct fixed points: 300
+  -711.939089
+  -712.298195
+  -712.982875
+  -713.737058
+  -714.944013
+  -715.132643
+  -715.167852
+  -715.195427
+
+[stdout]
+  --> src/solver/bounds.rs:46:17
+  --> src/solver/lagrange.rs:40:19
+distinct fixed points: 300
+  -711.939089
+  -712.298195
+  -712.982875
+  -713.737058
+  -714.944013
+  -715.132643
+  -715.167852
+  -715.195427
+[metadata] {"noOutputExpected": false}
+
+[64] CMD: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("mod local;\nmod model;","mod local;\nmod model;\nmod search;") open(p,'w').write(s) EOF cargo build --release --offline --locked 2>&1 | grep -E "^(error|w
+--- obs tail ---
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+--
+warning: unused variable: `c`
+  --> src/solver/lagrange.rs:40:19
+   |
+40 |             .map(|c| {
+   |                   ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+warning: constant `PAIR` is never used
+
+[stdout]
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+--
+warning: unused variable: `c`
+  --> src/solver/lagrange.rs:40:19
+   |
+40 |             .map(|c| {
+   |                   ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+warning: constant `PAIR` is never used
+[metadata] {"noOutputExpected": false}
+
+[66] CMD: timeout 900 cargo test --release --offline --locked --lib search_matches_enumeration -- --nocapture 2>&1 | grep -E "brute|panick|^error|assert" -A3 | head -30
+--- obs tail ---
+/tmp/free5.json: brute -1259.596287 search -1259.596287 complete true nodes 18
+test solver::smoke::search_matches_enumeration ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.79s
+
+[stdout]
+/tmp/free5.json: brute -1259.596287 search -1259.596287 complete true nodes 18
+test solver::smoke::search_matches_enumeration ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.79s
+[metadata] {"noOutputExpected": false}
+
+[67] CMD: timeout 1800 cargo test --release --offline --locked --lib search_on_the_fixture -- --nocapture 2>&1 | grep -E "seed|panick|^error" -A3 | head -20
+--- obs tail ---
+seed -707.730513 best -705.140456 complete true nodes 3995 ties 1 in 81.166055ms
+test solver::smoke::search_on_the_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.16s
+
+[stdout]
+seed -707.730513 best -705.140456 complete true nodes 3995 ties 1 in 81.166055ms
+test solver::smoke::search_on_the_fixture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.16s
+[metadata] {"noOutputExpected": false}
+
+[68] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// How the search grows with the cross. #[test] fn search_scales() { use crate::solver::search::Search; for &(markers, offspring) in &[(12usize, 8usize), (16, 16), (20, 24), (28, 32
+--- obs tail ---
+Exit code 143
+Command timed out after 10m 0s
+
+[error] tool reported failure
+
+[69] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace(''' for &(markers, offspring) in &[(12usize, 8usize), (16, 16), (20, 24), (28, 32)] {''', ''' let spec = std::env::var("SOLVER_SCALE").unwrap_or_else(|
+--- obs tail ---
+Exit code 143
+Command timed out after 10m 0s
+== 12,8
+Terminated
+== 16,16
+Terminated
+== 16,8
+
+[error] tool reported failure
+
+[70] CMD: python3 - <<'EOF' p='src/solver/dev.rs' s=open(p).read() s=s.replace("let complete = search.run(value, z, 20_000_000);","let complete = search.run(value, z, 500_000);") open(p,'w').write(s) EOF for s in 12,8 12,32; do ec
+--- obs tail ---
+== 12,8
+12x8: space 5.48e16 complete false nodes 500001 elapsed 6.180160518s
+== 12,32
+12x32: space 5.48e16 complete false nodes 500001 elapsed 22.557720287s
+
+[stdout]
+== 12,8
+12x8: space 5.48e16 complete false nodes 500001 elapsed 6.180160518s
+== 12,32
+12x32: space 5.48e16 complete false nodes 500001 elapsed 22.557720287s
+[metadata] {"noOutputExpected": false}
+
+[80] CMD: cargo build --release --offline --locked 2>&1 | grep -E "^error" -A 10 | head -40
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"noOutputExpected": false}
+
+[81] CMD: timeout 900 cargo test --offline --locked --release --test solver_checks 2>&1 | tail -30
+--- obs tail ---
+d_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.35s
+
+[stdout]
+warning: method `bound` is never used
+   --> src/solver/lagrange.rs:332:12
+    |
+329 | impl Suffix {
+    | ----------- method in this implementation
+...
+332 |     pub fn bound(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:138:10
+    |
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 20 warnings (run `cargo fix --lib -p polyploid-phase` to apply 8 suggestions)
+   Compiling polyploid-phase v1.0.0 (/app)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.43s
+     Running tests/solver_checks.rs (target/release/deps/solver_checks-c22f6fdf6997e2c2)
+
+running 6 tests
+test diagnostic_crosses_are_valid_inputs ... ok
+test double_reduction_appears_only_where_allowed ... ok
+test answers_are_in_canonical_form ... ok
+test repeated_runs_agree_and_the_document_is_self_consistent ... ok
+test equally_scoring_answers_resolve_to_the_documented_representative ... ok
+test search_reaches_the_enumerated_optimum ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.35s
+[metadata] {"noOutputExpected": false}
+
+[87] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// Nodes and time for one cross on disk. #[test] fn profile_file() { use crate::solver::search::Search; let Ok(path) = std::env::var("SOLVER_FILE") else { return }; let text = std::
+--- obs tail ---
+/tmp/h12x8.json: local -103.6471 in 85.990594ms; search -103.4146 complete true nodes 1315143 in 24.308480223s (54102 nodes/s)
+
+[stdout]
+/tmp/h12x8.json: local -103.6471 in 85.990594ms; search -103.4146 complete true nodes 1315143 in 24.308480223s (54102 nodes/s)
+[metadata] {"noOutputExpected": false}
+
+[88] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// Does the consensus dual actually tighten the single bound anywhere? #[test] fn dual_probe() { let path = std::env::var("SOLVER_FILE").unwrap_or_else(|_| "/tmp/free5.json".to_stri
+--- obs tail ---
+/tmp/free5.json: optimum -1259.5963 single -1255.8968 gap 3.6995
+  scale 2: best dual -1255.8968 (gap 3.6995)
+  scale 1: best dual -1255.8968 (gap 3.6995)
+  scale 0.4: best dual -1255.8968 (gap 3.6995)
+  scale 0.15: best dual -1255.8968 (gap 3.6995)
+  scale 0.05: best dual -1255.8968 (gap 3.6995)
+  scale 0.015: best dual -1255.8968 (gap 3.6995)
+  scale 0.005: best dual -1255.8968 (gap 3.6995)
+
+[stdout]
+/tmp/free5.json: optimum -1259.5963 single -1255.8968 gap 3.6995
+  scale 2: best dual -1255.8968 (gap 3.6995)
+  scale 1: best dual -1255.8968 (gap 3.6995)
+  scale 0.4: best dual -1255.8968 (gap 3.6995)
+  scale 0.15: best dual -1255.8968 (gap 3.6995)
+  scale 0.05: best dual -1255.8968 (gap 3.6995)
+  scale 0.015: best dual -1255.8968 (gap 3.6995)
+  scale 0.005: best dual -1255.8968 (gap 3.6995)
+[metadata] {"noOutputExpected": false}
+
+[103] CMD: cargo build --release --offline --locked 2>&1 | tail -20
+--- obs tail ---
+321 | pub struct Suffix {
+    |            ^^^^^^
+
+warning: method `bound` is never used
+   --> src/solver/lagrange.rs:332:12
+    |
+329 | impl Suffix {
+    | ----------- method in this implementation
+...
+332 |     pub fn bound(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:138:10
+    |
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 20 warnings (run `cargo fix --lib -p polyploid-phase` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.40s
+
+[stdout]
+321 | pub struct Suffix {
+    |            ^^^^^^
+
+warning: method `bound` is never used
+   --> src/solver/lagrange.rs:332:12
+    |
+329 | impl Suffix {
+    | ----------- method in this implementation
+...
+332 |     pub fn bound(&self, m: usize, fwd: &[[f64; NJ]]) -> f64 {
+    |            ^^^^^
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:138:10
+    |
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib) generated 20 warnings (run `cargo fix --lib -p polyploid-phase` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.40s
+[metadata] {"noOutputExpected": false}
+
+[105] CMD: python3 - <<'EOF' import re for path, subs in [ ("src/solver.rs", [ ("let complete = search.run(value, z, 5_000_000);", "let complete = search.run(value, z, 5_000_000, deadline());"), ("let complete = search.run(value, z
+--- obs tail ---
+warning: unused variable: `c`
+warning: unused variable: `c`
+BUILD_DONE
+
+[stdout]
+warning: unused variable: `c`
+warning: unused variable: `c`
+BUILD_DONE
+[metadata] {"noOutputExpected": false}
+
+[106] CMD: cargo test --offline --locked --release --lib -- --nocapture search_on_the_fixture search_matches_enumeration 2>&1 | tail -20
+--- obs tail ---
+oid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+seed -707.730513 best -705.140456 complete true nodes 3995 ties 1 in 84.923051ms
+test solver::smoke::search_on_the_fixture ... ok
+/tmp/free5.json: brute -1259.596287 search -1259.596287 complete true nodes 18
+test solver::smoke::search_matches_enumeration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.82s
+
+[stdout]
+    = note: `#[warn(dead_code)]` on by default
+
+warning: type alias `Scratch` is never used
+   --> src/solver/local.rs:138:10
+    |
+138 | pub type Scratch = Vec<[f64; NJ]>;
+    |          ^^^^^^^
+
+warning: `polyploid-phase` (lib test) generated 12 warnings (run `cargo fix --lib -p polyploid-phase --tests` to apply 8 suggestions)
+    Finished `release` profile [optimized + debuginfo] target(s) in 3.16s
+     Running unittests src/lib.rs (target/release/deps/polyploid_phase-d1c8bb8dbb33ffb3)
+
+running 2 tests
+seed -707.730513 best -705.140456 complete true nodes 3995 ties 1 in 84.923051ms
+test solver::smoke::search_on_the_fixture ... ok
+/tmp/free5.json: brute -1259.596287 search -1259.596287 complete true nodes 18
+test solver::smoke::search_matches_enumeration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.82s
+[metadata] {"noOutputExpected": false}
+
+[107] CMD: ls /tmp/*.json /tmp/gen.py 2>/dev/null; echo ---; SOLVER_FILE=/tmp/h12x8.json timeout 600 cargo test --offline --locked --release --lib profile_file -- --nocapture 2>&1 | grep -E "local|search|panic"
+--- obs tail ---
+/tmp/cross6.json
+/tmp/cross7.json
+/tmp/free5.json
+/tmp/free6.json
+/tmp/gen.py
+/tmp/h12x8.json
+/tmp/h16x16.json
+/tmp/h20x24.json
+/tmp/h28x32.json
+/tmp/out_h12x8.json
+/tmp/w12x8.json
+/tmp/w16x8.json
+---
+   --> src/solver/local.rs:138:10
+/tmp/h12x8.json: local -103.6471 in 95.016713ms; search -103.4146 complete true nodes 1323862 in 18.522481746s (71473 nodes/s)
+
+[stdout]
+/tmp/cross6.json
+/tmp/cross7.json
+/tmp/free5.json
+/tmp/free6.json
+/tmp/gen.py
+/tmp/h12x8.json
+/tmp/h16x16.json
+/tmp/h20x24.json
+/tmp/h28x32.json
+/tmp/out_h12x8.json
+/tmp/w12x8.json
+/tmp/w16x8.json
+---
+   --> src/solver/local.rs:138:10
+/tmp/h12x8.json: local -103.6471 in 95.016713ms; search -103.4146 complete true nodes 1323862 in 18.522481746s (71473 nodes/s)
+[metadata] {"noOutputExpected": false}
+
+[108] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// Root bound against the optimum, and where in the tree the nodes are. #[test] fn gap_and_depth() { use crate::solver::bounds::Bounds; use crate::solver::search::Search; let path =
+--- obs tail ---
+/tmp/h12x8.json: space 1.62e16 single -83.4756 best -103.4146 gap 19.9390 complete true nodes 1323862
+/tmp/w12x8.json: space 1.62e16 single -76.9349 best -83.4949 gap 6.5600 complete true nodes 11607354
+
+[stdout]
+/tmp/h12x8.json: space 1.62e16 single -83.4756 best -103.4146 gap 19.9390 complete true nodes 1323862
+/tmp/w12x8.json: space 1.62e16 single -76.9349 best -83.4949 gap 6.5600 complete true nodes 11607354
+[metadata] {"noOutputExpected": false}
+
+[109] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// How close the local search gets to the proven optimum. #[test] fn incumbent_quality() { use crate::solver::search::Search; for path in std::env::var("SOLVER_FILES") .unwrap_or_de
+--- obs tail ---
+--> src/solver/local.rs:138:10
+/tmp/h12x8.json: local -103.414629 in 256.93764ms -> best -103.414629 complete true nodes 1270573
+/tmp/w12x8.json: local -83.494922 in 277.430899ms -> best -83.494922 complete false nodes 3000001
+/tmp/w16x8.json: local -135.313257 in 398.997216ms -> best -135.313257 complete false nodes 3000001
+
+[stdout]
+   --> src/solver/local.rs:138:10
+/tmp/h12x8.json: local -103.414629 in 256.93764ms -> best -103.414629 complete true nodes 1270573
+/tmp/w12x8.json: local -83.494922 in 277.430899ms -> best -83.494922 complete false nodes 3000001
+/tmp/w16x8.json: local -135.313257 in 398.997216ms -> best -135.313257 complete false nodes 3000001
+[metadata] {"noOutputExpected": false}
+
+[110] CMD: cat > /tmp/loc.rs <<'EOF' EOF cat >> /app/src/solver/dev.rs <<'EOF' /// Cost of the local search across the declared range. #[test] fn local_cost() { for path in std::env::var("SOLVER_FILES") .unwrap_or_default() .split(
+--- obs tail ---
+/tmp/h28x32.json: 64 restarts -> -1197.7204 in 1.284832906s (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1191.5480 in 2.264116944s (space 3.9e37)
+/tmp/h20x24.json: 64 restarts -> -656.0367 in 541.906598ms (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -667.6017 in 816.07369ms (space 1.0e26)
+/tmp/h16x16.json: 64 restarts -> -339.3782 in 199.10387ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -335.5549 in 554.229288ms (space 7.1e20)
+
+[stdout]
+/tmp/h28x32.json: 64 restarts -> -1197.7204 in 1.284832906s (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1191.5480 in 2.264116944s (space 3.9e37)
+/tmp/h20x24.json: 64 restarts -> -656.0367 in 541.906598ms (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -667.6017 in 816.07369ms (space 1.0e26)
+/tmp/h16x16.json: 64 restarts -> -339.3782 in 199.10387ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -335.5549 in 554.229288ms (space 7.1e20)
+[metadata] {"noOutputExpected": false}
+
+[112] CMD: cat >> /app/src/solver/dev.rs <<'EOF' /// Why more restarts can come out worse: split `search_local` into its stages. #[test] fn local_stages() { for path in std::env::var("SOLVER_FILES") .unwrap_or_default() .split(',')
+--- obs tail ---
+/tmp/h20x24.json: after 64 restarts refine -695.275811 polish -656.036719 value(z) -656.036719
+/tmp/h20x24.json: after 512 restarts refine -678.569192 polish -667.601741 value(z) -667.601741
+
+[stdout]
+/tmp/h20x24.json: after 64 restarts refine -695.275811 polish -656.036719 value(z) -656.036719
+/tmp/h20x24.json: after 512 restarts refine -678.569192 polish -667.601741 value(z) -667.601741
+[metadata] {"noOutputExpected": false}
+
+[117] CMD: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("""fn backward( ta: &[f64; 100], tb: &[f64; 100],""","""fn backward( ta: &[f64; NS * NS], tb: &[f64; NS * NS],""") t=t.replace("mid[ap * 10 + b]
+--- obs tail ---
+     |
+    |                                        | |                mutable borrow occurs here
+    |                                        | immutable borrow occurs here
+    |                                        immutable borrow later used here
+--
+error: could not compile `polyploid-phase` (lib) due to 2 previous errors; 11 warnings emitted
+DONE
+
+[stdout]
+error[E0753]: expected outer doc comment
+  --> src/solver/local.rs:87:1
+   |
+87 | //! re-optimised rather than held fixed, which is what `refine` cannot do, and
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: inner doc comments like this (starting with `//!` or `/*!`) can only appear before items
+help: you might have meant to write a regular comment
+   |
+--
+error[E0502]: cannot borrow `fwd` as mutable because it is also borrowed as immutable
+   --> src/solver/local.rs:121:59
+    |
+121 |                     let (prev, here) = (&fwd[m - 1], &mut fwd[m]);
+    |                                        -------------------^^^----
+    |                                        | |                |
+    |                                        | |                mutable borrow occurs here
+    |                                        | immutable borrow occurs here
+    |                                        immutable borrow later used here
+--
+error: could not compile `polyploid-phase` (lib) due to 2 previous errors; 11 warnings emitted
+DONE
+[metadata] {"noOutputExpected": false}
+
+[118] CMD: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("//! re-optimised rather than held fixed","/// re-optimised rather than held fixed") t=t.replace(""" } else { let (prev, here) = (&fwd[m - 1], &
+--- obs tail ---
+DONE
+
+[stdout]
+DONE
+[metadata] {"noOutputExpected": false}
+
+[119] CMD: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json timeout 1800 cargo test --offline --locked --release --lib local_cost -- --nocapture 2>&1 | grep -E "restarts|panic"
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"returnCodeInterpretation": "No matches found", "noOutputExpected": false}
+
+[120] CMD: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json timeout 900 cargo test --offline --locked --release --lib local_cost -- --nocapture 2>&1 | tail -25
+--- obs tail ---
+  ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+warning: unused variable: `value`
+   --> src/solver/local.rs:258:9
+    |
+258 |     let value = refine(model, &mut z);
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_value`
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 11 warnings
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 11 warnings emitted
+
+[stdout]
+    |        ^^^^^^                                 -------------
+
+warning: unused variable: `c`
+  --> src/solver/bounds.rs:46:17
+   |
+46 |             for c in 0..offspring {
+   |                 ^ help: if this is intentional, prefix it with an underscore: `_c`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `c`
+  --> src/solver/lagrange.rs:40:19
+   |
+40 |             .map(|c| {
+   |                   ^ help: if this is intentional, prefix it with an underscore: `_c`
+
+warning: unused variable: `value`
+   --> src/solver/local.rs:258:9
+    |
+258 |     let value = refine(model, &mut z);
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_value`
+
+For more information about this error, try `rustc --explain E0308`.
+warning: `polyploid-phase` (lib test) generated 11 warnings
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 11 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[121] CMD: cargo test --offline --locked --release --lib local_cost 2>&1 | grep -E "^error" -A 12 | head -30
+--- obs tail ---
+error[E0308]: mismatched types
+   --> src/solver/dev.rs:451:62
+    |
+451 |                 let polished = local::polish(&model, &mut z, best);
+    |                                -------------                 ^^^^ expected `usize`, found `f64`
+    |                                |
+    |                                arguments to this function are incorrect
+    |
+note: function defined here
+   --> src/solver/local.rs:92:8
+    |
+92  | pub fn polish(model: &Model, z: &mut [usize], sweeps: usize) -> f64 {
+    |        ^^^^^^                                 -------------
+--
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 11 warnings emitted
+
+[stdout]
+error[E0308]: mismatched types
+   --> src/solver/dev.rs:451:62
+    |
+451 |                 let polished = local::polish(&model, &mut z, best);
+    |                                -------------                 ^^^^ expected `usize`, found `f64`
+    |                                |
+    |                                arguments to this function are incorrect
+    |
+note: function defined here
+   --> src/solver/local.rs:92:8
+    |
+92  | pub fn polish(model: &Model, z: &mut [usize], sweeps: usize) -> f64 {
+    |        ^^^^^^                                 -------------
+--
+error: could not compile `polyploid-phase` (lib test) due to 1 previous error; 11 warnings emitted
+[metadata] {"noOutputExpected": false}
+
+[122] CMD: python3 - <<'EOF' p='/app/src/solver/dev.rs' t=open(p).read() start=t.index("/// Why more restarts can come out worse") end=t.index("/// Cost of the local search across the declared range.") t = t[:start] + t[end:] open(
+--- obs tail ---
+(Bash completed with no output)
+
+[metadata] {"returnCodeInterpretation": "No matches found", "noOutputExpected": false}
+
+[123] CMD: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json timeout 1800 cargo test --offline --locked --release --lib local_cost -- --nocapture 2>&1 | grep -vE "^warning|^\s|^$|^note|
+--- obs tail ---
+b2p]
+163 | ...                   w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)] = best;
+163 -                                     w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)] = best;
+163 +                                     w2[((a1 * NS + b1) * NS + a2p) * NS + b2p] = best;
+174 | ...                   let v = w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)]
+174 -                                         let v = w2[(((a1 * NS + b1) * NS + a2p) * NS + b2p)]
+174 +                                         let v = w2[((a1 * NS + b1) * NS + a2p) * NS + b2p]
+180 | ...                   w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)] = best;
+180 -                                     w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)] = best;
+180 +                                     w3[((a1 * NS + b1) * NS + a2) * NS + b2p] = best;
+192 | ...                   let v = w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)]
+192 -                                         let v = w3[(((a1 * NS + b1) * NS + a2) * NS + b2p)]
+192 +                                         let v = w3[((a1 * NS + b1) * NS + a2) * NS + b2p]
+198 | ...                   row[(((a1 * NS + b1) * NS + a2) * NS + b2)] = best;
+198 -                                     row[(((a1 * NS + b1) * NS + a2) * NS + b2)] = best;
+198 +                                     row[((a1 * NS + b1) * NS + a2) * NS + b2] = best;
+error[E0308]: mismatched types
+474 |                 let polished = local::polish(&model, &mut z, best);
+[metadata] {"noOutputExpected": false}
+
+[125] CMD: python3 - <<'EOF' p='/app/src/solver/dev.rs' t=open(p).read() # drop the duplicate local_cost and the leftover local_stages first = t.index("/// Cost of the local search across the declared range.") second = t.index("///
+--- obs tail ---
+283:#[test]
+284:fn dual_probe() {
+352:#[test]
+353:fn gap_and_depth() {
+376:#[test]
+377:fn incumbent_quality() {
+400:#[test]
+401:fn local_cost() {
+OK
+
+[stdout]
+283:#[test]
+284:fn dual_probe() {
+352:#[test]
+353:fn gap_and_depth() {
+376:#[test]
+377:fn incumbent_quality() {
+400:#[test]
+401:fn local_cost() {
+OK
+[metadata] {"noOutputExpected": false}
+
+[126] CMD: SOLVER_FILES=/tmp/h12x8.json,/tmp/w12x8.json,/tmp/h16x16.json,/tmp/h20x24.json,/tmp/h28x32.json timeout 1800 cargo test --offline --locked --release --lib local_cost -- --nocapture 2>&1 | grep -E "restarts|panicked"
+--- obs tail ---
+ts -> -103.4146 in 215.878771ms (space 1.6e16)
+/tmp/h12x8.json: 512 restarts -> -103.4146 in 1.6214442s (space 1.6e16)
+/tmp/w12x8.json: 64 restarts -> -83.5149 in 117.97635ms (space 1.6e16)
+/tmp/w12x8.json: 512 restarts -> -83.4949 in 960.902906ms (space 1.6e16)
+/tmp/h16x16.json: 64 restarts -> -335.3313 in 510.591026ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -332.5998 in 4.083128515s (space 7.1e20)
+/tmp/h20x24.json: 64 restarts -> -668.3240 in 1.024552439s (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -658.0726 in 8.053523344s (space 1.0e26)
+/tmp/h28x32.json: 64 restarts -> -1207.3454 in 1.908521618s (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1195.5013 in 14.895563221s (space 3.9e37)
+
+[stdout]
+/tmp/h12x8.json: 64 restarts -> -103.4146 in 215.878771ms (space 1.6e16)
+/tmp/h12x8.json: 512 restarts -> -103.4146 in 1.6214442s (space 1.6e16)
+/tmp/w12x8.json: 64 restarts -> -83.5149 in 117.97635ms (space 1.6e16)
+/tmp/w12x8.json: 512 restarts -> -83.4949 in 960.902906ms (space 1.6e16)
+/tmp/h16x16.json: 64 restarts -> -335.3313 in 510.591026ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -332.5998 in 4.083128515s (space 7.1e20)
+/tmp/h20x24.json: 64 restarts -> -668.3240 in 1.024552439s (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -658.0726 in 8.053523344s (space 1.0e26)
+/tmp/h28x32.json: 64 restarts -> -1207.3454 in 1.908521618s (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1195.5013 in 14.895563221s (space 3.9e37)
+[metadata] {"noOutputExpected": false}
+
+[130] CMD: python3 - <<'EOF' p='/app/src/solver/local.rs' t=open(p).read() t=t.replace("""/// Sweeps of single marker substitution run from each start. const SWEEPS: usize = 8;""","""/// Sweeps of single marker substitution run fro
+--- obs tail ---
+ -336.6056 in 194.561912ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -332.5998 in 876.029707ms (space 7.1e20)
+/tmp/h20x24.json: 64 restarts -> -670.4166 in 439.798315ms (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -670.4166 in 976.393739ms (space 1.0e26)
+/tmp/h28x32.json: 64 restarts -> -1221.5572 in 949.702799ms (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1219.3734 in 1.438986571s (space 3.9e37)
+/app/cross.json: 64 restarts -> -705.3275 in 86.443831ms (space 1.3e11)
+/app/cross.json: 512 restarts -> -705.3275 in 191.525706ms (space 1.3e11)
+
+[stdout]
+BUILT
+/tmp/h12x8.json: 64 restarts -> -104.8938 in 94.993744ms (space 1.6e16)
+/tmp/h12x8.json: 512 restarts -> -103.4146 in 303.4561ms (space 1.6e16)
+/tmp/w12x8.json: 64 restarts -> -83.7649 in 88.327388ms (space 1.6e16)
+/tmp/w12x8.json: 512 restarts -> -83.4949 in 271.255886ms (space 1.6e16)
+/tmp/h16x16.json: 64 restarts -> -336.6056 in 194.561912ms (space 7.1e20)
+/tmp/h16x16.json: 512 restarts -> -332.5998 in 876.029707ms (space 7.1e20)
+/tmp/h20x24.json: 64 restarts -> -670.4166 in 439.798315ms (space 1.0e26)
+/tmp/h20x24.json: 512 restarts -> -670.4166 in 976.393739ms (space 1.0e26)
+/tmp/h28x32.json: 64 restarts -> -1221.5572 in 949.702799ms (space 3.9e37)
+/tmp/h28x32.json: 512 restarts -> -1219.3734 in 1.438986571s (space 3.9e37)
+/app/cross.json: 64 restarts -> -705.3275 in 86.443831ms (space 1.3e11)
+/app/cross.json: 512 restarts -> -705.3275 in 191.525706ms (space 1.3e11)
+[metadata] {"noOutputExpected": false}

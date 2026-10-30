@@ -1,0 +1,69 @@
+[step 2] I'll start by reading the specification and understanding the existing code.
+
+[step 11] Let me examine the fixture data and get a baseline build.
+
+[step 12] Now I'll build the solver. Starting with the core model tables:
+
+[step 23] Now adding the missing `seed` method and fixing collect storage:
+
+[step 31] All public tests pass. Now let me stress-test scaling, since the graded run uses its own (possibly larger) crosses:
+
+[step 36] Node counts are low. Now let me validate correctness rigorously with an exhaustive brute-force check on random instances:
+
+[step 38] Let me test a pathological case where every assignment ties exactly (all likelihoods flat), which stresses the tie-breaking phase:
+
+[step 40] The result looks right but the node count is suspiciously low for an all-ties instance. Let me instrument to make sure nothing is being wrongly pruned:
+
+[step 47] Let me get real data instead of reasoning about it — I'll instrument the child loop.
+
+[step 53] Found it — the scratch buffers `udr`/`base` are shared across recursion depths, so a parent's values are clobbered by its children. Let me confirm the declared size range first.
+
+[step 54] M ≤ 28, N ≤ 32 — per-depth tables cost ~0.7 MB each, so I'lljust make them per-depth.
+
+[step 59] The flat instance now explodes, as expected — the old code was accidentally pruning with clobbered (too low) bounds. The real fix is a proper lexicographic lower bound on the key, so ties can be pruned soundly:
+
+[step 60] Now the `dfs` rewrite:
+
+[step 67] The lower bound has to respect that all four bits at a marker come from one column. Using the lexicographically smallest admissible column per open marker fixes that:
+
+[step 70] Now the table builder and the two call sites:
+
+[step 74] Flat instance: 13 nodes, 1 leaf, correct lex-min. Now re-verify the fixture and the full test suite:
+
+[step 75] The fix found a better optimum than the buggy version reported (−705.1404562027 vs −707.9892291319) — the clobbered bounds had been pruning the true optimum. Now the test suites:
+
+[step 77] Now let me strengthen the validation, since the bug I just fixed was exactly a tie-handling bug. First, timing on the fixture and the largest allowed size:
+
+[step 78] M=28/N=32 doesn't finish — the dual gap (370 nats) is far too wide. Let me instrument to see whether the issue is the primal or the dual:
+
+[step 83] The dual converges instantly to −870.7033 regardless of step rule — that smells like every progeny already agrees at λ=0, which would make the relaxation exact. Let me check:
+
+[step 84] The subgradient never improves the dual at all, which is suspicious. Let me line-search along the projected gradient:
+
+[step 86] Let me look at what the public test suite actually checks, to calibrate how hard the hidden crosses are likely to be:
+
+[step 87] Let me evaluate a second, structurally different bound — relax the chain instead of the column sharing:
+
+[step 91] The gap is fundamental (Lagrangian dual −870 vs planted truth −1184), so I need a much stronger primal at minimum. Let me add consensus and refit moves to the local search:
+
+[step 93] Now the primal improvements in `solver.rs`:
+
+[step 99] Let me add the second bound (chain-relaxed, columns kept shared) and take the tighter of the two per node:
+
+[step 108] Let me instrument the dual optimiser so I can experiment with step rules:
+
+[step 115] The generator makes DR-impossible states common, which inflates the gap unrealistically. Let me fix it to sample legal states:
+
+[step 121] The generator plants double-reduction states 40% of the time; real meiosis uses them at the DR rate. Fixing that:
+
+[step 125] The local search sits 10–20 nats below the true optimum, which starves the branch and bound. Let me add a primal-only mode to measure and improve it:
+
+[step 130] Now let me try a smoothed (log-sum-exp) dual, which should survive the degeneracy that stalls the plain subgradient:
+
+[step 134] The step sizes were blowing up. Let me use fixed steps and watch the trajectory:
+
+[step 137] Let me map the tractability envelope with the corrected generator, running in the background:
+
+[step 138] While the battery runs, let me check a hypothesis: the fixture's GLs are superlinear in dosage distance, which pins the data far harder than my linear GLs:
+
+[step 140] Let me test decisively whether the subgradient direction can descend at all, by evaluating the dual along it:

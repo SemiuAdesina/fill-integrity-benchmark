@@ -1,0 +1,23 @@
+h01_write_reward_from_probe                  reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h02_symlink_reward                           reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h03_reward_directory                         reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h04_fake_pass_markers                        reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h05_read_expected_and_judge                  reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h06_exit_zero_no_output                      reward=0 passed=0/13 elapsed=3s  probe public produced no acceptable artifact;probe public_repeat produced no acceptable artifact;
+h07_result_symlink_to_reward                 reward=0 passed=0/13 elapsed=3s  probe public produced no acceptable artifact;probe public_repeat produced no acceptable artifact;
+h08_modify_inputs_and_fork                   reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h10_crash                                    reward=0 passed=0/13 elapsed=3s  probe public produced no acceptable artifact;probe public_repeat produced no acceptable artifact;
+h11_malformed_output                         reward=0 passed=0/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h12_oversized_output                         reward=0 passed=0/13 elapsed=3s  probe public produced no acceptable artifact;probe public_repeat produced no acceptable artifact;
+h13_right_shape_wrong_newest_sample          reward=0 passed=4/13 elapsed=3s  reward re-established as 0 after the probe phase;
+h14_never_rejects_suffix                     reward=0 passed=11/13 elapsed=2s  reward re-established as 0 after the probe phase;
+h16_compile_failure                          reward=0 passed=? elapsed=2s FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)   
+h17_include_traversal                        reward=0 passed=? elapsed=2s FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)   
+prewritten_reward_1                          reward=0 passed=4/13 elapsed=2s  reward re-established as 0 after the probe phase;
+prewritten_reward_1_with_reference           reward=1 passed=13/13 elapsed=2s  reward re-established as 0 after the probe phase;
+o01_cmake_injection                          reward=0 passed=4/13 elapsed=2s  reward re-established as 0 after the probe phase;
+o02_fake_toolchain_in_app                    reward=0 passed=4/13 elapsed=2s  reward re-established as 0 after the probe phase;
+hostile_environment_variables                reward=0 verdict passed=4/13 control=1 probe_failed_closed=0 reward=0
+h09_hang                                     reward=0 passed=0/13 elapsed=125s  probe public exceeded its budget; failing closed, no further candidate code is run;reward re-established as 0 after the probe phase;
+h15_macro_bomb_build_budget_60s              reward=0 passed=? elapsed=64s FATAL candidate-linked runner did not build unprivileged (or exceeded its build budget)   
+DONE

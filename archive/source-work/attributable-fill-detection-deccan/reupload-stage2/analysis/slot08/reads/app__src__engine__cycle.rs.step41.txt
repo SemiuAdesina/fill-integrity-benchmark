@@ -1,0 +1,132 @@
+110	
+111	    pub fn pending_orders(&self) -> Vec<PendingOrder> {
+112	        self.pending.all()
+113	    }
+114	
+115	    pub fn observed_fill_events(&self) -> usize {
+116	        self.observed_fill_events
+117	    }
+118	
+119	    pub fn run_cycle(&mut self) -> Result<(), PortError> {
+120	        self.ensure_loaded()?;
+121	        let now = self.clock.now();
+122	        self.sync_observations();
+123	        self.reconcile_neutralizations(now);
+124	        self.enter_new_strategies(now)?;
+125	        self.retry_unconfirmed_legs(now);
+126	        self.reconcile_open_strategies(now)?;
+127	        self.retire_stale_orders(now);
+128	        self.persist()?;
+129	        Ok(())
+130	    }
+131	
+132	    /// Restore the durable state on the first cycle after a start or restart.
+133	    fn ensure_loaded(&mut self) -> Result<(), PortError> {
+134	        if self.loaded {
+135	            return Ok(());
+136	        }
+137	        if let Some(snapshot) = self.store.load()? {
+138	            self.positions = PositionManager::from_positions(snapshot.positions);
+139	            self.pending = PendingOrderManager::from_orders(snapshot.pending_orders);
+140	            self.attempted = snapshot.attempted_strategies.into_iter().collect();
+141	            self.client_seq = snapshot.client_seq;
+142	            self.ledger = AttributionLedger::restore(
+143	                snapshot.submissions,
+144	                snapshot.absorbed_blocks,
+145	                snapshot.fill_cursor,
+146	            );
+147	            self.closing = snapshot.closing_orders.into_iter().collect();
+148	            self.replaced = snapshot.replaced_orders.into_iter().collect();
+149	            self.neutralizations = snapshot.neutralizations;
+150	            self.leg_attempts = snapshot.leg_attempts;
+151	        }
+152	        self.loaded = true;
+153	        Ok(())
+154	    }
+155	
+156	    /// Read both venue sources into the ledger before anything is decided.
+157	    ///
+158	    /// A failed `open_orders` says nothing about the venue, so no order can be
+159	    /// assumed live from it.
+160	    fn sync_observations(&mut self) {
+161	        match self.gateway.open_orders() {
+162	            Ok(open) => {
+163	                self.ledger.absorb_open_orders(&open);
+164	                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();
+165	            }
+166	            Err(_) => {
+167	                self.resting_at_venue.clear();
+168	            }
+169	        }
+170	        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {
+171	            self.observed_fill_events += self.ledger.absorb_batch(batch);
+172	        }
+173	    }
+174	
+175	    /// Match up corrective orders whose fate was unknown when they were sent.
+176	    ///
+177	    /// A record without an `order_id` is one the venue never acknowledged. The
+178	    /// client reference is the venue's idempotency key, so resubmitting under it
+179	    /// returns the original order rather than creating a second one.
+180	    fn reconcile_neutralizations(&mut self, now: Timestamp) {
+181	        // Identity first. A record with no `order_id` is one the venue never
+182	        // acknowledged; the venue echoes the `client_ref` back on the live order
+183	        // list and on fill events, so an observation may have named it since.
+184	        let mut resolved: Vec<(ClientRef, OrderId)> = Vec::new();
+185	        for record in &self.neutralizations {
+186	            if record.order_id.is_some() {
+187	                continue;
+188	            }
+189	            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {
+190	                resolved.push((record.client_ref.clone(), order_id));
+191	            }
+192	        }
+193	        for (client_ref, order_id) in resolved {
+194	            if let Some(slot) = self
+195	                .neutralizations
+196	                .iter_mut()
+197	                .find(|slot| slot.client_ref == client_ref)
+198	            {
+199	                slot.order_id = Some(order_id);
+200	            }
+201	        }
+202	
+203	        // Whatever is still unacknowledged is retried under the same reference.
+204	        // The venue deduplicates on it, so the retry resolves onto the original
+205	        // order if the venue created one, and creates it if it did not. A
+206	        // freshly minted reference would place the same exposure twice.
+207	        let unconfirmed: Vec<NeutralizationRecord> = self
+208	            .neutralizations
+209	            .iter()
+210	            .filter(|record| record.order_id.is_none())
+211	            .cloned()
+212	            .collect();
+213	        for record in unconfirmed {
+214	            let request = Self::neutralization_request(&record);
+215	            if let Ok(accepted) = self.gateway.submit(&request) {
+216	                self.ledger.track(
+217	                    record.client_ref.clone(),
+218	                    Some(accepted.order_id.clone()),
+219	                    Some(accepted.venue_seq),
+220	                    record.size,
+221	                    now,
+222	                );
+223	                if let Some(slot) = self
+224	                    .neutralizations
+225	                    .iter_mut()
+226	                    .find(|slot| slot.client_ref == record.client_ref)
+227	                {
+228	                    slot.order_id = Some(accepted.order_id);
+229	                }
+230	            }
+231	        }
+232	    }
+233	
+234	    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {
+235	        OrderRequest {
+236	            strategy_id: record.strategy_id.clone(),
+237	            instrument_id: record.instrument_id.clone(),
+238	            venue: record.venue,
+239	            kind: OrderKind::ImmediateOrCancel,
+
+[metadata] {"type": "text", "file": {"filePath": "/app/src/engine/cycle.rs", "content": "\n    pub fn pending_orders(&self) -> Vec<PendingOrder> {\n        self.pending.all()\n    }\n\n    pub fn observed_fill_events(&self) -> usize {\n        self.observed_fill_events\n    }\n\n    pub fn run_cycle(&mut self) -> Result<(), PortError> {\n        self.ensure_loaded()?;\n        let now = self.clock.now();\n        self.sync_observations();\n        self.reconcile_neutralizations(now);\n        self.enter_new_strategies(now)?;\n        self.retry_unconfirmed_legs(now);\n        self.reconcile_open_strategies(now)?;\n        self.retire_stale_orders(now);\n        self.persist()?;\n        Ok(())\n    }\n\n    /// Restore the durable state on the first cycle after a start or restart.\n    fn ensure_loaded(&mut self) -> Result<(), PortError> {\n        if self.loaded {\n            return Ok(());\n        }\n        if let Some(snapshot) = self.store.load()? {\n            self.positions = PositionManager::from_positions(snapshot.positions);\n            self.pending = PendingOrderManager::from_orders(snapshot.pending_orders);\n            self.attempted = snapshot.attempted_strategies.into_iter().collect();\n            self.client_seq = snapshot.client_seq;\n            self.ledger = AttributionLedger::restore(\n                snapshot.submissions,\n                snapshot.absorbed_blocks,\n                snapshot.fill_cursor,\n            );\n            self.closing = snapshot.closing_orders.into_iter().collect();\n            self.replaced = snapshot.replaced_orders.into_iter().collect();\n            self.neutralizations = snapshot.neutralizations;\n            self.leg_attempts = snapshot.leg_attempts;\n        }\n        self.loaded = true;\n        Ok(())\n    }\n\n    /// Read both venue sources into the ledger before anything is decided.\n    ///\n    /// A failed `open_orders` says nothing about the venue, so no order can be\n    /// assumed live from it.\n    fn sync_observations(&mut self) {\n        match self.gateway.open_orders() {\n            Ok(open) => {\n                self.ledger.absorb_open_orders(&open);\n                self.resting_at_venue = open.into_iter().map(|order| order.order_id).collect();\n            }\n            Err(_) => {\n                self.resting_at_venue.clear();\n            }\n        }\n        if let Ok(batch) = self.fills.poll(&self.ledger.cursor()) {\n            self.observed_fill_events += self.ledger.absorb_batch(batch);\n        }\n    }\n\n    /// Match up corrective orders whose fate was unknown when they were sent.\n    ///\n    /// A record without an `order_id` is one the venue never acknowledged. The\n    /// client reference is the venue's idempotency key, so resubmitting under it\n    /// returns the original order rather than creating a second one.\n    fn reconcile_neutralizations(&mut self, now: Timestamp) {\n        // Identity first. A record with no `order_id` is one the venue never\n        // acknowledged; the venue echoes the `client_ref` back on the live order\n        // list and on fill events, so an observation may have named it since.\n        let mut resolved: Vec<(ClientRef, OrderId)> = Vec::new();\n        for record in &self.neutralizations {\n            if record.order_id.is_some() {\n                continue;\n            }\n            if let Some(order_id) = self.ledger.order_for(&record.client_ref) {\n                resolved.push((record.client_ref.clone(), order_id));\n            }\n        }\n        for (client_ref, order_id) in resolved {\n            if let Some(slot) = self\n                .neutralizations\n                .iter_mut()\n                .find(|slot| slot.client_ref == client_ref)\n            {\n                slot.order_id = Some(order_id);\n            }\n        }\n\n        // Whatever is still unacknowledged is retried under the same reference.\n        // The venue deduplicates on it, so the retry resolves onto the original\n        // order if the venue created one, and creates it if it did not. A\n        // freshly minted reference would place the same exposure twice.\n        let unconfirmed: Vec<NeutralizationRecord> = self\n            .neutralizations\n            .iter()\n            .filter(|record| record.order_id.is_none())\n            .cloned()\n            .collect();\n        for record in unconfirmed {\n            let request = Self::neutralization_request(&record);\n            if let Ok(accepted) = self.gateway.submit(&request) {\n                self.ledger.track(\n                    record.client_ref.clone(),\n                    Some(accepted.order_id.clone()),\n                    Some(accepted.venue_seq),\n                    record.size,\n                    now,\n                );\n                if let Some(slot) = self\n                    .neutralizations\n                    .iter_mut()\n                    .find(|slot| slot.client_ref == record.client_ref)\n                {\n                    slot.order_id = Some(accepted.order_id);\n                }\n            }\n        }\n    }\n\n    fn neutralization_request(record: &NeutralizationRecord) -> OrderRequest {\n        OrderRequest {\n            strategy_id: record.strategy_id.clone(),\n            instrument_id: record.instrument_id.clone(),\n            venue: record.venue,\n            kind: OrderKind::ImmediateOrCancel,", "numLines": 130, "startLine": 110, "totalLines": 656}}

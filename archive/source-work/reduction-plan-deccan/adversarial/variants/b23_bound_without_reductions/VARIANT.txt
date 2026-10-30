@@ -1,0 +1,3 @@
+b23_bound_without_reductions
+search bound
+bounds a partial tree by its completion without any reduction (not a lower bound: a reduction can lower completion)

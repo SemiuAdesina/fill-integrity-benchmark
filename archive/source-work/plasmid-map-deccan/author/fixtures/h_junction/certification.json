@@ -1,0 +1,56 @@
+{
+ "reference": {
+  "status": "ok",
+  "seconds": 0.15,
+  "internal": 3,
+  "deviation": 4837,
+  "c": 54,
+  "L": 1400
+ },
+ "enumeration_solver": {
+  "status": "ok",
+  "seconds": 0.75
+ },
+ "python_bnb": {
+  "status": "ok",
+  "seconds": 1.6,
+  "nodes": 3924,
+  "ties_at_count_and_deviation": 1
+ },
+ "held_out": [
+  "AatII+KpnI",
+  "PvuII+ScaI"
+ ],
+ "truth": {
+  "internal": 3,
+  "deviation": 5559,
+  "optimum_equals_truth": false
+ },
+ "fixture": "h_junction",
+ "seed": 523,
+ "description": "the insert sits in one site of an enzyme that cuts the vector several times, so that window is torn, and a site is regenerated at a junction",
+ "vector": "pUC18",
+ "vector_header": "L08752.1 pUC18 cloning vector",
+ "source": "T7",
+ "source_header": "V01146.1 Genome of bacteriophage T7",
+ "fragment": {
+  "left_enzyme": "AatII",
+  "left_cut": 23331,
+  "right_enzyme": "BstZ17I",
+  "right_cut": 24734
+ },
+ "cloning_site": [
+  "PvuII",
+  54
+ ],
+ "insert_length": 1403,
+ "enzymes": [
+  "AatII",
+  "KpnI",
+  "PvuII",
+  "ScaI"
+ ],
+ "error_percent": 2,
+ "detection_limit": 200,
+ "observed": 8
+}

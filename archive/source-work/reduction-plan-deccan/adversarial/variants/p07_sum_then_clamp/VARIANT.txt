@@ -1,0 +1,3 @@
+p07_sum_then_clamp
+07 arithmetic
+computes the sink value as one wide sum clamped once

@@ -1,0 +1,513 @@
+[13]
+mkdir -p /tmp/exp && cat > /tmp/exp/base.py <<'EOF'
+import json, numpy as np, itertools, math, random
+from math import comb
+
+D=json.load(open('/app/cross.json'))
+M=D['markers']; N=D['offspring']
+STATES=[(a,b) for a in range(4) for b in range(a,4)]
+S=len(STATES)
+GL=np.array(D['child_gl'])  # (N,M,5)
+
+def cols(dos):
+    return [c for c in itertools.product([0,1],repeat=4) if sum(c)==dos]
+COLA=[cols(d) for d in D['parent_dosage']['A']]
+COLB=[cols(d) for d in D['parent_dosage']['B']]
+rec={p:np.array(D['recombination'][p]) for p in 'AB'}
+dra={p:np.array(D['double_reduction'][p]['allowed']) for p in 'AB'}
+drr={p:np.array(D['double_reduction'][p]['rate']) for p in 'AB'}
+
+# per parent: transition matrices per interval (S x S), DR term per (marker,state)
+def switch(s1,s2):
+    # multiset intersection
+    l=list(s1); r=list(s2); sh=0
+    for x in l:
+        for i in range(len(r)):
+            if r[i]==x:
+                r[i]=99; sh+=1; break
+    return 2-sh
+SW=np.array([[switch(a,b) for b in STATES] for a in STATES])  # S x S : k from a to b
+T={}
+for p in 'AB':
+    # T[p][m] : S x S term for interval m (between m and m+1)
+    T[p]=np.zeros((M-1,S,S))
+    for m in range(M-1):
+        r=rec[p][m]
+        T[p][m]=SW*math.log(r)+(2-SW)*math.log(1-r)
+DR={}
+for p in 'AB':
+    DR[p]=np.zeros((M,S))
+    for m in range(M):
+        for i,s in enumerate(STATES):
+            isdr = s[0]==s[1]
+            if isdr:
+                assert dra[p][m] or True
+                DR[p][m,i]= math.log(drr[p][m]) if dra[p][m] else -np.inf
+            else:
+                DR[p][m,i]= math.log(1-drr[p][m])
+
+# joint states
+J=[(i,j) for i in range(S) for j in range(S)]
+NJ=len(J)
+TJ=np.zeros((M-1,NJ,NJ))
+for m in range(M-1):
+    TJ[m]=np.einsum('ij,kl->ikjl',np.zeros((S,S)),np.zeros((S,S)))  # placeholder
+# build joint transition: TJ[m][ (i,j) , (i2,j2) ] = T['A'][m][i,i2]+T['B'][m][j,j2]
+for m in range(M-1):
+    A=T['A'][m]; B=T['B'][m]
+    TJ[m]=(A[:,None,:,None]+B[None,:,None,:]).reshape(S*S,S*S)
+DRJ=np.zeros((M,NJ))
+for m in range(M):
+    DRJ[m]=(DR['A'][m][:,None]+DR['B'][m][None,:]).reshape(NJ)
+# legality
+LEG=np.ones((M,NJ),dtype=bool)
+for m in range(M):
+    for idx,(i,j) in enumerate(J):
+        a=STATES[i]; b=STATES[j]
+        if (a[0]==a[1] and not dra['A'][m]) or (b[0]==b[1] and not dra['B'][m]):
+            LEG[m,idx]=False
+DRJ[~LEG]=-np.inf
+
+def dA_of(col,state):
+    return col[state[0]]+col[state[1]]
+# precompute: for each marker, each parent, each column index -> array over states of contribution
+def contrib_table(COLS):
+    # returns (M, ncolmax, S) with -1 for missing
+    out=np.zeros((M,6,S),dtype=int)
+    for m in range(M):
+        for ci,c in enumerate(COLS[m]):
+            for si,s in enumerate(STATES):
+                out[m,ci,si]=c[s[0]]+c[s[1]]
+    return out
+CTA=contrib_table(COLA); CTB=contrib_table(COLB)
+EOF
+echo ok
+
+[14]
+cat >> /tmp/exp/base.py <<'EOF'
+
+def emissions(ca,cb):
+    E=np.empty((N,M,NJ))
+    for m in range(M):
+        d=(CTA[m,ca[m]][:,None]+CTB[m,cb[m]][None,:]).reshape(NJ)
+        E[:,m,:]=GL[:,m,:][:,d]
+    return E
+
+def viterbi(E,want_path=False):
+    V=np.where(LEG[0],E[:,0,:]+DRJ[0],-np.inf)
+    backs=[]
+    for m in range(1,M):
+        W=V[:,:,None]+TJ[m-1][None,:,:]
+        am=W.argmax(axis=1)
+        backs.append(am)
+        V=W.max(axis=1)+E[:,m,:]+DRJ[m]
+        V=np.where(LEG[m],V,-np.inf)
+    tot=V.max(axis=1)
+    if not want_path:
+        return tot.sum(),None
+    paths=np.zeros((N,M),dtype=int)
+    cur=V.argmax(axis=1)
+    paths[:,M-1]=cur
+    for m in range(M-1,0,-1):
+        cur=backs[m-1][np.arange(N),cur]
+        paths[:,m-1]=cur
+    return tot.sum(),paths
+
+def score_paths(paths):
+    # total given joint state paths, with columns optimized per marker
+    tot=0.0; ca=np.zeros(M,dtype=int); cb=np.zeros(M,dtype=int)
+    for m in range(M):
+        st=paths[:,m]
+        sa=np.array([J[s][0] for s in st]); sb=np.array([J[s][1] for s in st])
+        best=-np.inf; bi=(0,0)
+        for x in range(len(COLA[m])):
+            for y in range(len(COLB[m])):
+                d=CTA[m,x,sa]+CTB[m,y,sb]
+                v=GL[np.arange(N),m,d].sum()
+                if v>best: best=v; bi=(x,y)
+        ca[m],cb[m]=bi; tot+=best
+    # transitions + dr
+    for c in range(N):
+        st=paths[c]
+        for m in range(M):
+            tot+=DRJ[m,st[m]]
+            if m+1<M: tot+=TJ[m][st[m],st[m+1]]
+    return tot,ca,cb
+
+def local_search(ca,cb,iters=30):
+    cur=-np.inf
+    for it in range(iters):
+        E=emissions(ca,cb)
+        tot,paths=viterbi(E,True)
+        t2,ca2,cb2=score_paths(paths)
+        if t2<=cur+1e-12: 
+            return t2,ca2,cb2
+        cur=t2; ca,cb=ca2,cb2
+    return cur,ca,cb
+
+if __name__=='__main__':
+    rng=random.Random(1)
+    best=-np.inf; bestc=None
+    for trial in range(20):
+        ca=np.array([rng.randrange(len(COLA[m])) for m in range(M)])
+        cb=np.array([rng.randrange(len(COLB[m])) for m in range(M)])
+        t,ca,cb=local_search(ca,cb)
+        if t>best: best=t; bestc=(ca.copy(),cb.copy())
+        print(trial, round(t,6))
+    print('BEST',best)
+EOF
+cd /tmp/exp && python3 base.py
+
+[28]
+sed -i 's/^pub mod canonical;/pub mod bound;\npub mod canonical;/' src/solver.rs && cargo test --offline --release --lib bounds_on_the_real_cross -- --nocapture 2>&1 | tail -12
+
+[29]
+cat >> src/solver/search.rs <<'EOF'
+
+#[cfg(test)]
+mod experiments {
+    use super::*;
+    use crate::cross_input::parse_cross;
+    use crate::solver::core::Tables;
+    use std::collections::BTreeMap;
+
+    #[test]
+    fn landscape() {
+        let text = std::fs::read_to_string("/app/cross.json").expect("cross.json");
+        let cross = parse_cross(&text).expect("valid cross");
+        let t = Tables::build(&cross);
+        let mut hist: BTreeMap<i64, usize> = BTreeMap::new();
+        let mut best = f64::NEG_INFINITY;
+        let mut rng = Rng::new(7);
+        let start = std::time::Instant::now();
+        for _ in 0..400 {
+            let mut xa: Vec<usize> = (0..t.markers).map(|m| rng.below(t.contrib[0][m].len())).collect();
+            let mut xb: Vec<usize> = (0..t.markers).map(|m| rng.below(t.contrib[1][m].len())).collect();
+            let mut paths = Vec::new();
+            let mut cur = local_search(&t, &mut xa, &mut xb, &mut paths);
+            for _ in 0..8 {
+                let mut ta = xa.clone();
+                let mut tb = xb.clone();
+                for _ in 0..1 + rng.below(3) {
+                    let m = rng.below(t.markers);
+                    ta[m] = rng.below(t.contrib[0][m].len());
+                    tb[m] = rng.below(t.contrib[1][m].len());
+                }
+                let mut tp = Vec::new();
+                let v = local_search(&t, &mut ta, &mut tb, &mut tp);
+                if v > cur - 1e-11 {
+                    cur = v; xa = ta; xb = tb; paths = tp;
+                }
+            }
+            cur = sweep_markers(&t, &mut xa, &mut xb);
+            *hist.entry((cur * 100.0).round() as i64).or_insert(0) += 1;
+            if cur > best { best = cur; }
+        }
+        println!("elapsed {:?}", start.elapsed());
+        println!("best {best:.6}");
+        for (k, v) in hist.iter().rev().take(15) {
+            println!("  {:>8.2}  x{}", *k as f64 / 100.0, v);
+        }
+    }
+}
+EOF
+cargo test --offline --release --lib landscape -- --nocapture 2>&1 | tail -22
+
+[32]
+sed -i 's/^pub mod core;/pub mod core;\npub mod exact;/' src/solver.rs && cargo test --offline --release --lib branch_and_bound -- --nocapture 2>&1 | tail -8
+
+[36]
+python3 - <<'EOF'
+p='src/solver/selftest.rs'
+s=open(p).read()
+start=s.index("    /// The optimum by enumeration over every admissible parental assignment.")
+end=s.index("    #[test]\n    fn branch_and_bound_matches_enumeration")
+s = s[:start] + '''    /// The optimum by enumeration over every admissible parental assignment.
+    fn enumerated_optimum(t: &Tables) -> f64 {
+        let markers = t.markers;
+        let counts_a: Vec<usize> = (0..markers).map(|m| t.contrib[0][m].len()).collect();
+        let counts_b: Vec<usize> = (0..markers).map(|m| t.contrib[1][m].len()).collect();
+        let total: usize =
+            counts_a.iter().product::<usize>() * counts_b.iter().product::<usize>();
+        assert!(total < 8_000_000, "enumeration too large: {total}");
+        let mut xa = vec![0usize; markers];
+        let mut xb = vec![0usize; markers];
+        let mut best = f64::NEG_INFINITY;
+        for n in 0..total {
+            let mut rest = n;
+            for m in 0..markers {
+                xa[m] = rest % counts_a[m];
+                rest /= counts_a[m];
+            }
+            for m in 0..markers {
+                xb[m] = rest % counts_b[m];
+                rest /= counts_b[m];
+            }
+            let value = t.evaluate(&xa, &xb);
+            if value > best {
+                best = value;
+            }
+        }
+        best
+    }
+
+''' + s[end:]
+s = s.replace("""
+            let rebuilt = assemble(&t, &Vec::new(), &Vec::new());
+            let _ = rebuilt;
+""","")
+s = s.replace("    use crate::solver::{assemble, solve};","    use crate::solver::solve;")
+open(p,'w').write(s)
+EOF
+sed -i 's/^pub mod search;/pub mod search;\npub mod selftest;/' src/solver.rs && cargo test --offline --release --lib selftest -- --nocapture --test-threads=1 2>&1 | tail -20
+
+[107]
+sed -i 's/branch.run(5_000_000)/branch.run(budget)/' src/solver/selftest.rs && grep -n "branch.run" src/solver/selftest.rs
+
+[170]
+cat > /tmp/verify.py <<'EOF'
+import json, math
+from itertools import permutations
+from collections import Counter
+
+cross = json.load(open('/app/cross.json'))
+res = json.load(open('/app/result.json'))
+M, N = cross['markers'], cross['offspring']
+hap = res['haplotypes']; paths = res['paths']
+P = {'A': cross['parent_dosage']['A'], 'B': cross['parent_dosage']['B']}
+DR = cross['double_reduction']; REC = cross['recombination']
+
+fail = []
+def check(cond, msg):
+    if not cond: fail.append(msg)
+
+# --- shape -------------------------------------------------------------
+check(sorted(res.keys()) == ['canonical_digest','format_version','haplotypes','paths','total_log_likelihood'],
+      f"field set: {sorted(res.keys())}")
+check(res['format_version'] == 1, "format_version")
+for p in 'AB':
+    check(len(hap[p]) == 4 and all(len(r) == M for r in hap[p]), f"{p}: 4 rows x M")
+    check(all(v in (0,1) for r in hap[p] for v in r), f"{p}: alleles 0/1")
+    for m in range(M):
+        check(sum(hap[p][h][m] for h in range(4)) == P[p][m], f"{p} marker {m}: dosage")
+check(len(paths) == N, f"{N} progeny paths")
+for c, path in enumerate(paths):
+    for p in 'AB':
+        check(len(path[p]) == M, f"progeny {c} {p}: M states")
+        for m, s in enumerate(path[p]):
+            check(len(s) == 2 and 0 <= s[0] <= s[1] < 4, f"progeny {c} {p} marker {m}: malformed pair {s}")
+            if s[0] == s[1]:
+                check(DR[p]['allowed'][m], f"progeny {c} {p} marker {m}: double reduction where forbidden")
+
+# --- the score, recomputed from the spec --------------------------------
+def k_changed(s, t):
+    return 2 - sum((Counter(s) & Counter(t)).values())
+
+total = 0.0
+for c in range(N):
+    for m in range(M):
+        d = 0
+        for p in 'AB':
+            a, b = paths[c][p][m]
+            d += hap[p][a][m] + hap[p][b][m]
+        total += cross['child_gl'][c][m][d]
+        for p in 'AB':
+            a, b = paths[c][p][m]
+            rate = DR[p]['rate'][m]
+            total += math.log(rate) if a == b else math.log(1.0 - rate)
+        if m + 1 < M:
+            for p in 'AB':
+                r = REC[p][m]
+                kk = k_changed(paths[c][p][m], paths[c][p][m+1])
+                total += kk * math.log(r) + (2 - kk) * math.log(1.0 - r)
+check(abs(total - res['total_log_likelihood']) <= 1e-8,
+      f"total: document says {res['total_log_likelihood']!r}, spec says {total!r}")
+print(f"independent score  {total:.10f}")
+print(f"document score     {res['total_log_likelihood']:.10f}")
+
+# --- canonical form -----------------------------------------------------
+ALL = [tuple(x) for x in [(0,0),(0,1),(0,2),(0,3),(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)]]
+def remap_state(s, perm):
+    return tuple(sorted((perm[s[0]], perm[s[1]])))
+def set_rows(h, perm):
+    out = [None]*4
+    for h_ in range(4): out[perm[h_]] = list(h[h_])
+    return out
+for p in 'AB':
+    rows = [list(r) for r in hap[p]]
+    check(rows == sorted(rows), f"{p}: rows not ascending")
+    best = None
+    for perm in permutat
+
+[173]
+cat > /tmp/verify2.py <<'EOF'
+import json, math
+from itertools import combinations_with_replacement, permutations
+from collections import Counter
+
+cross = json.load(open('/app/cross.json')); res = json.load(open('/app/result.json'))
+M, N = cross['markers'], cross['offspring']
+hap = {p: [list(r) for r in res['haplotypes'][p]] for p in 'AB'}
+paths = res['paths']
+DR, REC = cross['double_reduction'], cross['recombination']
+STATES = [(a,b) for a in range(4) for b in range(4) if a <= b]
+
+def dr_term(p, m, s):
+    rate = DR[p]['rate'][m]
+    if s[0] == s[1]:
+        if not DR[p]['allowed'][m]: return None      # illegal
+        return math.log(rate)
+    return math.log(1.0 - rate)
+
+def trans(p, m, s, t):
+    k = 2 - sum((Counter(s) & Counter(t)).values())
+    r = REC[p][m]
+    return k*math.log(r) + (2-k)*math.log(1.0-r)
+
+def emit(c, m, sa, sb, h):
+    d = h['A'][sa[0]][m] + h['A'][sa[1]][m] + h['B'][sb[0]][m] + h['B'][sb[1]][m]
+    return cross['child_gl'][c][m][d]
+
+def viterbi(c, h, want_path=False):
+    """Best score for progeny c under haplotypes h."""
+    V = {}
+    for sa in STATES:
+        for sb in STATES:
+            da, db = dr_term('A',0,sa), dr_term('B',0,sb)
+            if da is None or db is None: continue
+            V[(sa,sb)] = emit(c,0,sa,sb,h) + da + db
+    back = []
+    for m in range(1, M):
+        nb = {}
+        arg = {}
+        for sa in STATES:
+            for sb in STATES:
+                da, db = dr_term('A',m,sa), dr_term('B',m,sb)
+                if da is None or db is None: continue
+                best, who = None, None
+                for (pa, pb), v in V.items():
+                    val = v + trans('A',m-1,pa,sa) + trans('B',m-1,pb,sb)
+                    if best is None or val > best: best, who = val, (pa,pb)
+                if best is not None:
+                    nb[(sa,sb)] = best + emit(c,m,sa,sb,h) + da + db
+                    arg[(sa,sb)] = who
+        V, back = nb, back + [arg]
+    best, end = max((v, k) for k, v in V.items())
+    if not want_path: return best
+    joint = [end]
+    for m in range(M-1, 0, -1):
+        joint.append(back[m-1][joint[-1]])
+    joint.reverse()
+    return best, [(j[0], j[1]) for j in joint]
+
+def path_score(c, pa, pb, h):
+    tot = 0.0
+    for m in range(M):
+        tot += emit(c,m,pa[m],pb[m],h)
+        for p, st in (('A',pa[m]), ('B',pb[m])):
+            t = dr_term(p,m,st)
+            if t is None: return None
+            tot += t
+        if m+1 < M:
+            tot += trans('A',m,pa[m],pa[m+1]) + trans('B',m,pb[m],pb[m+1])
+    return tot
+
+# 1. the reported paths are optimal for the reported haplotypes
+reported = 0.0
+for c in range(N):
+    pa = [tuple(s) for s in paths[c]['A']]
+    pb = [tuple(s) for s in paths[c]['B']]
+    got = path_score(c, pa, pb, hap)
+    best = viterbi(c, hap)
+    assert got is not None, f"progeny {c}: illegal path"
+    assert got >= best - 1e-9, f"progeny {c}: path {got:.9} below the optimum {best:.9}"
+    reported += got
+print(f"paths optimal for the haplotyp
+
+[174]
+cat > /tmp/verify2.py <<'EOF'
+import json, math
+from collections import Counter
+cross = json.load(open('/app/cross.json')); res = json.load(open('/app/result.json'))
+M, N = cross['markers'], cross['offspring']
+hap = {p: [list(r) for r in res['haplotypes'][p]] for p in 'AB'}
+paths = res['paths']; DR, REC = cross['double_reduction'], cross['recombination']
+STATES = [(a,b) for a in range(4) for b in range(4) if a <= b]
+def dr(p,m,s):
+    r = DR[p]['rate'][m]
+    if s[0]==s[1]:
+        return None if not DR[p]['allowed'][m] else math.log(r)
+    return math.log(1.0-r)
+def tr(p,m,s,t):
+    k = 2 - sum((Counter(s)&Counter(t)).values()); r = REC[p][m]
+    return k*math.log(r)+(2-k)*math.log(1.0-r)
+def em(c,m,sa,sb,h):
+    d = h['A'][sa[0]][m]+h['A'][sa[1]][m]+h['B'][sb[0]][m]+h['B'][sb[1]][m]
+    return cross['child_gl'][c][m][d]
+# precompute per marker, per parent: legal states and dr terms
+legal = {p: [ [s for s in STATES if dr(p,m,s) is not None] for m in range(M)] for p in 'AB'}
+def viterbi(c,h):
+    V = {}
+    for sa in legal['A'][0]:
+        dsa = dr('A',0,sa)
+        for sb in legal['B'][0]:
+            V[(sa,sb)] = em(c,0,sa,sb,h)+dsa+dr('B',0,sb)
+    for m in range(1,M):
+        ta = legal['A'][m]; tb = legal['B'][m]
+        nb = {}
+        for sa in ta:
+            dsa = dr('A',m,sa)
+            for sb in tb:
+                e = em(c,m,sa,sb,h)+dsa+dr('B',m,sb)
+                best = None
+                for (pa,pb),v in V.items():
+                    val = v + tr('A',m-1,pa,sa) + tr('B',m-1,pb,sb)
+                    if best is None or val > best: best = val
+                nb[(sa,sb)] = best + e
+        V = nb
+    return max(V.values())
+def pathscore(c,pa,pb,h):
+    tot=0.0
+    for m in range(M):
+        tot += em(c,m,pa[m],pb[m],h)
+        for p,st in (('A',pa[m]),('B',pb[m])):
+            t=dr(p,m,st)
+            if t is None: return None
+            tot+=t
+        if m+1<M: tot += tr('A',m,pa[m],pa[m+1])+tr('B',m,pb[m],pb[m+1])
+    return tot
+tot=0.0
+for c in range(N):
+    pa=[tuple(s) for s in paths[c]['A']]; pb=[tuple(s) for s in paths[c]['B']]
+    got=pathscore(c,pa,pb,hap); best=viterbi(c,hap)
+    assert got is not None, f"progeny {c}: illegal path"
+    assert got >= best-1e-9, f"progeny {c}: {got:.9} < {best:.9}"
+    tot+=got
+print(f"paths optimal for the haplotypes: {tot:.10f} (document {res['total_log_likelihood']:.10f})")
+assert abs(tot-res['total_log_likelihood']) <= 1e-8
+# second half: with the paths fixed, no marker admits a better column pair
+def cols(p,m):
+    want=cross['parent_dosage'][p][m]
+    return [mask for mask in range(16) if bin(mask).count('1')==want]
+improved=[]
+for m in range(M):
+    best=None; who=None
+    for ma in cols('A',m):
+        for mb in cols('B',m):
+            s=0.0
+            for c in range(N):
+                d=0
+                for p,mask,st in (('A',ma,paths[c]['A'][m]),('B',mb,paths[c]['B'][m])):
+                    d += ((mask>>st[0])&1)+((mask>>st[1])&1)
+                s += cross['child_gl'][c
+
+[180]
+cp src/solver.rs /tmp/solver.rs.bak && python3 - <<'EOF'
+p='src/solver.rs'
+s=open(p).read()
+old = s[s.index("const SEEDS: [u64; 6] = ["):s.index("];", s.index("const SEEDS"))+3]
+new = "const SEEDS: [u64; 60] = [\n" + "".join(f"    0x9e3779b97f4a7c15 ^ {i},\n" for i in range(60)) + "];"
+s = s.replace(old, new)
+open(p,'w').write(s)
+EOF
+cargo build --offline --release 2>&1 | tail -2 && time ./target/release/phase; cp /tmp/solver.rs.bak src/solver.rs; cargo build --offline --release 2>&1 | tail -2

@@ -1,0 +1,10 @@
+# Verifier-private judge build: frozen sources and the judge only. No probe
+# target, no candidate source.
+cmake_minimum_required(VERSION 3.16)
+project(fabric_verifier_judge LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+add_executable(judge src/json.cpp src/model.cpp src/judge.cpp)
+target_include_directories(judge PRIVATE include src)
+target_compile_options(judge PRIVATE -O2 -Wall -Wextra)

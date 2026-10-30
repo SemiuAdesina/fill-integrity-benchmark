@@ -1,0 +1,118 @@
+[2] BASH rc=0 0.0s :: find /app -type f -name "*.rs" -o -name "*.md" -o -name "*.toml" -o -name "*.json" | head -50 :: rs /app/src/cross_model.rs /app/src/digest.rs /app/src/json.rs /app/src/lib.rs /app/src/result_output.rs /app/src/scoring.rs /app/src/solver.rs /app/Cargo.toml 
+[8] BASH rc=0 0.0s :: ls -la && python3 -c " import json d=json.load(open('cross.json')) print('markers',d['markers'],'off :: , False, False, False, True, True, True, True, False, True, True] drB rate [0, 0.289772, 0, 0, 0, 0.233696, 0.18933, 0.181965, 0.280416, 0, 0.266179, 0.218749] 
+[10] BASH rc=0 0.0s :: cat /app/Cargo.toml /app/src/lib.rs /app/README.md /app/examples/README.md; echo ---; cat /app/examp :: 0,1]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]},{"A":[[0,3],[0,3],[0,3],[0,3],[0,3]],"B":[[0,1],[0,1],[0,1],[0,1],[0,1]]}],"total_log_likelihood":-44.65149744151981}
+[11] WRITE /app/src/solver/core.rs -> W ok
+[12] WRITE /app/src/solver/viterbi.rs -> W ok
+[13] EDIT /app/src/solver/viterbi.rs -> E ok
+[14] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='src/solver/viterbi.rs' s=open(p).read() start=s.index("/// Columns th :: done 
+[15] WRITE /app/src/solver/search.rs -> W ok
+[16] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() old_bound = """ fn bound(&self, marker: u :: ok 
+[17] WRITE /app/src/solver.rs -> W ok
+[18] WRITE /app/src/solver/canon.rs -> W ok
+[19] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver.rs' s=open(p).read() s=s.replace("""use crate::solver::core::Core;""" :: 
+[20] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() old=""" for &(child_bound, va, vb, next_a :: 
+[21] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/core.rs' s=open(p).read() s=s.replace("use crate::cross_model::{Paren :: BUILD: 
+[22] BASH rc=0 0.0s :: PHASE_DEBUG=1 timeout 600 ./target/release/phase 2>&1 | tail -5 :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[23] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/core.rs' s=open(p).read() old=""" let (above, below) = rows.split_at_ :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[24] BASH rc=0 0.0s :: time (PHASE_DEBUG=1 ./target/release/phase >/dev/null) 2>&1 | tail -5; echo ===; time (cargo test -- :: ===  real	0m0.008s user	0m0.009s sys	0m0.000s  real	0m0.000s user	0m0.000s sys	0m0.001s 
+[25] WRITE /app/src/solver/lexmin.rs -> W ok
+[26] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver.rs' s=open(p).read() old_head = """use crate::cross_input::Cross; use :: 
+[27] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -3; PHASE_DEBUG=1 ./target/release/phase 2>&1 | tail -5 :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /app/result.json 
+[28] BASH rc=0 0.0s :: cargo test --offline --locked --release --test solver_checks 2>&1 | tail -15 :: 
+[29] WRITE /app/tests/zz_scratch.rs -> W ok
+[30] BASH rc=0 0.0s :: cargo test --offline --locked --release --test zz_scratch 2>&1 | tail -20 :: 
+[31] BASH rc=0 0.0s :: kill %1 2>/dev/null; pkill -f zz_scratch; python3 - <<'PY' p='tests/zz_scratch.rs' s=open(p).read()  :: bash: line 1: pkill: command not found  real	0m0.001s user	0m0.001s sys	0m0.000s 
+[32] BASH rc=0 0.0s :: time cargo test --offline --locked --release --test zz_scratch 2>&1 | tail -25 ::  real	0m0.000s user	0m0.000s sys	0m0.000s 
+[33] BASH rc=0 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7ovwyzaj.output 2>/dev/n :: 
+[34] BASH rc=0 0.0s :: ls -la /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/ 2>/dev/null | head; sleep 0; c :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7ovwyzaj.output: No such file or directory 
+[35] BASH rc=0 0.0s :: cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7ovwyzaj.output | tail -20; echo  :: -- killed cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7ovwyzaj.output: No such file or directory bash: line 1: pkill: command not found 
+[36] WRITE /app/tests/zz_scratch.rs -> W ok
+[38] BASH rc=0 0.0s :: timeout 600 cargo test --offline --locked --release --test zz_scratch -- --test-threads=1 --nocaptur :: 
+[40] BASH rc=1 0.0s :: sleep 0; tail -30 /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/bcg9s3mfy.output :: tail: cannot open '/tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/bcg9s3mfy.output' for reading: No such file or directory 
+[41] BASH rc=0 0.0s :: python3 - <<'EOF' import re p='tests/zz_scratch.rs' s=open(p).read() s=s.replace("let instance = ran :: 336:        let slope = 1.0 + rng.float(); 354:        let slope = 1.0 + rng.float(); 
+[42] BASH rc=0 0.0s :: timeout 900 cargo test --offline --locked --release --test zz_scratch -- --test-threads=1 --nocaptur :: 
+[43] BASH rc=1 0.0s :: sleep 0; tail -30 /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output :: tail: cannot open '/tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output' for reading: No such file or directory 
+[44] BASH rc=1 0.0s :: cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output: No such file or directory 
+[46] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output: No such file or directory 
+[47] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output: No such file or directory 
+[48] BASH rc=0 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output; ps aux  :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output: No such file or directory bash: line 1: ps: command not found 
+[49] BASH rc=0 0.0s :: grep -rn -i "28\|32\|range\|at most\|maximum" spec/cross-format-v1.md | head -40 :: 28`. | 18:| `offspring` | integer | Number of progeny, `N`. Must satisfy `8 <= N <= 32`. | 122:3. `markers` outside `12..=28`, or `offspring` outside `8..=32`. 
+[50] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b7abb516f.output: No such file or directory 
+[51] BASH rc=0 0.0s :: pkill -f zz_scratch; sleep 0; echo killed :: killed bash: line 1: pkill: command not found 
+[52] BASH rc=0 0.0s :: python3 - <<'EOF' p='tests/zz_scratch.rs' s=open(p).read() s=s.replace(""" let instance = random_ins :: t instance = random_instance(&mut rng, 12, 8, 2, slope, true); 386:            let instance = random_instance(&mut rng, *markers, *offspring, 8, 1.5, planted); 
+[53] BASH rc=0 0.0s :: (timeout 1500 cargo test --offline --locked --release --test zz_scratch -- --test-threads=1 --nocapt :: 
+[54] BASH rc=0 0.0s :: sleep 0; cat /tmp/scratch.log :: EXIT 0 
+[55] BASH rc=0 0.0s :: sleep 0; cat /tmp/scratch.log :: EXIT 0 
+[56] BASH rc=0 0.0s :: sleep 0; cat /tmp/scratch.log :: EXIT 0 
+[57] BASH rc=0 0.0s :: pkill -f zz_scratch; pkill -f "cargo test"; sleep 0; echo done :: done bash: line 1: pkill: command not found bash: line 1: pkill: command not found 
+[58] BASH rc=0 0.0s :: python3 - <<'PY' p='tests/zz_scratch.rs' s=open(p).read() old = s[s.index("#[test]\nfn largest_input :: 379:fn largest_inputs_finish() { 
+[59] BASH rc=0 0.0s :: (timeout 400 cargo test --offline --locked --release --test zz_scratch -- --test-threads=1 --nocaptu :: 
+[60] BASH rc=0 0.0s :: sleep 0; cat /tmp/scratch2.log :: EXIT 0 
+[61] BASH rc=0 0.0s :: sleep 0; cat /tmp/scratch2.log :: EXIT 0 
+[62] BASH rc=0 0.0s :: cat src/main.rs 2>/dev/null | head -60; ls src/ :: bin cross_input.rs cross_model.rs digest.rs json.rs lib.rs result_output.rs scoring.rs solver solver.rs 
+[63] BASH rc=0 0.0s :: ls src/bin; cat src/bin/*.rs | head -80 :: rs={} offspring={}", cross.markers, cross.offspring);     println!("total_log_likelihood={total:.10}");     println!("wrote {output}");     ExitCode::SUCCESS } 
+[64] BASH rc=0 0.1s :: pkill -f zz_scratch; pkill -f "cargo test"; sleep 0; cat > /tmp/gen.py <<'PY' import json, random, s :: /tmp/large_planted.json -rw-r--r-- 1 root root  5192 Sep  7 21:34 /tmp/small.json bash: line 1: pkill: command not found bash: line 1: pkill: command not found 
+[65] BASH rc=0 0.0s :: ls -la /tmp/*.json 2>&1; echo --- python3 -c " import json d=json.load(open('/tmp/large_planted.json :: , 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 2, 3, 0, 0], 'B': [2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 3, 0]} 
+[66] BASH rc=0 0.1s :: cat > /tmp/gen.py <<'PY' import json, random, sys def gen(markers, offspring, free, slope, planted,  :: 0 Sep  7 21:34 /tmp/large_flat.json -rw-r--r-- 1 root root 34014 Sep  7 21:34 /tmp/large_planted.json -rw-r--r-- 1 root root  5192 Sep  7 21:34 /tmp/small.json 
+[67] BASH rc=0 0.0s :: cargo build --offline --locked --release 2>&1 | tail -3 && time (PHASE_DEBUG=1 ./target/release/phas :: markers=12 offspring=10 total_log_likelihood=-179.9513804989 wrote /tmp/small_out.json  real	0m0.008s user	0m0.008s sys	0m0.000s 
+[68] BASH rc=0 0.1s :: (time PHASE_DEBUG=1 ./target/release/phase /tmp/large_planted.json /tmp/lp_out.json) > /tmp/lp.log 2 :: 
+[69] BASH rc=1 0.0s :: sleep 0; cat /tmp/lp.log 2>/dev/null; echo "---"; ps aux | grep -c "[p]hase" :: ring=32 total_log_likelihood=-1080.2001503313 wrote /tmp/lp_out.json  real	0m0.043s user	0m0.043s sys	0m0.000s EXIT 0 --- 0 bash: line 1: ps: command not found 
+[70] BASH rc=1 0.0s :: sleep 0; cat /tmp/lp.log 2>/dev/null; echo "---"; ps aux | grep -c "[p]hase" :: ring=32 total_log_likelihood=-1080.2001503313 wrote /tmp/lp_out.json  real	0m0.043s user	0m0.043s sys	0m0.000s EXIT 0 --- 0 bash: line 1: ps: command not found 
+[72] EDIT /app/src/solver/viterbi.rs -> E ok
+[73] EDIT /app/src/solver/viterbi.rs -> E ok
+[74] EDIT /app/src/solver/viterbi.rs -> E ok
+[75] WRITE /app/src/solver/price.rs -> W ok
+[76] EDIT /app/src/solver/core.rs -> E ok
+[77] EDIT /app/src/solver/search.rs -> E ok
+[78] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() s=s.replace("""use crate::cross_model::ST ::        if bound + EPS < self.floor { 286:            if !self.collecting && child_bound + EPS < self.best { 289:            if child_bound + EPS < self.floor { 
+[79] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver.rs' s=open(p).read() s=s.replace("""pub mod canon; pub mod core; pub  :: 
+[80] BASH rc=0 0.0s :: cargo build --offline --locked --release 2>&1 | grep -A18 "^error\[E0308\]" | head -30 :: 
+[81] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() s=s.replace("children.sort_by(|x, y| y.0. :: 
+[82] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(" let (na, nb) = (cols_a.len() :: BUILD_DONE 
+[83] BASH rc=0 0.0s :: time (PHASE_DEBUG=1 ./target/release/phase /tmp/small.json /tmp/small_out.json) 2>&1; echo "==="; ti :: s user	0m0.008s sys	0m0.000s === markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json  real	0m0.009s user	0m0.009s sys	0m0.000s 
+[84] BASH rc=0 0.1s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() s=s.replace(""" for c in 0..core.offsprin :: s user	0m0.009s sys	0m0.000s === markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json  real	0m0.008s user	0m0.008s sys	0m0.000s 
+[85] BASH rc=0 0.0s :: grep -n "refine\|local_search" src/solver.rs | head; echo "---"; python3 - <<'PY' p='src/solver/pric :: columns_b) = local_search(&core); 52:    refine(&mut core, heuristic); --- markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json 
+[87] BASH rc=0 0.0s :: cp src/solver/search.rs /tmp/search_new.rs python3 - <<'PY' p='src/solver/search.rs' s=open(p).read( :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out2.json 
+[88] BASH rc=0 0.1s :: cp /tmp/search_new.rs src/solver/search.rs python3 - <<'PY' p='src/solver/search.rs' s=open(p).read( :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out3.json 
+[89] BASH rc=0 0.1s :: python3 - <<'PY' p='src/solver/search.rs' s=open(p).read() # drop the debug comparison block start = :: ring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json === markers=12 offspring=10 total_log_likelihood=-179.9513804989 wrote /tmp/small_out.json 
+[90] BASH rc=0 0.1s :: cp /tmp/search_new.rs src/solver/search.rs python3 - <<'PY' p='src/solver/search.rs' s=open(p).read( :: ring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json === markers=12 offspring=10 total_log_likelihood=-179.9513804989 wrote /tmp/small_out.json 
+[91] BASH rc=0 0.1s :: time (PHASE_DEBUG=1 ./target/release/phase /tmp/large_planted.json /tmp/lp_out.json) 2>&1 | head -4 :: markers=28 offspring=32 total_log_likelihood=-1080.2001503313 wrote /tmp/lp_out.json  real	0m0.060s user	0m0.059s sys	0m0.001s 
+[92] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b4iihjkrr.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b4iihjkrr.output: No such file or directory 
+[93] BASH rc=1 0.0s :: sleep 0; cat /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b4iihjkrr.output :: cat: /tmp/claude-0/-app/ac19dca8-348a-47bd-8186-9efadd40e46e/tasks/b4iihjkrr.output: No such file or directory 
+[94] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(""" if value < best_value {""" :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json 
+[95] BASH rc=1 0.1s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(""" let step = step_scale * (v :: --- cap=0.05 --- cap=0.2 --- cap=0.5 --- cap=2 
+[96] BASH rc=1 0.1s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(" let mut step_scale = 1.0f64; :: --- lam=0.01 cap=100 --- lam=0.05 cap=100 --- lam=0.2 cap=100 
+[97] BASH rc=1 0.1s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(" let step_scale: f64 = std::e :: --- lam=0.01 --- lam=0.05 --- lam=0.2 --- lam=1.0 
+[98] BASH rc=0 0.1s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace('if std::env::var("PHASE_DEBUG :: ng=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json --- 0.5 markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json 
+[99] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s=s.replace(" mu[c][m][picks[c][m]] += ste :: markers=12 offspring=10 total_log_likelihood=-725.2001583337 wrote /tmp/fix_out.json 
+[100] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() s = s.replace("""/// The column pair a pro :: [c][m]); 208:        let (value, picks) = evaluate(core, &mu); 240:                counts[picks[c][m]] += 1; 261:                mu[c][m][picks[c][m]] -= step; 
+[101] BASH rc=0 0.0s :: python3 - <<'PY' p='src/solver/price.rs' s=open(p).read() start = s.index(" let mut step_last = 0.0f :: 
+[102] BASH rc=0 0.1s :: for lam in 0.05 0.5 2; do echo "--- lam=$lam"; PHASE_LAM=$lam PHASE_PRICE=100 PHASE_DEBUG=1 ./target :: --- lam=0.05 --- lam=0.5 --- lam=2 
+[103] BASH rc=1 0.1s :: for lam in 0.0005 0.002 0.01; do echo "--- lam=$lam"; PHASE_LAM=$lam PHASE_PRICE=100 PHASE_DEBUG=1 . :: --- lam=0.0005 --- lam=0.002 --- lam=0.01 
+[105] WRITE /app/src/solver/price.rs -> W ok
+[106] EDIT /app/src/solver/price.rs -> E ok
+[107] EDIT /app/src/solver/price.rs -> E ok
+[108] EDIT /app/src/solver/price.rs -> E ok
+[109] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -20 :: 
+[110] BASH rc=1 0.0s :: python3 - <<'EOF' p='src/solver/price.rs' s=open(p).read() s=s.replace(" let value = evaluate(core,  :: 
+[112] EDIT /app/src/solver/price.rs -> E ok
+[113] BASH rc=1 0.0s :: sed -i 's|/// Steps without a lower bound before the step size is halved.\nconst PATIENCE: usize = 1 :: 
+[114] BASH rc=1 0.0s :: python3 - <<'EOF' p='src/solver/price.rs' s=open(p).read() probe = ''' if std::env::var("PHASE_PROBE :: 
+[115] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/price.rs' s=open(p).read() chk = ''' let (value, path) = viterbi_nod :: ---done--- 
+[116] WRITE SKIP (tool error) /app/src/solver/price.rs :: '<tool_use_error>File has been modified since read, either by the user or by a linter. Read it again before attempting to'
+[117] BASH rc=0 0.0s :: head -c 1 src/solver/price.rs >/dev/null && wc -l src/solver/price.rs :: 371 src/solver/price.rs 
+[119] WRITE /app/src/solver/price.rs -> W ok
+[120] BASH rc=0 0.0s :: cargo build --release 2>&1 | tail -20 :: 
+[121] BASH rc=1 0.0s :: time PHASE_DEBUG=1 ./target/release/phase /app/cross.json /tmp/fix_out.json 2>&1 | grep -E "^heurist ::  real	0m0.010s user	0m0.008s sys	0m0.003s 
+[122] BASH rc=0 0.1s :: python3 - <<'EOF' p='src/solver/price.rs' s=open(p).read() s=s.replace(" let (trial_value, trial_pat :: 
+[123] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver/price.rs' s=open(p).read() old = """/// What each column pair would  :: pick_row(core: &Core, c: usize, m: usize, out: &mut [f64]) { 196:                pick_row(core, c, m, &mut own[c][m]); 199:        let _ = &paths;            } 
+[125] EDIT /app/src/solver/price.rs -> E ok
+[126] BASH rc=0 0.0s :: cargo build --release 2>&1|tail -15 && PHASE_DEBUG=1 ./target/release/phase /app/cross.json /tmp/fix :: 
+[127] BASH rc=0 0.0s :: rm -f /app/src/solver/price.rs && grep -n "price\|refine" /app/src/solver.rs :: 26:use crate::solver::price::refine; 33:pub mod price; 52:    refine(&mut core, heuristic); 
+[129] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace("use crate::solver::price::refine;\ :: 
+[130] BASH rc=0 0.0s :: python3 - <<'EOF' p='src/solver.rs' s=open(p).read() s=s.replace(" let mut core = Core::new(cross);" :: === warnings check === 0 
+[131] BASH rc=0 0.0s :: rm -f tests/zz_scratch.rs && ls tests/ && cargo test --offline --locked --release --test solver_chec :: diagnostics.rs solver_checks.rs 
+[132] BASH rc=0 0.0s :: cargo test --offline --locked --test diagnostics 2>&1 | tail -30 :: 
+[133] BASH rc=0 0.0s :: ls -la /tmp/large_planted.json /tmp/large_flat.json /tmp/small.json 2>&1 :: 0 Sep  7 21:34 /tmp/large_flat.json -rw-r--r-- 1 root root 34014 Sep  7 21:34 /tmp/large_planted.json -rw-r--r-- 1 root root  5192 Sep  7 21:34 /tmp/small.json 
+[134] BASH rc=0 0.0s :: for f in /tmp/large_planted.json /tmp/large_flat.json; do echo "=== $f"; /usr/bin/time -f "%e s %M K ::  /tmp/large_planted.json bash: line 1: /usr/bin/time: No such file or directory === /tmp/large_flat.json bash: line 1: /usr/bin/time: No such file or directory 
+[135] BASH rc=0 0.1s :: for f in /tmp/large_planted.json /tmp/large_flat.json /tmp/small.json; do echo "=== $f"; start=$(dat :: e_flat.json elapsed:  === /tmp/small.json elapsed:  bash: line 1: bc: command not found bash: line 1: bc: command not found bash: line 1: bc: command not found 
