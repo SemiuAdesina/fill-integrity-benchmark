@@ -1,0 +1,92 @@
+[
+  {
+    "check": "check-canary",
+    "status": "PASS",
+    "detail": "missing_in=[]"
+  },
+  {
+    "check": "check-standard-paths",
+    "status": "PASS",
+    "detail": "required=['environment/Dockerfile', 'tests/Dockerfile', 'tests/test.sh', 'solution/solve.sh', 'instruction.md', 'task.toml'] missing=[]"
+  },
+  {
+    "check": "check-no-dropped-keys",
+    "status": "PASS",
+    "detail": "silently_dropped_present=[]"
+  },
+  {
+    "check": "check-dockerfile-sanity",
+    "status": "PASS",
+    "detail": "issues=[]"
+  },
+  {
+    "check": "check-verifier-isolation",
+    "status": "PASS",
+    "detail": "leaks=[]"
+  },
+  {
+    "check": "check-test-sh-sanity",
+    "status": "PASS",
+    "detail": "issues=[]"
+  },
+  {
+    "check": "check-test-sh-hardening",
+    "status": "PASS",
+    "detail": "issues=[]"
+  },
+  {
+    "check": "check-task-fields",
+    "status": "PASS",
+    "detail": "unsupported_present=[]"
+  },
+  {
+    "check": "check-task-timeout",
+    "status": "PASS",
+    "detail": "agent=7200 verifier=900"
+  },
+  {
+    "check": "check-separate-verifier",
+    "status": "PASS",
+    "detail": "mode=separate"
+  },
+  {
+    "check": "check-category",
+    "status": "PASS",
+    "detail": "category=debugging"
+  },
+  {
+    "check": "check-artifacts",
+    "status": "PASS",
+    "detail": "artifacts=['/app', '/logs/verifier/reward.txt', '/logs/verifier/report.json']"
+  },
+  {
+    "check": "check-allow-internet",
+    "status": "PASS",
+    "detail": "allow_internet not set"
+  },
+  {
+    "check": "check-gpu-types",
+    "status": "PASS",
+    "detail": "no gpu request"
+  },
+  {
+    "check": "check-task-absolute-path",
+    "status": "PASS",
+    "detail": "instruction references /app absolutely"
+  },
+  {
+    "check": "check-instruction-reproducer",
+    "status": "PASS",
+    "detail": "instruction mentions the offline reproducer"
+  },
+  {
+    "check": "check-trial-network-fetch",
+    "status": "PASS",
+    "detail": "files_with_fetch=[]"
+  },
+  {
+    "check": "check-task-slug",
+    "status": "PASS",
+    "detail": "slug=attributable-fill-detection tokens=3"
+  }
+]
